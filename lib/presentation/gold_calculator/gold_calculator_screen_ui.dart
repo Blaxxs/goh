@@ -4,10 +4,11 @@ import 'package:flutter/services.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:intl/intl.dart';
 
-import '../widgets/app_drawer.dart';
-import '../../gold_calculator_logic.dart'; // GoldEfficiencyResult 사용
-import '../../constants/leader_constants.dart';
-import '../../gold_calculator_screen.dart'; // TimeOption, GoldSortOption Enum 사용
+import '../../core/widgets/app_drawer.dart';
+import '../../domain/logic/gold_calculator_logic.dart'; // GoldEfficiencyResult 사용
+import '../../core/constants/box_constants.dart'; // AppScreen enum을 위해 추가
+import '../../core/constants/leader_constants.dart';
+import 'gold_calculator_screen.dart'; // TimeOption, GoldSortOption Enum 사용
 
 class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
   // ... (기존 파라미터들은 변경 없음) ...
@@ -31,9 +32,13 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
   final List<GoldEfficiencyResult> results;
   final bool isLoading;
   final Function(GoldEfficiencyResult result) onStageNameTap;
+  final VoidCallback onStageSettingsPressed; // 스테이지 설정 버튼 콜백 추가
 
   final GoldSortOption selectedSortOption;
   final ValueChanged<GoldSortOption?> onSortOptionChanged;
+
+  final bool hideUnconfiguredStages; // "간략히" 보기 상태 필드 추가
+  final ValueChanged<bool> onHideUnconfiguredStagesChanged; // 콜백 필드 추가
 
   final NumberFormat _integerFormatter = NumberFormat('#,##0');
 
@@ -41,6 +46,8 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
 
   GoldEfficiencyCalculatorScreenUI({
     super.key,
+    required this.hideUnconfiguredStages, // 생성자에 필드 초기화 추가
+    required this.onHideUnconfiguredStagesChanged, // 생성자에 필드 초기화 추가
     required this.timeOptions,
     required this.selectedTimeOption,
     required this.onTimeOptionChanged,
@@ -58,10 +65,10 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
     required this.results,
     required this.isLoading,
     required this.onStageNameTap,
+    required this.onStageSettingsPressed, // 생성자에 추가
     required this.selectedSortOption,
-    required this.onSortOptionChanged,
-      this.onManualTimeSubmitted, // 생성자에 추가
-
+    required this.onSortOptionChanged, 
+    this.onManualTimeSubmitted,
   });
 
   // 설정 토글 위젯 수정: 스위치를 텍스트 아래로 이동
@@ -72,8 +79,8 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
     required IconData icon,
   }) {
     final theme = Theme.of(context);
-    final baseFontSize = theme.textTheme.bodyMedium?.fontSize ?? 13.0;
-    final scaledFontSize = 13.0 * (baseFontSize / 13.0); // 폰트 크기 조정
+    // Use a theme style that will be scaled globally by main.dart
+    final scaledFontSize = theme.textTheme.bodySmall?.fontSize; // Example: using bodySmall
 
     return Expanded(
       child: Padding(
@@ -82,7 +89,7 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center, // 자식들을 가로축 중앙에 정렬
           children: [
-            Row( // 아이콘과 텍스트는 가로로 배치
+            Row( // 아이콘과 텍스트는 가로로 배치            
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -93,19 +100,17 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
                   child: Text(
                     label,
                     style: TextStyle(
-                      fontSize: scaledFontSize,
+                      fontSize: scaledFontSize, 
                       fontWeight: value ? FontWeight.bold : FontWeight.normal,
-                      color: theme.textTheme.bodyMedium?.color,
+                      color: theme.textTheme.bodySmall?.color,
                     ),
-                    overflow: TextOverflow.visible, // 텍스트가 잘리지 않도록 함
-                    softWrap: false, // 필요시 true로 변경하여 자동 줄바꿈 허용
+                    softWrap: true, // Allow text to wrap
                     textAlign: TextAlign.center,
-                    maxLines: 1, // 한 줄을 유지하되, 넘치면 visible로 인해 확장될 수 있음
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 0), // 텍스트와 스위치 사이의 수직 간격 (아주 작게)
+            const SizedBox(height: 0), // 텍스트와 스위치 사이의 수직 간격 (아주 작게)            
             Transform.scale(
               scale: 0.8, // 스위치 크기 조정
               child: Switch(
@@ -135,15 +140,41 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
     const double textFormFieldContentVerticalPadding = (inputFieldHeight - inputFieldTextSize - (inputFieldLabelSize*0.3) -10 ) /2 ;
 
     const Map<GoldSortOption, String> sortOptionDisplayNames = {
-      GoldSortOption.stageName: '스테이지명 순',
-      GoldSortOption.totalGold: '최종 골드 순',
+      GoldSortOption.stageName: '스테이지명',
+      GoldSortOption.totalGold: '최종 골드',
     };
 
     return Scaffold(
       drawer: const AppDrawer(currentScreen: AppScreen.goldCalculator),
       appBar: AppBar(
-        title: Text('골드 효율 계산기', style: titleStyle?.copyWith(fontSize: (titleStyle.fontSize ?? 20) + 2.0)),
-      ),
+        title: FittedBox( // AppBar 제목이 길어질 경우 축소되도록 FittedBox 추가
+          fit: BoxFit.scaleDown,
+          child: Text(
+            '골드 효율 계산기',
+            style: titleStyle?.copyWith(
+              fontSize: (titleStyle.fontSize ?? 20) + 2.0,
+            ),
+          ),
+        ),
+        actions: [ // actions를 AppBar 내부로 이동
+          TextButton.icon( // IconButton 대신 TextButton.icon 사용
+            icon: const Icon(Icons.settings_outlined), // 설정 아이콘
+            label: Text( // 텍스트 라벨 추가
+              '스테이지 설정',
+              style: TextStyle(fontSize: (theme.textTheme.labelLarge?.fontSize ?? 14.0) * 0.7), // 폰트 크기 조정 (약 10pt)
+            ),
+            onPressed: onStageSettingsPressed, // 전달받은 콜백 사용
+            style: TextButton.styleFrom( // 버튼 스타일 설정
+              foregroundColor: theme.colorScheme.onSurface, // 아이콘 및 텍스트 색상
+              minimumSize: const Size(0, 23), // 버튼 최소 높이 설정
+              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0), // 패딩 조정
+              iconColor: theme.colorScheme.onSurface, // 아이콘 색상 명시
+              iconSize: 16, // 아이콘 크기 조정
+            ),
+          ),
+          const SizedBox(width: 8), // 아이콘과 앱바 끝 사이 간격
+        ],
+      ), // AppBar 닫는 괄호
       body: SafeArea(
         child: Stack(
           children: [
@@ -248,36 +279,85 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                       Text('스테이지별 골드 효율', style: theme.textTheme.titleMedium),
-                      DropdownButtonHideUnderline(
-                        child: DropdownButton2<GoldSortOption>(
-                          isDense: true,
-                          items: GoldSortOption.values.map((option) => DropdownMenuItem<GoldSortOption>(
-                                  value: option,
-                                  child: Text(
-                                    sortOptionDisplayNames[option]!,
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                )).toList(),
-                          value: selectedSortOption,
-                          onChanged: onSortOptionChanged,
-                          buttonStyleData: ButtonStyleData(
-                            height: 40,
-                            padding: const EdgeInsets.only(left: 14, right: 14),
-                             decoration: BoxDecoration(
-                               borderRadius: BorderRadius.circular(8),
-                               border: Border.all(color: Colors.grey.shade400),
-                               color: theme.inputDecorationTheme.fillColor ?? theme.canvasColor,
-                             ),
+                      Expanded(
+                        flex: 2, // 정렬 드롭다운과의 공간 비율 조정을 위해 flex 추가
+                        child: Text(
+                          '스테이지',
+                          style: theme.textTheme.titleMedium,
+                          overflow: TextOverflow.ellipsis, // 텍스트가 너무 길 경우 대비
+                        ),
+                      ),
+                      // "간략히" 텍스트와 스위치를 Row로 묶어 한 단위로 처리
+                      Row(
+                        mainAxisSize: MainAxisSize.min, // 자식 위젯 크기만큼만 차지
+                        children: [
+                          Text(
+                            '미설정 숨기기',
+                            style: TextStyle(fontSize: (theme.textTheme.bodySmall?.fontSize ?? 12.0) * 0.8, color: theme.textTheme.bodySmall?.color), // 폰트 크기 20% 감소
                           ),
-                           iconStyleData: const IconStyleData(icon: Icon(Icons.sort), iconSize: 18),
-                           dropdownStyleData: DropdownStyleData(
-                             maxHeight: 200,
-                             decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                             offset: const Offset(0, 0),
-                             scrollbarTheme: ScrollbarThemeData(radius: const Radius.circular(40), thickness: WidgetStateProperty.all(6), thumbVisibility: WidgetStateProperty.all(true)),
-                           ),
-                           menuItemStyleData: const MenuItemStyleData(height: 40, padding: EdgeInsets.only(left: 14, right: 14)),
+                          Transform.scale(
+                            scale: 0.6, // 스위치 크기 20% 추가 감소 (0.75 * 0.8)
+                            alignment: Alignment.center,
+                            child: Switch(
+                              value: hideUnconfiguredStages,
+                              onChanged: onHideUnconfiguredStagesChanged,
+                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(width: 40), // 간략히 토글과 정렬 버튼 사이 간격 (왼쪽 이동 효과를 위해 증가)
+                      // 정렬 드롭다운 버튼을 Flexible로 감싸서 공간이 부족할 때 축소되도록 함
+                      Flexible(
+                        flex: 3, // "스테이지" 텍스트와의 공간 비율 조정을 위해 flex 추가
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<GoldSortOption>(
+                            isExpanded: true, // Flexible 내부에서 DropdownButton2가 확장되도록 설정
+                            isDense: true,
+                            items: GoldSortOption.values.map((option) => DropdownMenuItem<GoldSortOption>(
+                                    value: option,
+                                    child: Text( // 드롭다운 메뉴 아이템 텍스트
+                                      sortOptionDisplayNames[option]!,
+                                      style: TextStyle(fontSize: theme.textTheme.bodyMedium?.fontSize ?? 14), // 테마 폰트 크기 사용
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  )).toList(),
+                            value: selectedSortOption,
+                            onChanged: onSortOptionChanged,
+                            buttonStyleData: ButtonStyleData(
+                              height: 40,
+                              padding: const EdgeInsets.only(left: 14, right: 14), // 루프 계산기와 동일하게 패딩 조정
+                               decoration: BoxDecoration(
+                                 borderRadius: BorderRadius.circular(8),
+                                 border: Border.all(color: Colors.grey.shade400),
+                                 color: theme.inputDecorationTheme.fillColor ?? theme.canvasColor,
+                               ),
+                            ),
+                            selectedItemBuilder: (context) { // 버튼에 표시될 선택된 아이템
+                              return GoldSortOption.values.map((option) {
+                                return Container(
+                                  alignment: Alignment.center, // FittedBox 내부 Text 정렬을 위해 중요
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown, // 텍스트 크기를 줄여서 맞춤
+                                    child: Text(
+                                      sortOptionDisplayNames[option]!,
+                                      style: TextStyle(fontSize: theme.textTheme.bodyMedium?.fontSize ?? 14, color: theme.textTheme.titleMedium?.color),
+                                      // overflow: TextOverflow.ellipsis, // FittedBox 사용 시 불필요하거나 다르게 동작할 수 있음
+                                      softWrap: false, // 한 줄로 표시되도록 강제
+                                    ),
+                                  ),
+                                );
+                              }).toList();
+                            },
+                             iconStyleData: const IconStyleData(icon: Icon(Icons.sort), iconSize: 18),
+                             dropdownStyleData: DropdownStyleData(
+                               maxHeight: 200,
+                               decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                               offset: const Offset(0, 0),
+                               scrollbarTheme: ScrollbarThemeData(radius: const Radius.circular(40), thickness: WidgetStateProperty.all(6), thumbVisibility: WidgetStateProperty.all(true)),
+                             ),
+                             menuItemStyleData: const MenuItemStyleData(height: 40, padding: EdgeInsets.only(left: 14, right: 14)),
+                          ),
                         ),
                       ),
                     ],
@@ -298,13 +378,20 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
                   Expanded(
                     child: isLoading
                         ? const Center(child: CircularProgressIndicator())
-                        : results.isEmpty
-                            ? const Center(child: Text('옵션을 확인하거나 시간을 입력해주세요.'))
+                        : (hideUnconfiguredStages && results.where((r) => r.clearTimeSeconds != null && r.clearTimeSeconds! > 0).isEmpty && results.isNotEmpty) // 간략히 모드인데 보여줄 게 없을 때
+                            ? const Center(child: Text('표시할 설정 완료된 스테이지가 없습니다.'))
+                            : results.isEmpty // 아예 결과가 없을 때
+                                ? const Center(child: Text('옵션을 확인하거나 시간을 입력해주세요.'))
                             : ListView.separated(
-                                itemCount: results.length,
+                                itemCount: hideUnconfiguredStages
+                                    ? results.where((r) => r.clearTimeSeconds != null && r.clearTimeSeconds! > 0).length
+                                    : results.length,
                                 separatorBuilder: (context, index) => const Divider(height: 1, indent: 8, endIndent: 8),
                                 itemBuilder: (context, index) {
-                                  final result = results[index];
+                                  final List<GoldEfficiencyResult> displayedResults = hideUnconfiguredStages
+                                      ? results.where((r) => r.clearTimeSeconds != null && r.clearTimeSeconds! > 0).toList()
+                                      : results;
+                                  final result = displayedResults[index];
                                   bool isIncomplete = result.clearTimeSeconds == null || result.clearTimeSeconds! <= 0;
                                   Color? rowColor = isIncomplete ? Colors.grey.withAlpha((0.1 * 255).round()) : null;
 

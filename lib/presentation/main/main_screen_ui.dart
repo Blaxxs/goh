@@ -1,7 +1,7 @@
 // lib/presentation/main/main_screen_ui.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:goh_calculator/services/settings_service.dart';
+import 'package:goh_calculator/core/services/settings_service.dart';
 
 class MainScreenUI extends StatelessWidget {
   final VoidCallback onStartPressed;

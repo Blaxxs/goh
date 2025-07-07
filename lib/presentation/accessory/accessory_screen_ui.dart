@@ -1,8 +1,9 @@
 // lib/presentation/accessory/accessory_screen_ui.dart
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
-import '../../constants/accessory_constants.dart';
-import '../widgets/app_drawer.dart'; // 공통 Drawer 사용
+import '../../data/models/accessory.dart'; // Accessory 모델 클래스를 import 합니다.
+import '../../core/constants/box_constants.dart'; // AppScreen enum을 위해 추가
+import '../../core/widgets/app_drawer.dart'; // 공통 Drawer 사용
 
 class AccessoryScreenUI extends StatelessWidget {
   final TextEditingController searchController;

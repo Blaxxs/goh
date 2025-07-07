@@ -46,7 +46,7 @@ class AppSettingsScreenUI extends StatelessWidget {
   }) {
     final theme = Theme.of(context);
     VoidCallback? effectiveOnTap;
-
+    
     if (isEmail) {
       effectiveOnTap = () async {
         await Clipboard.setData(ClipboardData(text: subtitle));
@@ -62,7 +62,7 @@ class AppSettingsScreenUI extends StatelessWidget {
 
     return ListTile(
       // ignore: deprecated_member_use
-      leading: Icon(icon, color: theme.colorScheme.primary.withOpacity(0.85)),
+      leading: Icon(icon, color: theme.colorScheme.onSurface.withOpacity(0.85)), // 아이콘 색상을 onSurface 색상으로 변경하여 가독성 개선
       title: Text(
         title,
         style: theme.textTheme.titleSmall?.copyWith(
@@ -79,14 +79,20 @@ class AppSettingsScreenUI extends StatelessWidget {
       onTap: effectiveOnTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 6.0),
       dense: true,
+      // 아이콘 색상을 다크 모드에서 더 눈에 띄는 색상으로 변경
       trailing: (isEmail || urlToLaunch != null)
           // ignore: deprecated_member_use
-          ? Icon(Icons.open_in_new_rounded, size: 18, color: theme.colorScheme.primary.withOpacity(0.7))
+          ? Icon(
+              Icons.open_in_new_rounded,
+              size: 18,
+              // ignore: deprecated_member_use
+              color: theme.brightness == Brightness.dark ? theme.colorScheme.error : theme.colorScheme.primary.withOpacity(0.7), // 다크 모드에서 테마의 오류 색상(어두운 빨간색) 사용
+            )
           : null, // 이메일 또는 링크인 경우에만 아이콘 표시
     );
   }
 
-  @override
+  @override  
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
@@ -119,9 +125,9 @@ class AppSettingsScreenUI extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Slider(
             value: currentFontSizeMultiplier,
-            min: 0.8,
-            max: 1.5,
-            divisions: 7,
+            min: 0.5, // 최소값 50%
+            max: 1.5, // 최대값 150%
+            divisions: 10, // 0.5에서 1.5까지 0.1 단위로 조절 (10개 구간)
             label: "${(currentFontSizeMultiplier * 100).toStringAsFixed(0)}%",
             onChanged: onFontSizeMultiplierChanged,
           ),
@@ -180,7 +186,7 @@ class AppSettingsScreenUI extends StatelessWidget {
                       '앱 정보',
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary,
+                        color: theme.colorScheme.secondary, // "앱 정보" 제목 색상을 Secondary 색상으로 변경
                       ),
                     ),
                   ),
@@ -188,7 +194,7 @@ class AppSettingsScreenUI extends StatelessWidget {
                     context,
                     icon: Icons.people_outline,
                     title: '도움 주신 분들',
-                    subtitle: '세계는스몰 님, PDL힉센 님, 貪민서 님, Hebi 님, 뮤즈 님, 기타 많은 분들...',
+                    subtitle: '세계는스몰 님, PDL힉센 님, 貪민서 님, Hebi 님, 뮤즈 님, Fractal 님, 뽀짝 님, 공명 님 ,貪벨리알 님, 기타 많은 분들...',
                   ),
                   const Divider(height: 1, indent: 24, endIndent: 24),
                   _buildInfoTile(
