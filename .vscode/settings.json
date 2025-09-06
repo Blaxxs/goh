@@ -6,7 +6,7 @@
             {
                 "match": ".dart$",
                 "isAsync": true,
-                "cmd": "C:/goh/test/goh_calculator/autocommit.bat"
+                "cmd": "C:/goh/test/goh_calculator/autocommit.bat "${file}""
             }
         ]
     }
