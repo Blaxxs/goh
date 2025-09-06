@@ -19,13 +19,15 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   String? _selectedPartFilter;
   String _searchQuery = "";
   late List<String> _partFilterOptions;
+  String _sortOption = '기본';
+  final List<String> _sortOptions = ['기본', '이름 (가나다순)', '이름 (ABC순)'];
 
   @override
   void initState() {
     super.initState();
     _partFilterOptions = ['전체', ...accessoryParts.toSet()];
-    _filteredAccessories = List.from(allAccessories);
     _searchController.addListener(_onSearchChanged);
+    _updateAccessories(); // 초기 데이터 로드 및 정렬
   }
 
   @override
@@ -37,44 +39,61 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   void _onSearchChanged() {
     if (_searchQuery != _searchController.text) {
-       setState(() {
-         _searchQuery = _searchController.text;
-         _filterAccessories();
-       });
+      // setState를 _updateAccessories() 내부에서 호출하므로 여기서는 상태만 변경
+      _searchQuery = _searchController.text;
+      _updateAccessories();
     }
   }
 
   void _clearSearch() {
-     _searchController.clear();
+    _searchController.clear();
   }
 
-  void _filterAccessories() {
+  void _updateAccessories() {
     List<Accessory> results = List.from(allAccessories);
 
     // 부위 필터
     if (_selectedPartFilter != null && _selectedPartFilter != '전체') {
       results = results.where((acc) => acc.part == _selectedPartFilter).toList();
     }
+
     // 검색어 필터
     if (_searchQuery.isNotEmpty) {
       String query = _searchQuery.toLowerCase();
       results = results.where((acc) {
-        if (acc.name.toLowerCase().contains(query)) return true;
-        if (acc.part.toLowerCase().contains(query)) return true;
-        for (var option in acc.options) {
-          if (option.optionName.toLowerCase().contains(query)) return true;
-          if (option.optionValue.toLowerCase().contains(query)) return true;
-        }
-        return false;
+        return acc.name.toLowerCase().contains(query) ||
+            acc.part.toLowerCase().contains(query) ||
+            acc.restrictions.toLowerCase().contains(query) ||
+            acc.options.any((option) =>
+                option.optionName.toLowerCase().contains(query) ||
+                option.optionValue.toLowerCase().contains(query));
       }).toList();
     }
-    _filteredAccessories = results; // setState는 _onSearchChanged 등에서 호출됨
+
+    // 정렬
+    if (_sortOption == '이름 (가나다순)') {
+      results.sort((a, b) => a.name.compareTo(b.name));
+    } else if (_sortOption == '이름 (ABC순)') {
+      results.sort((a, b) => a.id.compareTo(b.id));
+    }
+
+    setState(() {
+      _filteredAccessories = results;
+    });
   }
 
   void _handlePartFilterChanged(String? newValue) {
     setState(() {
-      _selectedPartFilter = (newValue == '전체') ? null : newValue;
-      _filterAccessories();
+        _selectedPartFilter = (newValue == '전체') ? null : newValue;
+        _updateAccessories();
+    });
+  }
+
+  void _handleSortChanged(String? newValue) {
+    if (newValue == null) return;
+    setState(() {
+        _sortOption = newValue;
+        _updateAccessories();
     });
   }
 
@@ -151,13 +170,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           ),
         );
       },
-      // transitionBuilder는 pageBuilder 내에서 처리했으므로 여기서는 제거 가능
-      // transitionBuilder: (context, animation, secondaryAnimation, child) {
-      //   return FadeTransition( // 기본 페이드 전환 (선택적)
-      //     opacity: animation,
-      //     child: child,
-      //   );
-      // },
     );
   }
   // --- 상세 정보 표시 끝 ---
@@ -187,6 +199,9 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       onAccessoryTap: _showAccessoryDetails, // 애니메이션 적용된 함수 전달
       currentSearchQuery: _searchQuery,
       onClearSearch: _clearSearch,
+      sortOption: _sortOption,
+      sortOptions: _sortOptions,
+      onSortChanged: _handleSortChanged,
     );
   }
 }

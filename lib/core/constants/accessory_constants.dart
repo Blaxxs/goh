@@ -1014,11 +1014,237 @@ const List<Accessory> allAccessories = [
     id: 'yosak_park',
     name: '박요삭',
     imagePath: 'assets/images/accessories/yosak_park.png',
-    part: '머리', // 부위 데이터가 '머리'로 되어 있어 그대로 사용.
+    part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
       AccessoryOption(optionName: AccessoryOptionNames.accuracyFlat, optionValue: '95'),
       AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '40'),
     ],
   ),
+   Accessory(
+    id: 'confessing_bear',
+    name: '고백하는 곰돌이',
+    imagePath: 'assets/images/accessories/confessing_bear.png',
+    part: '손',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.hpPercent, optionValue: '??'),
+      AccessoryOption(optionName: AccessoryOptionNames.critResistFlat, optionValue: '??'),
+    ],
+  ),
+   Accessory(
+    id: 'the_power_of_ocheon',
+    name: '오천의 힘',
+    imagePath: 'assets/images/accessories/the_power_of_ocheon.png',
+    part: '머리',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationChancePercent, optionValue: '40'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '50'),
+    ],
+  ),
+   Accessory(
+    id: 'skitzophrenic',
+    name: 'SkitZoPhrenic',
+    imagePath: 'assets/images/accessories/skitzophrenic.png',
+    part: '머리',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.accuracyFlat, optionValue: '??'),
+      AccessoryOption(optionName: AccessoryOptionNames.atkPercent, optionValue: '??'),
+    ],
+  ),
+   Accessory(
+    id: 'guitar_of_haru',
+    name: '하루의 기타',
+    imagePath: 'assets/images/accessories/guitar_of_haru.png',
+    part: '머리',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.hpPercent, optionValue: '50'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '40'),
+    ],
+  ),
+   Accessory(
+    id: 'palancs',
+    name: 'PalanCs',
+    imagePath: 'assets/images/accessories/palancs.png',
+    part: '머리',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.hpPercent, optionValue: '??'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '??'),
+    ],
+  ),
+   Accessory(
+    id: '貪',
+    name: '貪',
+    imagePath: 'assets/images/accessories/貪.png',
+    part: '머리',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.hpPercent, optionValue: '40'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '50'),
+    ],
+  ),
+   Accessory(
+    id: 'plc_white_whale',
+    name: '팔크 하얀 고래',
+    imagePath: 'assets/images/accessories/plc_white_whale.png',
+    part: '머리',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.accuracyFlat, optionValue: '70'),
+      AccessoryOption(optionName: AccessoryOptionNames.evasionFlat, optionValue: '80'),
+    ],
+  ),
+   Accessory(
+    id: 'devil_genes',
+    name: '악마 유전자',
+    imagePath: 'assets/images/accessories/devil_genes.png',
+    part: '머리',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.miniGameSkillDmgPercent, optionValue: '100'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationChancePercent, optionValue: '40'),
+    ],
+  ),
+   Accessory(
+    id: 'titanium_implants',
+    name: '티타늄 임플란트',
+    imagePath: 'assets/images/accessories/titanium_implants.png',
+    part: '머리',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.dotDmgPercent, optionValue: '120'),
+      AccessoryOption(optionName: AccessoryOptionNames.atkPercent, optionValue: '35'),
+    ],
+  ),
+   Accessory(
+    id: 'rose_of_sharon_hairpin',
+    name: '무궁화 헤어핀',
+    imagePath: 'assets/images/accessories/rose_of_sharon_hairpin.png',
+    part: '머리',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.allDmgTakenReducePercent, optionValue: '32'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '35'),
+    ],
+  ),
+   Accessory(
+    id: 'pirate_hat_of_greed',
+    name: '탐욕의 해적모자',
+    imagePath: 'assets/images/accessories/pirate_hat_of_greed.png',
+    part: '머리',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.accuracyFlat, optionValue: '80'),
+      AccessoryOption(optionName: AccessoryOptionNames.atkPercent, optionValue: '35'),
+    ],
+  ),
+   Accessory(
+    id: 'noxs_legacy',
+    name: '녹스의 유산',
+    imagePath: 'assets/images/accessories/noxs_legacy.png',
+    part: '머리',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.dotDmgPercent, optionValue: '120'),
+      AccessoryOption(optionName: AccessoryOptionNames.atkPercent, optionValue: '35'),
+    ],
+  ),
+   Accessory(
+    id: 'trophy_of_honor_1',
+    name: '명예의 트로피 1',
+    imagePath: 'assets/images/accessories/trophy_of_honor_1.png',
+    part: '손',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.accuracyFlat, optionValue: '75'),
+      AccessoryOption(optionName: AccessoryOptionNames.atkPercent, optionValue: '35'),
+    ],
+  ),
+   Accessory(
+    id: 'trophy_of_honor_2',
+    name: '명예의 트로피 2',
+    imagePath: 'assets/images/accessories/trophy_of_honor_2.png',
+    part: '손',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.allDmgTakenReducePercent, optionValue: '32'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '50'),
+    ],
+  ),
+   Accessory(
+    id: 'freshly_boiled_soybean_paste_soup',
+    name: '갓 끓인 된장국',
+    imagePath: 'assets/images/accessories/freshly_boiled_soybean_paste_soup.png',
+    part: '손',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.critResistFlat, optionValue: '70'),
+      AccessoryOption(optionName: AccessoryOptionNames.critDamageFlat, optionValue: '90'),
+    ],
+  ),
+   Accessory(
+    id: 'hanayama_badge',
+    name: '하나야마 뱃지',
+    imagePath: 'assets/images/accessories/hanayama_badge.png',
+    part: '손',
+    restrictions: '전 직업 착용 가능',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.hpPercent, optionValue: '55'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '35'),
+    ],
+  ),
+   Accessory(
+    id: 'trophy_of_honor_3',
+    name: '명예의 트로피 3',
+    imagePath: 'assets/images/accessories/trophy_of_honor_3.png',
+    part: '손',
+    restrictions: 'SVIP1 참가자 전용',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.hpPercent, optionValue: '40'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationResistPercent, optionValue: '50'),
+    ],
+  ),
+   Accessory(
+    id: 'compass_of_greed',
+    name: '탐욕의 나침반',
+    imagePath: 'assets/images/accessories/compass_of_greed.png',
+    part: '손',
+    restrictions: '환생 LV.1 이상',
+    options: [
+      AccessoryOption(optionName: AccessoryOptionNames.atkPercent, optionValue: '40'),
+      AccessoryOption(optionName: AccessoryOptionNames.penetrationChancePercent, optionValue: '40'),
+    ],
+  ),
 ];
+  // static const String atkPercent = '공격력 %증가';
+  // static const String hpPercent = '체력 %증가';
+  // static const String activeSkillDmgPercent = '공격스킬피해 %증가';
+  // static const String basicAtkDmgPercent = '일반공격피해 %증가';
+  // static const String miniGameSkillDmgPercent = '미니게임스킬피해 %증가';
+  // static const String dotDmgPercent = '지속피해 %증가';
+  // static const String penetrationChancePercent = '관통확률 %증가';
+  // static const String penetrationResistPercent = '관통확률 저항 %증가';
+  // static const String counterAttackChancePercent = '반격확률 %증가';
+  // static const String skillCooldownIncreaseResistPercent = '스킬쿨타임증가 저항 %증가';
+  // static const String allBadEffectResistPercent = '모든나쁜효과 저항 %증가';
+  // static const String recoveryEffectPercent = '회복효과 %증가';
+  // static const String allDmgTakenReducePercent = '모든피해 %감소';
+  // static const String activeSkillDmgTakenReducePercent = '받는공격스킬피해 %감소';
+  // static const String basicAtkDmgTakenReducePercent = '받는일반공격피해 %감소';
+  // static const String dotDmgTakenReducePercent = '받는지속피해 %감소';
+  // static const String attackPowerFlat = '공격력 증가';
+  // static const String accuracyFlat = '명중 증가';
+  // static const String evasionFlat = '회피 증가';
+  // static const String critChanceFlat = '크리티컬 증가'; // 고정 수치 크리티컬 확률로 가정
+  // static const String critDamageFlat = '크리티컬데미지 증가'; // 고정 수치 크리티컬 데미지로 가정
+  // static const String critResistFlat = '크리티컬 저항 증가'; // 고정 수치 크리티컬 저항
+  // static const String hpFlat = '체력 증가'; // 추가
+  // static const String defenseFlat = '방어력 증가'; // 추가
+  // static const String hpRegenPerTurn = '매턴 체력 회복';
+  // static const String summonAtkFlat = '소환수공격 증가'; // 추가
+  // static const String rabbitMaxHpChancePercent = '토끼 최대체력 +1 확률 %증가';
+  // static const String spaceTravelReturnChancePercent = '우주여행 돌아올 확률 %증가';

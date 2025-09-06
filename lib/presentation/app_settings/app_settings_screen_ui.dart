@@ -194,7 +194,7 @@ class AppSettingsScreenUI extends StatelessWidget {
                     context,
                     icon: Icons.people_outline,
                     title: '도움 주신 분들',
-                    subtitle: '세계는스몰 님, PDL힉센 님, 貪민서 님, Hebi 님, 뮤즈 님, Fractal 님, 뽀짝 님, 공명 님 ,貪벨리알 님, 기타 많은 분들...',
+                    subtitle: '세계는스몰 님, PDL힉센 님, 貪민서 님, Hebi 님, 뮤즈 님, Fractal 님, 뽀짝 님, 공명 님 ,貪벨리알 님, 모리님, 기타 많은 분들...',
                   ),
                   const Divider(height: 1, indent: 24, endIndent: 24),
                   _buildInfoTile(

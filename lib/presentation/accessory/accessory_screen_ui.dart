@@ -14,6 +14,9 @@ class AccessoryScreenUI extends StatelessWidget {
   final Function(BuildContext context, Accessory accessory) onAccessoryTap;
   final VoidCallback? onClearSearch;
   final String currentSearchQuery;
+  final String sortOption;
+  final List<String> sortOptions;
+  final ValueChanged<String?> onSortChanged;
 
   const AccessoryScreenUI({
     super.key,
@@ -24,6 +27,9 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.onPartFilterChanged,
     required this.onAccessoryTap,
     required this.currentSearchQuery,
+    required this.sortOption,
+    required this.sortOptions,
+    required this.onSortChanged,
     this.onClearSearch,
   });
 
@@ -51,105 +57,113 @@ class AccessoryScreenUI extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      decoration: InputDecoration(
-                        hintText: '이름, 옵션, 부위 검색...',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                        isDense: true,
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
-                        suffixIcon: currentSearchQuery.isNotEmpty && onClearSearch != null
-                            ? IconButton(
-                                icon: const Icon(Icons.clear),
-                                onPressed: onClearSearch,
-                              )
-                            : null,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  DropdownButtonHideUnderline(
-                    child: DropdownButton2<String>(
-                      isExpanded: true,
-                      buttonStyleData: ButtonStyleData(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        height: 48,
-                        width: 130,
-                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: Colors.grey.shade400,
-                          ),
-                          color: theme.inputDecorationTheme.fillColor ?? theme.canvasColor,
-                        ),
-                      ),
-                      hint: Container(
-                        alignment: Alignment.centerLeft,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            '부위 필터',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).hintColor,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            hintText: '이름, 옵션, 부위, 착용 제한 검색...',
+                            prefixIcon: const Icon(Icons.search),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12.0),
                             ),
-                             softWrap: false,
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 10.0),
+                            suffixIcon: currentSearchQuery.isNotEmpty && onClearSearch != null
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear),
+                                    onPressed: onClearSearch,
+                                  )
+                                : null,
                           ),
                         ),
                       ),
-                      items: partFilterOptions
-                          .map((item) => DropdownMenuItem(
-                                value: item,
-                                child: Text(
-                                  item,
-                                  style: const TextStyle(fontSize: 14),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            buttonStyleData: ButtonStyleData(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              height: 48,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: Colors.grey.shade400,
                                 ),
-                              ))
-                          .toList(),
-                      value: selectedPartFilter ?? '전체',
-                      onChanged: onPartFilterChanged,
-                      dropdownStyleData: DropdownStyleData(
-                        maxHeight: 250,
-                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        offset: const Offset(0, -4),
-                        scrollbarTheme: ScrollbarThemeData(
-                          radius: const Radius.circular(40),
-                          thickness: WidgetStateProperty.all(6),
-                          thumbVisibility: WidgetStateProperty.all(true),
-                        ),
-                      ),
-                      menuItemStyleData: const MenuItemStyleData(
-                        height: 40,
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                      ),
-                      selectedItemBuilder: (context) {
-                          return partFilterOptions.map((item) {
-                            return Container(
-                              alignment: Alignment.centerLeft,
-                              padding: const EdgeInsets.symmetric(horizontal: 0),
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  item,
-                                  style: TextStyle(fontSize: 14, color: theme.textTheme.titleMedium?.color),
-                                  softWrap: false,
-                                ),
+                                color: theme.inputDecorationTheme.fillColor ?? theme.canvasColor,
                               ),
-                            );
-                          }).toList();
-                        },
-                    ),
+                            ),
+                            hint: Text('부위 필터', style: TextStyle(fontSize: 14, color: Theme.of(context).hintColor)),
+                            items: partFilterOptions
+                                .map((item) => DropdownMenuItem(
+                                      value: item,
+                                      child: Text(item, style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 1),
+                                    ))
+                                .toList(),
+                            value: selectedPartFilter ?? '전체',
+                            onChanged: onPartFilterChanged,
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 250,
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                              offset: const Offset(0, -4),
+                              scrollbarTheme: ScrollbarThemeData(
+                                radius: const Radius.circular(40),
+                                thickness: WidgetStateProperty.all(6),
+                                thumbVisibility: WidgetStateProperty.all(true),
+                              ),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            buttonStyleData: ButtonStyleData(
+                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              height: 48,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: Colors.grey.shade400),
+                                color: theme.inputDecorationTheme.fillColor ?? theme.canvasColor,
+                              ),
+                            ),
+                            hint: Text('정렬', style: TextStyle(fontSize: 14, color: Theme.of(context).hintColor)),
+                            items: sortOptions
+                                .map((item) => DropdownMenuItem(
+                                      value: item,
+                                      child: Text(item, style: const TextStyle(fontSize: 14), overflow: TextOverflow.ellipsis, maxLines: 1),
+                                    ))
+                                .toList(),
+                            value: sortOption,
+                            onChanged: onSortChanged,
+                            dropdownStyleData: DropdownStyleData(
+                              maxHeight: 250,
+                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                              offset: const Offset(0, -4),
+                            ),
+                            menuItemStyleData: const MenuItemStyleData(
+                              height: 40,
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -166,7 +180,7 @@ class AccessoryScreenUI extends StatelessWidget {
                       ),
                     )
                   : GridView.builder(
-                      padding: const EdgeInsets.all(12.0),
+                      padding: const EdgeInsets.fromLTRB(12.0, 0, 12.0, 12.0),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
                         crossAxisSpacing: 12.0,

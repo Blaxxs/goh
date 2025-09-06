@@ -12,7 +12,7 @@ publish_to: 'none' # pub.dev에 게시하려면 이 줄을 제거하세요.
 # 선택적으로 +로 구분된 빌드 번호가 뒤따를 수 있습니다.
 # 버전과 빌더 번호는 flutter 빌드 시 --build-name 및 --build-number를
 # 각각 지정하여 재정의할 수 있습니다.
-version: 2.2.1+12
+version: 2.2.2+13
 
 environment:
   # Dart SDK 버전 제약 조건입니다.
