@@ -7,6 +7,9 @@ SET REPO_PATH=c:\goh\test\goh_calculator\flutter_application
 REM Change to the repository directory
 cd /D "%REPO_PATH%"
 
+REM Add a small delay to avoid race conditions with other extensions
+timeout /t 1 /nobreak > NUL
+
 REM Add all changes
 git add .
 
