@@ -1248,12 +1248,4 @@ const List<Accessory> allAccessories = [
   // static const String summonAtkFlat = '소환수공격 증가'; // 추가
   // static const String rabbitMaxHpChancePercent = '토끼 최대체력 +1 확률 %증가';
   // static const String spaceTravelReturnChancePercent = '우주여행 돌아올 확률 %증가';
-  //테스트1231231223123123
-
-  //입니다.
-  //입니다.
-    // 수정을 해보자고
-      // 수정을 해보자고
-        // 수정을 해보자고
-          // 수정을 해보자고
-          
+  //테스트 해볼까12123ㅁㄴㅇㅁㄴㅇㅀㅇㅎㄹㄹ홀호fgg

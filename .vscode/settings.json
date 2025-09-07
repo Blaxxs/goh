@@ -2,12 +2,12 @@
     "cmake.sourceDirectory": "C:/goh/test/goh_calculator/flutter_application/linux",
     "java.configuration.updateBuildConfiguration": "automatic",
     "emeraldwalk.runonsave": {
-        "commands": [
-            {
-                "match": ".dart$",
-                "isAsync": true,
-                "cmd": "C:/goh/test/goh_calculator/autocommit.bat "${file}""
-            }
-        ]
-    }
+    "commands": [
+      {
+        "match": ".*\\.(dart|yaml|json)$",
+        "cmd": "c:\\goh\\test\\goh_calculator\\autocommit.bat ${file}",
+        "runIn": "terminal"
+      }
+    ]
+  }
 }
