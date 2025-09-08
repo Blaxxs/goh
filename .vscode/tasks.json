@@ -1,18 +1,17 @@
 {
-  // VS Code Tasks에 대한 문서는 다음 링크를 참고하세요: https://go.microsoft.com/fwlink/?LinkId=733558
+  // VS Code 작업(Task)에 대한 문서: https://go.microsoft.com/fwlink/?LinkId=733558
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Auto Git Pull on Startup",
+      "label": "auto-commit",
       "type": "shell",
-      "command": "git pull",
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
+      // 스크립트를 직접 실행하도록 변경
+      "command": "${workspaceFolder}/auto-commit.sh",
       "presentation": {
-        "reveal": "silent",
-        "panel": "shared"
-      }
+        // 매번 터미널이 나타나지 않도록 'silent'로 변경합니다.
+        "reveal": "silent"
+      },
+      "problemMatcher": []
     }
   ]
 }
