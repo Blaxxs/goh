@@ -16,29 +16,20 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // --- 테마 생성 함수 (글꼴 크기 배율 적용) ---
-  ThemeData _buildTheme(BuildContext context, Brightness brightness, double fontSizeMultiplier) {
+  // BuildContext를 제거하여 context에 의존하지 않도록 수정했습니다.
+  // 이는 MaterialApp 생성 시점에서 MediaQuery 정보가 없어 발생하는 오류를 해결하며,
+  // 이 오류는 웹 뿐만 아니라 안드로이드에서도 동일하게 발생합니다.
+  ThemeData _buildTheme(Brightness brightness, double fontSizeMultiplier) {
     final bool isDark = brightness == Brightness.dark;
 
-    // --- 화면 크기 기반 동적 폰트 스케일 계산 ---
-    final double screenWidth = MediaQuery.of(context).size.width;
-    const double referenceScreenWidth = 360.0; // 기준 화면 너비 (dp/pt)
-
-    // 화면 반응형 스케일의 기본 기준 (예: Material 기본값의 8/9 수준을 목표)
-    const double baseScaleFactorForScreenResponsiveness = 8.0 / 9.0;
-    const double desiredBodyMediumSizeAtReference = 14.0 * baseScaleFactorForScreenResponsiveness;
-
-    // 현재 화면 너비와 기준 너비의 비율
-    final double screenWidthRatio = screenWidth / referenceScreenWidth;
-    // 화면 너비에 따라 계산된 스케일 (아직 clamp 및 최종 조정 전)
-    final double calculatedScreenResponsiveScale = (desiredBodyMediumSizeAtReference / 14.0) * screenWidthRatio;
-
-    // 화면 크기에 따른 스케일 변동폭 제한 (예: Material 기본값의 0.8배 ~ 1.0배 사이로)
-    final double clampedScreenResponsiveScale = calculatedScreenResponsiveScale.clamp(0.8, 1.0);
-
+    // 참고: 화면 너비에 따른 동적 폰트 스케일링은 앱의 테마를 정의하는 이 시점에서는 불안정합니다.
+    // 대신, 각 화면이나 위젯의 build 메서드 내에서 MediaQuery를 사용하여
+    // 반응형 UI를 구현하는 것이 표준적인 방법입니다.
+    
     // 요청사항: 현재 앱 설정의 130%가 새로운 기본 100%가 되도록 함.
-    // 따라서, 화면 반응형으로 계산된 스케일에 1.3을 곱하여 새로운 기본 스케일로 설정.
     const double newBaseMultiplier = 1.3;
-    final double deviceResponsiveFontScale = clampedScreenResponsiveScale * newBaseMultiplier;
+    // 화면 너비 반응형 로직을 일단 상수로 대체합니다.
+    final double deviceResponsiveFontScale = 1.0 * newBaseMultiplier; // 화면 너비 반응형 로직을 일단 상수로 대체
 
     // 기본 색상 정의 (요청된 색상으로 변경)
 // 파란색
@@ -128,12 +119,6 @@ class MyApp extends StatelessWidget {
       textTheme: customTextTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
-        // localizationsDelegates 및 supportedLocales는 MaterialApp 최상단에 이미 설정되어 있습니다.
-        // MaterialApp(
-        //   localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        //   supportedLocales: [
-        //      const Locale('ko', 'KR'),
-        //   ],
         foregroundColor: onPrimaryColor,
         elevation: 4.0,
         titleTextStyle: customTextTheme.headlineSmall?.copyWith(color: onPrimaryColor),
@@ -184,7 +169,7 @@ class MyApp extends StatelessWidget {
            ),
         ),
       ),
-       dialogTheme: DialogTheme(
+       dialogTheme: DialogThemeData(
         backgroundColor: isDark ? cardBackgroundColorDark : cardBackgroundColorLight, // 다크 모드에서 검정 배경 사용
         titleTextStyle: customTextTheme.titleLarge,
         contentTextStyle: customTextTheme.bodyMedium,
@@ -260,8 +245,9 @@ class MyApp extends StatelessWidget {
         ),
       ),
       // Drawer 배경색 설정 (Material 3)
+      // context에 의존하지 않도록, 미리 정의된 색상을 사용합니다.
       drawerTheme: DrawerThemeData(
-        backgroundColor: isDark ? cardBackgroundColorDark : Theme.of(context).colorScheme.surfaceContainerLow, // 다크 모드에서 cardBackgroundColorDark 사용
+        backgroundColor: isDark ? cardBackgroundColorDark : scaffoldBackgroundColorLight,
       ),
       visualDensity: VisualDensity.adaptivePlatformDensity,
     );
@@ -278,8 +264,9 @@ class MyApp extends StatelessWidget {
           builder: (_, double currentFontSizeMultiplier, __) {
             return MaterialApp(
               title: 'GOH Calculator',
-          theme: _buildTheme(context, Brightness.light, currentFontSizeMultiplier), // Or _buildTheme(Brightness.light, currentFontSizeMultiplier)
-          darkTheme: _buildTheme(context, Brightness.dark, currentFontSizeMultiplier), // Or _buildTheme(Brightness.dark, currentFontSizeMultiplier)
+              // _buildTheme에서 context를 제거했으므로, 여기서도 제거합니다.
+              theme: _buildTheme(Brightness.light, currentFontSizeMultiplier),
+              darkTheme: _buildTheme(Brightness.dark, currentFontSizeMultiplier),
               themeMode: currentThemeMode,
               home: const LoadingScreen(),
               localizationsDelegates: const [ // MaterialApp 레벨에 설정

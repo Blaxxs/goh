@@ -1,22 +1,18 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Autocommit Script",
-            "type": "shell",
-            "command": "C:/goh/test/goh_calculator/autocommit.bat",
-            "args": [
-                "${file}"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": "build",
-            "presentation": {
-                "reveal": "always", // "silent"에서 변경됨
-                "panel": "dedicated"
-            },
-            "problemMatcher": []
-        }
-    ]
+  // VS Code Tasks에 대한 문서는 다음 링크를 참고하세요: https://go.microsoft.com/fwlink/?LinkId=733558
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Auto Git Pull on Startup",
+      "type": "shell",
+      "command": "git pull",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    }
+  ]
 }

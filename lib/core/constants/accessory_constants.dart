@@ -1,4 +1,4 @@
-// lib/ants/accessory_ants.dart
+// lib/core/constants/accessory_constants.dart
 import 'package:flutter/foundation.dart'; // 디버깅용
 import '../../data/models/accessory.dart'; // Accessory, AccessoryOption 모델 import
 
@@ -38,46 +38,31 @@ class AccessoryOptionNames {
   static const String rabbitMaxHpChancePercent = '토끼 최대체력 +1 확률 %증가'; // 추가
   static const String spaceTravelReturnChancePercent = '우주여행 돌아올 확률 %증가'; // 추가
 
+  static final Set<String> _allOptionNames = {
+    // % 증가
+    atkPercent, hpPercent, activeSkillDmgPercent, basicAtkDmgPercent,
+    miniGameSkillDmgPercent, dotDmgPercent, penetrationChancePercent,
+    penetrationResistPercent, counterAttackChancePercent,
+    skillCooldownIncreaseResistPercent, allBadEffectResistPercent,
+    recoveryEffectPercent,
+    // % 감소
+    allDmgTakenReducePercent, activeSkillDmgTakenReducePercent,
+    basicAtkDmgTakenReducePercent, dotDmgTakenReducePercent,
+    // 기타
+    attackPowerFlat, accuracyFlat, evasionFlat, critChanceFlat,
+    critDamageFlat, critResistFlat, hpFlat, defenseFlat, hpRegenPerTurn,
+    summonAtkFlat, rabbitMaxHpChancePercent, spaceTravelReturnChancePercent,
+  };
+
   // 옵션 이름을 상수로 변환하는 헬퍼 함수 (내부 사용)
-  static String? getConstantName(String koreanName) {
-    switch (koreanName) {
-      // % 증가
-      case '공격력 %증가': return atkPercent;
-      case '체력 %증가': return hpPercent;
-      case '공격스킬피해 %증가': return activeSkillDmgPercent;
-      case '일반공격피해 %증가': return basicAtkDmgPercent;
-      case '미니게임스킬피해 %증가': return miniGameSkillDmgPercent;
-      case '지속피해 %증가': return dotDmgPercent;
-      case '관통확률 %증가': return penetrationChancePercent;
-      case '관통확률 저항 %증가': return penetrationResistPercent;
-      case '반격확률 %증가': return counterAttackChancePercent;
-      case '스킬쿨타임증가 저항 %증가': return skillCooldownIncreaseResistPercent;
-      case '모든나쁜효과 저항 %증가': return allBadEffectResistPercent;
-      case '회복효과 %증가': return recoveryEffectPercent;
-      // % 감소
-      case '모든피해 %감소': return allDmgTakenReducePercent;
-      case '받는공격스킬피해 %감소': return activeSkillDmgTakenReducePercent;
-      case '받는일반공격피해 %감소': return basicAtkDmgTakenReducePercent;
-      case '받는지속피해 %감소': return dotDmgTakenReducePercent;
-      // 기타
-      case '공격력 증가': return attackPowerFlat;
-      case '명중 증가': return accuracyFlat;
-      case '회피 증가': return evasionFlat;
-      case '크리티컬 증가': return critChanceFlat;
-      case '크리티컬데미지 증가': return critDamageFlat;
-      case '크리티컬 저항 증가': return critResistFlat;
-      case '체력 증가': return hpFlat; // 추가
-      case '방어력 증가': return defenseFlat; // 추가
-      case '매턴 체력 회복': return hpRegenPerTurn;
-      case '소환수공격 증가': return summonAtkFlat; // 추가
-      case '토끼 최대체력 +1 확률 %증가': return rabbitMaxHpChancePercent; // 추가
-      case '우주여행 돌아올 확률 %증가': return spaceTravelReturnChancePercent; // 추가
-      default:
-        if (kDebugMode) {
-          print("경고: 알 수 없는 옵션 이름 '$koreanName' 발견. AccessoryOptionNames에 추가 필요.");
-        }
-        return koreanName; // 매핑 실패 시 원본 이름 반환 (또는 null 반환)
+  // 이 함수는 주어진 이름이 정의된 옵션 목록에 있는지 확인하고,
+  // 없는 경우 디버그 모드에서 경고를 출력합니다.
+  // 이름 자체를 반환하므로, 주로 데이터 유효성 검증에 사용될 수 있습니다.
+  static String getConstantName(String koreanName) {
+    if (kDebugMode && !_allOptionNames.contains(koreanName)) {
+      print("경고: 알 수 없는 옵션 이름 '$koreanName' 발견. AccessoryOptionNames에 추가 필요.");
     }
+    return koreanName; // 항상 입력된 이름을 그대로 반환
   }
 }
 
@@ -1220,31 +1205,4 @@ const List<Accessory> allAccessories = [
     ],
   ),
 ];
-  // static const String atkPercent = '공격력 %증가';
-  // static const String hpPercent = '체력 %증가';
-  // static const String activeSkillDmgPercent = '공격스킬피해 %증가';
-  // static const String basicAtkDmgPercent = '일반공격피해 %증가';
-  // static const String miniGameSkillDmgPercent = '미니게임스킬피해 %증가';
-  // static const String dotDmgPercent = '지속피해 %증가';
-  // static const String penetrationChancePercent = '관통확률 %증가';
-  // static const String penetrationResistPercent = '관통확률 저항 %증가';
-  // static const String counterAttackChancePercent = '반격확률 %증가';
-  // static const String skillCooldownIncreaseResistPercent = '스킬쿨타임증가 저항 %증가';
-  // static const String allBadEffectResistPercent = '모든나쁜효과 저항 %증가';
-  // static const String recoveryEffectPercent = '회복효과 %증가';
-  // static const String allDmgTakenReducePercent = '모든피해 %감소';
-  // static const String activeSkillDmgTakenReducePercent = '받는공격스킬피해 %감소';
-  // static const String basicAtkDmgTakenReducePercent = '받는일반공격피해 %감소';
-  // static const String dotDmgTakenReducePercent = '받는지속피해 %감소';
-  // static const String attackPowerFlat = '공격력 증가';
-  // static const String accuracyFlat = '명중 증가';
-  // static const String evasionFlat = '회피 증가';
-  // static const String critChanceFlat = '크리티컬 증가'; // 고정 수치 크리티컬 확률로 가정
-  // static const String critDamageFlat = '크리티컬데미지 증가'; // 고정 수치 크리티컬 데미지로 가정
-  // static const String critResistFlat = '크리티컬 저항 증가'; // 고정 수치 크리티컬 저항
-  // static const String hpFlat = '체력 증가'; // 추가
-  // static const String defenseFlat = '방어력 증가'; // 추가
-  // static const String hpRegenPerTurn = '매턴 체력 회복';
-  // static const String summonAtkFlat = '소환수공격 증가'; // 추가
-  // static const String rabbitMaxHpChancePercent = '토끼 최대체력 +1 확률 %증가';
-  // static const String spaceTravelReturnChancePercent = '우주여행 돌아올 확률 %증가';
+ 
