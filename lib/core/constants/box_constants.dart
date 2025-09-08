@@ -8,6 +8,7 @@ const String legendaryBox = '전설 상자';
 enum AppScreen {
   home,
   calculator,
+  damageCalculator,
   goldCalculator,
   boxCalculator,
   accessory,
