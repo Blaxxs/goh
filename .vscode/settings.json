@@ -1,10 +1,7 @@
 {
-    "emeraldwalk.runonsave": {
-        "commands": [
-            {
-                "match": ".*",
-                "cmd": "c:\\goh\\test\\goh_calculator\\flutter_application\\autocommit.bat"
-            }
-        ]
-    }
+  "triggerTaskOnSave.tasks": {
+    "auto-commit": [
+      "*"
+    ]
+  }
 }

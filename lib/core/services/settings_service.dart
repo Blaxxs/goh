@@ -1,10 +1,9 @@
 // lib/services/settings_service.dart
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:table_calendar/table_calendar.dart'; // StartingDayOfWeek enum 사용
 import 'package:flutter/material.dart'; // ThemeMode, ValueNotifier 사용
-import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // 웹과 모바일 모두에서 동작하는 shared_preferences를 사용합니다.
 import '../constants/leader_constants.dart';
 import '../../data/models/journal_entry.dart'; // JournalEntry 모델 import
 import '../constants/stage_constants.dart'; // stageNameList 사용
@@ -268,31 +267,12 @@ class SettingsService {
   bool _isInitialized = false;
   bool get isInitialized => _isInitialized;
 
-  // 파일 경로 getter (변경 없음)
-  Future<String> get _calculatorSettingsPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return '${directory.path}/calculator_settings.json';
-  }
-  Future<String> get _stageSettingsPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return '${directory.path}/stage_settings.json';
-  }
-  Future<String> get _appSettingsPath async {
-    final directory = await getApplicationDocumentsDirectory();
-    return '${directory.path}/app_settings.json';
-  }
-  Future<String> get _journalEntriesPath async { // 일지 데이터 파일 경로 추가
-    final directory = await getApplicationDocumentsDirectory();
-    return '${directory.path}/journal_entries.json';
-  }
-
   // --- AppSettings 로드 함수 수정 ---
   Future<void> _loadAppSettings() async {
     try {
-      final path = await _appSettingsPath;
-      final file = File(path);
-      if (await file.exists()) {
-        final jsonString = await file.readAsString();
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString('app_settings');
+      if (jsonString != null) {
         _appSettings = AppSettings.fromJson(jsonDecode(jsonString));
       } else {
         _appSettings = AppSettings(); // 파일 없으면 기본값
@@ -315,9 +295,8 @@ class SettingsService {
     fontSizeNotifier.value = _appSettings.fontSizeMultiplier; // 글꼴 크기 notifier 업데이트
     startingDayOfWeekNotifier.value = _appSettings.startingDayOfWeek; // 시작 요일 notifier 업데이트
     try {
-      final path = await _appSettingsPath;
-      final file = File(path);
-      await file.writeAsString(jsonEncode(settings.toJson()));
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('app_settings', jsonEncode(settings.toJson()));
       if (kDebugMode) { print('앱 설정 저장됨.'); }
     } catch (e) {
       if (kDebugMode) { print('앱 설정 저장 오류: $e'); }
@@ -346,10 +325,9 @@ class SettingsService {
   // 계산기 설정 로드 (내부용, 변경 없음)
   Future<void> _loadCalculatorSettings() async {
     try {
-      final calcPath = await _calculatorSettingsPath;
-      final calcFile = File(calcPath);
-      if (await calcFile.exists()) {
-        final jsonString = await calcFile.readAsString();
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString('calculator_settings');
+      if (jsonString != null) {
         _calculatorSettings = CalculatorSettings.fromJson(jsonDecode(jsonString));
       } else {
         _calculatorSettings = CalculatorSettings(selectedLeader: leaderList[0]);
@@ -362,10 +340,9 @@ class SettingsService {
   // 스테이지 설정 로드 (내부용, 변경 없음)
   Future<void> _loadStageSettings() async {
     try {
-      final stagePath = await _stageSettingsPath;
-      final stageFile = File(stagePath);
-      if (await stageFile.exists()) {
-        final jsonString = await stageFile.readAsString();
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString('stage_settings');
+      if (jsonString != null) {
         _stageSettings = StageSettings.fromJson(jsonDecode(jsonString));
       } else {
         _stageSettings = StageSettings();
@@ -379,10 +356,9 @@ class SettingsService {
   // --- 일지 데이터 로드 함수 추가 ---
   Future<void> _loadJournalEntries() async {
     try {
-      final path = await _journalEntriesPath;
-      final file = File(path);
-      if (await file.exists()) {
-        final jsonString = await file.readAsString();
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString('journal_entries');
+      if (jsonString != null) {
         final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
         _journalEntries = {}; // 기존 데이터 초기화
         jsonMap.forEach((dateString, entryListJson) {
@@ -407,11 +383,10 @@ class SettingsService {
   // --- 일지 데이터 저장 함수 추가 ---
   Future<void> saveJournalEntries() async {
     try {
-      final path = await _journalEntriesPath;
-      final file = File(path);
+      final prefs = await SharedPreferences.getInstance();
       // Map<DateTime, List<JournalEntry>>를 Map<String, List<Map<String, dynamic>>>으로 변환하여 저장
       final jsonMap = _journalEntries.map((date, entries) => MapEntry(date.toIso8601String(), entries.map((e) => e.toJson()).toList()));
-      await file.writeAsString(jsonEncode(jsonMap));
+      await prefs.setString('journal_entries', jsonEncode(jsonMap));
       if (kDebugMode) { print('일지 데이터 저장됨.'); }
     } catch (e) {
       if (kDebugMode) { print('일지 데이터 저장 오류: $e'); }
@@ -450,9 +425,8 @@ class SettingsService {
   Future<void> saveCalculatorSettings(CalculatorSettings settings) async {
       _calculatorSettings = settings;
       try {
-        final path = await _calculatorSettingsPath;
-        final file = File(path);
-        await file.writeAsString(jsonEncode(settings.toJson()));
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('calculator_settings', jsonEncode(settings.toJson()));
         if (kDebugMode) { print('계산기 설정 저장됨.'); }
       } catch (e) {
         if (kDebugMode) { print('계산기 설정 저장 오류: $e'); }
@@ -463,9 +437,8 @@ class SettingsService {
   Future<void> saveStageSettings(StageSettings settings) async {
       _stageSettings = settings;
       try {
-        final path = await _stageSettingsPath;
-        final file = File(path);
-        await file.writeAsString(jsonEncode(settings.toJson()));
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('stage_settings', jsonEncode(settings.toJson()));
         if (kDebugMode) { print('스테이지 설정 저장됨.'); }
       } catch (e) {
         if (kDebugMode) { print('스테이지 설정 저장 오류: $e'); }

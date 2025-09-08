@@ -27,9 +27,6 @@ dependencies:
   # Google Fonts 패키지 (폰트를 직접 번들링하므로 필수 아님)
   google_fonts: ^6.2.1
 
-  # 파일 시스템 경로를 얻기 위한 패키지
-  path_provider: ^2.1.5 
-  
   # 간단한 데이터를 저장하기 위한 패키지 (예: 사용자 설정)
   shared_preferences: ^2.5.3 # settings_service.dart 에서 사용하므로 추가합니다.
 
@@ -93,3 +90,6 @@ flutter:
         # 예: NanumGothic-Bold.ttf
         # - asset: assets/fonts/NanumGothic-Bold.ttf
         #   weight: 700 # 700은 Bold에 해당
+
+dependency_overrides:
+  intl: 0.20.2

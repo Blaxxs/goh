@@ -1,22 +1,17 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "Autocommit Script",
-            "type": "shell",
-            "command": "C:/goh/test/goh_calculator/autocommit.bat",
-            "args": [
-                "${file}"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "group": "build",
-            "presentation": {
-                "reveal": "always", // "silent"에서 변경됨
-                "panel": "dedicated"
-            },
-            "problemMatcher": []
-        }
-    ]
+  // VS Code 작업(Task)에 대한 문서: https://go.microsoft.com/fwlink/?LinkId=733558
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "auto-commit",
+      "type": "shell",
+      // 스크립트를 직접 실행하도록 변경
+      "command": "${workspaceFolder}/auto-commit.sh",
+      "presentation": {
+        // 매번 터미널이 나타나지 않도록 'silent'로 변경합니다.
+        "reveal": "silent"
+      },
+      "problemMatcher": []
+    }
+  ]
 }
