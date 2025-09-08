@@ -13,6 +13,7 @@ import '../../presentation/simulator/accessory_enhancement_screen.dart'; // Corr
 import '../constants/box_constants.dart'; // AppScreen enum을 box_constants.dart에서 가져옵니다.
 import '../../presentation/simulator/accessory_option_change_screen.dart'; // 악세사리 옵션 변경 시뮬레이터 import
 import '../../presentation/gold_calculator/gold_calculator_screen.dart'; // 골드 계산기 화면 import
+import '../../presentation/damage_calculator/damage_calculator_screen.dart'; // 데미지 계산기 import
 
 class AppDrawer extends StatelessWidget {
   final AppScreen currentScreen;
@@ -286,6 +287,19 @@ class AppDrawer extends StatelessWidget {
                     text: '악세사리 도감',
                     selected: currentScreen == AppScreen.accessory,
                     onTap: () { Navigator.of(context).pop(); if (currentScreen != AppScreen.accessory) { Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const AccessoryScreen())); } },
+                    showDrawerText: showDrawerText,
+                    theme: theme, // Pass theme
+                    listItemTextStyle: mainDrawerItemTextStyle,
+                    selectedListItemTextStyle: selectedMainDrawerItemTextStyle,
+                    defaultIconColor: defaultDrawerIconColor,
+                    selectedIconColor: selectedDrawerIconColor,
+                  ),
+                  _buildDrawerListTile(
+                    context,
+                    icon: Icons.flash_on_rounded, // 데미지 계산기 아이콘
+                    text: '데미지 계산기',
+                    selected: currentScreen == AppScreen.damageCalculator,
+                    onTap: () { Navigator.of(context).pop(); if (currentScreen != AppScreen.damageCalculator) { Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DamageCalculatorScreen())); } },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
                     listItemTextStyle: mainDrawerItemTextStyle,
