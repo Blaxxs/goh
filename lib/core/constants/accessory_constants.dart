@@ -7,6 +7,7 @@ class AccessoryOptionNames {
   // --- % 증가 옵션 ---
 // 반영이 될까?
 //이것도 반영해 보시지
+  static const String atkPercent = '공격력 %증가';
   static const String hpPercent = '체력 %증가';
   static const String activeSkillDmgPercent = '공격스킬피해 %증가';
   static const String basicAtkDmgPercent = '일반공격피해 %증가';
@@ -1206,7 +1207,6 @@ const List<Accessory> allAccessories = [
     ],
   ),
 ];
-<<<<<<< HEAD
   // static const String atkPercent = '공격력 %증가';
   // static const String hpPercent = '체력 %증가';
   // static const String activeSkillDmgPercent = '공격스킬피해 %증가';
@@ -1237,10 +1237,8 @@ const List<Accessory> allAccessories = [
   // static const String spaceTravelReturnChancePercent = '우주여행 돌아올 확률 %증가';
 // 반영이 될까?
 //이것도 반영해 보시지
-=======
  // 수정을 해 볼?까요ㄴㄴㄴㄴㄴ
  ///ㅁㄴ언미어ㅇㄴㄹㄴㄹㅗㅓ러ㅓㅓㄹ럴ㄴㄴ
  //다시 수정 ㅎ해 보겠습니다ㄴㄴㄴ농ㄹㅁ내롬내뢘므오랜ㅁ오래ㅐㄴㄴㄴㄴㄴssssㄴㄴㅁㄴㅇㄹㅁㄴㅇㅁㄴㅇㅁㄴ
  //ㅁㄴㅇㄹㅁㄴㅇㄹㅁㄴㅇㅁㄴㅇㅁㄴㅁㄴㅇㅁㄴㅇㄴㄴ
 //건방진 은영이 궁둥짝을 때려줘야겠당
->>>>>>> b65cf01fcb511de2a99d94f80dda8bb824805bc1
