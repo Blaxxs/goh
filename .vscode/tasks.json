@@ -12,6 +12,36 @@
         "reveal": "silent"
       },
       "problemMatcher": []
+    },
+    {
+        "label": "Autocommit Script",
+        "type": "shell",
+        "command": "C:/goh/test/goh_calculator/autocommit.bat",
+        "args": [
+            "${file}"
+        ],
+        "options": {
+            "cwd": "${workspaceFolder}"
+        },
+        "group": "build",
+        "presentation": {
+            "reveal": "always", // "silent"에서 변경됨
+            "panel": "dedicated"
+        },
+        "problemMatcher": []
+    },
+    {
+        "label": "Auto Pull on Startup",
+        "type": "shell",
+        "command": "git pull",
+        "runOptions": {
+            "runOn": "folderOpen"
+        },
+        "presentation": {
+            "reveal": "silent",
+            "panel": "shared"
+        },
+        "problemMatcher": []
     }
   ]
 }
