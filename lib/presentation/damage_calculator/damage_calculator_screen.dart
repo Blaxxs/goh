@@ -196,18 +196,21 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           if (_selectedCharacter != null)
             Positioned(
               top: 309.0,
-              left: 107.0,
-              child: Image.asset(
-                _selectedCharacter!.imagePath,
-                width: 287.0,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 287.0,
-                    height: 200, // Placeholder height, adjust as needed
-                    color: Colors.red.withOpacity(0.5),
-                    child: const Center(child: Text('Image Error')),
-                  );
-                },
+              left: 246.0,
+              child: FractionalTranslation(
+                translation: const Offset(-0.5, -0.5),
+                child: Image.asset(
+                  _selectedCharacter!.imagePath,
+                  width: 287.0,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 287.0,
+                      height: 200, // Placeholder height, adjust as needed
+                      color: Colors.red.withOpacity(0.5),
+                      child: const Center(child: Text('Image Error')),
+                    );
+                  },
+                ),
               ),
             ),
           if (_selectedCharacter != null)
