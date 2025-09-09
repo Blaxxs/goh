@@ -238,7 +238,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         items: items.map((item) {
           return DropdownMenuItem<T>(
             value: item,
-            child: Text(item.displayName, overflow: TextOverflow.ellipsis),
+            child: Text(item!.displayName, overflow: TextOverflow.ellipsis),
           );
         }).toList(),
         onChanged: onChanged,
