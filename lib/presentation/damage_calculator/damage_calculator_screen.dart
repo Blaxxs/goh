@@ -21,6 +21,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Spirit? _selectedSpirit;
   int _enhancementLevel = 0;
   int _tamLevel = 0;
+  int _rebirthLevel = 0;
   bool _isCounterElement = false;
   double _calculatedDamage = 0;
 
@@ -37,7 +38,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     super.initState();
     _selectedCharacter = characters[0];
     _selectedAura = auras[0];
-    _selectedCharyeok = charyeoks[0];
+    if (charyeoks.isNotEmpty) {
+      _selectedCharyeok = charyeoks[0];
+    }
     _selectedSpirit = spirits[0];
   }
 
@@ -104,50 +107,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   ),
                   const SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SizedBox(
-                        width: 100,
-                        child: DropdownButton<Aura>(
-                          value: _selectedAura,
-                          isExpanded: true,
-                          items: auras.map((Aura aura) {
-                            return DropdownMenuItem<Aura>(
-                              value: aura,
-                              child: Text(aura.name, overflow: TextOverflow.ellipsis),
-                            );
-                          }).toList(),
-                          onChanged: (Aura? newValue) {
-                            setState(() {
-                              _selectedAura = newValue;
-                            });
-                          },
-                        ),
-                      ),
                       Image.asset(
                         _selectedCharacter!.imagePath,
                         height: 150,
                         errorBuilder: (context, error, stackTrace) {
                           return const Icon(Icons.error, size: 150);
                         },
-                      ),
-                      SizedBox(
-                        width: 100,
-                        child: DropdownButton<Charyeok>(
-                          value: _selectedCharyeok,
-                          isExpanded: true,
-                          items: charyeoks.map((Charyeok charyeok) {
-                            return DropdownMenuItem<Charyeok>(
-                              value: charyeok,
-                              child: Text(charyeok.name, overflow: TextOverflow.ellipsis),
-                            );
-                          }).toList(),
-                          onChanged: (Charyeok? newValue) {
-                            setState(() {
-                              _selectedCharyeok = newValue;
-                            });
-                          },
-                        ),
                       ),
                     ],
                   ),
@@ -157,7 +124,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                const Text('강화 단계: '),
+                const Text('강화: '),
                 DropdownButton<int>(
                   value: _enhancementLevel,
                   items: List.generate(6, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
@@ -167,8 +134,19 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     });
                   },
                 ),
-                const SizedBox(width: 20),
-                const Text('탐 단계: '),
+                const SizedBox(width: 10),
+                const Text('환생: '),
+                DropdownButton<int>(
+                  value: _rebirthLevel,
+                  items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                  onChanged: (value) {
+                    setState(() {
+                      _rebirthLevel = value ?? 0;
+                    });
+                  },
+                ),
+                const SizedBox(width: 10),
+                const Text('탐: '),
                 DropdownButton<int>(
                   value: _tamLevel,
                   items: List.generate(11, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
@@ -187,31 +165,27 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               alignment: WrapAlignment.center,
               children: [
                 _buildTextField('추가 공격력', _additionalAttackPowerController),
-                _buildDropdownField('환생', List.generate(10, (i) => i.toString())),
                 _buildTextField('리더 효과', _leaderEffectController, hint: '예) 1.5'),
                 _buildTextField('크리 데미지', _critDamageController),
                 _buildTextField('일반 데미지 증가', _normalDamageIncreaseController, suffix: '%'),
                 _buildTextField('스킬 데미지 증가', _skillDamageIncreaseController, suffix: '%'),
                 _buildTextField('미니게임 데미지 증가', _minigameDamageIncreaseController, suffix: '%'),
                 _buildTextField('하이스쿨 버프', _highSchoolBuffController, suffix: '%'),
-                SizedBox(
-                  width: 150,
-                  child: DropdownButton<Spirit>(
-                    value: _selectedSpirit,
-                    isExpanded: true,
-                    items: spirits.map((Spirit spirit) {
-                      return DropdownMenuItem<Spirit>(
-                        value: spirit,
-                        child: Text(spirit.name, overflow: TextOverflow.ellipsis),
-                      );
-                    }).toList(),
-                    onChanged: (Spirit? newValue) {
-                      setState(() {
-                        _selectedSpirit = newValue;
-                      });
-                    },
-                  ),
-                ),
+                _buildDropdown('오라', auras, _selectedAura, (Aura? newValue) {
+                  setState(() {
+                    _selectedAura = newValue;
+                  });
+                }),
+                _buildDropdown('차력', charyeoks, _selectedCharyeok, (Charyeok? newValue) {
+                  setState(() {
+                    _selectedCharyeok = newValue;
+                  });
+                }),
+                _buildDropdown('스피릿', spirits, _selectedSpirit, (Spirit? newValue) {
+                  setState(() {
+                    _selectedSpirit = newValue;
+                  });
+                }),
                 CheckboxListTile(
                   title: const Text('역속'),
                   value: _isCounterElement,
@@ -252,18 +226,33 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     );
   }
 
-  Widget _buildDropdownField(String label, List<String> items) {
+  Widget _buildDropdown<T>(String label, List<T> items, T? selectedItem, ValueChanged<T?> onChanged) {
     return SizedBox(
       width: 150,
-      child: DropdownButtonFormField<String>(
+      child: DropdownButtonFormField<T>(
         decoration: InputDecoration(
           labelText: label,
           border: const OutlineInputBorder(),
         ),
-        value: items[0],
-        items: items.map((item) => DropdownMenuItem(value: item, child: Text(item))).toList(),
-        onChanged: (value) {},
+        value: selectedItem,
+        items: items.map((item) {
+          return DropdownMenuItem<T>(
+            value: item,
+            child: Text(item.displayName, overflow: TextOverflow.ellipsis),
+          );
+        }).toList(),
+        onChanged: onChanged,
       ),
     );
+  }
+}
+
+// A helper to get the name of the items in the dropdown
+extension DropdownDisplay on Object {
+  String get displayName {
+    if (this is Aura) return (this as Aura).name;
+    if (this is Charyeok) return (this as Charyeok).name;
+    if (this is Spirit) return (this as Spirit).name;
+    return toString();
   }
 }
