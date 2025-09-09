@@ -193,27 +193,27 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               ],
             ),
           ),
-          if (_selectedCharacter != null)
-            Positioned(
-              top: 692.0,
-              left: 541.0,
-              child: Image.asset(
-                _selectedCharacter!.imagePath,
-                width: screenWidth / 2,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.error, size: screenWidth / 2);
-                },
-              ),
-            ),
-          if (_selectedCharacter != null)
-            Positioned(
-              top: 1653.0,
-              left: 40.0,
-              child: Text(
-                '기본 공격력: ${formatter.format(_selectedCharacter!.baseAttackPower)}',
-                style: const TextStyle(color: Colors.white, fontSize: 16),
-              ),
-            ),
+          // if (_selectedCharacter != null)
+          //   Positioned(
+          //     top: 692.0,
+          //     left: 541.0,
+          //     child: Image.asset(
+          //       _selectedCharacter!.imagePath,
+          //       width: screenWidth / 2,
+          //       errorBuilder: (context, error, stackTrace) {
+          //         return Icon(Icons.error, size: screenWidth / 2);
+          //       },
+          //     ),
+          //   ),
+          // if (_selectedCharacter != null)
+          //   Positioned(
+          //     top: 1653.0,
+          //     left: 40.0,
+          //     child: Text(
+          //       '기본 공격력: ${formatter.format(_selectedCharacter!.baseAttackPower)}',
+          //       style: const TextStyle(color: Colors.white, fontSize: 16),
+          //     ),
+          //   ),
         ],
       ),
     );
