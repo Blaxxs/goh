@@ -80,12 +80,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       drawer: const AppDrawer(currentScreen: AppScreen.damageCalculator),
       body: Stack(
         children: [
-          Image.asset(
-            'assets/images/damage_calculator_screen_background_image.png',
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-          ),
           SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
