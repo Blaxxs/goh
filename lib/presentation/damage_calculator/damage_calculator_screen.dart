@@ -18,6 +18,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Character? _selectedCharacter;
   Aura? _selectedAura;
   Charyeok? _selectedCharyeok;
+  CharyeokGrade? _selectedCharyeokGrade;
+  int _selectedCharyeokStar = 1;
   Spirit? _selectedSpirit;
   int _enhancementLevel = 0;
   int _tamLevel = 0;
@@ -40,6 +42,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _selectedAura = auras[0];
     if (charyeoks.isNotEmpty) {
       _selectedCharyeok = charyeoks[0];
+      if (_selectedCharyeok!.availableGrades.isNotEmpty) {
+        _selectedCharyeokGrade = _selectedCharyeok!.availableGrades[0];
+      }
     }
     _selectedSpirit = spirits[0];
   }
@@ -57,14 +62,85 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   }
 
   void _calculateDamage() {
-    // This is a placeholder formula. Replace with the actual formula.
-    final baseAttack = _selectedCharacter?.baseAttackPower ?? 0;
-    final additionalAttack = double.tryParse(_additionalAttackPowerController.text) ?? 0;
-    final leaderEffect = double.tryParse(_leaderEffectController.text) ?? 1.0;
-    final skillDamageIncrease = (double.tryParse(_skillDamageIncreaseController.text) ?? 0) / 100;
+    if (_selectedCharacter == null) return;
+
+    // Base Stats
+    double baseAttack = _selectedCharacter!.baseAttackPower.toDouble();
+    double additionalAttack = double.tryParse(_additionalAttackPowerController.text) ?? 0;
+
+    // Multipliers & Buffs from TextFields
+    double leaderEffect = double.tryParse(_leaderEffectController.text) ?? 1.0;
+    double critDamage = (double.tryParse(_critDamageController.text) ?? 0);
+    double normalDamageIncrease = (double.tryParse(_normalDamageIncreaseController.text) ?? 0) / 100;
+    double skillDamageIncrease = (double.tryParse(_skillDamageIncreaseController.text) ?? 0) / 100;
+    // Other buffs can be added here
+
+    // Charyeok Effects
+    if (_selectedCharyeok != null && _selectedCharyeokGrade != null) {
+      final charyeok = _selectedCharyeok!;
+      final grade = _selectedCharyeokGrade!;
+      final star = _selectedCharyeokStar;
+
+      // Base Effect
+      if (charyeok.baseEffectValues.containsKey(grade)) {
+        final value = charyeok.baseEffectValues[grade]![star - 1].toDouble();
+        switch (charyeok.baseEffectType) {
+          case CharyeokEffectType.BASE_ATTACK_INCREASE_PERCENT:
+            baseAttack *= (1 + value / 100);
+            break;
+          case CharyeokEffectType.CRIT_DAMAGE_INCREASE:
+            critDamage += value;
+            break;
+          // ATTACK_SET_PERCENT and FIXED_ADDITIONAL_DAMAGE are applied later
+          default:
+            break;
+        }
+      }
+
+      // Synergy Effect
+      if (charyeok.synergyEffectType.containsKey(grade)) {
+        final synergyType = charyeok.synergyEffectType[grade]!;
+        final synergyValue = charyeok.synergyEffectValues[grade]!.toDouble();
+        switch (synergyType) {
+          case SynergyEffectType.SKILL_DAMAGE_INCREASE_PERCENT:
+            skillDamageIncrease += (synergyValue / 100);
+            break;
+          case SynergyEffectType.NORMAL_DAMAGE_INCREASE_PERCENT:
+            normalDamageIncrease += (synergyValue / 100);
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    // Final Calculation (simplified formula)
+    double totalAttack = baseAttack + additionalAttack;
+    double finalDamage = totalAttack * leaderEffect * (1 + skillDamageIncrease) * (1 + normalDamageIncrease) * (1 + (critDamage/100));
+
+    // Apply Charyeok effects that modify the final damage
+    if (_selectedCharyeok != null && _selectedCharyeokGrade != null) {
+      final charyeok = _selectedCharyeok!;
+      final grade = _selectedCharyeokGrade!;
+      final star = _selectedCharyeokStar;
+
+      if (charyeok.baseEffectValues.containsKey(grade)) {
+        final value = charyeok.baseEffectValues[grade]![star - 1].toDouble();
+        switch (charyeok.baseEffectType) {
+          case CharyeokEffectType.ATTACK_SET_PERCENT:
+            finalDamage *= (value / 100);
+            break;
+          case CharyeokEffectType.FIXED_ADDITIONAL_DAMAGE:
+            finalDamage += value;
+            break;
+          default:
+            break;
+        }
+      }
+    }
 
     setState(() {
-      _calculatedDamage = (baseAttack + additionalAttack) * leaderEffect * (1 + skillDamageIncrease);
+      _calculatedDamage = finalDamage;
     });
   }
 
@@ -104,6 +180,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     if (selected != null) {
       setState(() {
         _selectedCharyeok = selected;
+        // Reset grade and star when charyeok changes
+        if (selected.availableGrades.isNotEmpty) {
+          _selectedCharyeokGrade = selected.availableGrades[0];
+        } else {
+          _selectedCharyeokGrade = null;
+        }
+        _selectedCharyeokStar = 1;
       });
     }
   }
@@ -182,6 +265,44 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       });
                     },
                   ),
+                  const SizedBox(height: 20),
+                  if (_selectedCharyeok != null && _selectedCharyeok!.availableGrades.isNotEmpty)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('차력 등급: '),
+                        DropdownButton<CharyeokGrade>(
+                          value: _selectedCharyeokGrade,
+                          items: _selectedCharyeok!.availableGrades
+                              .map((grade) => DropdownMenuItem(
+                                    value: grade,
+                                    child: Text(grade.displayName),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCharyeokGrade = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 20),
+                        const Text('차력 성급: '),
+                        DropdownButton<int>(
+                          value: _selectedCharyeokStar,
+                          items: List.generate(9, (index) => index + 1)
+                              .map((star) => DropdownMenuItem(
+                                    value: star,
+                                    child: Text('$star성'),
+                                  ))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCharyeokStar = value ?? 1;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -308,6 +429,20 @@ extension DropdownDisplay on Object {
     if (this is Aura) return (this as Aura).name;
     if (this is Charyeok) return (this as Charyeok).name;
     if (this is Spirit) return (this as Spirit).name;
+    if (this is CharyeokGrade) {
+      switch (this as CharyeokGrade) {
+        case CharyeokGrade.normal:
+          return '일반';
+        case CharyeokGrade.advanced:
+          return '고급';
+        case CharyeokGrade.rare:
+          return '희귀';
+        case CharyeokGrade.relic:
+          return '유물';
+        case CharyeokGrade.legendary:
+          return '전설';
+      }
+    }
     return toString();
   }
 }
