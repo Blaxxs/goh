@@ -68,158 +68,198 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     });
   }
 
+  Future<void> _showAuraSelectionDialog() async {
+    final selected = await showDialog<Aura>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('오라 선택'),
+        children: auras
+            .map((aura) => SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, aura),
+                  child: Text(aura.name),
+                ))
+            .toList(),
+      ),
+    );
+    if (selected != null) {
+      setState(() {
+        _selectedAura = selected;
+      });
+    }
+  }
+
+  Future<void> _showCharyeokSelectionDialog() async {
+    final selected = await showDialog<Charyeok>(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: const Text('차력 선택'),
+        children: charyeoks
+            .map((charyeok) => SimpleDialogOption(
+                  onPressed: () => Navigator.pop(context, charyeok),
+                  child: Text(charyeok.name),
+                ))
+            .toList(),
+      ),
+    );
+    if (selected != null) {
+      setState(() {
+        _selectedCharyeok = selected;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###');
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('데미지 계산기'),
       ),
       drawer: const AppDrawer(currentScreen: AppScreen.damageCalculator),
-      body: Stack(
+      body: Column(
         children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+          SizedBox(
+            height: screenHeight * 0.35, // 상단 영역 높이
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                DropdownButton<Character>(
-                  value: _selectedCharacter,
-                  hint: const Text('캐릭터 선택'),
-                  isExpanded: true,
-                  items: characters.map((Character character) {
-                    return DropdownMenuItem<Character>(
-                      value: character,
-                      child: Text(character.name),
-                    );
-                  }).toList(),
-                  onChanged: (Character? newValue) {
-                    setState(() {
-                      _selectedCharacter = newValue;
-                    });
-                  },
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('강화: '),
-                    DropdownButton<int>(
-                      value: _enhancementLevel,
-                      items: List.generate(6, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                      onChanged: (value) {
-                        setState(() {
-                          _enhancementLevel = value ?? 0;
-                        });
-                      },
+                    FloatingActionButton(
+                      onPressed: _showAuraSelectionDialog,
+                      child: const Icon(Icons.wb_sunny_outlined),
                     ),
-                    const SizedBox(width: 10),
-                    const Text('환생: '),
-                    DropdownButton<int>(
-                      value: _rebirthLevel,
-                      items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                      onChanged: (value) {
-                        setState(() {
-                          _rebirthLevel = value ?? 0;
-                        });
-                      },
-                    ),
-                    const SizedBox(width: 10),
-                    const Text('탐: '),
-                    DropdownButton<int>(
-                      value: _tamLevel,
-                      items: List.generate(11, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                      onChanged: (value) {
-                        setState(() {
-                          _tamLevel = value ?? 0;
-                        });
-                      },
-                    ),
+                    const SizedBox(height: 8),
+                    const Text('오라'),
                   ],
                 ),
-                const SizedBox(height: 20),
-                Wrap(
-                  spacing: 16.0,
-                  runSpacing: 16.0,
-                  alignment: WrapAlignment.center,
+                if (_selectedCharacter != null)
+                  Image.asset(
+                    _selectedCharacter!.imagePath,
+                    width: screenWidth * 0.4,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.error, size: screenWidth * 0.4);
+                    },
+                  ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    _buildTextField('추가 공격력', _additionalAttackPowerController),
-                    _buildTextField('리더 효과', _leaderEffectController, hint: '예) 1.5'),
-                    _buildTextField('크리 데미지', _critDamageController),
-                    _buildTextField('일반 데미지 증가', _normalDamageIncreaseController, suffix: '%'),
-                    _buildTextField('스킬 데미지 증가', _skillDamageIncreaseController, suffix: '%'),
-                    _buildTextField('미니게임 데미지 증가', _minigameDamageIncreaseController, suffix: '%'),
-                    _buildTextField('하이스쿨 버프', _highSchoolBuffController, suffix: '%'),
-                    _buildDropdown('오라', auras, _selectedAura, (Aura? newValue) {
-                      setState(() {
-                        _selectedAura = newValue;
-                      });
-                    }),
-                    _buildDropdown('차력', charyeoks, _selectedCharyeok, (Charyeok? newValue) {
-                      setState(() {
-                        _selectedCharyeok = newValue;
-                      });
-                    }),
-                    _buildDropdown('스피릿', spirits, _selectedSpirit, (Spirit? newValue) {
-                      setState(() {
-                        _selectedSpirit = newValue;
-                      });
-                    }),
-                    CheckboxListTile(
-                      title: const Text('역속'),
-                      value: _isCounterElement,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          _isCounterElement = value ?? false;
-                        });
-                      },
+                    FloatingActionButton(
+                      onPressed: _showCharyeokSelectionDialog,
+                      child: const Icon(Icons.flash_on_outlined),
                     ),
+                    const SizedBox(height: 8),
+                    const Text('차력'),
                   ],
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(onPressed: _calculateDamage, child: const Text('계산하기')),
-                const SizedBox(height: 20),
-                Text(
-                  '최종 데미지: ${formatter.format(_calculatedDamage)}',
-                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ],
             ),
           ),
-          if (_selectedCharacter != null)
-            Positioned(
-              top: 309.0,
-              left: 246.0,
-              child: FractionalTranslation(
-                translation: const Offset(-0.5, -0.5),
-                child: Image.asset(
-                  _selectedCharacter!.imagePath,
-                  width: 287.0,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: 287.0,
-                      height: 200, // Placeholder height, adjust as needed
-                      color: Colors.red.withOpacity(0.5),
-                      child: const Center(child: Text('Image Error')),
-                    );
-                  },
-                ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+              child: Column(
+                children: [
+                  DropdownButton<Character>(
+                    value: _selectedCharacter,
+                    hint: const Text('캐릭터 선택'),
+                    isExpanded: true,
+                    items: characters.map((Character character) {
+                      return DropdownMenuItem<Character>(
+                        value: character,
+                        child: Text(character.name),
+                      );
+                    }).toList(),
+                    onChanged: (Character? newValue) {
+                      setState(() {
+                        _selectedCharacter = newValue;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text('강화: '),
+                      DropdownButton<int>(
+                        value: _enhancementLevel,
+                        items: List.generate(6, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                        onChanged: (value) {
+                          setState(() {
+                            _enhancementLevel = value ?? 0;
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      const Text('환생: '),
+                      DropdownButton<int>(
+                        value: _rebirthLevel,
+                        items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                        onChanged: (value) {
+                          setState(() {
+                            _rebirthLevel = value ?? 0;
+                          });
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      const Text('탐: '),
+                      DropdownButton<int>(
+                        value: _tamLevel,
+                        items: List.generate(11, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                        onChanged: (value) {
+                          setState(() {
+                            _tamLevel = value ?? 0;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Wrap(
+                    spacing: 16.0,
+                    runSpacing: 16.0,
+                    alignment: WrapAlignment.center,
+                    children: [
+                      _buildTextField('추가 공격력', _additionalAttackPowerController),
+                      _buildTextField('리더 효과', _leaderEffectController, hint: '예) 1.5'),
+                      _buildTextField('크리 데미지', _critDamageController),
+                      _buildTextField('일반 데미지 증가', _normalDamageIncreaseController, suffix: '%'),
+                      _buildTextField('스킬 데미지 증가', _skillDamageIncreaseController, suffix: '%'),
+                      _buildTextField('미니게임 데미지 증가', _minigameDamageIncreaseController, suffix: '%'),
+                      _buildTextField('하이스쿨 버프', _highSchoolBuffController, suffix: '%'),
+                      _buildDropdown('스피릿', spirits, _selectedSpirit, (Spirit? newValue) {
+                        setState(() {
+                          _selectedSpirit = newValue;
+                        });
+                      }),
+                      CheckboxListTile(
+                        title: const Text('역속'),
+                        value: _isCounterElement,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            _isCounterElement = value ?? false;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  ElevatedButton(onPressed: _calculateDamage, child: const Text('계산하기')),
+                  const SizedBox(height: 20),
+                  Text(
+                    '최종 데미지: ${formatter.format(_calculatedDamage)}',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ],
               ),
             ),
-          if (_selectedCharacter != null)
-            Positioned(
-              top: 746.0,
-              left: 15.0,
-              child: Container(
-                width: 127.0,
-                child: Text(
-                  '기본 공격력: ${formatter.format(_selectedCharacter!.baseAttackPower)}',
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
+          ),
         ],
       ),
     );
