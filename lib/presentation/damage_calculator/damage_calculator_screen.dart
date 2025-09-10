@@ -165,28 +165,19 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   }
 
   Future<void> _showCharyeokSelectionDialog() async {
-    final selected = await showDialog<Charyeok>(
+    final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('차력 선택'),
-        children: charyeoks
-            .map((charyeok) => SimpleDialogOption(
-                  onPressed: () => Navigator.pop(context, charyeok),
-                  child: Text(charyeok.name),
-                ))
-            .toList(),
+      // Make the dialog larger to accommodate the new UI
+      builder: (context) => Dialog(
+        child: _CharyeokSelectionDialog(),
       ),
     );
-    if (selected != null) {
+
+    if (result != null) {
       setState(() {
-        _selectedCharyeok = selected;
-        // Reset grade and star when charyeok changes
-        if (selected.availableGrades.isNotEmpty) {
-          _selectedCharyeokGrade = selected.availableGrades[0];
-        } else {
-          _selectedCharyeokGrade = null;
-        }
-        _selectedCharyeokStar = 1;
+        _selectedCharyeok = result['charyeok'];
+        _selectedCharyeokGrade = result['grade'];
+        _selectedCharyeokStar = result['star'];
       });
     }
   }
@@ -266,43 +257,44 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  if (_selectedCharyeok != null && _selectedCharyeok!.availableGrades.isNotEmpty)
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text('차력 등급: '),
-                        DropdownButton<CharyeokGrade>(
-                          value: _selectedCharyeokGrade,
-                          items: _selectedCharyeok!.availableGrades
-                              .map((grade) => DropdownMenuItem(
-                                    value: grade,
-                                    child: Text(grade.displayName),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCharyeokGrade = value;
-                            });
-                          },
-                        ),
-                        const SizedBox(width: 20),
-                        const Text('차력 성급: '),
-                        DropdownButton<int>(
-                          value: _selectedCharyeokStar,
-                          items: List.generate(9, (index) => index + 1)
-                              .map((star) => DropdownMenuItem(
-                                    value: star,
-                                    child: Text('$star성'),
-                                  ))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedCharyeokStar = value ?? 1;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
+                  // This UI is now replaced by the new dialog
+                  // if (_selectedCharyeok != null && _selectedCharyeok!.availableGrades.isNotEmpty)
+                  //   Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       const Text('차력 등급: '),
+                  //       DropdownButton<CharyeokGrade>(
+                  //         value: _selectedCharyeokGrade,
+                  //         items: _selectedCharyeok!.availableGrades
+                  //             .map((grade) => DropdownMenuItem(
+                  //                   value: grade,
+                  //                   child: Text(grade.displayName),
+                  //                 ))
+                  //             .toList(),
+                  //         onChanged: (value) {
+                  //           setState(() {
+                  //             _selectedCharyeokGrade = value;
+                  //           });
+                  //         },
+                  //       ),
+                  //       const SizedBox(width: 20),
+                  //       const Text('차력 성급: '),
+                  //       DropdownButton<int>(
+                  //         value: _selectedCharyeokStar,
+                  //         items: List.generate(9, (index) => index + 1)
+                  //             .map((star) => DropdownMenuItem(
+                  //                   value: star,
+                  //                   child: Text('$star성'),
+                  //                 ))
+                  //             .toList(),
+                  //         onChanged: (value) {
+                  //           setState(() {
+                  //             _selectedCharyeokStar = value ?? 1;
+                  //           });
+                  //         },
+                  //       ),
+                  //     ],
+                  //   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -444,5 +436,135 @@ extension DropdownDisplay on Object {
       }
     }
     return toString();
+  }
+}
+
+class _CharyeokSelectionDialog extends StatefulWidget {
+  @override
+  __CharyeokSelectionDialogState createState() => __CharyeokSelectionDialogState();
+}
+
+class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
+  Charyeok? _detailedCharyeok;
+  CharyeokGrade? _selectedGrade;
+  int _selectedStar = 1;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _selectCharyeok(Charyeok charyeok) {
+    setState(() {
+      _detailedCharyeok = charyeok;
+      if (charyeok.availableGrades.isNotEmpty) {
+        _selectedGrade = charyeok.availableGrades[0];
+      } else {
+        _selectedGrade = null;
+      }
+      _selectedStar = 1;
+    });
+  }
+
+  Widget _buildGridView() {
+    return Column(
+      children: [
+        Text("차력 선택", style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 16),
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: charyeoks.length,
+            itemBuilder: (context, index) {
+              final charyeok = charyeoks[index];
+              return GestureDetector(
+                onTap: () => _selectCharyeok(charyeok),
+                child: GridTile(
+                  footer: Container(
+                    color: Colors.black54,
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      charyeok.name,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  child: Image.asset(charyeok.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => Icon(Icons.error)),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailView() {
+    final charyeok = _detailedCharyeok!;
+    String effectValueText = 'N/A';
+    if (_selectedGrade != null && charyeok.baseEffectValues.containsKey(_selectedGrade)) {
+      final values = charyeok.baseEffectValues[_selectedGrade]!;
+      if (values.isNotEmpty) {
+         effectValueText = values[_selectedStar - 1].toString();
+      }
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedCharyeok = null)),
+              Expanded(child: Text(charyeok.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => Icon(Icons.error, size: 100)),
+          const SizedBox(height: 16),
+          if (charyeok.availableGrades.isNotEmpty)
+            DropdownButton<CharyeokGrade>(
+              value: _selectedGrade,
+              items: charyeok.availableGrades
+                  .map((grade) => DropdownMenuItem(value: grade, child: Text(grade.displayName)))
+                  .toList(),
+              onChanged: (value) => setState(() => _selectedGrade = value),
+            ),
+          const SizedBox(height: 16),
+          Text('성급: $_selectedStar성'),
+          Slider(
+            value: _selectedStar.toDouble(),
+            min: 1,
+            max: 9,
+            divisions: 8,
+            label: '$_selectedStar성',
+            onChanged: (value) => setState(() => _selectedStar = value.round()),
+          ),
+          const SizedBox(height: 16),
+          Text('효과: ${charyeok.baseEffectDescription.replaceFirst('n', effectValueText)}'),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context, {
+                'charyeok': _detailedCharyeok,
+                'grade': _selectedGrade,
+                'star': _selectedStar,
+              });
+            },
+            child: const Text('선택'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _detailedCharyeok == null ? _buildGridView() : _buildDetailView();
   }
 }
