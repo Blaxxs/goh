@@ -196,16 +196,16 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     Widget auraIcon;
     if (_selectedAura != null) {
-      auraIcon = Image.asset(_selectedAura!.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.wb_sunny_outlined));
+      auraIcon = Image.asset(_selectedAura!.imagePath, errorBuilder: (c, o, s) => const Text('오라'));
     } else {
-      auraIcon = const Icon(Icons.wb_sunny_outlined);
+      auraIcon = const Text('오라');
     }
 
     Widget charyeokIcon;
     if (_selectedCharyeok != null) {
-      charyeokIcon = Image.asset(_selectedCharyeok!.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.flash_on_outlined));
+      charyeokIcon = Image.asset(_selectedCharyeok!.imagePath, errorBuilder: (c, o, s) => const Text('차력'));
     } else {
-      charyeokIcon = const Icon(Icons.flash_on_outlined);
+      charyeokIcon = const Text('차력');
     }
 
     return Scaffold(
@@ -215,8 +215,27 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       drawer: const AppDrawer(currentScreen: AppScreen.damageCalculator),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: DropdownButton<Character>(
+              value: _selectedCharacter,
+              hint: const Text('캐릭터 선택'),
+              isExpanded: true,
+              items: characters.map((Character character) {
+                return DropdownMenuItem<Character>(
+                  value: character,
+                  child: Text(character.name),
+                );
+              }).toList(),
+              onChanged: (Character? newValue) {
+                setState(() {
+                  _selectedCharacter = newValue;
+                });
+              },
+            ),
+          ),
           SizedBox(
-            height: screenHeight * 0.35, // 상단 영역 높이
+            height: screenHeight * 0.30,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -280,76 +299,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
               child: Column(
                 children: [
-                  DropdownButton<Character>(
-                    value: _selectedCharacter,
-                    hint: const Text('캐릭터 선택'),
-                    isExpanded: true,
-                    items: characters.map((Character character) {
-                      return DropdownMenuItem<Character>(
-                        value: character,
-                        child: Text(character.name),
-                      );
-                    }).toList(),
-                    onChanged: (Character? newValue) {
-                      setState(() {
-                        _selectedCharacter = newValue;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  // This UI is now replaced by the new dialog
-                  // if (_selectedCharyeok != null && _selectedCharyeok!.availableGrades.isNotEmpty)
-                  //   Row(
-                  //     mainAxisAlignment: MainAxisAlignment.center,
-                  //     children: [
-                  //       const Text('차력 등급: '),
-                  //       DropdownButton<CharyeokGrade>(
-                  //         value: _selectedCharyeokGrade,
-                  //         items: _selectedCharyeok!.availableGrades
-                  //             .map((grade) => DropdownMenuItem(
-                  //                   value: grade,
-                  //                   child: Text(grade.displayName),
-                  //                 ))
-                  //             .toList(),
-                  //         onChanged: (value) {
-                  //           setState(() {
-                  //             _selectedCharyeokGrade = value;
-                  //           });
-                  //         },
-                  //       ),
-                  //       const SizedBox(width: 20),
-                  //       const Text('차력 성급: '),
-                  //       DropdownButton<int>(
-                  //         value: _selectedCharyeokStar,
-                  //         items: List.generate(9, (index) => index + 1)
-                  //             .map((star) => DropdownMenuItem(
-                  //                   value: star,
-                  //                   child: Text('$star성'),
-                  //                 ))
-                  //             .toList(),
-                  //         onChanged: (value) {
-                  //           setState(() {
-                  //             _selectedCharyeokStar = value ?? 1;
-                  //           });
-                  //         },
-                  //       ),
-                  //     ],
-                  //   ),
                   const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const Text('강화: '),
-                      DropdownButton<int>(
-                        value: _enhancementLevel,
-                        items: List.generate(6, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                        onChanged: (value) {
-                          setState(() {
-                            _enhancementLevel = value ?? 0;
-                          });
-                        },
-                      ),
-                      const SizedBox(width: 10),
                       const Text('환생: '),
                       DropdownButton<int>(
                         value: _rebirthLevel,

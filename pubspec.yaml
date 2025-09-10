@@ -70,6 +70,8 @@ flutter:
     - assets/images/accessories/ # <<< 새로운 악세사리 이미지 폴더 추가
     - assets/images/boxes/ # <<< 상자 이미지 폴더 추가
     - assets/images/enhancement_aids/ # 이 줄 추가
+    - assets/images/auras/
+    - assets/images/charyeok/
 
 
     # 개별 파일을 지정할 수도 있습니다. 예:
