@@ -75,6 +75,20 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     double skillDamageIncrease = (double.tryParse(_skillDamageIncreaseController.text) ?? 0) / 100;
     // Other buffs can be added here
 
+    // Aura Effects
+    if (_selectedAura != null) {
+      final aura = _selectedAura!;
+      if (aura.effects.containsKey('attack_power')) {
+        additionalAttack += aura.effects['attack_power'] as int;
+      }
+      if (aura.effects.containsKey('skill_damage_increase')) {
+        skillDamageIncrease += (aura.effects['skill_damage_increase'] as int) / 100.0;
+      }
+      if (aura.effects.containsKey('attack_power_increase')) {
+        baseAttack *= (1 + (aura.effects['attack_power_increase'] as int) / 100.0);
+      }
+    }
+
     // Charyeok Effects
     if (_selectedCharyeok != null && _selectedCharyeokGrade != null) {
       final charyeok = _selectedCharyeok!;
@@ -85,10 +99,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       if (charyeok.baseEffectValues.containsKey(grade)) {
         final value = charyeok.baseEffectValues[grade]![star - 1].toDouble();
         switch (charyeok.baseEffectType) {
-          case CharyeokEffectType.BASE_ATTACK_INCREASE_PERCENT:
+          case CharyeokEffectType.baseAttackIncreasePercent:
             baseAttack *= (1 + value / 100);
             break;
-          case CharyeokEffectType.CRIT_DAMAGE_INCREASE:
+          case CharyeokEffectType.critDamageIncrease:
             critDamage += value;
             break;
           // ATTACK_SET_PERCENT and FIXED_ADDITIONAL_DAMAGE are applied later
@@ -102,10 +116,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         final synergyType = charyeok.synergyEffectType[grade]!;
         final synergyValue = charyeok.synergyEffectValues[grade]!.toDouble();
         switch (synergyType) {
-          case SynergyEffectType.SKILL_DAMAGE_INCREASE_PERCENT:
+          case SynergyEffectType.skillDamageIncreasePercent:
             skillDamageIncrease += (synergyValue / 100);
             break;
-          case SynergyEffectType.NORMAL_DAMAGE_INCREASE_PERCENT:
+          case SynergyEffectType.normalDamageIncreasePercent:
             normalDamageIncrease += (synergyValue / 100);
             break;
           default:
@@ -127,10 +141,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       if (charyeok.baseEffectValues.containsKey(grade)) {
         final value = charyeok.baseEffectValues[grade]![star - 1].toDouble();
         switch (charyeok.baseEffectType) {
-          case CharyeokEffectType.ATTACK_SET_PERCENT:
+          case CharyeokEffectType.attackSetPercent:
             finalDamage *= (value / 100);
             break;
-          case CharyeokEffectType.FIXED_ADDITIONAL_DAMAGE:
+          case CharyeokEffectType.fixedAdditionalDamage:
             finalDamage += value;
             break;
           default:
