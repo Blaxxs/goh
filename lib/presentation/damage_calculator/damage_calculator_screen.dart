@@ -161,15 +161,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Future<void> _showAuraSelectionDialog() async {
     final selected = await showDialog<Aura>(
       context: context,
-      builder: (context) => SimpleDialog(
-        title: const Text('오라 선택'),
-        children: auras
-            .map((aura) => SimpleDialogOption(
-                  onPressed: () => Navigator.pop(context, aura),
-                  child: Text(aura.name),
-                ))
-            .toList(),
-      ),
+      builder: (context) => _AuraSelectionDialog(),
     );
     if (selected != null) {
       setState(() {
@@ -202,6 +194,20 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
+    Widget auraIcon;
+    if (_selectedAura != null) {
+      auraIcon = Image.asset(_selectedAura!.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.wb_sunny_outlined));
+    } else {
+      auraIcon = const Icon(Icons.wb_sunny_outlined);
+    }
+
+    Widget charyeokIcon;
+    if (_selectedCharyeok != null) {
+      charyeokIcon = Image.asset(_selectedCharyeok!.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.flash_on_outlined));
+    } else {
+      charyeokIcon = const Icon(Icons.flash_on_outlined);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('데미지 계산기'),
@@ -218,9 +224,19 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    FloatingActionButton(
-                      onPressed: _showAuraSelectionDialog,
-                      child: const Icon(Icons.wb_sunny_outlined),
+                    InkWell(
+                      onTap: _showAuraSelectionDialog,
+                      customBorder: const CircleBorder(),
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey.shade300, width: 2),
+                        ),
+                        child: ClipOval(child: auraIcon),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Text('오라'),
@@ -238,9 +254,19 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    FloatingActionButton(
-                      onPressed: _showCharyeokSelectionDialog,
-                      child: const Icon(Icons.flash_on_outlined),
+                    InkWell(
+                      onTap: _showCharyeokSelectionDialog,
+                      customBorder: const CircleBorder(),
+                      child: Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.grey.shade300, width: 2),
+                        ),
+                        child: ClipOval(child: charyeokIcon),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Text('차력'),
@@ -580,5 +606,53 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return _detailedCharyeok == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class _AuraSelectionDialog extends StatefulWidget {
+  @override
+  __AuraSelectionDialogState createState() => __AuraSelectionDialogState();
+}
+
+class __AuraSelectionDialogState extends State<_AuraSelectionDialog> {
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Column(
+        children: [
+          Text("오라 선택", style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 16),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: auras.length,
+              itemBuilder: (context, index) {
+                final aura = auras[index];
+                return GestureDetector(
+                  onTap: () => Navigator.pop(context, aura),
+                  child: GridTile(
+                    footer: Container(
+                      color: Colors.black54,
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        aura.name,
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    child: Image.asset(aura.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => Icon(Icons.error)),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
