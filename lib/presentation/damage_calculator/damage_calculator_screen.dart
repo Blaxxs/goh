@@ -15,9 +15,30 @@ class DamageCalculatorScreen extends StatefulWidget {
   State<DamageCalculatorScreen> createState() => _DamageCalculatorScreenState();
 }
 
+Color _getBorderColorForGrade(CharyeokGrade? grade) {
+  if (grade == null) {
+    return Colors.grey.shade300;
+  }
+  switch (grade) {
+    case CharyeokGrade.normal:
+      return const Color(0xFFDBEDFA);
+    case CharyeokGrade.advanced:
+      return const Color(0xFF0FD380);
+    case CharyeokGrade.rare:
+      return const Color(0xFF6BBDF7);
+    case CharyeokGrade.relic:
+      return const Color(0xFFE0564B);
+    case CharyeokGrade.legendary:
+      return const Color(0xFFF7C05F);
+  }
+}
+
 class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
-  // Character and Spirit
+  // Character, Charyeok, and Spirit
   Character? _selectedCharacter;
+  Charyeok? _selectedCharyeok;
+  CharyeokGrade? _selectedCharyeokGrade;
+  int _selectedCharyeokStar = 1;
   Spirit? _selectedSpirit;
 
   // Rebirth
@@ -64,6 +85,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     super.initState();
     _selectedCharacter = characters[0];
     _selectedSpirit = spirits[0];
+    if (charyeoks.isNotEmpty) {
+      _selectedCharyeok = charyeoks[0];
+      if (_selectedCharyeok!.availableGrades.isNotEmpty) {
+        _selectedCharyeokGrade = _selectedCharyeok!.availableGrades[0];
+      }
+    }
   }
 
   @override
@@ -103,14 +130,54 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   void _calculateDamage() {
     if (_selectedCharacter == null) return;
 
-    // For now, charyeok effects are added as input fields.
-    // This section can be expanded later if charyeok constants are updated.
+    // --- Charyeok Effects ---
     double charyeokBaseAttackIncrease = 1.0;
     double charyeokAttackIncrease = 1.0;
     double charyeokCritDamage = 0;
     double charyeokNormalDamage = 0;
     double charyeokSkillDamage = 0;
     double charyeokFixedDamage = 0;
+
+    if (_selectedCharyeok != null && _selectedCharyeokGrade != null) {
+      final charyeok = _selectedCharyeok!;
+      final grade = _selectedCharyeokGrade!;
+      final star = _selectedCharyeokStar;
+
+      if (charyeok.baseEffectValues.containsKey(grade)) {
+        final value = charyeok.baseEffectValues[grade]![star - 1].toDouble();
+        switch (charyeok.baseEffectType) {
+          case CharyeokEffectType.baseAttackIncreasePercent:
+            charyeokBaseAttackIncrease = 1 + (value / 100);
+            break;
+          case CharyeokEffectType.critDamageIncrease:
+            charyeokCritDamage = value;
+            break;
+          case CharyeokEffectType.fixedAdditionalDamage:
+            charyeokFixedDamage = value;
+            break;
+          case CharyeokEffectType.attackSetPercent:
+            charyeokAttackIncrease = value / 100;
+            break;
+          case CharyeokEffectType.none:
+            break;
+        }
+      }
+
+      if (charyeok.synergyEffectType.containsKey(grade)) {
+        final synergyType = charyeok.synergyEffectType[grade]!;
+        final synergyValue = charyeok.synergyEffectValues[grade]!.toDouble();
+        switch (synergyType) {
+          case SynergyEffectType.skillDamageIncreasePercent:
+            charyeokSkillDamage = synergyValue;
+            break;
+          case SynergyEffectType.normalDamageIncreasePercent:
+            charyeokNormalDamage = synergyValue;
+            break;
+          case SynergyEffectType.none:
+            break;
+        }
+      }
+    }
 
     // --- Part 1: Base Attack Calculation ---
     double baseAttack = _selectedCharacter!.baseAttackPower.toDouble();
@@ -194,9 +261,94 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     });
   }
 
+  Future<void> _showCharyeokSelectionDialog() async {
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => Dialog(
+        child: _CharyeokSelectionDialog(),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedCharyeok = result['charyeok'];
+        _selectedCharyeokGrade = result['grade'];
+        _selectedCharyeokStar = result['star'];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###');
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    Widget charyeokWidget;
+    if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
+      charyeokWidget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            onTap: _showCharyeokSelectionDialog,
+            customBorder: const CircleBorder(),
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
+                 boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 2,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  _selectedCharyeok!.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, o, s) => const Icon(Icons.error),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _selectedCharyeok!.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(1.0, 1.0),
+                  blurRadius: 2.0,
+                  color: Colors.black,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      charyeokWidget = InkWell(
+        onTap: _showCharyeokSelectionDialog,
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.grey.shade300, width: 2),
+          ),
+          child: const Text('차력 선택'),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('데미지 계산기'),
@@ -223,9 +375,36 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               },
             ),
           ),
+          SizedBox(
+            height: screenHeight * 0.25, // Adjusted height
+            child: Stack(
+              children: [
+                if (_selectedCharacter != null)
+                  Positioned.fill(
+                    child: Image.asset(
+                      _selectedCharacter!.imagePath,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[200],
+                          child: const Center(child: Text('이미지 없음')),
+                        );
+                      },
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: charyeokWidget,
+                  ),
+                ),
+              ],
+            ),
+          ),
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
               child: Column(
                 children: [
                   _buildRebirthSelector(),
@@ -372,6 +551,21 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 extension DropdownDisplay on Object {
   String get displayName {
     if (this is Spirit) return (this as Spirit).name;
+    if (this is Charyeok) return (this as Charyeok).name;
+    if (this is CharyeokGrade) {
+      switch (this as CharyeokGrade) {
+        case CharyeokGrade.normal:
+          return '일반';
+        case CharyeokGrade.advanced:
+          return '고급';
+        case CharyeokGrade.rare:
+          return '희귀';
+        case CharyeokGrade.relic:
+          return '유물';
+        case CharyeokGrade.legendary:
+          return '전설';
+      }
+    }
     if (this is RebirthRealm) {
       switch (this as RebirthRealm) {
         case RebirthRealm.none:
@@ -383,5 +577,150 @@ extension DropdownDisplay on Object {
       }
     }
     return toString();
+  }
+}
+
+class _CharyeokSelectionDialog extends StatefulWidget {
+  @override
+  __CharyeokSelectionDialogState createState() => __CharyeokSelectionDialogState();
+}
+
+class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
+  Charyeok? _detailedCharyeok;
+  CharyeokGrade? _selectedGrade;
+  int _selectedStar = 1;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void _selectCharyeok(Charyeok charyeok) {
+    setState(() {
+      _detailedCharyeok = charyeok;
+      if (charyeok.availableGrades.isNotEmpty) {
+        _selectedGrade = charyeok.availableGrades[0];
+      } else {
+        _selectedGrade = null;
+      }
+      _selectedStar = 1;
+    });
+  }
+
+  Widget _buildGridView() {
+    final displayCharyeoks = charyeoks.where((c) => c.name != '선택 안함').toList();
+    return Column(
+      children: [
+        Text("차력 선택", style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 16),
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: displayCharyeoks.length,
+            itemBuilder: (context, index) {
+              final charyeok = displayCharyeoks[index];
+              return GestureDetector(
+                onTap: () => _selectCharyeok(charyeok),
+                child: GridTile(
+                  footer: Container(
+                    color: Colors.black54,
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      charyeok.name,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  child: Image.asset(charyeok.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextButton.icon(
+            icon: const Icon(Icons.cancel),
+            label: const Text("선택 취소"),
+            onPressed: () {
+              Navigator.pop(context, {
+                'charyeok': charyeoks[0],
+                'grade': null,
+                'star': 1,
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailView() {
+    final charyeok = _detailedCharyeok!;
+    String effectValueText = 'N/A';
+    if (_selectedGrade != null && charyeok.baseEffectValues.containsKey(_selectedGrade)) {
+      final values = charyeok.baseEffectValues[_selectedGrade]!;
+      if (values.isNotEmpty) {
+         effectValueText = values[_selectedStar - 1].toString();
+      }
+    }
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedCharyeok = null)),
+              Expanded(child: Text(charyeok.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
+          const SizedBox(height: 16),
+          if (charyeok.availableGrades.isNotEmpty)
+            DropdownButton<CharyeokGrade>(
+              value: _selectedGrade,
+              items: charyeok.availableGrades
+                  .map((grade) => DropdownMenuItem(value: grade, child: Text(grade.displayName)))
+                  .toList(),
+              onChanged: (value) => setState(() => _selectedGrade = value),
+            ),
+          const SizedBox(height: 16),
+          Text('성급: $_selectedStar성'),
+          Slider(
+            value: _selectedStar.toDouble(),
+            min: 1,
+            max: 9,
+            divisions: 8,
+            label: '$_selectedStar성',
+            onChanged: (value) => setState(() => _selectedStar = value.round()),
+          ),
+          const SizedBox(height: 16),
+          Text('효과: ${charyeok.baseEffectDescription.replaceFirst('n', effectValueText)}'),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context, {
+                'charyeok': _detailedCharyeok,
+                'grade': _selectedGrade,
+                'star': _selectedStar,
+              });
+            },
+            child: const Text('선택'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _detailedCharyeok == null ? _buildGridView() : _buildDetailView();
   }
 }
