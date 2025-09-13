@@ -46,6 +46,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   int _rebirthLevel = 0;
   bool _isCounterElement = false;
   double _calculatedDamage = 0;
+  double _currentAttackPower = 0;
 
   final _additionalAttackPowerController = TextEditingController();
   final _leaderEffectController = TextEditingController();
@@ -175,6 +176,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     setState(() {
       _calculatedDamage = finalDamage;
+      _currentAttackPower = totalAttack;
     });
   }
 
@@ -475,6 +477,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   const SizedBox(height: 30),
                   ElevatedButton(onPressed: _calculateDamage, child: const Text('계산하기')),
                   const SizedBox(height: 20),
+                  Text(
+                    '현재 공격력: ${formatter.format(_currentAttackPower)}',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 10),
                   Text(
                     '최종 데미지: ${formatter.format(_calculatedDamage)}',
                     style: Theme.of(context).textTheme.headlineMedium,
