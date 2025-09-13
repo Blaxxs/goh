@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:goh_calculator/core/constants/box_constants.dart';
 import 'package:goh_calculator/core/widgets/app_drawer.dart';
 import 'package:goh_calculator/core/constants/damage_calculator_constants.dart';
-import 'package:goh_calculator/core/constants/aura_constants.dart';
 import 'package:goh_calculator/core/constants/charyeok_constants.dart';
 import 'package:goh_calculator/core/constants/spirit_constants.dart';
 import 'package:intl/intl.dart';
+
+enum RebirthRealm { none, heavenly, demon }
 
 class DamageCalculatorScreen extends StatefulWidget {
   const DamageCalculatorScreen({super.key});
@@ -36,12 +37,12 @@ Color _getBorderColorForGrade(CharyeokGrade? grade) {
 
 class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Character? _selectedCharacter;
-  Aura? _selectedAura;
   Charyeok? _selectedCharyeok;
   CharyeokGrade? _selectedCharyeokGrade;
   int _selectedCharyeokStar = 1;
   Spirit? _selectedSpirit;
   
+  RebirthRealm _selectedRebirthRealm = RebirthRealm.none;
   int _rebirthLevel = 0;
   bool _isCounterElement = false;
   double _calculatedDamage = 0;
@@ -54,12 +55,15 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _skillDamageIncreaseController = TextEditingController();
   final _minigameDamageIncreaseController = TextEditingController();
   final _highSchoolBuffController = TextEditingController();
+  final _powerUpController = TextEditingController();
+
+  final List<int> demonRebirthBonus = [0, 50, 50, 100, 100, 200, 200, 300, 300, 450];
+  final List<int> heavenlyRebirthBonus = [0, 50, 100, 200, 300, 450, 600, 800, 1000, 1400];
 
   @override
   void initState() {
     super.initState();
     _selectedCharacter = characters[0];
-    _selectedAura = auras[0];
     if (charyeoks.isNotEmpty) {
       _selectedCharyeok = charyeoks[0];
       if (_selectedCharyeok!.availableGrades.isNotEmpty) {
@@ -78,6 +82,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _skillDamageIncreaseController.dispose();
     _minigameDamageIncreaseController.dispose();
     _highSchoolBuffController.dispose();
+    _powerUpController.dispose();
     super.dispose();
   }
 
@@ -86,6 +91,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     // Base Stats
     double baseAttack = _selectedCharacter!.baseAttackPower.toDouble();
+    
+    // Rebirth bonus
+    if (_selectedRebirthRealm == RebirthRealm.demon) {
+      baseAttack += demonRebirthBonus[_rebirthLevel];
+    } else if (_selectedRebirthRealm == RebirthRealm.heavenly) {
+      baseAttack += heavenlyRebirthBonus[_rebirthLevel];
+    }
+
     double additionalAttack = double.tryParse(_additionalAttackPowerController.text) ?? 0;
 
     // Multipliers & Buffs from TextFields
@@ -93,21 +106,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     double critDamage = (double.tryParse(_critDamageController.text) ?? 0);
     double normalDamageIncrease = (double.tryParse(_normalDamageIncreaseController.text) ?? 0) / 100;
     double skillDamageIncrease = (double.tryParse(_skillDamageIncreaseController.text) ?? 0) / 100;
-    // Other buffs can be added here
-
-    // Aura Effects
-    if (_selectedAura != null) {
-      final aura = _selectedAura!;
-      if (aura.effects.containsKey('attack_power')) {
-        additionalAttack += aura.effects['attack_power'] as int;
-      }
-      if (aura.effects.containsKey('skill_damage_increase')) {
-        skillDamageIncrease += (aura.effects['skill_damage_increase'] as int) / 100.0;
-      }
-      if (aura.effects.containsKey('attack_power_increase')) {
-        baseAttack *= (1 + (aura.effects['attack_power_increase'] as int) / 100.0);
-      }
-    }
+    double powerUpPercent = double.tryParse(_powerUpController.text) ?? 100.0;
 
     // Charyeok Effects
     if (_selectedCharyeok != null && _selectedCharyeokGrade != null) {
@@ -148,8 +147,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       }
     }
 
-    // Final Calculation (simplified formula)
-    double totalAttack = baseAttack + additionalAttack;
+    // Final Calculation
+    double totalAttack = (baseAttack + additionalAttack) * (powerUpPercent / 100.0);
     double finalDamage = totalAttack * leaderEffect * (1 + skillDamageIncrease) * (1 + normalDamageIncrease) * (1 + (critDamage/100));
 
     // Apply Charyeok effects that modify the final damage
@@ -179,22 +178,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     });
   }
 
-  Future<void> _showAuraSelectionDialog() async {
-    final selected = await showDialog<Aura>(
-      context: context,
-      builder: (context) => _AuraSelectionDialog(),
-    );
-    if (selected != null) {
-      setState(() {
-        _selectedAura = selected;
-      });
-    }
-  }
-
   Future<void> _showCharyeokSelectionDialog() async {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      // Make the dialog larger to accommodate the new UI
       builder: (context) => Dialog(
         child: _CharyeokSelectionDialog(),
       ),
@@ -215,77 +201,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    Widget auraWidget;
-    if (_selectedAura != null && _selectedAura!.name != '선택 안함') {
-      // Selected state: Larger circular image with name below
-      auraWidget = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          InkWell(
-            onTap: _showAuraSelectionDialog,
-            customBorder: const CircleBorder(),
-            child: Container(
-              width: 128, // Increased size
-              height: 128, // Increased size
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey.shade300, width: 3),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
-                  ),
-                ],
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  _selectedAura!.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (c, o, s) => const Icon(Icons.error),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _selectedAura!.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-              shadows: <Shadow>[
-                Shadow(
-                  offset: Offset(1.0, 1.0),
-                  blurRadius: 3.0,
-                  color: Colors.black,
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-    } else {
-      // Default state: Text button
-      auraWidget = InkWell(
-        onTap: _showAuraSelectionDialog,
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.grey.shade300, width: 2),
-          ),
-          child: const Text('오라 선택'),
-        ),
-      );
-    }
-
     Widget charyeokWidget;
     if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
-      // Selected state: Larger circular image with name below
       charyeokWidget = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -335,7 +252,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         ],
       );
     } else {
-      // Default state: Text button
       charyeokWidget = InkWell(
         onTap: _showCharyeokSelectionDialog,
         borderRadius: BorderRadius.circular(30),
@@ -378,18 +294,16 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
           SizedBox(
-            height: screenHeight * 0.35, // Increased height for the stack
+            height: screenHeight * 0.35,
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Background Character Image
                 if (_selectedCharacter != null)
                   Positioned.fill(
                     child: Image.asset(
                       _selectedCharacter!.imagePath,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        // Display a placeholder or error message
                         return Container(
                           color: Colors.grey[200],
                           child: const Center(child: Text('이미지 없음')),
@@ -397,17 +311,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       },
                     ),
                   ),
-                // Foreground Icons
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      auraWidget,
-                      charyeokWidget,
-                    ],
-                  ),
+                Align(
+                  alignment: Alignment.center,
+                  child: charyeokWidget,
                 ),
               ],
             ),
@@ -418,22 +324,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Text('환생: '),
-                      DropdownButton<int>(
-                        value: _rebirthLevel,
-                        items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                        onChanged: (value) {
-                          setState(() {
-                            _rebirthLevel = value ?? 0;
-                          });
-                        },
-                      ),
-                      
-                    ],
-                  ),
+                  _buildRebirthSelector(),
                   const SizedBox(height: 20),
                   Wrap(
                     spacing: 16.0,
@@ -447,6 +338,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       _buildTextField('스킬 데미지 증가', _skillDamageIncreaseController, suffix: '%'),
                       _buildTextField('미니게임 데미지 증가', _minigameDamageIncreaseController, suffix: '%'),
                       _buildTextField('하이스쿨 버프', _highSchoolBuffController, suffix: '%'),
+                      _buildTextField('파워업', _powerUpController, suffix: '%'),
                       _buildDropdown('스피릿', spirits, _selectedSpirit, (Spirit? newValue) {
                         setState(() {
                           _selectedSpirit = newValue;
@@ -481,6 +373,41 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRebirthSelector() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        const Text('환생: '),
+        DropdownButton<RebirthRealm>(
+          value: _selectedRebirthRealm,
+          items: RebirthRealm.values.map((realm) {
+            return DropdownMenuItem<RebirthRealm>(
+              value: realm,
+              child: Text(realm.displayName),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              _selectedRebirthRealm = value ?? RebirthRealm.none;
+            });
+          },
+        ),
+        const SizedBox(width: 10),
+        if (_selectedRebirthRealm != RebirthRealm.none)
+          DropdownButton<int>(
+            value: _rebirthLevel,
+            hint: const Text('단계'),
+            items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+            onChanged: (value) {
+              setState(() {
+                _rebirthLevel = value ?? 0;
+              });
+            },
+          ),
+      ],
     );
   }
 
@@ -560,12 +487,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   }
 }
 
-// A helper to get the name of the items in the dropdown
 extension DropdownDisplay on Object {
   String get displayName {
-    if (this is Aura) return (this as Aura).name;
-    if (this is Charyeok) return (this as Charyeok).name;
     if (this is Spirit) return (this as Spirit).name;
+    if (this is Charyeok) return (this as Charyeok).name;
     if (this is CharyeokGrade) {
       switch (this as CharyeokGrade) {
         case CharyeokGrade.normal:
@@ -578,6 +503,16 @@ extension DropdownDisplay on Object {
           return '유물';
         case CharyeokGrade.legendary:
           return '전설';
+      }
+    }
+    if (this is RebirthRealm) {
+      switch (this as RebirthRealm) {
+        case RebirthRealm.none:
+          return '선택 안함';
+        case RebirthRealm.heavenly:
+          return '천계';
+        case RebirthRealm.demon:
+          return '마계';
       }
     }
     return toString();
@@ -728,65 +663,3 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
     return _detailedCharyeok == null ? _buildGridView() : _buildDetailView();
   }
 }
-
-class _AuraSelectionDialog extends StatefulWidget {
-  @override
-  __AuraSelectionDialogState createState() => __AuraSelectionDialogState();
-}
-
-class __AuraSelectionDialogState extends State<_AuraSelectionDialog> {
-  @override
-  Widget build(BuildContext context) {
-    final displayAuras = auras.where((a) => a.name != '선택 안함').toList();
-    return Dialog(
-      child: Column(
-        children: [
-          Text("오라 선택", style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: displayAuras.length,
-              itemBuilder: (context, index) {
-                final aura = displayAuras[index];
-                return GestureDetector(
-                  onTap: () => Navigator.pop(context, aura),
-                  child: GridTile(
-                    footer: Container(
-                      color: Colors.black54,
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        aura.name,
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    child: Image.asset(aura.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextButton.icon(
-              icon: const Icon(Icons.cancel),
-              label: const Text("선택 취소"),
-              onPressed: () {
-                // Pop with the "None" aura
-                Navigator.pop(context, auras[0]);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-
