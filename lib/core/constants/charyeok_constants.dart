@@ -53,9 +53,19 @@ class Charyeok {
 
 const List<Charyeok> charyeoks = [
   Charyeok(
+    name: '선택 안함',
+    englishName: 'none',
+    imagePath: '',
+    availableGrades: [],
+    baseEffectType: CharyeokEffectType.none,
+    baseEffectValues: {},
+    synergyEffectType: {},
+    synergyEffectValues: {},
+  ),
+  Charyeok(
     name: '제갈택의 탐',
     englishName: 'tam',
-    imagePath: 'images/charyeok/tam.png',
+    imagePath: 'assets/images/charyeok/tam.png',
     availableGrades: [CharyeokGrade.relic, CharyeokGrade.legendary],
     baseEffectType: CharyeokEffectType.attackSetPercent,
     baseEffectValues: {
@@ -68,7 +78,7 @@ const List<Charyeok> charyeoks = [
   Charyeok(
     name: '우마왕',
     englishName: 'umawang',
-    imagePath: 'images/charyeok/umawang.png',
+    imagePath: 'assets/images/charyeok/umawang.png',
     availableGrades: [
       CharyeokGrade.normal,
       CharyeokGrade.advanced,
@@ -96,7 +106,7 @@ const List<Charyeok> charyeoks = [
   Charyeok(
     name: '잔다르크',
     englishName: 'jandaleukeu',
-    imagePath: 'images/charyeok/jandaleukeu.png',
+    imagePath: 'assets/images/charyeok/jandaleukeu.png',
     availableGrades: [
       CharyeokGrade.normal,
       CharyeokGrade.advanced,
@@ -118,7 +128,7 @@ const List<Charyeok> charyeoks = [
   Charyeok(
     name: '아수라',
     englishName: 'asula',
-    imagePath: 'images/charyeok/asula.png',
+    imagePath: 'assets/images/charyeok/asula.png',
     availableGrades: [CharyeokGrade.rare, CharyeokGrade.relic, CharyeokGrade.legendary],
     baseEffectType: CharyeokEffectType.none,
     baseEffectValues: {},
@@ -134,7 +144,7 @@ const List<Charyeok> charyeoks = [
   Charyeok(
     name: '롱기누스',
     englishName: 'longginuseu',
-    imagePath: 'images/charyeok/longginuseu.png',
+    imagePath: 'assets/images/charyeok/longginuseu.png',
     availableGrades: [CharyeokGrade.rare, CharyeokGrade.relic, CharyeokGrade.legendary],
     baseEffectType: CharyeokEffectType.baseAttackIncreasePercent,
     baseEffectValues: {
@@ -154,7 +164,7 @@ const List<Charyeok> charyeoks = [
   Charyeok(
     name: '상형권',
     englishName: 'sanghyeonggwon',
-    imagePath: 'images/charyeok/sanghyeonggwon.png',
+    imagePath: 'assets/images/charyeok/sanghyeonggwon.png',
     availableGrades: [CharyeokGrade.rare, CharyeokGrade.relic, CharyeokGrade.legendary],
     baseEffectType: CharyeokEffectType.critDamageIncrease,
     baseEffectValues: {

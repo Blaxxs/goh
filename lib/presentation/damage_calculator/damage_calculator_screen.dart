@@ -195,17 +195,17 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     Widget auraIcon;
-    if (_selectedAura != null) {
-      auraIcon = Image.asset(_selectedAura!.imagePath, errorBuilder: (c, o, s) => const Text('오라'));
+    if (_selectedAura != null && _selectedAura!.name != '선택 안함') {
+      auraIcon = Image.asset(_selectedAura!.imagePath, fit: BoxFit.cover);
     } else {
-      auraIcon = const Text('오라');
+      auraIcon = const Center(child: Text('오라 선택'));
     }
 
     Widget charyeokIcon;
-    if (_selectedCharyeok != null) {
-      charyeokIcon = Image.asset(_selectedCharyeok!.imagePath, errorBuilder: (c, o, s) => const Text('차력'));
+    if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
+      charyeokIcon = Image.asset(_selectedCharyeok!.imagePath, fit: BoxFit.cover);
     } else {
-      charyeokIcon = const Text('차력');
+      charyeokIcon = const Center(child: Text('차력 선택'));
     }
 
     return Scaffold(
