@@ -14,6 +14,26 @@ class DamageCalculatorScreen extends StatefulWidget {
   State<DamageCalculatorScreen> createState() => _DamageCalculatorScreenState();
 }
 
+Color _getBorderColorForGrade(CharyeokGrade? grade) {
+  if (grade == null) {
+    return Colors.grey.shade300;
+  }
+  switch (grade) {
+    case CharyeokGrade.normal:
+      return const Color(0xFFDBEDFA);
+    case CharyeokGrade.advanced:
+      return const Color(0xFF0FD380);
+    case CharyeokGrade.rare:
+      return const Color(0xFF6BBDF7);
+    case CharyeokGrade.relic:
+      return const Color(0xFFE0564B);
+    case CharyeokGrade.legendary:
+      return const Color(0xFFF7C05F);
+    default:
+      return Colors.grey.shade300;
+  }
+}
+
 class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Character? _selectedCharacter;
   Aura? _selectedAura;
@@ -276,7 +296,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               height: 128,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.grey.shade300, width: 3),
+                border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 3),
                  boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.5),
