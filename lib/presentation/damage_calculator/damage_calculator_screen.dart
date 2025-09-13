@@ -21,7 +21,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   CharyeokGrade? _selectedCharyeokGrade;
   int _selectedCharyeokStar = 1;
   Spirit? _selectedSpirit;
-  int _enhancementLevel = 0;
+  
   int _tamLevel = 0;
   int _rebirthLevel = 0;
   bool _isCounterElement = false;
@@ -661,50 +661,4 @@ class __AuraSelectionDialogState extends State<_AuraSelectionDialog> {
   }
 }
 
-class _AuraSelectionDialog extends StatefulWidget {
-  @override
-  __AuraSelectionDialogState createState() => __AuraSelectionDialogState();
-}
 
-class __AuraSelectionDialogState extends State<_AuraSelectionDialog> {
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Column(
-        children: [
-          Text("오라 선택", style: Theme.of(context).textTheme.headlineSmall),
-          const SizedBox(height: 16),
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-              ),
-              itemCount: auras.length,
-              itemBuilder: (context, index) {
-                final aura = auras[index];
-                return GestureDetector(
-                  onTap: () => Navigator.pop(context, aura),
-                  child: GridTile(
-                    footer: Container(
-                      color: Colors.black54,
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        aura.name,
-                        style: const TextStyle(color: Colors.white, fontSize: 12),
-                        textAlign: TextAlign.center,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    child: Image.asset(aura.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => Icon(Icons.error)),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
