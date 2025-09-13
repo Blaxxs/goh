@@ -86,19 +86,21 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     super.dispose();
   }
 
-  void _calculateDamage() {
-    if (_selectedCharacter == null) return;
-
-    // Base Stats
-    double baseAttack = _selectedCharacter!.baseAttackPower.toDouble();
-    
-    // Rebirth bonus
+  double _getBaseAttackWithRebirth() {
+    double baseAttack = _selectedCharacter?.baseAttackPower.toDouble() ?? 0;
     if (_selectedRebirthRealm == RebirthRealm.demon) {
       baseAttack += demonRebirthBonus[_rebirthLevel];
     } else if (_selectedRebirthRealm == RebirthRealm.heavenly) {
       baseAttack += heavenlyRebirthBonus[_rebirthLevel];
     }
+    return baseAttack;
+  }
 
+  void _calculateDamage() {
+    if (_selectedCharacter == null) return;
+
+    // Base Stats
+    double baseAttack = _getBaseAttackWithRebirth();
     double additionalAttack = double.tryParse(_additionalAttackPowerController.text) ?? 0;
 
     // Multipliers & Buffs from TextFields
@@ -124,7 +126,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           case CharyeokEffectType.critDamageIncrease:
             critDamage += value;
             break;
-          // ATTACK_SET_PERCENT and FIXED_ADDITIONAL_DAMAGE are applied later
           default:
             break;
         }
@@ -210,17 +211,17 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             onTap: _showCharyeokSelectionDialog,
             customBorder: const CircleBorder(),
             child: Container(
-              width: 128,
-              height: 128,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 3),
+                border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
                  boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.5),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: const Offset(0, 3),
+                    spreadRadius: 2,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -233,17 +234,17 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
           Text(
             _selectedCharyeok!.name,
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 16,
+              fontSize: 12,
               shadows: <Shadow>[
                 Shadow(
                   offset: Offset(1.0, 1.0),
-                  blurRadius: 3.0,
+                  blurRadius: 2.0,
                   color: Colors.black,
                 ),
               ],
@@ -296,7 +297,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           SizedBox(
             height: screenHeight * 0.35,
             child: Stack(
-              alignment: Alignment.center,
               children: [
                 if (_selectedCharacter != null)
                   Positioned.fill(
@@ -311,9 +311,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       },
                     ),
                   ),
-                Align(
-                  alignment: Alignment.center,
-                  child: charyeokWidget,
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, right: 8.0),
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: charyeokWidget,
+                  ),
                 ),
               ],
             ),
@@ -416,16 +419,25 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     return SizedBox(
       width: 220,
       child: InputDecorator(
-        decoration: const InputDecoration(
-          labelText: '공격력',
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: InputDecoration(
+          label: RichText(
+            text: TextSpan(
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(fontSize: 16),
+              children: const [
+                TextSpan(text: '기본 공격력', style: TextStyle(color: Colors.red)),
+                TextSpan(text: ' + '),
+                TextSpan(text: '추가 공격력', style: TextStyle(color: Colors.green)),
+              ],
+            ),
+          ),
+          border: const OutlineInputBorder(),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         ),
         child: RichText(
           text: TextSpan(
             style: DefaultTextStyle.of(context).style.copyWith(fontSize: 16),
             children: [
-              TextSpan(text: '${formatter.format(_selectedCharacter?.baseAttackPower ?? 0)} + '),
+              TextSpan(text: '${formatter.format(_getBaseAttackWithRebirth())} + '),
               WidgetSpan(
                 alignment: PlaceholderAlignment.middle,
                 child: SizedBox(
