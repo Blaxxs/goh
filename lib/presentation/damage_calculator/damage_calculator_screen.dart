@@ -196,25 +196,54 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     Widget auraWidget;
     if (_selectedAura != null && _selectedAura!.name != '선택 안함') {
-      // Selected state: Circular image
-      auraWidget = InkWell(
-        onTap: _showAuraSelectionDialog,
-        customBorder: const CircleBorder(),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey.shade300, width: 2),
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              _selectedAura!.imagePath,
-              fit: BoxFit.cover,
-              errorBuilder: (c, o, s) => const Icon(Icons.error),
+      // Selected state: Larger circular image with name below
+      auraWidget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            onTap: _showAuraSelectionDialog,
+            customBorder: const CircleBorder(),
+            child: Container(
+              width: 128, // Increased size
+              height: 128, // Increased size
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey.shade300, width: 3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  _selectedAura!.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, o, s) => const Icon(Icons.error),
+                ),
+              ),
             ),
           ),
-        ),
+          const SizedBox(height: 8),
+          Text(
+            _selectedAura!.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(1.0, 1.0),
+                  blurRadius: 3.0,
+                  color: Colors.black,
+                ),
+              ],
+            ),
+          ),
+        ],
       );
     } else {
       // Default state: Text button
@@ -235,25 +264,54 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     Widget charyeokWidget;
     if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
-      // Selected state: Circular image
-      charyeokWidget = InkWell(
-        onTap: _showCharyeokSelectionDialog,
-        customBorder: const CircleBorder(),
-        child: Container(
-          width: 64,
-          height: 64,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.grey.shade300, width: 2),
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              _selectedCharyeok!.imagePath,
-              fit: BoxFit.cover,
-              errorBuilder: (c, o, s) => const Icon(Icons.error),
+      // Selected state: Larger circular image with name below
+      charyeokWidget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            onTap: _showCharyeokSelectionDialog,
+            customBorder: const CircleBorder(),
+            child: Container(
+              width: 128,
+              height: 128,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.grey.shade300, width: 3),
+                 boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  _selectedCharyeok!.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, o, s) => const Icon(Icons.error),
+                ),
+              ),
             ),
           ),
-        ),
+          const SizedBox(height: 8),
+          Text(
+            _selectedCharyeok!.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(1.0, 1.0),
+                  blurRadius: 3.0,
+                  color: Colors.black,
+                ),
+              ],
+            ),
+          ),
+        ],
       );
     } else {
       // Default state: Text button
@@ -299,22 +357,37 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
           SizedBox(
-            height: screenHeight * 0.30,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.center,
+            height: screenHeight * 0.35, // Increased height for the stack
+            child: Stack(
+              alignment: Alignment.center,
               children: [
-                auraWidget,
+                // Background Character Image
                 if (_selectedCharacter != null)
-                  Image.asset(
-                    _selectedCharacter!.imagePath,
-                    width: screenWidth * 0.4,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.error, size: screenWidth * 0.4);
-                    },
+                  Positioned.fill(
+                    child: Image.asset(
+                      _selectedCharacter!.imagePath,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        // Display a placeholder or error message
+                        return Container(
+                          color: Colors.grey[200],
+                          child: const Center(child: Text('이미지 없음')),
+                        );
+                      },
+                    ),
                   ),
-                charyeokWidget,
+                // Foreground Icons
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      auraWidget,
+                      charyeokWidget,
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
