@@ -484,6 +484,7 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
   }
 
   Widget _buildGridView() {
+    final displayCharyeoks = charyeoks.where((c) => c.name != '선택 안함').toList();
     return Column(
       children: [
         Text("차력 선택", style: Theme.of(context).textTheme.headlineSmall),
@@ -495,9 +496,9 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
               crossAxisSpacing: 8,
               mainAxisSpacing: 8,
             ),
-            itemCount: charyeoks.length,
+            itemCount: displayCharyeoks.length,
             itemBuilder: (context, index) {
-              final charyeok = charyeoks[index];
+              final charyeok = displayCharyeoks[index];
               return GestureDetector(
                 onTap: () => _selectCharyeok(charyeok),
                 child: GridTile(
@@ -511,9 +512,23 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  child: Image.asset(charyeok.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => Icon(Icons.error)),
+                  child: Image.asset(charyeok.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
                 ),
               );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextButton.icon(
+            icon: const Icon(Icons.cancel),
+            label: const Text("선택 취소"),
+            onPressed: () {
+              Navigator.pop(context, {
+                'charyeok': charyeoks[0],
+                'grade': null,
+                'star': 1,
+              });
             },
           ),
         ),
@@ -542,7 +557,7 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
             ],
           ),
           const SizedBox(height: 16),
-          Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => Icon(Icons.error, size: 100)),
+          Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
           const SizedBox(height: 16),
           if (charyeok.availableGrades.isNotEmpty)
             DropdownButton<CharyeokGrade>(
@@ -583,6 +598,66 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return _detailedCharyeok == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class _AuraSelectionDialog extends StatefulWidget {
+  @override
+  __AuraSelectionDialogState createState() => __AuraSelectionDialogState();
+}
+
+class __AuraSelectionDialogState extends State<_AuraSelectionDialog> {
+  @override
+  Widget build(BuildContext context) {
+    final displayAuras = auras.where((a) => a.name != '선택 안함').toList();
+    return Dialog(
+      child: Column(
+        children: [
+          Text("오라 선택", style: Theme.of(context).textTheme.headlineSmall),
+          const SizedBox(height: 16),
+          Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+              ),
+              itemCount: displayAuras.length,
+              itemBuilder: (context, index) {
+                final aura = displayAuras[index];
+                return GestureDetector(
+                  onTap: () => Navigator.pop(context, aura),
+                  child: GridTile(
+                    footer: Container(
+                      color: Colors.black54,
+                      padding: const EdgeInsets.all(4.0),
+                      child: Text(
+                        aura.name,
+                        style: const TextStyle(color: Colors.white, fontSize: 12),
+                        textAlign: TextAlign.center,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    child: Image.asset(aura.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel),
+              label: const Text("선택 취소"),
+              onPressed: () {
+                // Pop with the "None" aura
+                Navigator.pop(context, auras[0]);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
