@@ -42,7 +42,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   int _selectedCharyeokStar = 1;
   Spirit? _selectedSpirit;
   
-  int _tamLevel = 0;
   int _rebirthLevel = 0;
   bool _isCounterElement = false;
   double _calculatedDamage = 0;
@@ -432,17 +431,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                           });
                         },
                       ),
-                      const SizedBox(width: 10),
-                      const Text('탐: '),
-                      DropdownButton<int>(
-                        value: _tamLevel,
-                        items: List.generate(11, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                        onChanged: (value) {
-                          setState(() {
-                            _tamLevel = value ?? 0;
-                          });
-                        },
-                      ),
+                      
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -451,7 +440,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     runSpacing: 16.0,
                     alignment: WrapAlignment.center,
                     children: [
-                      _buildTextField('추가 공격력', _additionalAttackPowerController),
+                      _buildAttackPowerInput(),
                       _buildTextField('리더 효과', _leaderEffectController, hint: '예) 1.5'),
                       _buildTextField('크리 데미지', _critDamageController),
                       _buildTextField('일반 데미지 증가', _normalDamageIncreaseController, suffix: '%'),
@@ -491,6 +480,45 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAttackPowerInput() {
+    final formatter = NumberFormat('#,###');
+    return SizedBox(
+      width: 220,
+      child: InputDecorator(
+        decoration: const InputDecoration(
+          labelText: '공격력',
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        ),
+        child: RichText(
+          text: TextSpan(
+            style: DefaultTextStyle.of(context).style.copyWith(fontSize: 16),
+            children: [
+              TextSpan(text: '${formatter.format(_selectedCharacter?.baseAttackPower ?? 0)} + '),
+              WidgetSpan(
+                alignment: PlaceholderAlignment.middle,
+                child: SizedBox(
+                  width: 100,
+                  child: TextFormField(
+                    controller: _additionalAttackPowerController,
+                    style: const TextStyle(color: Colors.green, fontSize: 16),
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      hintText: '추가',
+                      isDense: true,
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
