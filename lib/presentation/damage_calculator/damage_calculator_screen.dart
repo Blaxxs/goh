@@ -194,18 +194,82 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
-    Widget auraIcon;
+    Widget auraWidget;
     if (_selectedAura != null && _selectedAura!.name != '선택 안함') {
-      auraIcon = Image.asset(_selectedAura!.imagePath, fit: BoxFit.cover);
+      // Selected state: Circular image
+      auraWidget = InkWell(
+        onTap: _showAuraSelectionDialog,
+        customBorder: const CircleBorder(),
+        child: Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey.shade300, width: 2),
+          ),
+          child: ClipOval(
+            child: Image.asset(
+              _selectedAura!.imagePath,
+              fit: BoxFit.cover,
+              errorBuilder: (c, o, s) => const Icon(Icons.error),
+            ),
+          ),
+        ),
+      );
     } else {
-      auraIcon = const Center(child: Text('오라 선택'));
+      // Default state: Text button
+      auraWidget = InkWell(
+        onTap: _showAuraSelectionDialog,
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.grey.shade300, width: 2),
+          ),
+          child: const Text('오라 선택'),
+        ),
+      );
     }
 
-    Widget charyeokIcon;
+    Widget charyeokWidget;
     if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
-      charyeokIcon = Image.asset(_selectedCharyeok!.imagePath, fit: BoxFit.cover);
+      // Selected state: Circular image
+      charyeokWidget = InkWell(
+        onTap: _showCharyeokSelectionDialog,
+        customBorder: const CircleBorder(),
+        child: Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey.shade300, width: 2),
+          ),
+          child: ClipOval(
+            child: Image.asset(
+              _selectedCharyeok!.imagePath,
+              fit: BoxFit.cover,
+              errorBuilder: (c, o, s) => const Icon(Icons.error),
+            ),
+          ),
+        ),
+      );
     } else {
-      charyeokIcon = const Center(child: Text('차력 선택'));
+      // Default state: Text button
+      charyeokWidget = InkWell(
+        onTap: _showCharyeokSelectionDialog,
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.grey.shade300, width: 2),
+          ),
+          child: const Text('차력 선택'),
+        ),
+      );
     }
 
     return Scaffold(
@@ -240,27 +304,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    InkWell(
-                      onTap: _showAuraSelectionDialog,
-                      customBorder: const CircleBorder(),
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.shade300, width: 2),
-                        ),
-                        child: ClipOval(child: auraIcon),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('오라'),
-                  ],
-                ),
+                auraWidget,
                 if (_selectedCharacter != null)
                   Image.asset(
                     _selectedCharacter!.imagePath,
@@ -270,27 +314,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       return Icon(Icons.error, size: screenWidth * 0.4);
                     },
                   ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    InkWell(
-                      onTap: _showCharyeokSelectionDialog,
-                      customBorder: const CircleBorder(),
-                      child: Container(
-                        width: 64,
-                        height: 64,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.shade300, width: 2),
-                        ),
-                        child: ClipOval(child: charyeokIcon),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Text('차력'),
-                  ],
-                ),
+                charyeokWidget,
               ],
             ),
           ),
