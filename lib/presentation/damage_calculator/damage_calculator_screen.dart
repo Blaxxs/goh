@@ -455,9 +455,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###');
     final screenHeight = MediaQuery.of(context).size.height;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final charyeokIconSize = screenWidth * 0.2;
-    final otherIconSize = screenWidth * 0.15;
+    final imageContainerHeight = screenHeight * 0.3;
+    final charyeokIconSize = imageContainerHeight * 0.4;
+    final otherIconSize = imageContainerHeight * 0.25;
 
     Widget charyeokWidget;
     if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
