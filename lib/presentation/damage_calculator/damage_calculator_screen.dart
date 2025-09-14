@@ -387,9 +387,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) {
-        return _CrestSelectionDialog(
-          initialCrest: _selectedCrest ?? crests[0],
-          initialValue: _crestValueController.text,
+        return Dialog(
+          child: _CrestSelectionDialog(
+            initialCrest: _selectedCrest ?? crests[0],
+            initialValue: _crestValueController.text,
+          ),
         );
       },
     );
@@ -964,13 +966,12 @@ class _CrestSelectionDialog extends StatefulWidget {
 }
 
 class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
-  late Crest _selectedCrest;
+  Crest? _detailedCrest;
   late TextEditingController _valueController;
 
   @override
   void initState() {
     super.initState();
-    _selectedCrest = widget.initialCrest;
     _valueController = TextEditingController(text: widget.initialValue);
   }
 
@@ -980,68 +981,114 @@ class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('문장 선택'),
-      content: Column(
+  void _selectCrest(Crest crest) {
+    setState(() {
+      _detailedCrest = crest;
+    });
+  }
+
+  Widget _buildGridView() {
+    final displayCrests = crests.where((c) => c.type != CrestType.none).toList();
+    return Column(
+      children: [
+        Text("문장 선택", style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 16),
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: displayCrests.length,
+            itemBuilder: (context, index) {
+              final crest = displayCrests[index];
+              return GestureDetector(
+                onTap: () => _selectCrest(crest),
+                child: GridTile(
+                  footer: Container(
+                    color: Colors.black54,
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      crest.name,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  child: crest.imagePath != null
+                      ? Image.asset(crest.imagePath!, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error))
+                      : Icon(crest.icon, size: 50),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextButton.icon(
+            icon: const Icon(Icons.cancel),
+            label: const Text("선택 취소"),
+            onPressed: () {
+              Navigator.pop(context, {
+                'crest': crests[0],
+                'value': '',
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailView() {
+    final crest = _detailedCrest!;
+
+    return SingleChildScrollView(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: crests.where((c) => c.type != CrestType.none).map((crest) {
-              bool isSelected = _selectedCrest.type == crest.type;
-              return InkWell(
-                onTap: () => setState(() => _selectedCrest = crest),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: isSelected ? Colors.blue.withOpacity(0.2) : Colors.transparent,
-                    border: Border.all(color: isSelected ? Colors.blue : Colors.grey),
-                  ),
-                  child: Column(
-                    children: [
-                      if (crest.imagePath != null)
-                        Image.asset(crest.imagePath!, width: 30, height: 30)
-                      else if (crest.icon != null)
-                        Icon(crest.icon!, size: 30),
-                      const SizedBox(height: 4),
-                      Text(crest.name, style: const TextStyle(fontSize: 10)),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
+            children: [
+              IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedCrest = null)),
+              Expanded(child: Text(crest.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+            ],
           ),
-          const SizedBox(height: 20),
-          if (_selectedCrest.type != CrestType.none)
-            TextFormField(
+          const SizedBox(height: 16),
+          if (crest.imagePath != null)
+            Image.asset(crest.imagePath!, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100))
+          else if (crest.icon != null)
+            Icon(crest.icon, size: 100),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
               controller: _valueController,
               decoration: InputDecoration(
-                labelText: '${_selectedCrest.name} 값',
+                labelText: '${crest.name} 값',
                 hintText: 'n% 또는 n 입력',
                 border: const OutlineInputBorder(),
               ),
               keyboardType: TextInputType.number,
             ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context, {
+                'crest': _detailedCrest,
+                'value': _valueController.text,
+              });
+            },
+            child: const Text('선택'),
+          ),
         ],
       ),
-      actions: [
-        TextButton(
-          child: const Text('취소'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        TextButton(
-          child: const Text('확인'),
-          onPressed: () {
-            Navigator.of(context).pop({
-              'crest': _selectedCrest,
-              'value': _valueController.text,
-            });
-          },
-        ),
-      ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _detailedCrest == null ? _buildGridView() : _buildDetailView();
   }
 }
