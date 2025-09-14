@@ -59,7 +59,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   CharyeokGrade? _selectedCharyeokGrade;
   int _selectedCharyeokStar = 1;
   Spirit? _selectedSpirit;
+  int _selectedSpiritStar = 1;
   Crest? _selectedCrest;
+  Leader? _selectedLeader;
 
   // Rebirth
   RebirthRealm _selectedRebirthRealm = RebirthRealm.none;
@@ -72,7 +74,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
   // --- Text Editing Controllers ---
   final _additionalAttackPowerController = TextEditingController();
-  final _leaderEffectController = TextEditingController();
   final _highSchoolBuffController = TextEditingController();
   final _powerUpController = TextEditingController();
   final _critDamageController = TextEditingController();
@@ -124,6 +125,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _selectedCharacter = characters[0];
     _selectedSpirit = spirits[0];
     _selectedCrest = crests[0];
+    _selectedLeader = leaders[0];
     if (charyeoks.isNotEmpty) {
       _selectedCharyeok = charyeoks[0];
       if (_selectedCharyeok!.availableGrades.isNotEmpty) {
@@ -135,7 +137,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   @override
   void dispose() {
     _additionalAttackPowerController.dispose();
-    _leaderEffectController.dispose();
     _highSchoolBuffController.dispose();
     _powerUpController.dispose();
     _critDamageController.dispose();
@@ -163,6 +164,38 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
   void _calculateDamage() {
     if (_selectedCharacter == null) return;
+
+    // --- Spirit Effects ---
+    double spiritSkillCoeff = 0;
+    double spiritCritDamage = 0;
+    double spiritBaseAttack = 0;
+    double spiritNormalDamage = 0;
+    double spiritSkillDamage = 0;
+
+    if (_selectedSpirit != null) {
+      for (var effect in _selectedSpirit!.effects) {
+        if (effect.characterDependency == null || effect.characterDependency == _selectedCharacter!.englishName) {
+          final value = effect.values[_selectedSpiritStar - 1];
+          switch (effect.type) {
+            case SpiritEffectType.skillCoefficient:
+              spiritSkillCoeff = value;
+              break;
+            case SpiritEffectType.critDamage:
+              spiritCritDamage = value;
+              break;
+            case SpiritEffectType.baseAttack:
+              spiritBaseAttack = value;
+              break;
+            case SpiritEffectType.normalDamage:
+              spiritNormalDamage = value;
+              break;
+            case SpiritEffectType.skillDamage:
+              spiritSkillDamage = value;
+              break;
+          }
+        }
+      }
+    }
 
     // --- Charyeok Effects ---
     double charyeokBaseAttackIncrease = 1.0;
@@ -270,26 +303,23 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       rebirthAttackBonus = heavenlyRebirthAttackBonus[_rebirthLevel].toDouble();
     }
 
-    double totalBaseAttack = (baseAttack * charyeokBaseAttackIncrease) + additionalAttack + rebirthAttackBonus + rebirthAttackOption;
+    double totalBaseAttack = (baseAttack * charyeokBaseAttackIncrease) + additionalAttack + rebirthAttackBonus + rebirthAttackOption + spiritBaseAttack;
 
     // --- Part 2: Multipliers ---
     final Object dalgijiLevel = SettingsService.instance.stageSettings.dalgijiLevel ?? 0;
     final double moonBaseAttackPercent = moonBaseAttackBuffs[dalgijiLevel] ?? 0.0;
     double moonBaseBuff = 1 + (moonBaseAttackPercent / 100);
 
-    double leaderBuff = _getParser(_leaderEffectController) / 100;
+    double leaderBuff = _selectedLeader?.multiplier ?? 1.0;
     double highSchoolBuff = _getParser(_highSchoolBuffController) / 100;
     double powerUpBuff = _getParser(_powerUpController) / 100;
 
-    leaderBuff = leaderBuff == 0 ? 1.0 : leaderBuff;
     highSchoolBuff = highSchoolBuff == 0 ? 1.0 : highSchoolBuff;
     powerUpBuff = powerUpBuff == 0 ? 1.0 : powerUpBuff;
 
     double totalMultiplier = leaderBuff * highSchoolBuff * moonBaseBuff * charyeokAttackIncrease * powerUpBuff * crestAttackBuff;
 
     // --- Part 3: Damage Type Multipliers ---
-    double spiritCritDamage = (_selectedSpirit?.effects['crit_damage'] as num? ?? 0).toDouble();
-    double spiritSkillDamage = (_selectedSpirit?.effects['skill_damage_increase'] as num? ?? 0).toDouble();
     double passiveCritDamage = (_selectedCharacter!.passive['critDamage'] as num? ?? 0).toDouble();
 
     double critDmgSum = _getParser(_critDamageController) +
@@ -306,6 +336,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _getParser(_divineItemNormalDamageController) +
         charyeokNormalDamage +
         rebirthNormalDmgOption +
+        spiritNormalDamage +
         _getParser(_fragmentNormalDamageController);
     double normalDmgMultiplier = 1 + (normalDmgSum / 100);
 
@@ -325,7 +356,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _getParser(_fragmentMinigameDamageController);
     double minigameDmgMultiplier = 1 + (minigameDmgSum / 100);
 
-    double skillCoeffSum = _selectedCharacter!.skillMultiplier.toDouble();
+    double skillCoeffSum = _selectedCharacter!.skillMultiplier.toDouble() + spiritSkillCoeff;
     double skillCoeffMultiplier = skillCoeffSum / 100;
 
     // --- Final Calculation ---
@@ -367,20 +398,20 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   }
 
   Future<void> _showLeaderSelectionDialog() async {
-    await showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('리더 효과'),
-            content: _buildTextField('리더 효과 (%)', _leaderEffectController, hint: '150'),
-            actions: [
-              TextButton(
-                child: const Text('확인'),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
-          );
-        });
+    final result = await showDialog<Leader>(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: _LeaderSelectionDialog(),
+        );
+      },
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedLeader = result;
+      });
+    }
   }
 
   Future<void> _showCrestSelectionDialog() async {
@@ -400,6 +431,22 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       setState(() {
         _selectedCrest = result['crest'];
         _crestValueController.text = result['value'];
+      });
+    }
+  }
+
+  Future<void> _showSpiritSelectionDialog() async {
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => Dialog(
+        child: _SpiritSelectionDialog(),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedSpirit = result['spirit'];
+        _selectedSpiritStar = result['star'];
       });
     }
   }
@@ -475,19 +522,62 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       );
     }
 
-    Widget leaderWidget = InkWell(
-      onTap: _showLeaderSelectionDialog,
-      borderRadius: BorderRadius.circular(30),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.grey.shade300, width: 2),
+    Widget leaderWidget;
+    if (_selectedLeader != null && _selectedLeader!.name != '선택 안함') {
+      leaderWidget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            onTap: _showLeaderSelectionDialog,
+            customBorder: const CircleBorder(),
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.amber, width: 2),
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  _selectedLeader!.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, o, s) => const Icon(Icons.error),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _selectedLeader!.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(1.0, 1.0),
+                  blurRadius: 2.0,
+                  color: Colors.black,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      leaderWidget = InkWell(
+        onTap: _showLeaderSelectionDialog,
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.grey.shade300, width: 2),
+          ),
+          child: const Text('리더 선택'),
         ),
-        child: const Text('리더 선택'),
-      ),
-    );
+      );
+    }
 
     Widget crestWidget;
     if (_selectedCrest != null && _selectedCrest!.type != CrestType.none) {
@@ -531,6 +621,63 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             child: const Text('문장 선택'),
           ),
         );
+    }
+
+    Widget spiritWidget;
+    if (_selectedSpirit != null && _selectedSpirit!.name != '선택 안함') {
+      spiritWidget = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          InkWell(
+            onTap: _showSpiritSelectionDialog,
+            customBorder: const CircleBorder(),
+            child: Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.amber, width: 2),
+              ),
+              child: ClipOval(
+                child: Image.asset(
+                  _selectedSpirit!.imagePath,
+                  fit: BoxFit.cover,
+                  errorBuilder: (c, o, s) => const Icon(Icons.error),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            _selectedSpirit!.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 10,
+              shadows: <Shadow>[
+                Shadow(
+                  offset: Offset(1.0, 1.0),
+                  blurRadius: 2.0,
+                  color: Colors.black,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      spiritWidget = InkWell(
+        onTap: _showSpiritSelectionDialog,
+        borderRadius: BorderRadius.circular(30),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.grey.shade300, width: 2),
+          ),
+          child: const Text('스피릿 선택'),
+        ),
+      );
     }
 
     return Scaffold(
@@ -582,9 +729,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   child: leaderWidget,
                 ),
                 Positioned(
-                  top: 68, 
+                  top: 68,
                   left: 8,
                   child: crestWidget,
+                ),
+                Positioned(
+                  bottom: 8,
+                  left: 8,
+                  child: spiritWidget,
                 ),
                 Positioned(
                   top: 8,
@@ -765,6 +917,7 @@ extension DropdownDisplay on Object {
   String get displayName {
     if (this is Spirit) return (this as Spirit).name;
     if (this is Charyeok) return (this as Charyeok).name;
+    if (this is Leader) return (this as Leader).name;
     if (this is CharyeokGrade) {
       switch (this as CharyeokGrade) {
         case CharyeokGrade.normal:
@@ -1090,5 +1243,187 @@ class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return _detailedCrest == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class _LeaderSelectionDialog extends StatefulWidget {
+  @override
+  __LeaderSelectionDialogState createState() => __LeaderSelectionDialogState();
+}
+
+class __LeaderSelectionDialogState extends State<_LeaderSelectionDialog> {
+  Leader? _detailedLeader;
+
+  void _selectLeader(Leader leader) {
+    setState(() {
+      _detailedLeader = leader;
+    });
+  }
+
+  Widget _buildGridView() {
+    final displayLeaders = leaders.where((l) => l.name != '선택 안함').toList();
+    return Column(
+      children: [
+        Text("리더 선택", style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 16),
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: displayLeaders.length,
+            itemBuilder: (context, index) {
+              final leader = displayLeaders[index];
+              return GestureDetector(
+                onTap: () => Navigator.of(context).pop(leader),
+                child: GridTile(
+                  footer: Container(
+                    color: Colors.black54,
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      leader.name,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  child: Image.asset(leader.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextButton.icon(
+            icon: const Icon(Icons.cancel),
+            label: const Text("선택 취소"),
+            onPressed: () {
+              Navigator.pop(context, leaders[0]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildGridView();
+  }
+}
+
+class _SpiritSelectionDialog extends StatefulWidget {
+  @override
+  __SpiritSelectionDialogState createState() => __SpiritSelectionDialogState();
+}
+
+class __SpiritSelectionDialogState extends State<_SpiritSelectionDialog> {
+  Spirit? _detailedSpirit;
+  int _selectedStar = 1;
+
+  void _selectSpirit(Spirit spirit) {
+    setState(() {
+      _detailedSpirit = spirit;
+    });
+  }
+
+  Widget _buildGridView() {
+    final displaySpirits = spirits.where((s) => s.name != '선택 안함').toList();
+    return Column(
+      children: [
+        Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 16),
+        Expanded(
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
+            itemCount: displaySpirits.length,
+            itemBuilder: (context, index) {
+              final spirit = displaySpirits[index];
+              return GestureDetector(
+                onTap: () => _selectSpirit(spirit),
+                child: GridTile(
+                  footer: Container(
+                    color: Colors.black54,
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(
+                      spirit.name,
+                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  child: Image.asset(spirit.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextButton.icon(
+            icon: const Icon(Icons.cancel),
+            label: const Text("선택 취소"),
+            onPressed: () {
+              Navigator.pop(context, {
+                'spirit': spirits[0],
+                'star': 1,
+              });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailView() {
+    final spirit = _detailedSpirit!;
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedSpirit = null)),
+              Expanded(child: Text(spirit.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Image.asset(spirit.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
+          const SizedBox(height: 16),
+          Text('성급: $_selectedStar성'),
+          Slider(
+            value: _selectedStar.toDouble(),
+            min: 1,
+            max: 9,
+            divisions: 8,
+            label: '$_selectedStar성',
+            onChanged: (value) => setState(() => _selectedStar = value.round()),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context, {
+                'spirit': _detailedSpirit,
+                'star': _selectedStar,
+              });
+            },
+            child: const Text('선택'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _detailedSpirit == null ? _buildGridView() : _buildDetailView();
   }
 }
