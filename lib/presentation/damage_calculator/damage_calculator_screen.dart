@@ -978,7 +978,7 @@ class BuffSelectionDialog extends StatelessWidget {
   final TextEditingController divineItemSkillDamageController;
   final TextEditingController divineItemCritDamageController;
 
-  const BuffSelectionDialog({
+  const BuffSelectionDialog({super.key, 
     // Removed super.key
     required this.highSchoolBuffController,
     required this.divineItemNormalDamageController,
