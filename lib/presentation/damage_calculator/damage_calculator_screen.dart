@@ -533,9 +533,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             child: Container(
               width: 60,
               height: 60,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.amber, width: 2),
               ),
               child: ClipOval(
                 child: Image.asset(
@@ -547,18 +546,21 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            _selectedLeader!.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              shadows: <Shadow>[
-                Shadow(
-                  offset: Offset(1.0, 1.0),
-                  blurRadius: 2.0,
-                  color: Colors.black,
-                ),
-              ],
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              _selectedLeader!.name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 2.0,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -590,10 +592,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     child: Container(
                         width: 60,
                         height: 60,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white,
-                            border: Border.all(color: Colors.amber, width: 2),
                         ),
                         child: _selectedCrest!.imagePath != null
                             ? ClipOval(child: Image.asset(_selectedCrest!.imagePath!, fit: BoxFit.cover))
@@ -601,9 +601,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     ),
                 ),
                 const SizedBox(height: 4),
-                Text(
-                    _selectedCrest!.name,
-                    style: const TextStyle(color: Colors.white, fontSize: 10, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Colors.black,)]),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                      _selectedCrest!.name,
+                      style: const TextStyle(color: Colors.white, fontSize: 10, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Colors.black,)]),
+                  ),
                 ),
             ],
         );
@@ -634,9 +637,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             child: Container(
               width: 60,
               height: 60,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.amber, width: 2),
               ),
               child: ClipOval(
                 child: Image.asset(
@@ -648,18 +650,21 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            _selectedSpirit!.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              shadows: <Shadow>[
-                Shadow(
-                  offset: Offset(1.0, 1.0),
-                  blurRadius: 2.0,
-                  color: Colors.black,
-                ),
-              ],
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              _selectedSpirit!.name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                shadows: <Shadow>[
+                  Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 2.0,
+                    color: Colors.black,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -707,7 +712,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
           SizedBox(
-            height: screenHeight * 0.25,
+            height: screenHeight * 0.3,
             child: Stack(
               children: [
                 if (_selectedCharacter != null)
@@ -724,19 +729,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     ),
                   ),
                 Positioned(
-                  top: 8,
+                  top: 0,
                   left: 8,
-                  child: leaderWidget,
-                ),
-                Positioned(
-                  top: 68,
-                  left: 8,
-                  child: crestWidget,
-                ),
-                Positioned(
-                  bottom: 8,
-                  left: 8,
-                  child: spiritWidget,
+                  bottom: 0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [leaderWidget, crestWidget, spiritWidget],
+                  ),
                 ),
                 Positioned(
                   top: 8,
