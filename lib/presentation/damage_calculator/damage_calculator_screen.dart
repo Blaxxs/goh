@@ -1263,7 +1263,6 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
                 }).toList(),
               ),
             const SizedBox(height: 16),
-            Text('성급: $_selectedStar성'),
             StarSelector(
               initialStar: _selectedStar,
               onChanged: (star) {
@@ -1587,14 +1586,13 @@ class __SpiritSelectionDialogState extends State<_SpiritSelectionDialog> {
           const SizedBox(height: 16),
           Image.asset(spirit.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
           const SizedBox(height: 16),
-          Text('성급: $_selectedStar성'),
-          Slider(
-            value: _selectedStar.toDouble(),
-            min: 1,
-            max: 9,
-            divisions: 8,
-            label: '$_selectedStar성',
-            onChanged: (value) => setState(() => _selectedStar = value.round()),
+          StarSelector(
+            initialStar: _selectedStar,
+            onChanged: (star) {
+              setState(() {
+                _selectedStar = star;
+              });
+            },
           ),
           const SizedBox(height: 24),
           ElevatedButton(
