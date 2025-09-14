@@ -381,7 +381,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => Dialog(
-        child: _CharyeokSelectionDialog(),
+        child: CharyeokSelectionDialog(),
       ),
     );
 
@@ -399,7 +399,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       context: context,
       builder: (context) {
         return Dialog(
-          child: _LeaderSelectionDialog(),
+          child: LeaderSelectionDialog(),
         );
       },
     );
@@ -416,7 +416,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       context: context,
       builder: (context) {
         return Dialog(
-          child: _CrestSelectionDialog(
+          child: CrestSelectionDialog(
             initialCrest: _selectedCrest ?? crests[0],
             initialValue: _crestValueController.text,
           ),
@@ -436,7 +436,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => Dialog(
-        child: _SpiritSelectionDialog(),
+        child: SpiritSelectionDialog(),
       ),
     );
 
@@ -451,7 +451,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Future<void> _showBuffSelectionDialog() async {
     await showDialog(
       context: context,
-      builder: (context) => _BuffSelectionDialog(
+      builder: (context) => BuffSelectionDialog(
         highSchoolBuffController: _highSchoolBuffController,
         divineItemNormalDamageController: _divineItemNormalDamageController,
         divineItemSkillDamageController: _divineItemSkillDamageController,
@@ -485,7 +485,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                 border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
                  boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Color.fromRGBO(0, 0, 0, (0.5 * 255).round()),
                     spreadRadius: 2,
                     blurRadius: 4,
                     offset: const Offset(0, 2),
@@ -972,14 +972,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   }
 }
 
-class _BuffSelectionDialog extends StatelessWidget {
+class BuffSelectionDialog extends StatelessWidget {
   final TextEditingController highSchoolBuffController;
   final TextEditingController divineItemNormalDamageController;
   final TextEditingController divineItemSkillDamageController;
   final TextEditingController divineItemCritDamageController;
 
-  const _BuffSelectionDialog({
-    super.key,
+  const BuffSelectionDialog({
+    // Removed super.key
     required this.highSchoolBuffController,
     required this.divineItemNormalDamageController,
     required this.divineItemSkillDamageController,
@@ -1145,12 +1145,12 @@ extension DropdownDisplay on Object {
   }
 }
 
-class _CharyeokSelectionDialog extends StatefulWidget {
+class CharyeokSelectionDialog extends StatefulWidget {
   @override
-  __CharyeokSelectionDialogState createState() => __CharyeokSelectionDialogState();
+  _CharyeokSelectionDialogState createState() => _CharyeokSelectionDialogState();
 }
 
-class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
+class _CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   Charyeok? _detailedCharyeok;
   CharyeokGrade? _selectedGrade;
   int _selectedStar = 1;
@@ -1303,17 +1303,17 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
   }
 }
 
-class _CrestSelectionDialog extends StatefulWidget {
+class CrestSelectionDialog extends StatefulWidget {
   final Crest initialCrest;
   final String initialValue;
 
-  const _CrestSelectionDialog({required this.initialCrest, required this.initialValue});
+  const CrestSelectionDialog({super.key, required this.initialCrest, required this.initialValue});
 
   @override
-  __CrestSelectionDialogState createState() => __CrestSelectionDialogState();
+  _CrestSelectionDialogState createState() => _CrestSelectionDialogState();
 }
 
-class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
+class _CrestSelectionDialogState extends State<CrestSelectionDialog> {
   Crest? _detailedCrest;
   late TextEditingController _valueController;
 
@@ -1394,7 +1394,7 @@ class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
 
     return SingleChildScrollView(
       child: Column(
-        mainAxisSize: MainAxisSize.AxisSize.min,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Row(
             children: [
@@ -1441,19 +1441,14 @@ class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
   }
 }
 
-class _LeaderSelectionDialog extends StatefulWidget {
+class LeaderSelectionDialog extends StatefulWidget {
   @override
-  __LeaderSelectionDialogState createState() => __LeaderSelectionDialogState();
+  _LeaderSelectionDialogState createState() => _LeaderSelectionDialogState();
 }
 
-class __LeaderSelectionDialogState extends State<_LeaderSelectionDialog> {
-  Leader? _detailedLeader;
-
-  void _selectLeader(Leader leader) {
-    setState(() {
-      _detailedLeader = leader;
-    });
-  }
+class _LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
+  // Removed _detailedLeader;
+  // Removed _selectLeader method
 
   Widget _buildGridView() {
     final displayLeaders = leaders.where((l) => l.name != '선택 안함').toList();
@@ -1510,12 +1505,12 @@ class __LeaderSelectionDialogState extends State<_LeaderSelectionDialog> {
   }
 }
 
-class _SpiritSelectionDialog extends StatefulWidget {
+class SpiritSelectionDialog extends StatefulWidget {
   @override
-  __SpiritSelectionDialogState createState() => __SpiritSelectionDialogState();
+  _SpiritSelectionDialogState createState() => _SpiritSelectionDialogState();
 }
 
-class __SpiritSelectionDialogState extends State<_SpiritSelectionDialog> {
+class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   Spirit? _detailedSpirit;
   int _selectedStar = 1;
 
@@ -1581,37 +1576,40 @@ class __SpiritSelectionDialogState extends State<_SpiritSelectionDialog> {
     final spirit = _detailedSpirit!;
 
     return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedSpirit = null)),
-              Expanded(child: Text(spirit.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Image.asset(spirit.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
-          const SizedBox(height: 16),
-          StarSelector(
-            initialStar: _selectedStar,
-            onChanged: (star) {
-              setState(() {
-                _selectedStar = star;
-              });
-            },
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, {
-                'spirit': _detailedSpirit,
-                'star': _selectedStar,
-              });
-            },
-            child: const Text('선택'),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedSpirit = null)),
+                Expanded(child: Text(spirit.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Image.asset(spirit.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
+            const SizedBox(height: 16),
+            StarSelector(
+              initialStar: _selectedStar,
+              onChanged: (star) {
+                setState(() {
+                  _selectedStar = star;
+                });
+              },
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, {
+                  'spirit': _detailedSpirit,
+                  'star': _selectedStar,
+                });
+              },
+              child: const Text('선택'),
+            ),
+          ],
+        ),
       ),
     );
   }
