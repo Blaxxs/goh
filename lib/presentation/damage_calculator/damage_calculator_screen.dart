@@ -68,6 +68,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   int _rebirthLevel = 0;
   RebirthStat _selectedRebirthStat = RebirthStat.none;
 
+  // Critical
+  bool _isCriticalEnabled = false;
+
   // Calculation Results
   double _calculatedDamage = 0;
   double _currentAttackPower = 0;
@@ -91,6 +94,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _fragmentMinigameDamageController = TextEditingController();
   final _rebirthStatValueController = TextEditingController();
   final _crestValueController = TextEditingController();
+  final _criticalDamageInputController = TextEditingController(); // New controller
 
   // --- Data Maps ---
   final List<int> demonRebirthAttackBonus = [0, 50, 50, 100, 100, 200, 200, 300, 300, 450];
@@ -153,6 +157,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _fragmentMinigameDamageController.dispose();
     _rebirthStatValueController.dispose();
     _crestValueController.dispose();
+    _criticalDamageInputController.dispose(); // Dispose new controller
     super.dispose();
   }
 
@@ -354,6 +359,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         crestCritDamage +
         passiveCritDamage +
         charyeokCritDamage;
+
+    if (_isCriticalEnabled) {
+      critDmgSum += _getParser(_criticalDamageInputController);
+    }
+
     double critDmgMultiplier = 1 + (critDmgSum / 100);
 
     double normalDmgSum = _getParser(_accessoryNormalDamageController) +
@@ -921,7 +931,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     return Column(
       children: [
-        Row(
+        Row( // Existing Rebirth Row
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const Text('환생: '),
@@ -980,6 +990,26 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                 child: _buildTextField('스탯 값', _rebirthStatValueController),
               ),
             ],
+          ),
+        // New Critical Button and Input Field
+        const SizedBox(height: 10), // Add some spacing
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  _isCriticalEnabled = !_isCriticalEnabled;
+                });
+              },
+              child: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
+            ),
+          ],
+        ),
+        if (_isCriticalEnabled)
+          Padding(
+            padding: const EdgeInsets.only(top: 10.0),
+            child: _buildTextField('크리티컬 데미지', _criticalDamageInputController),
           ),
       ],
     );
