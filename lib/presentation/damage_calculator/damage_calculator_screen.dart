@@ -292,8 +292,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     }
 
     // --- Part 1: Base Attack Calculation ---
-    double baseAttack = _selectedCharacter!.baseAttackPower.toDouble();
-    double additionalAttack = _getParser(_additionalAttackPowerController);
+    double baseCharacterAttack = _selectedCharacter!.baseAttackPower.toDouble();
     double rebirthAttackBonus = 0;
     if (_selectedRebirthRealm == RebirthRealm.demon) {
       rebirthAttackBonus = demonRebirthAttackBonus[_rebirthLevel].toDouble();
@@ -301,7 +300,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       rebirthAttackBonus = heavenlyRebirthAttackBonus[_rebirthLevel].toDouble();
     }
 
-    double totalBaseAttack = (baseAttack * charyeokBaseAttackIncrease) + additionalAttack + rebirthAttackBonus + rebirthAttackOption + spiritBaseAttack;
+    // New term: baseAttackForCharyeok includes character base, rebirth stat option, and spirit base attack
+    double baseAttackForCharyeok = baseCharacterAttack + rebirthAttackOption + spiritBaseAttack;
+
+    // totalBaseAttack now uses baseAttackForCharyeok
+    double totalBaseAttack = (baseAttackForCharyeok * charyeokBaseAttackIncrease) + _getParser(_additionalAttackPowerController) + rebirthAttackBonus;
+
 
     // --- Part 2: Multipliers ---
     final Object dalgijiLevel = SettingsService.instance.stageSettings.dalgijiLevel ?? 0;
@@ -309,13 +313,15 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     double moonBaseBuff = 1 + (moonBaseAttackPercent / 100);
 
     double leaderBuff = _selectedLeader?.multiplier ?? 1.0;
-    double highSchoolBuff = _getParser(_highSchoolBuffController) / 100;
-    double powerUpBuff = _getParser(_powerUpController) / 100;
 
-    highSchoolBuff = highSchoolBuff == 0 ? 1.0 : highSchoolBuff;
-    powerUpBuff = powerUpBuff == 0 ? 1.0 : powerUpBuff;
+    // Changed highSchoolBuff and powerUpBuff calculation as per user's clarification
+    double highSchoolBuffMultiplier = 1 + (_getParser(_highSchoolBuffController) / 100);
+    double powerUpBuffMultiplier = 1 + (_getParser(_powerUpController) / 100);
 
-    double totalMultiplier = leaderBuff * highSchoolBuff * moonBaseBuff * charyeokAttackIncrease * powerUpBuff * crestAttackBuff;
+    // charyeokAttackIncrease remains value / 100 (assuming "n%가 된다" type)
+    // crestAttackBuff remains 1 + (crestValue / 100)
+
+    double totalMultiplier = leaderBuff * highSchoolBuffMultiplier * moonBaseBuff * charyeokAttackIncrease * powerUpBuffMultiplier * crestAttackBuff;
 
     // --- Part 3: Damage Type Multipliers ---
     double passiveCritDamage = (_selectedCharacter!.passive['critDamage'] as num? ?? 0).toDouble();
