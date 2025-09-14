@@ -197,7 +197,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     // --- Charyeok Effects ---
     double charyeokBaseAttackIncrease = 1.0;
-    double charyeokAttackIncrease = 1.0;
+    double charyeokAttackIncrease = 1.0; // Initialize to 1.0, will be set below
     double charyeokCritDamage = 0;
     double charyeokNormalDamage = 0;
     double charyeokSkillDamage = 0;
@@ -210,21 +210,42 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
       if (charyeok.baseEffectValues.containsKey(grade)) {
         final value = charyeok.baseEffectValues[grade]![star - 1].toDouble();
+
+        // Handle effects that are NOT attackSetPercent or baseAttackIncreasePercent
+        // These are critDamageIncrease and fixedAdditionalDamage
         switch (charyeok.baseEffectType) {
-          case CharyeokEffectType.baseAttackIncreasePercent:
-            charyeokBaseAttackIncrease = 1 + (value / 100);
-            break;
           case CharyeokEffectType.critDamageIncrease:
             charyeokCritDamage = value;
             break;
           case CharyeokEffectType.fixedAdditionalDamage:
             charyeokFixedDamage = value;
             break;
-          case CharyeokEffectType.attackSetPercent:
-            charyeokAttackIncrease = value / 100;
-            break;
           case CharyeokEffectType.none:
             break;
+          // attackSetPercent and baseAttackIncreasePercent are handled below
+          case CharyeokEffectType.attackSetPercent:
+          case CharyeokEffectType.baseAttackIncreasePercent:
+            // Do nothing here, handled by specific Charyeok name below
+            break;
+        }
+
+        // Handle charyeokBaseAttackIncrease (for "기본 공격력이 n%증가한다" type)
+        if (charyeok.baseEffectType == CharyeokEffectType.baseAttackIncreasePercent) {
+          charyeokBaseAttackIncrease = 1 + (value / 100);
+        }
+
+        // Handle charyeokAttackIncrease based on specific Charyeok name
+        if (charyeok.englishName == 'tam') { // 제갈택의 탐: 공격력이 n%가 된다
+          charyeokAttackIncrease = value / 100;
+        } else if (charyeok.englishName == 'umawang' || charyeok.englishName == 'longginuseu') { // 우마왕, 롱기누스: 기본 공격력이 n%증가한다 (이것이 totalMultiplier에 영향을 주는 경우)
+          charyeokAttackIncrease = 1 + (value / 100);
+        } else if (charyeok.baseEffectType == CharyeokEffectType.attackSetPercent) {
+          // Default for other attackSetPercent types if not tam
+          charyeokAttackIncrease = value / 100;
+        } else if (charyeok.baseEffectType == CharyeokEffectType.baseAttackIncreasePercent) {
+          // Default for other baseAttackIncreasePercent types if not umawang/longginuseu
+          // If baseAttackIncreasePercent also affects totalMultiplier as 1 + n/100, then:
+          charyeokAttackIncrease = 1 + (value / 100);
         }
       }
 
