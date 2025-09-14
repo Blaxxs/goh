@@ -455,6 +455,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###');
     final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final charyeokIconSize = screenWidth * 0.2;
+    final otherIconSize = screenWidth * 0.15;
 
     Widget charyeokWidget;
     if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
@@ -465,8 +468,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             onTap: _showCharyeokSelectionDialog,
             customBorder: const CircleBorder(),
             child: Container(
-              width: 80,
-              height: 80,
+              width: charyeokIconSize,
+              height: charyeokIconSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
@@ -531,8 +534,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             onTap: _showLeaderSelectionDialog,
             customBorder: const CircleBorder(),
             child: Container(
-              width: 60,
-              height: 60,
+              width: otherIconSize,
+              height: otherIconSize,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
               ),
@@ -590,8 +593,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     onTap: _showCrestSelectionDialog,
                     customBorder: const CircleBorder(),
                     child: Container(
-                        width: 60,
-                        height: 60,
+                        width: otherIconSize,
+                        height: otherIconSize,
                         decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                         ),
@@ -635,8 +638,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             onTap: _showSpiritSelectionDialog,
             customBorder: const CircleBorder(),
             child: Container(
-              width: 60,
-              height: 60,
+              width: otherIconSize,
+              height: otherIconSize,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
               ),
@@ -719,7 +722,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   Positioned.fill(
                     child: Image.asset(
                       _selectedCharacter!.imagePath,
-                      fit: BoxFit.cover,
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           color: Colors.grey[200],
