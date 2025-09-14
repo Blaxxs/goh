@@ -14,16 +14,17 @@ enum CrestType { none, attack, critDamage, skillDamage }
 class Crest {
   final String name;
   final CrestType type;
-  final IconData icon;
+  final String? imagePath;
+  final IconData? icon;
 
-  const Crest({required this.name, required this.type, required this.icon});
+  const Crest({required this.name, required this.type, this.imagePath, this.icon});
 }
 
 const List<Crest> crests = [
   Crest(name: '선택 안함', type: CrestType.none, icon: Icons.cancel_outlined),
-  Crest(name: '공격강화 문장', type: CrestType.attack, icon: Icons.flash_on),
-  Crest(name: '치명피해 문장', type: CrestType.critDamage, icon: Icons.star),
-  Crest(name: '스킬 문장', type: CrestType.skillDamage, icon: Icons.school),
+  Crest(name: '공격강화 문장', type: CrestType.attack, imagePath: 'assets/images/accessories/attack.png'),
+  Crest(name: '치명피해 문장', type: CrestType.critDamage, imagePath: 'assets/images/accessories/fata.png'),
+  Crest(name: '스킬 문장', type: CrestType.skillDamage, imagePath: 'assets/images/accessories/skill.png'),
 ];
 
 class DamageCalculatorScreen extends StatefulWidget {
@@ -502,7 +503,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             color: Colors.white,
                             border: Border.all(color: Colors.amber, width: 2),
                         ),
-                        child: Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: 30),
+                        child: _selectedCrest!.imagePath != null
+                            ? ClipOval(child: Image.asset(_selectedCrest!.imagePath!, fit: BoxFit.cover))
+                            : Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: 30),
                     ),
                 ),
                 const SizedBox(height: 4),
@@ -999,7 +1002,10 @@ class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
                   ),
                   child: Column(
                     children: [
-                      Icon(crest.icon, size: 30),
+                      if (crest.imagePath != null)
+                        Image.asset(crest.imagePath!, width: 30, height: 30)
+                      else if (crest.icon != null)
+                        Icon(crest.icon!, size: 30),
                       const SizedBox(height: 4),
                       Text(crest.name, style: const TextStyle(fontSize: 10)),
                     ],
