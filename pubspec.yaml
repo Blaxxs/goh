@@ -72,6 +72,7 @@ flutter:
     - assets/images/enhancement_aids/ # 이 줄 추가
     - assets/images/auras/
     - assets/images/charyeok/
+    - assets/images/charyeok/
 
 
     # 개별 파일을 지정할 수도 있습니다. 예:
