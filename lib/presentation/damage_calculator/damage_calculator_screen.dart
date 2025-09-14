@@ -272,7 +272,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     double totalBaseAttack = (baseAttack * charyeokBaseAttackIncrease) + additionalAttack + rebirthAttackBonus + rebirthAttackOption;
 
     // --- Part 2: Multipliers ---
-    final int dalgijiLevel = SettingsService.instance.stageSettings.dalgijiLevel ?? 0;
+    final Object dalgijiLevel = SettingsService.instance.stageSettings.dalgijiLevel ?? 0;
     final double moonBaseAttackPercent = moonBaseAttackBuffs[dalgijiLevel] ?? 0.0;
     double moonBaseBuff = 1 + (moonBaseAttackPercent / 100);
 
