@@ -1040,10 +1040,10 @@ class StarSelector extends StatefulWidget {
   });
 
   @override
-  _StarSelectorState createState() => _StarSelectorState();
+  StarSelectorState createState() => StarSelectorState();
 }
 
-class _StarSelectorState extends State<StarSelector> {
+class StarSelectorState extends State<StarSelector> {
   late int _currentStar;
 
   @override
@@ -1146,11 +1146,12 @@ extension DropdownDisplay on Object {
 }
 
 class CharyeokSelectionDialog extends StatefulWidget {
+  const CharyeokSelectionDialog({super.key});
   @override
-  _CharyeokSelectionDialogState createState() => _CharyeokSelectionDialogState();
+  CharyeokSelectionDialogState createState() => CharyeokSelectionDialogState();
 }
 
-class _CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
+class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   Charyeok? _detailedCharyeok;
   CharyeokGrade? _selectedGrade;
   int _selectedStar = 1;
@@ -1310,10 +1311,10 @@ class CrestSelectionDialog extends StatefulWidget {
   const CrestSelectionDialog({super.key, required this.initialCrest, required this.initialValue});
 
   @override
-  _CrestSelectionDialogState createState() => _CrestSelectionDialogState();
+  CrestSelectionDialogState createState() => CrestSelectionDialogState();
 }
 
-class _CrestSelectionDialogState extends State<CrestSelectionDialog> {
+class CrestSelectionDialogState extends State<CrestSelectionDialog> {
   Crest? _detailedCrest;
   late TextEditingController _valueController;
 
@@ -1442,11 +1443,12 @@ class _CrestSelectionDialogState extends State<CrestSelectionDialog> {
 }
 
 class LeaderSelectionDialog extends StatefulWidget {
+  const LeaderSelectionDialog({super.key});
   @override
-  _LeaderSelectionDialogState createState() => _LeaderSelectionDialogState();
+  LeaderSelectionDialogState createState() => LeaderSelectionDialogState();
 }
 
-class _LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
+class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
   // Removed _detailedLeader;
   // Removed _selectLeader method
 
@@ -1506,11 +1508,12 @@ class _LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
 }
 
 class SpiritSelectionDialog extends StatefulWidget {
+  const SpiritSelectionDialog({super.key});
   @override
-  _SpiritSelectionDialogState createState() => _SpiritSelectionDialogState();
+  SpiritSelectionDialogState createState() => SpiritSelectionDialogState();
 }
 
-class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
+class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   Spirit? _detailedSpirit;
   int _selectedStar = 1;
 
