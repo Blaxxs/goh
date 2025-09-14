@@ -23,7 +23,7 @@ class Crest {
 const List<Crest> crests = [
   Crest(name: '선택 안함', type: CrestType.none, icon: Icons.cancel_outlined),
   Crest(name: '공격강화 문장', type: CrestType.attack, imagePath: 'assets/images/crest/attack.png'),
-  Crest(name: '치명피해 문장', type: CrestType.critDamage, imagePath: 'assets/images/crest/fata.png'),
+  Crest(name: '치명피해 문장', type: CrestType.critDamage, imagePath: 'assets/images/crest/fatal.png'),
   Crest(name: '스킬 문장', type: CrestType.skillDamage, imagePath: 'assets/images/crest/skill.png'),
 ];
 
