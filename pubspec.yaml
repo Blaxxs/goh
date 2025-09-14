@@ -76,7 +76,7 @@ flutter:
     - assets/images/leader/
     - assets/images/spirit/
     - assets/images/characters/
-    - assets/images/characters/
+    - assets/images/Icon/
 
 
     # 개별 파일을 지정할 수도 있습니다. 예:
