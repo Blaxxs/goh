@@ -1264,13 +1264,13 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
               ),
             const SizedBox(height: 16),
             Text('성급: $_selectedStar성'),
-            Slider(
-              value: _selectedStar.toDouble(),
-              min: 1,
-              max: 9,
-              divisions: 8,
-              label: '$_selectedStar성',
-              onChanged: (value) => setState(() => _selectedStar = value.round()),
+            StarSelector(
+              initialStar: _selectedStar,
+              onChanged: (star) {
+                setState(() {
+                  _selectedStar = star;
+                });
+              },
             ),
             const SizedBox(height: 16),
             Text('효과: ${charyeok.baseEffectDescription.replaceFirst('n', effectValueText)}'),
