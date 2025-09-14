@@ -833,6 +833,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   }
 
   Widget _buildInputFields() {
+    final String? selectedCharacterName = _selectedCharacter?.name;
+    final bool isSatanOrWamira = selectedCharacterName == '사탄' || selectedCharacterName == '와미라';
+    final bool isHaegaeltaek = selectedCharacterName == '해갈택';
+
     return Column(
       children: [
         ExpansionTile(
@@ -849,30 +853,33 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             _buildTextField('표기 크뎀', _critDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
-        ExpansionTile(
-          title: const Text('일반 공격 데미지 증가 (%)'),
-          children: [
-            _buildTextField('악세 일공증', _accessoryNormalDamageController),
-            _buildTextField('장비 일공증', _equipmentNormalDamageController),
-            _buildTextField('파편 일공증', _fragmentNormalDamageController),
-          ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-        ),
-        ExpansionTile(
-          title: const Text('스킬 데미지 증가 (%)'),
-          children: [
-            _buildTextField('악세 스증', _accessorySkillDamageController),
-            _buildTextField('장비 스증', _equipmentSkillDamageController),
-            _buildTextField('파편 스증', _fragmentSkillDamageController),
-          ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-        ),
-        ExpansionTile(
-          title: const Text('미니게임 데미지 증가 (%)'),
-          children: [
-            _buildTextField('악세 미겜증', _accessoryMinigameDamageController),
-            _buildTextField('장비 미겜증', _equipmentMinigameDamageController),
-            _buildTextField('파편 미겜증', _fragmentMinigameDamageController),
-          ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-        ),
+        if (!isSatanOrWamira) // Hide if Satan or Wamira
+          ExpansionTile(
+            title: const Text('일반 공격 데미지 증가 (%)'),
+            children: [
+              _buildTextField('악세 일공증', _accessoryNormalDamageController),
+              _buildTextField('장비 일공증', _equipmentNormalDamageController),
+              _buildTextField('파편 일공증', _fragmentNormalDamageController),
+            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+          ),
+        if (!isHaegaeltaek) // Hide if Haegaeltaek
+          ExpansionTile(
+            title: const Text('스킬 데미지 증가 (%)'),
+            children: [
+              _buildTextField('악세 스증', _accessorySkillDamageController),
+              _buildTextField('장비 스증', _equipmentSkillDamageController),
+              _buildTextField('파편 스증', _fragmentSkillDamageController),
+            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+          ),
+        if (!isHaegaeltaek) // Hide if Haegaeltaek
+          ExpansionTile(
+            title: const Text('미니게임 데미지 증가 (%)'),
+            children: [
+              _buildTextField('악세 미겜증', _accessoryMinigameDamageController),
+              _buildTextField('장비 미겜증', _equipmentMinigameDamageController),
+              _buildTextField('파편 미겜증', _fragmentMinigameDamageController),
+            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+          ),
       ],
     );
   }
@@ -1387,7 +1394,7 @@ class __CrestSelectionDialogState extends State<_CrestSelectionDialog> {
 
     return SingleChildScrollView(
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.AxisSize.min,
         children: [
           Row(
             children: [
