@@ -7,6 +7,7 @@ import 'package:goh_calculator/core/constants/spirit_constants.dart';
 import 'package:intl/intl.dart';
 
 enum RebirthRealm { none, heavenly, demon }
+enum RebirthStat { none, skillDamage, attackPower, critDamage, normalDamage }
 
 class DamageCalculatorScreen extends StatefulWidget {
   const DamageCalculatorScreen({super.key});
@@ -44,6 +45,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   // Rebirth
   RebirthRealm _selectedRebirthRealm = RebirthRealm.none;
   int _rebirthLevel = 0;
+  RebirthStat _selectedRebirthStat = RebirthStat.none;
 
   // Calculation Results
   double _calculatedDamage = 0;
@@ -51,14 +53,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
   // --- Text Editing Controllers ---
   final _additionalAttackPowerController = TextEditingController();
-  final _rebirthOptionAttackController = TextEditingController();
   final _leaderEffectController = TextEditingController();
   final _highSchoolBuffController = TextEditingController();
   final _moonBaseBuffController = TextEditingController();
   final _powerUpController = TextEditingController();
   final _critDamageController = TextEditingController();
   final _divineItemCritDamageController = TextEditingController();
-  final _rebirthCritDamageController = TextEditingController();
   final _crestCritDamageController = TextEditingController();
   final _accessoryNormalDamageController = TextEditingController();
   final _equipmentNormalDamageController = TextEditingController();
@@ -72,7 +72,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _equipmentMinigameDamageController = TextEditingController();
   final _divineItemMinigameDamageController = TextEditingController();
   final _fragmentMinigameDamageController = TextEditingController();
-  final _rebirthAdditionalDamageController = TextEditingController();
+  final _rebirthStatValueController = TextEditingController();
 
   // --- Rebirth Bonuses ---
   final List<int> demonRebirthAttackBonus = [0, 50, 50, 100, 100, 200, 200, 300, 300, 450];
@@ -94,14 +94,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   @override
   void dispose() {
     _additionalAttackPowerController.dispose();
-    _rebirthOptionAttackController.dispose();
     _leaderEffectController.dispose();
     _highSchoolBuffController.dispose();
     _moonBaseBuffController.dispose();
     _powerUpController.dispose();
     _critDamageController.dispose();
     _divineItemCritDamageController.dispose();
-    _rebirthCritDamageController.dispose();
     _crestCritDamageController.dispose();
     _accessoryNormalDamageController.dispose();
     _equipmentNormalDamageController.dispose();
@@ -115,7 +113,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.dispose();
     _divineItemMinigameDamageController.dispose();
     _fragmentMinigameDamageController.dispose();
-    _rebirthAdditionalDamageController.dispose();
+    _rebirthStatValueController.dispose();
     super.dispose();
   }
 
@@ -174,6 +172,32 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         }
       }
     }
+    
+    // --- Rebirth Stat Bonus ---
+    double rebirthStatValue = _getParser(_rebirthStatValueController);
+    double rebirthAttackOption = 0;
+    double rebirthCritDmgOption = 0;
+    double rebirthNormalDmgOption = 0;
+    double rebirthSkillDmgOption = 0;
+
+    if(_selectedRebirthRealm != RebirthRealm.none) {
+        switch(_selectedRebirthStat) {
+            case RebirthStat.attackPower:
+                rebirthAttackOption = rebirthStatValue;
+                break;
+            case RebirthStat.critDamage:
+                rebirthCritDmgOption = rebirthStatValue;
+                break;
+            case RebirthStat.normalDamage:
+                rebirthNormalDmgOption = rebirthStatValue;
+                break;
+            case RebirthStat.skillDamage:
+                rebirthSkillDmgOption = rebirthStatValue;
+                break;
+            case RebirthStat.none:
+                break;
+        }
+    }
 
     // --- Part 1: Base Attack Calculation ---
     double baseAttack = _selectedCharacter!.baseAttackPower.toDouble();
@@ -184,9 +208,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     } else if (_selectedRebirthRealm == RebirthRealm.heavenly) {
       rebirthAttackBonus = heavenlyRebirthAttackBonus[_rebirthLevel].toDouble();
     }
-    double rebirthOptionAttack = _getParser(_rebirthOptionAttackController);
 
-    double totalBaseAttack = (baseAttack * charyeokBaseAttackIncrease) + additionalAttack + rebirthAttackBonus + rebirthOptionAttack;
+    double totalBaseAttack = (baseAttack * charyeokBaseAttackIncrease) + additionalAttack + rebirthAttackBonus + rebirthAttackOption;
 
     // --- Part 2: Multipliers ---
     double leaderBuff = _getParser(_leaderEffectController) / 100;
@@ -208,7 +231,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     double critDmgSum = _getParser(_critDamageController) +
         _getParser(_divineItemCritDamageController) +
-        _getParser(_rebirthCritDamageController) +
+        rebirthCritDmgOption +
         spiritCritDamage +
         _getParser(_crestCritDamageController) +
         passiveCritDamage +
@@ -219,6 +242,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _getParser(_equipmentNormalDamageController) +
         _getParser(_divineItemNormalDamageController) +
         charyeokNormalDamage +
+        rebirthNormalDmgOption +
         _getParser(_fragmentNormalDamageController);
     double normalDmgMultiplier = 1 + (normalDmgSum / 100);
 
@@ -227,6 +251,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _getParser(_divineItemSkillDamageController) +
         spiritSkillDamage +
         charyeokSkillDamage +
+        rebirthSkillDmgOption +
         _getParser(_fragmentSkillDamageController);
     double skillDmgMultiplier = 1 + (skillDmgSum / 100);
 
@@ -251,7 +276,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     finalDamage *= skillCoeffMultiplier;
 
     // --- Part 4: Fixed Additional Damage ---
-    double rebirthFixedDamage = _getParser(_rebirthAdditionalDamageController);
+    // For now, rebirth fixed damage is an input field. This can be updated.
+    double rebirthFixedDamage = 0; 
     finalDamage += rebirthFixedDamage + charyeokFixedDamage;
 
     setState(() {
@@ -275,6 +301,23 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeokStar = result['star'];
       });
     }
+  }
+
+  Future<void> _showLeaderSelectionDialog() async {
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('리더 효과'),
+            content: _buildTextField('리더 효과 (%)', _leaderEffectController, hint: '150'),
+            actions: [
+              TextButton(
+                child: const Text('확인'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        });
   }
 
   @override
@@ -348,6 +391,20 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       );
     }
 
+    Widget leaderWidget = InkWell(
+      onTap: _showLeaderSelectionDialog,
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: Colors.grey.shade300, width: 2),
+        ),
+        child: const Text('리더 선택'),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('데미지 계산기'),
@@ -391,6 +448,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       },
                     ),
                   ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, left: 8.0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: leaderWidget,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(top: 8.0, right: 8.0),
                   child: Align(
@@ -438,8 +502,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           initiallyExpanded: true,
           children: [
             _buildTextField('추가 공격력', _additionalAttackPowerController),
-            _buildTextField('환생 옵션 공격력', _rebirthOptionAttackController),
-            _buildTextField('리더 효과 (%)', _leaderEffectController),
             _buildTextField('하이스쿨 버프 (%)', _highSchoolBuffController),
             _buildTextField('달기지 공격력 (%)', _moonBaseBuffController),
             _buildTextField('파워업 (%)', _powerUpController),
@@ -450,7 +512,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           children: [
             _buildTextField('표기 크뎀', _critDamageController),
             _buildTextField('신기 크뎀', _divineItemCritDamageController),
-            _buildTextField('환생 크뎀', _rebirthCritDamageController),
             _buildTextField('문장 크뎀', _crestCritDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
@@ -481,46 +542,79 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             _buildTextField('파편 미겜증', _fragmentMinigameDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
-        ExpansionTile(
-          title: const Text('고정 추가 데미지'),
-          children: [
-            _buildTextField('환생 추가 데미지', _rebirthAdditionalDamageController),
-          ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-        ),
       ],
     );
   }
 
   Widget _buildRebirthSelector() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
+    List<RebirthStat> availableStats = [];
+    if (_selectedRebirthRealm == RebirthRealm.heavenly) {
+      availableStats = [RebirthStat.skillDamage, RebirthStat.attackPower, RebirthStat.critDamage];
+    } else if (_selectedRebirthRealm == RebirthRealm.demon) {
+      availableStats = [RebirthStat.normalDamage];
+    }
+
+    return Column(
       children: [
-        const Text('환생: '),
-        DropdownButton<RebirthRealm>(
-          value: _selectedRebirthRealm,
-          items: RebirthRealm.values.map((realm) {
-            return DropdownMenuItem<RebirthRealm>(
-              value: realm,
-              child: Text(realm.displayName),
-            );
-          }).toList(),
-          onChanged: (value) {
-            setState(() {
-              _selectedRebirthRealm = value ?? RebirthRealm.none;
-            });
-          },
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text('환생: '),
+            DropdownButton<RebirthRealm>(
+              value: _selectedRebirthRealm,
+              items: RebirthRealm.values.map((realm) {
+                return DropdownMenuItem<RebirthRealm>(
+                  value: realm,
+                  child: Text(realm.displayName),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedRebirthRealm = value ?? RebirthRealm.none;
+                  _selectedRebirthStat = RebirthStat.none; // Reset stat selection
+                });
+              },
+            ),
+            const SizedBox(width: 10),
+            if (_selectedRebirthRealm != RebirthRealm.none)
+              DropdownButton<int>(
+                value: _rebirthLevel,
+                hint: const Text('단계'),
+                items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                onChanged: (value) {
+                  setState(() {
+                    _rebirthLevel = value ?? 0;
+                  });
+                },
+              ),
+          ],
         ),
-        const SizedBox(width: 10),
         if (_selectedRebirthRealm != RebirthRealm.none)
-          DropdownButton<int>(
-            value: _rebirthLevel,
-            hint: const Text('단계'),
-            items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-            onChanged: (value) {
-              setState(() {
-                _rebirthLevel = value ?? 0;
-              });
-            },
+          const SizedBox(height: 10),
+        if (_selectedRebirthRealm != RebirthRealm.none)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              DropdownButton<RebirthStat>(
+                value: _selectedRebirthStat,
+                hint: const Text('증가 스탯'),
+                items: [RebirthStat.none, ...availableStats].map((stat) {
+                  return DropdownMenuItem<RebirthStat>(
+                    value: stat,
+                    child: Text(stat.displayName),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedRebirthStat = value ?? RebirthStat.none;
+                  });
+                },
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: _buildTextField('스탯 값', _rebirthStatValueController),
+              ),
+            ],
           ),
       ],
     );
@@ -567,6 +661,20 @@ extension DropdownDisplay on Object {
         case RebirthRealm.demon:
           return '마계';
       }
+    }
+    if (this is RebirthStat) {
+        switch (this as RebirthStat) {
+            case RebirthStat.none:
+                return '스탯 선택';
+            case RebirthStat.attackPower:
+                return '공격력 증가';
+            case RebirthStat.critDamage:
+                return '크리티컬 데미지 증가';
+            case RebirthStat.normalDamage:
+                return '일반 데미지 증가';
+            case RebirthStat.skillDamage:
+                return '스킬 데미지 증가';
+        }
     }
     return toString();
   }

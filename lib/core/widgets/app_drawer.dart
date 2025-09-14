@@ -14,6 +14,7 @@ import '../constants/box_constants.dart'; // AppScreen enum을 box_constants.dar
 import '../../presentation/simulator/accessory_option_change_screen.dart'; // 악세사리 옵션 변경 시뮬레이터 import
 import '../../presentation/gold_calculator/gold_calculator_screen.dart'; // 골드 계산기 화면 import
 import '../../presentation/damage_calculator/damage_calculator_screen.dart'; // 데미지 계산기 import
+import '../../presentation/stage_settings/settings_screen.dart'; // SettingsScreen import
 
 class AppDrawer extends StatelessWidget {
   final AppScreen currentScreen;
@@ -187,6 +188,19 @@ class AppDrawer extends StatelessWidget {
                     onTap: () { Navigator.of(context).pop(); if (currentScreen != AppScreen.home) { Navigator.of(context).popUntil((route) => route.isFirst); } },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
+                    listItemTextStyle: mainDrawerItemTextStyle,
+                    selectedListItemTextStyle: selectedMainDrawerItemTextStyle,
+                    defaultIconColor: defaultDrawerIconColor,
+                    selectedIconColor: selectedDrawerIconColor,
+                  ),
+                  _buildDrawerListTile(
+                    context,
+                    icon: Icons.person_outline,
+                    text: '유저 설정',
+                    selected: currentScreen == AppScreen.settings,
+                    onTap: () { Navigator.of(context).pop(); if (currentScreen != AppScreen.settings) { Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen())); } },
+                    showDrawerText: showDrawerText,
+                    theme: theme,
                     listItemTextStyle: mainDrawerItemTextStyle,
                     selectedListItemTextStyle: selectedMainDrawerItemTextStyle,
                     defaultIconColor: defaultDrawerIconColor,

@@ -307,24 +307,7 @@ class CalculatorScreenUI extends StatelessWidget {
                 ),
               ),
               iconTheme: IconThemeData(color: colorScheme.onSurface),
-              actions: [
-                TextButton.icon( // IconButton 대신 TextButton.icon 사용
-                  icon: const Icon(Icons.settings_outlined), // 설정 아이콘
-                  label: Text( // 텍스트 라벨 추가
-                    '스테이지 설정',
-                    style: TextStyle(fontSize: (theme.textTheme.labelLarge?.fontSize ?? 14.0) * 0.7), // 폰트 크기 조정 (약 10pt)
-                  ),
-                  onPressed: onStageSettingsPressed, // 전달받은 콜백 사용
-                  style: TextButton.styleFrom( // 버튼 스타일 설정
-                    foregroundColor: colorScheme.onSurface, // 아이콘 및 텍스트 색상
-                    minimumSize: const Size(0, 23), // 버튼 최소 높이 설정
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2.0), // 패딩 조정
-                    iconColor: colorScheme.onSurface, // 아이콘 색상 명시
-                    iconSize: 16, // 아이콘 크기 조정
-                  ),
-                ),
-                const SizedBox(width: 8), // 아이콘과 앱바 끝 사이 간격
-              ],
+              
             ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 0),
