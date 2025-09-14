@@ -88,7 +88,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _fragmentSkillDamageController = TextEditingController();
   final _accessoryMinigameDamageController = TextEditingController();
   final _equipmentMinigameDamageController = TextEditingController();
-  final _divineItemMinigameDamageController = TextEditingController();
   final _fragmentMinigameDamageController = TextEditingController();
   final _rebirthStatValueController = TextEditingController();
   final _crestValueController = TextEditingController();
@@ -151,7 +150,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _fragmentSkillDamageController.dispose();
     _accessoryMinigameDamageController.dispose();
     _equipmentMinigameDamageController.dispose();
-    _divineItemMinigameDamageController.dispose();
     _fragmentMinigameDamageController.dispose();
     _rebirthStatValueController.dispose();
     _crestValueController.dispose();
@@ -352,7 +350,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     double minigameDmgSum = _getParser(_accessoryMinigameDamageController) +
         _getParser(_equipmentMinigameDamageController) +
-        _getParser(_divineItemMinigameDamageController) +
         _getParser(_fragmentMinigameDamageController);
     double minigameDmgMultiplier = 1 + (minigameDmgSum / 100);
 
@@ -451,6 +448,18 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     }
   }
 
+  Future<void> _showBuffSelectionDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => _BuffSelectionDialog(
+        highSchoolBuffController: _highSchoolBuffController,
+        divineItemNormalDamageController: _divineItemNormalDamageController,
+        divineItemSkillDamageController: _divineItemSkillDamageController,
+        divineItemCritDamageController: _divineItemCritDamageController,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat('#,###');
@@ -458,6 +467,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final imageContainerHeight = screenHeight * 0.3;
     final charyeokIconSize = imageContainerHeight / 3;
     final otherIconSize = imageContainerHeight * 0.225;
+    final buffIconSize = otherIconSize * (2/3);
 
     Widget charyeokWidget;
     if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
@@ -524,6 +534,45 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         ),
       );
     }
+
+    Widget buffWidget = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: _showBuffSelectionDialog,
+          customBorder: const CircleBorder(),
+          child: Container(
+            width: buffIconSize,
+            height: buffIconSize,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/Icon/buff.png',
+                fit: BoxFit.cover,
+                errorBuilder: (c, o, s) => const Icon(Icons.error),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          '버프',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+            shadows: <Shadow>[
+              Shadow(
+                offset: Offset(1.0, 1.0),
+                blurRadius: 2.0,
+                color: Colors.black,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
 
     Widget leaderWidget;
     if (_selectedLeader != null && _selectedLeader!.name != '선택 안함') {
@@ -743,7 +792,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                 Positioned(
                   top: 8,
                   right: 8,
-                  child: charyeokWidget,
+                  child: Column(
+                    children: [
+                      charyeokWidget,
+                      const SizedBox(height: 8),
+                      buffWidget,
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -785,7 +840,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           initiallyExpanded: true,
           children: [
             _buildTextField('추가 공격력', _additionalAttackPowerController),
-            _buildTextField('하이스쿨 버프 (%)', _highSchoolBuffController),
             _buildTextField('파워업 (%)', _powerUpController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
@@ -793,7 +847,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           title: const Text('크리티컬 데미지 (%)'),
           children: [
             _buildTextField('표기 크뎀', _critDamageController),
-            _buildTextField('신기 크뎀', _divineItemCritDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
         ExpansionTile(
@@ -801,7 +854,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           children: [
             _buildTextField('악세 일공증', _accessoryNormalDamageController),
             _buildTextField('장비 일공증', _equipmentNormalDamageController),
-            _buildTextField('신기 일공증', _divineItemNormalDamageController),
             _buildTextField('파편 일공증', _fragmentNormalDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
@@ -810,7 +862,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           children: [
             _buildTextField('악세 스증', _accessorySkillDamageController),
             _buildTextField('장비 스증', _equipmentSkillDamageController),
-            _buildTextField('신기 스증', _divineItemSkillDamageController),
             _buildTextField('파편 스증', _fragmentSkillDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
@@ -819,7 +870,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           children: [
             _buildTextField('악세 미겜증', _accessoryMinigameDamageController),
             _buildTextField('장비 미겜증', _equipmentMinigameDamageController),
-            _buildTextField('신기 미겜증', _divineItemMinigameDamageController),
             _buildTextField('파편 미겜증', _fragmentMinigameDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
@@ -912,6 +962,61 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         ),
         keyboardType: TextInputType.number,
       );
+  }
+}
+
+class _BuffSelectionDialog extends StatelessWidget {
+  final TextEditingController highSchoolBuffController;
+  final TextEditingController divineItemNormalDamageController;
+  final TextEditingController divineItemSkillDamageController;
+  final TextEditingController divineItemCritDamageController;
+
+  const _BuffSelectionDialog({
+    super.key,
+    required this.highSchoolBuffController,
+    required this.divineItemNormalDamageController,
+    required this.divineItemSkillDamageController,
+    required this.divineItemCritDamageController,
+  });
+
+  Widget _buildTextField(String label, TextEditingController controller) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        suffixText: '%',
+        border: const OutlineInputBorder(),
+      ),
+      keyboardType: TextInputType.number,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('버프 정보 입력', style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 20),
+            _buildTextField('하이스쿨 버프', highSchoolBuffController),
+            const SizedBox(height: 12),
+            _buildTextField('신기 일공증', divineItemNormalDamageController),
+            const SizedBox(height: 12),
+            _buildTextField('신기 스증', divineItemSkillDamageController),
+            const SizedBox(height: 12),
+            _buildTextField('신기 크뎀증', divineItemCritDamageController),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('확인'),
+            )
+          ],
+        ),
+      ),
+    );
   }
 }
 
