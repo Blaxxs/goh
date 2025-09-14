@@ -60,7 +60,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _divineItemCritDamageController = TextEditingController();
   final _rebirthCritDamageController = TextEditingController();
   final _crestCritDamageController = TextEditingController();
-  final _passiveCritDamageController = TextEditingController();
   final _accessoryNormalDamageController = TextEditingController();
   final _equipmentNormalDamageController = TextEditingController();
   final _divineItemNormalDamageController = TextEditingController();
@@ -73,7 +72,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _equipmentMinigameDamageController = TextEditingController();
   final _divineItemMinigameDamageController = TextEditingController();
   final _fragmentMinigameDamageController = TextEditingController();
-  final _skillCoefficientController = TextEditingController();
   final _rebirthAdditionalDamageController = TextEditingController();
 
   // --- Rebirth Bonuses ---
@@ -105,7 +103,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _divineItemCritDamageController.dispose();
     _rebirthCritDamageController.dispose();
     _crestCritDamageController.dispose();
-    _passiveCritDamageController.dispose();
     _accessoryNormalDamageController.dispose();
     _equipmentNormalDamageController.dispose();
     _divineItemNormalDamageController.dispose();
@@ -118,7 +115,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.dispose();
     _divineItemMinigameDamageController.dispose();
     _fragmentMinigameDamageController.dispose();
-    _skillCoefficientController.dispose();
     _rebirthAdditionalDamageController.dispose();
     super.dispose();
   }
@@ -208,13 +204,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     // --- Part 3: Damage Type Multipliers ---
     double spiritCritDamage = (_selectedSpirit?.effects['crit_damage'] as num? ?? 0).toDouble();
     double spiritSkillDamage = (_selectedSpirit?.effects['skill_damage_increase'] as num? ?? 0).toDouble();
+    double passiveCritDamage = (_selectedCharacter!.passive['critDamage'] as num? ?? 0).toDouble();
 
     double critDmgSum = _getParser(_critDamageController) +
         _getParser(_divineItemCritDamageController) +
         _getParser(_rebirthCritDamageController) +
         spiritCritDamage +
         _getParser(_crestCritDamageController) +
-        _getParser(_passiveCritDamageController) +
+        passiveCritDamage +
         charyeokCritDamage;
     double critDmgMultiplier = 1 + (critDmgSum / 100);
 
@@ -239,17 +236,19 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _getParser(_fragmentMinigameDamageController);
     double minigameDmgMultiplier = 1 + (minigameDmgSum / 100);
 
-    double skillCoeffSum = _getParser(_skillCoefficientController);
+    double skillCoeffSum = _selectedCharacter!.skillMultiplier.toDouble();
     double skillCoeffMultiplier = skillCoeffSum / 100;
 
     // --- Final Calculation ---
     double finalDamage = totalBaseAttack * totalMultiplier;
+    String damageType = _selectedCharacter!.damageType;
 
-    if (_selectedCharacter?.englishName == 'satan') {
-      finalDamage *= critDmgMultiplier * skillDmgMultiplier * minigameDmgMultiplier * skillCoeffMultiplier;
-    } else {
-      finalDamage *= critDmgMultiplier * normalDmgMultiplier * skillDmgMultiplier * minigameDmgMultiplier * skillCoeffMultiplier;
-    }
+    if (damageType.contains('크리 데미지')) finalDamage *= critDmgMultiplier;
+    if (damageType.contains('일반 데미지')) finalDamage *= normalDmgMultiplier;
+    if (damageType.contains('스킬 데미지')) finalDamage *= skillDmgMultiplier;
+    if (damageType.contains('미니게임 데미지')) finalDamage *= minigameDmgMultiplier;
+    
+    finalDamage *= skillCoeffMultiplier;
 
     // --- Part 4: Fixed Additional Damage ---
     double rebirthFixedDamage = _getParser(_rebirthAdditionalDamageController);
@@ -376,7 +375,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
           SizedBox(
-            height: screenHeight * 0.25, // Adjusted height
+            height: screenHeight * 0.25,
             child: Stack(
               children: [
                 if (_selectedCharacter != null)
@@ -453,7 +452,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             _buildTextField('신기 크뎀', _divineItemCritDamageController),
             _buildTextField('환생 크뎀', _rebirthCritDamageController),
             _buildTextField('문장 크뎀', _crestCritDamageController),
-            _buildTextField('패시브 크뎀', _passiveCritDamageController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
         ExpansionTile(
@@ -481,12 +479,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             _buildTextField('장비 미겜증', _equipmentMinigameDamageController),
             _buildTextField('신기 미겜증', _divineItemMinigameDamageController),
             _buildTextField('파편 미겜증', _fragmentMinigameDamageController),
-          ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-        ),
-        ExpansionTile(
-          title: const Text('스킬 계수 (%)'),
-          children: [
-            _buildTextField('스킬 계수', _skillCoefficientController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
         ExpansionTile(
