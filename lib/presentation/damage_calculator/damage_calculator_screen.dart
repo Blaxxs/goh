@@ -1161,50 +1161,64 @@ class __CharyeokSelectionDialogState extends State<_CharyeokSelectionDialog> {
     }
 
     return SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedCharyeok = null)),
-              Expanded(child: Text(charyeok.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
-          const SizedBox(height: 16),
-          if (charyeok.availableGrades.isNotEmpty)
-            DropdownButton<CharyeokGrade>(
-              value: _selectedGrade,
-              items: charyeok.availableGrades
-                  .map((grade) => DropdownMenuItem(value: grade, child: Text(grade.displayName)))
-                  .toList(),
-              onChanged: (value) => setState(() => _selectedGrade = value),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedCharyeok = null)),
+                Expanded(child: Text(charyeok.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+              ],
             ),
-          const SizedBox(height: 16),
-          Text('성급: $_selectedStar성'),
-          Slider(
-            value: _selectedStar.toDouble(),
-            min: 1,
-            max: 9,
-            divisions: 8,
-            label: '$_selectedStar성',
-            onChanged: (value) => setState(() => _selectedStar = value.round()),
-          ),
-          const SizedBox(height: 16),
-          Text('효과: ${charyeok.baseEffectDescription.replaceFirst('n', effectValueText)}'),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, {
-                'charyeok': _detailedCharyeok,
-                'grade': _selectedGrade,
-                'star': _selectedStar,
-              });
-            },
-            child: const Text('선택'),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
+            const SizedBox(height: 16),
+            if (charyeok.availableGrades.isNotEmpty)
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 4.0,
+                alignment: WrapAlignment.center,
+                children: charyeok.availableGrades.map((grade) {
+                  return ChoiceChip(
+                    label: Text(grade.displayName),
+                    selected: _selectedGrade == grade,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _selectedGrade = grade;
+                        });
+                      }
+                    },
+                  );
+                }).toList(),
+              ),
+            const SizedBox(height: 16),
+            Text('성급: $_selectedStar성'),
+            Slider(
+              value: _selectedStar.toDouble(),
+              min: 1,
+              max: 9,
+              divisions: 8,
+              label: '$_selectedStar성',
+              onChanged: (value) => setState(() => _selectedStar = value.round()),
+            ),
+            const SizedBox(height: 16),
+            Text('효과: ${charyeok.baseEffectDescription.replaceFirst('n', effectValueText)}'),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context, {
+                  'charyeok': _detailedCharyeok,
+                  'grade': _selectedGrade,
+                  'star': _selectedStar,
+                });
+              },
+              child: const Text('선택'),
+            ),
+          ],
+        ),
       ),
     );
   }
