@@ -1020,6 +1020,74 @@ class _BuffSelectionDialog extends StatelessWidget {
   }
 }
 
+class StarSelector extends StatefulWidget {
+  final int initialStar;
+  final ValueChanged<int> onChanged;
+  final double size;
+
+  const StarSelector({
+    super.key,
+    required this.initialStar,
+    required this.onChanged,
+    this.size = 30,
+  });
+
+  @override
+  _StarSelectorState createState() => _StarSelectorState();
+}
+
+class _StarSelectorState extends State<StarSelector> {
+  late int _currentStar;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentStar = widget.initialStar;
+  }
+
+  @override
+  void didUpdateWidget(covariant StarSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialStar != oldWidget.initialStar) {
+      _currentStar = widget.initialStar;
+    }
+  }
+
+  void _updateStars(Offset localPosition, double width) {
+    final starWidth = width / 9;
+    final star = (localPosition.dx / starWidth).clamp(0, 8).floor() + 1;
+    if (star != _currentStar) {
+      setState(() {
+        _currentStar = star;
+      });
+      widget.onChanged(star);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return GestureDetector(
+          onTapDown: (details) => _updateStars(details.localPosition, constraints.maxWidth),
+          onPanStart: (details) => _updateStars(details.localPosition, constraints.maxWidth),
+          onPanUpdate: (details) => _updateStars(details.localPosition, constraints.maxWidth),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(9, (index) {
+              return Icon(
+                index < _currentStar ? Icons.star : Icons.star_border,
+                color: Colors.amber,
+                size: widget.size,
+              );
+            }),
+          ),
+        );
+      },
+    );
+  }
+}
+
 extension DropdownDisplay on Object {
   String get displayName {
     if (this is Spirit) return (this as Spirit).name;
