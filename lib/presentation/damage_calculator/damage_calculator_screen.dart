@@ -485,7 +485,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                 border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
                  boxShadow: [
                   BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, (0.5 * 255).round() as double),
+                    color: Color.fromRGBO(0, 0, 0, (0.5 * 255).round().toDouble()),
                     spreadRadius: 2,
                     blurRadius: 4,
                     offset: const Offset(0, 2),
@@ -978,8 +978,8 @@ class BuffSelectionDialog extends StatelessWidget {
   final TextEditingController divineItemSkillDamageController;
   final TextEditingController divineItemCritDamageController;
 
-  const BuffSelectionDialog({super.key, 
-    // Removed super.key
+  const BuffSelectionDialog({
+    super.key, // Added super.key
     required this.highSchoolBuffController,
     required this.divineItemNormalDamageController,
     required this.divineItemSkillDamageController,
