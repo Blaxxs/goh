@@ -351,13 +351,16 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     // --- Part 3: Damage Type Multipliers ---
     double passiveCritDamage = (_selectedCharacter!.passive['critDamage'] as num? ?? 0).toDouble();
 
-    double critDmgSum = _getParser(_critDamageController) +
-        _getParser(_divineItemCritDamageController) +
+    double critDmgSum = _getParser(_divineItemCritDamageController) +
         rebirthCritDmgOption +
         spiritCritDamage +
         crestCritDamage +
         passiveCritDamage +
         charyeokCritDamage;
+
+    if (_isCriticalEnabled) {
+      critDmgSum += _getParser(_critDamageController); // Add '표기 크뎀' only if critical is enabled
+    }
 
     
 
@@ -881,12 +884,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             _buildTextField('추가 공격력', _additionalAttackPowerController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
-        ExpansionTile(
-          title: const Text('크리티컬 데미지 (%)'),
-          children: [
-            _buildTextField('표기 크뎀', _critDamageController),
-          ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-        ),
+        if (_isCriticalEnabled) // Only show if critical is enabled
+          ExpansionTile(
+            title: const Text('크리티컬 데미지 (%)'),
+            children: [
+              _buildTextField('표기 크뎀', _critDamageController),
+            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+          ),
         if (!isSatanOrWamira) // Hide if Satan or Wamira
           ExpansionTile(
             title: const Text('일반 공격 데미지 증가 (%)'),
