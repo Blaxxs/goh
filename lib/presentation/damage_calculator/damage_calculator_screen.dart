@@ -76,6 +76,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   double _currentAttackPower = 0;
 
   // --- Text Editing Controllers ---
+  final _baseAttackPowerController = TextEditingController();
   final _additionalAttackPowerController = TextEditingController();
   final _highSchoolBuffController = TextEditingController();
   final _powerUpController = TextEditingController();
@@ -125,6 +126,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   void initState() {
     super.initState();
     _selectedCharacter = characters[0];
+    _baseAttackPowerController.text = _selectedCharacter!.baseAttackPower.toString();
     _selectedSpirit = spirits[0];
     _selectedCrest = crests[0];
     _selectedLeader = leaders[0];
@@ -138,6 +140,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
   @override
   void dispose() {
+    _baseAttackPowerController.dispose();
     _additionalAttackPowerController.dispose();
     _highSchoolBuffController.dispose();
     _powerUpController.dispose();
@@ -316,7 +319,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     }
 
     // --- Part 1: Base Attack Calculation ---
-    double baseCharacterAttack = _selectedCharacter!.baseAttackPower.toDouble();
+    double baseCharacterAttack = _getParser(_baseAttackPowerController); // Use input field
     double rebirthAttackBonus = 0;
     if (_selectedRebirthRealm == RebirthRealm.demon) {
       rebirthAttackBonus = demonRebirthAttackBonus[_rebirthLevel].toDouble();
@@ -787,25 +790,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       drawer: const AppDrawer(currentScreen: AppScreen.damageCalculator),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: DropdownButton<Character>(
-              value: _selectedCharacter,
-              hint: const Text('캐릭터 선택'),
-              isExpanded: true,
-              items: characters.map((Character character) {
-                return DropdownMenuItem<Character>(
-                  value: character,
-                  child: Text(character.name),
-                );
-              }).toList(),
-              onChanged: (Character? newValue) {
-                setState(() {
-                  _selectedCharacter = newValue;
-                });
-              },
-            ),
-          ),
+          
           SizedBox(
             height: screenHeight * 0.3,
             child: Stack(
@@ -886,16 +871,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           title: const Text('공격력 관련'),
           initiallyExpanded: true,
           children: [
+            _buildTextField('기본 공격력', _baseAttackPowerController),
             _buildTextField('추가 공격력', _additionalAttackPowerController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
-        if (_isCriticalEnabled) // Only show if critical is enabled
-          ExpansionTile(
-            title: const Text('크리티컬 데미지 (%)'),
-            children: [
-              _buildTextField('표기 크뎀', _critDamageController),
-            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-          ),
+        
         if (!isSatanOrWamira) // Hide if Satan or Wamira
           ExpansionTile(
             title: const Text('일반 공격 데미지 증가 (%)'),
@@ -1010,7 +990,18 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               ),
             ],
           ),
-        
+        if (_isCriticalEnabled) // Only show if critical is enabled
+          Column(
+            children: [
+              const SizedBox(height: 10), // Add spacing
+              ExpansionTile(
+                title: const Text('크리티컬 데미지 (%)'),
+                children: [
+                  _buildTextField('표기 크뎀', _critDamageController),
+                ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+              ),
+            ],
+          ),
       ],
     );
   }
