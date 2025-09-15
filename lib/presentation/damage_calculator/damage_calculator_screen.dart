@@ -6,6 +6,7 @@ import 'package:goh_calculator/core/constants/damage_calculator_constants.dart';
 import 'package:goh_calculator/core/constants/charyeok_constants.dart';
 import 'package:goh_calculator/core/constants/spirit_constants.dart';
 import 'package:intl/intl.dart';
+import 'package:goh_calculator/presentation/damage_calculator/character_selection_dialog.dart';
 
 enum RebirthRealm { none, heavenly, demon }
 enum RebirthStat { none, skillDamage, attackPower, critDamage, normalDamage }
@@ -319,7 +320,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     }
 
     // --- Part 1: Base Attack Calculation ---
-    double baseCharacterAttack = _getParser(_baseAttackPowerController); // Use input field
+    double baseCharacterAttack = _selectedCharacter!.baseAttackPower.toDouble();
     double rebirthAttackBonus = 0;
     if (_selectedRebirthRealm == RebirthRealm.demon) {
       rebirthAttackBonus = demonRebirthAttackBonus[_rebirthLevel].toDouble();
@@ -504,6 +505,23 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         powerUpController: _powerUpController, // ADDED
       ),
     );
+  }
+
+  Future<void> _showCharacterSelectionDialog() async {
+    final result = await showDialog<Character>(
+      context: context,
+      builder: (context) => Dialog(
+        child: CharacterSelectionDialog(),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _selectedCharacter = result;
+        _baseAttackPowerController.text = _selectedCharacter!.baseAttackPower.toString();
+        _calculateDamage();
+      });
+    }
   }
 
   @override
@@ -795,19 +813,59 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             height: screenHeight * 0.3,
             child: Stack(
               children: [
-                if (_selectedCharacter != null)
-                  Positioned.fill(
-                    child: Image.asset(
-                      _selectedCharacter!.imagePath,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: Colors.grey[200],
-                          child: const Center(child: Text('이미지 없음')),
-                        );
-                      },
-                    ),
-                  ),
+                Positioned.fill(
+                  child: _selectedCharacter != null
+                      ? InkWell(
+                          onTap: _showCharacterSelectionDialog,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                _selectedCharacter!.imagePath,
+                                fit: BoxFit.contain,
+                                height: imageContainerHeight * 0.7,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    color: Colors.grey[200],
+                                    child: const Center(child: Text('이미지 없음')),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _selectedCharacter!.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      offset: Offset(1.0, 1.0),
+                                      blurRadius: 2.0,
+                                      color: Colors.black,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Center(
+                          child: InkWell(
+                            onTap: _showCharacterSelectionDialog,
+                            borderRadius: BorderRadius.circular(30),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(color: Colors.grey.shade300, width: 2),
+                              ),
+                              child: const Text('캐릭터 선택'),
+                            ),
+                          ),
+                        ),
+                ),
                 Positioned(
                   top: 0,
                   left: 8,
@@ -871,7 +929,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           title: const Text('공격력 관련'),
           initiallyExpanded: true,
           children: [
-            _buildTextField('기본 공격력', _baseAttackPowerController),
             _buildTextField('추가 공격력', _additionalAttackPowerController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
