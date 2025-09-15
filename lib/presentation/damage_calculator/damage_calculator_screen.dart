@@ -342,7 +342,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     // Changed highSchoolBuff and powerUpBuff calculation as per user's clarification
     double highSchoolBuffMultiplier = 1 + (_getParser(_highSchoolBuffController) / 100);
-    double powerUpBuffMultiplier = (_getParser(_powerUpController) / 100);
+    double powerUpValue = _getParser(_powerUpController);
+    double powerUpBuffMultiplier = (powerUpValue == 0) ? 1.0 : (powerUpValue / 100);
 
     // charyeokAttackIncrease remains value / 100 (assuming "n%가 된다" type)
     // crestAttackBuff remains 1 + (crestValue / 100)
@@ -364,7 +365,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       critDmgSum += _getParser(_criticalDamageInputController);
     }
 
-    double critDmgMultiplier = (critDmgSum / 100);
+    double critDmgMultiplier = (100 + critDmgSum) / 100;
 
     double normalDmgSum = _getParser(_accessoryNormalDamageController) +
         _getParser(_equipmentNormalDamageController) +
