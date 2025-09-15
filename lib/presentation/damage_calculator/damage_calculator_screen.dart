@@ -332,7 +332,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
 
     // --- Part 2: Multipliers ---
-    final int dalgijiLevel = (SettingsService.instance.stageSettings.dalgijiLevel as int?) ?? 0;
+    final int dalgijiLevel = int.tryParse(SettingsService.instance.stageSettings.dalgijiLevel.toString()) ?? 0;
     final double moonBaseAttackPercent = moonBaseAttackBuffs[dalgijiLevel] ?? 0.0;
     double moonBaseBuff = 1 + (moonBaseAttackPercent / 100);
 
