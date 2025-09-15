@@ -493,6 +493,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         divineItemNormalDamageController: _divineItemNormalDamageController,
         divineItemSkillDamageController: _divineItemSkillDamageController,
         divineItemCritDamageController: _divineItemCritDamageController,
+        powerUpController: _powerUpController, // ADDED
       ),
     );
   }
@@ -881,7 +882,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           initiallyExpanded: true,
           children: [
             _buildTextField('추가 공격력', _additionalAttackPowerController),
-            _buildTextField('파워업 (%)', _powerUpController),
           ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
         ),
         ExpansionTile(
@@ -1032,13 +1032,15 @@ class BuffSelectionDialog extends StatelessWidget {
   final TextEditingController divineItemNormalDamageController;
   final TextEditingController divineItemSkillDamageController;
   final TextEditingController divineItemCritDamageController;
+  final TextEditingController powerUpController; // ADDED
 
   const BuffSelectionDialog({
-    super.key, // Added super.key
+    super.key,
     required this.highSchoolBuffController,
     required this.divineItemNormalDamageController,
     required this.divineItemSkillDamageController,
     required this.divineItemCritDamageController,
+    required this.powerUpController, // ADDED
   });
 
   Widget _buildTextField(String label, TextEditingController controller) {
@@ -1064,6 +1066,8 @@ class BuffSelectionDialog extends StatelessWidget {
             Text('버프 정보 입력', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 20),
             _buildTextField('하이스쿨 버프', highSchoolBuffController),
+            const SizedBox(height: 12),
+            _buildTextField('파워업 (%)', powerUpController), // ADDED
             const SizedBox(height: 12),
             _buildTextField('신기 일공증', divineItemNormalDamageController),
             const SizedBox(height: 12),
