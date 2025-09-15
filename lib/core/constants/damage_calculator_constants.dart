@@ -25,7 +25,7 @@ const List<Character> characters = [
     imagePath: 'assets/images/characters/satan.png',
     baseAttackPower: 16666,
     skillMultiplier: 150,
-    damageType: '미니게임 데미지 * 스킬 데미지',
+    damageType: '미니게임 데미지 * 스킬 데미지 * 크리 데미지',
     passive: {},
   ),
   Character(
@@ -34,7 +34,7 @@ const List<Character> characters = [
     imagePath: 'assets/images/characters/mira.png',
     baseAttackPower: 14000,
     skillMultiplier: 150,
-    damageType: '미니게임 데미지 * 스킬 데미지',
+    damageType: '미니게임 데미지 * 스킬 데미지 * 크리 데미지',
     passive: {
       'critDamage': 100,
       'finalDamage': 30000,
@@ -47,7 +47,7 @@ const List<Character> characters = [
     imagePath: 'assets/images/characters/haegaltaeg.png',
     baseAttackPower: 15000,
     skillMultiplier: 160,
-    damageType: '일반 데미지',
+    damageType: '일반 데미지 * 크리 데미지',
     passive: {
       'critDamage': 120,
     },
