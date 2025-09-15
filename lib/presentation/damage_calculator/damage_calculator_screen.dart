@@ -365,7 +365,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       critDmgSum += _getParser(_criticalDamageInputController);
     }
 
-    double critDmgMultiplier = (100 + critDmgSum) / 100;
+    double critDmgMultiplier = (critDmgSum / 100);
 
     double normalDmgSum = _getParser(_accessoryNormalDamageController) +
         _getParser(_equipmentNormalDamageController) +
