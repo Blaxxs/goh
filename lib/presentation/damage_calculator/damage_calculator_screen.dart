@@ -932,36 +932,49 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     return Column(
       children: [
         Row( // Existing Rebirth Row
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed to spaceBetween
           children: [
-            const Text('환생: '),
-            DropdownButton<RebirthRealm>(
-              value: _selectedRebirthRealm,
-              items: RebirthRealm.values.map((realm) {
-                return DropdownMenuItem<RebirthRealm>(
-                  value: realm,
-                  child: Text(realm.displayName),
-                );
-              }).toList(),
-              onChanged: (value) {
+            ElevatedButton( // Moved Critical button here
+              onPressed: () {
                 setState(() {
-                  _selectedRebirthRealm = value ?? RebirthRealm.none;
-                  _selectedRebirthStat = RebirthStat.none; // Reset stat selection
+                  _isCriticalEnabled = !_isCriticalEnabled;
                 });
               },
+              child: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
             ),
-            const SizedBox(width: 10),
-            if (_selectedRebirthRealm != RebirthRealm.none)
-              DropdownButton<int>(
-                value: _rebirthLevel,
-                hint: const Text('단계'),
-                items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                onChanged: (value) {
-                  setState(() {
-                    _rebirthLevel = value ?? 0;
-                  });
-                },
-              ),
+            Row( // Wrapped Rebirth elements in a Row to keep them together
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('환생: '),
+                DropdownButton<RebirthRealm>(
+                  value: _selectedRebirthRealm,
+                  items: RebirthRealm.values.map((realm) {
+                    return DropdownMenuItem<RebirthRealm>(
+                      value: realm,
+                      child: Text(realm.displayName),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      _selectedRebirthRealm = value ?? RebirthRealm.none;
+                      _selectedRebirthStat = RebirthStat.none; // Reset stat selection
+                    });
+                  },
+                ),
+                const SizedBox(width: 10),
+                if (_selectedRebirthRealm != RebirthRealm.none)
+                  DropdownButton<int>(
+                    value: _rebirthLevel,
+                    hint: const Text('단계'),
+                    items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                    onChanged: (value) {
+                      setState(() {
+                        _rebirthLevel = value ?? 0;
+                      });
+                    },
+                  ),
+              ],
+            ),
           ],
         ),
         if (_selectedRebirthRealm != RebirthRealm.none)
@@ -991,22 +1004,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               ),
             ],
           ),
-        // New Critical Button and Input Field
-        const SizedBox(height: 10), // Add some spacing
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _isCriticalEnabled = !_isCriticalEnabled;
-                });
-              },
-              child: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
-            ),
-          ],
-        ),
-        if (_isCriticalEnabled)
+        if (_isCriticalEnabled) // Only show critical input if enabled
           Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: _buildTextField('크리티컬 데미지', _criticalDamageInputController),
