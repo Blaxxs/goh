@@ -94,7 +94,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _fragmentMinigameDamageController = TextEditingController();
   final _rebirthStatValueController = TextEditingController();
   final _crestValueController = TextEditingController();
-  final _criticalDamageInputController = TextEditingController(); // New controller
 
   // --- Data Maps ---
   final List<int> demonRebirthAttackBonus = [0, 50, 50, 100, 100, 200, 200, 300, 300, 450];
@@ -157,7 +156,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _fragmentMinigameDamageController.dispose();
     _rebirthStatValueController.dispose();
     _crestValueController.dispose();
-    _criticalDamageInputController.dispose(); // Dispose new controller
     super.dispose();
   }
 
@@ -361,9 +359,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         passiveCritDamage +
         charyeokCritDamage;
 
-    if (_isCriticalEnabled) {
-      critDmgSum += _getParser(_criticalDamageInputController);
-    }
+    
 
     double critDmgMultiplier = (critDmgSum / 100);
 
@@ -1005,11 +1001,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               ),
             ],
           ),
-        if (_isCriticalEnabled) // Only show critical input if enabled
-          Padding(
-            padding: const EdgeInsets.only(top: 10.0),
-            child: _buildTextField('크리티컬 데미지', _criticalDamageInputController),
-          ),
+        
       ],
     );
   }
