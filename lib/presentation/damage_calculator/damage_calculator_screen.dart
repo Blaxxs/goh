@@ -1830,6 +1830,34 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                 });
               },
             ),
+            const SizedBox(height: 16),
+            if (spirit.effects.isNotEmpty)
+              Column(
+                children: spirit.effects.map((effect) {
+                  String effectName;
+                  switch (effect.type) {
+                    case SpiritEffectType.skillCoefficient:
+                      effectName = '스킬 계수';
+                      break;
+                    case SpiritEffectType.critDamage:
+                      effectName = '크리티컬 데미지';
+                      break;
+                    case SpiritEffectType.baseAttack:
+                      effectName = '기본 공격력';
+                      break;
+                    case SpiritEffectType.normalDamage:
+                      effectName = '일반 공격 데미지';
+                      break;
+                    case SpiritEffectType.skillDamage:
+                      effectName = '스킬 데미지';
+                      break;
+                  }
+                  final value = effect.values[_selectedStar - 1];
+                  String valueString = effect.type == SpiritEffectType.baseAttack ? value.toInt().toString() : '${value}%';
+
+                  return Text('$effectName: $valueString');
+                }).toList(),
+              ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
