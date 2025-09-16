@@ -1052,12 +1052,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           Column(
             children: [
               const SizedBox(height: 10), // Add spacing
-              ExpansionTile(
-                title: const Text('크리티컬 데미지 (%)'),
-                children: [
-                  _buildTextField('표기 크뎀', _critDamageController),
-                ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-              ),
+              _buildTextField('표기 크뎀', _critDamageController),
             ],
           ),
       ],
