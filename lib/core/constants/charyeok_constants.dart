@@ -200,5 +200,15 @@ const List<Charyeok> charyeoks = [
     synergyEffectType: {},
     synergyEffectValues: {},
     description: '전투 시작 시 크리티컬 데미지가 n증가한다. 매턴 n씩 감소하고 최소 n까지 감소 후 유지한다.',
+    decreasePerTurn: {
+      CharyeokGrade.rare: [30, 30, 30, 30, 30, 30, 30, 30, 30],
+      CharyeokGrade.relic: [40, 40, 40, 40, 40, 40, 40, 40, 40],
+      CharyeokGrade.legendary: [50, 50, 50, 50, 50, 50, 50, 50, 50],
+    },
+    minValue: {
+      CharyeokGrade.rare: [30, 30, 30, 30, 30, 30, 30, 30, 30],
+      CharyeokGrade.relic: [40, 40, 40, 40, 40, 40, 40, 40, 40],
+      CharyeokGrade.legendary: [50, 50, 50, 50, 50, 50, 50, 50, 50],
+    },
   ),
 ];

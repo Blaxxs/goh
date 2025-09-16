@@ -1331,13 +1331,41 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
 
   Widget _buildDetailView() {
     final charyeok = _detailedCharyeok!;
-    String effectValueText = 'N/A';
-    if (_selectedGrade != null && charyeok.baseEffectValues.containsKey(_selectedGrade)) {
-      final values = charyeok.baseEffectValues[_selectedGrade]!;
-      if (values.isNotEmpty) {
-         effectValueText = values[_selectedStar - 1].toString();
+    String description = charyeok.description;
+
+    if (_selectedGrade != null) {
+      List<String> values = [];
+      if (charyeok.baseEffectValues.containsKey(_selectedGrade)) {
+        values.add(charyeok.baseEffectValues[_selectedGrade]![_selectedStar - 1].toString());
+      }
+
+      if (charyeok.englishName == 'longginuseu') {
+        if (charyeok.increasePerTurn != null && charyeok.increasePerTurn!.containsKey(_selectedGrade)) {
+          values.add(charyeok.increasePerTurn![_selectedGrade]![_selectedStar - 1].toString());
+        }
+        if (charyeok.maxValue != null && charyeok.maxValue!.containsKey(_selectedGrade)) {
+          values.add(charyeok.maxValue![_selectedGrade]![_selectedStar - 1].toString());
+        }
+      } else { // For umawang and sanghyeonggwon
+        if (charyeok.decreasePerTurn != null && charyeok.decreasePerTurn!.containsKey(_selectedGrade)) {
+          values.add(charyeok.decreasePerTurn![_selectedGrade]![_selectedStar - 1].toString());
+        }
+        if (charyeok.minValue != null && charyeok.minValue!.containsKey(_selectedGrade)) {
+          values.add(charyeok.minValue![_selectedGrade]![_selectedStar - 1].toString());
+        }
+      }
+
+      int i = 0;
+      while(description.contains('n')) {
+        if (i < values.length) {
+          description = description.replaceFirst('n', values[i]);
+          i++;
+        } else {
+          break; // No more values to replace 'n'
+        }
       }
     }
+
 
     return SingleChildScrollView(
       child: Padding(
@@ -1383,7 +1411,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               },
             ),
             const SizedBox(height: 16),
-            Text('효과: ${charyeok.description.replaceFirst('n', effectValueText)}'),
+            Text('효과: $description'),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
