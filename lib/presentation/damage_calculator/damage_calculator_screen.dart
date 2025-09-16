@@ -931,13 +931,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     return Column(
       children: [
-        ExpansionTile(
-          title: const Text('공격력 관련'),
-          initiallyExpanded: true,
-          children: [
-            _buildTextField('추가 공격력', _additionalAttackPowerController),
-          ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-        ),
+        _buildTextField('추가 공격력', _additionalAttackPowerController),
+        const SizedBox(height: 10),
         
         if (!isSatanOrWamira) // Hide if Satan or Wamira
           ExpansionTile(
