@@ -12,18 +12,18 @@ class CharacterSelectionDialog extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
             child: Text("캐릭터 선택", style: Theme.of(context).textTheme.headlineSmall),
           ),
           GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 3 / 4,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              childAspectRatio: 0.8,
             ),
             itemCount: displayCharacters.length,
             itemBuilder: (context, index) {
@@ -38,7 +38,7 @@ class CharacterSelectionDialog extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: Text(
                             character.name,
                             textAlign: TextAlign.center,
@@ -51,7 +51,7 @@ class CharacterSelectionDialog extends StatelessWidget {
                       Expanded(
                         flex: 3,
                         child: Padding(
-                          padding: const EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: Image.asset(
                             character.imagePath,
                             fit: BoxFit.contain,
@@ -66,7 +66,7 @@ class CharacterSelectionDialog extends StatelessWidget {
             },
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: TextButton.icon(
               icon: const Icon(Icons.cancel_outlined),
               label: const Text("선택 취소"),
