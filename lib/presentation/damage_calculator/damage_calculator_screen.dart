@@ -1844,19 +1844,19 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                   String text;
                   switch (effect.type) {
                     case SpiritEffectType.skillCoefficient:
-                      text = '스킬 계수 +${value}%';
+                      text = '스킬 계수 +$value%';
                       break;
                     case SpiritEffectType.critDamage:
-                      text = '크리티컬 데미지 ${value}% 증가';
+                      text = '크리티컬 데미지 $value% 증가';
                       break;
                     case SpiritEffectType.baseAttack:
                       text = '기본 공격력 ${value.toInt()} 증가';
                       break;
                     case SpiritEffectType.normalDamage:
-                      text = '일반 공격 데미지 ${value}% 증가';
+                      text = '일반 공격 데미지 $value% 증가';
                       break;
                     case SpiritEffectType.skillDamage:
-                      text = '스킬 데미지 ${value}% 증가';
+                      text = '스킬 데미지 $value% 증가';
                       break;
                   }
                   return Text(text);
