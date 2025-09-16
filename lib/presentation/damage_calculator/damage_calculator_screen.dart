@@ -1184,6 +1184,8 @@ class StarSelectorState extends State<StarSelector> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(9, (index) {
         return IconButton(
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
           icon: Icon(
             index < _currentStar ? Icons.star : Icons.star_border,
             color: Colors.amber,
