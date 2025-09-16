@@ -40,7 +40,7 @@ class Spirit {
       final endValue = e.values.last;
       switch (e.type) {
         case SpiritEffectType.skillCoefficient:
-          return '스킬 계수 +${startValue}%~+${endValue}%';
+          return '스킬 계수 +$startValue%~+$endValue%';
         case SpiritEffectType.critDamage:
           return '크리티컬 데미지 ${startValue}%~${endValue}% 증가';
         case SpiritEffectType.baseAttack:

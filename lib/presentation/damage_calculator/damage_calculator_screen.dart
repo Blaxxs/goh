@@ -513,8 +513,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       builder: (context) => Dialog(
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 0.8,
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: CharacterSelectionDialog(),
+          child: AspectRatio(
+            aspectRatio: 1 / 0.8,
+            child: CharacterSelectionDialog(),
+          ),
         ),
       ),
     );
