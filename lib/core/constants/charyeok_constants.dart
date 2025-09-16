@@ -24,6 +24,10 @@ class Charyeok {
   final Map<CharyeokGrade, SynergyEffectType> synergyEffectType;
   final Map<CharyeokGrade, int> synergyEffectValues;
   final String description;
+  final Map<CharyeokGrade, List<int>>? decreasePerTurn;
+  final Map<CharyeokGrade, List<int>>? minValue;
+  final Map<CharyeokGrade, List<int>>? increasePerTurn;
+  final Map<CharyeokGrade, List<int>>? maxValue;
 
   const Charyeok({
     required this.name,
@@ -35,6 +39,10 @@ class Charyeok {
     required this.synergyEffectType,
     required this.synergyEffectValues,
     required this.description,
+    this.decreasePerTurn,
+    this.minValue,
+    this.increasePerTurn,
+    this.maxValue,
   });
 }
 
@@ -91,7 +99,21 @@ const List<Charyeok> charyeoks = [
       CharyeokGrade.relic: 30,
       CharyeokGrade.legendary: 50,
     },
-    description: '전투 시작 시 자신의 기본 공격력이 n%증가한다. 매턴 n%씩 감소하며 최소 30%까지 감소하고 유지한다.',
+    description: '전투 시작 시 자신의 기본 공격력이 n%증가한다. 매턴 n%씩 감소하며 최소 n%까지 감소하고 유지한다.',
+    decreasePerTurn: {
+      CharyeokGrade.normal: [20, 20, 20, 20, 20, 20, 20, 20, 20],
+      CharyeokGrade.advanced: [20, 20, 20, 20, 20, 20, 20, 20, 20],
+      CharyeokGrade.rare: [30, 30, 30, 30, 30, 30, 30, 30, 30],
+      CharyeokGrade.relic: [40, 40, 40, 40, 40, 40, 40, 40, 40],
+      CharyeokGrade.legendary: [50, 50, 50, 50, 50, 50, 50, 50, 50],
+    },
+    minValue: {
+      CharyeokGrade.normal: [30, 30, 30, 30, 30, 30, 30, 30, 30],
+      CharyeokGrade.advanced: [30, 30, 30, 30, 30, 30, 30, 30, 30],
+      CharyeokGrade.rare: [30, 30, 30, 30, 30, 30, 30, 30, 30],
+      CharyeokGrade.relic: [40, 40, 40, 40, 40, 40, 40, 40, 40],
+      CharyeokGrade.legendary: [50, 50, 50, 50, 50, 50, 50, 50, 50],
+    },
   ),
   Charyeok(
     name: '잔다르크',
@@ -153,6 +175,16 @@ const List<Charyeok> charyeoks = [
       CharyeokGrade.legendary: 50,
     },
     description: '전투 시작 시 자신의 기본 공격력이 n%증가한다. 매턴 n%씩 증가하며 최대 n%까지 증가하고 유지된다.',
+    increasePerTurn: {
+      CharyeokGrade.rare: [10, 10, 10, 10, 10, 10, 10, 10, 10],
+      CharyeokGrade.relic: [15, 15, 15, 15, 15, 15, 15, 15, 15],
+      CharyeokGrade.legendary: [20, 20, 20, 20, 20, 20, 20, 20, 20],
+    },
+    maxValue: {
+      CharyeokGrade.rare: [50, 51, 52, 53, 54, 55, 56, 58, 60],
+      CharyeokGrade.relic: [70, 71, 72, 73, 74, 75, 76, 78, 80],
+      CharyeokGrade.legendary: [90, 91, 92, 93, 94, 95, 96, 98, 100],
+    },
   ),
   Charyeok(
     name: '상형권',
