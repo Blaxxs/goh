@@ -23,6 +23,7 @@ class Charyeok {
   final Map<CharyeokGrade, List<int>> baseEffectValues;
   final Map<CharyeokGrade, SynergyEffectType> synergyEffectType;
   final Map<CharyeokGrade, int> synergyEffectValues;
+  final String description;
 
   const Charyeok({
     required this.name,
@@ -33,22 +34,8 @@ class Charyeok {
     required this.baseEffectValues,
     required this.synergyEffectType,
     required this.synergyEffectValues,
+    required this.description,
   });
-
-  String get baseEffectDescription {
-    switch (baseEffectType) {
-      case CharyeokEffectType.attackSetPercent:
-        return '공격력이 n%가 된다';
-      case CharyeokEffectType.baseAttackIncreasePercent:
-        return '기본 공격력이 n%증가한다';
-      case CharyeokEffectType.fixedAdditionalDamage:
-        return '고정 추가 데미지 n을 입힌다';
-      case CharyeokEffectType.critDamageIncrease:
-        return '크리티컬 데미지가 n 증가한다.';
-      case CharyeokEffectType.none:
-        return '없음';
-    }
-  }
 }
 
 const List<Charyeok> charyeoks = [
@@ -61,6 +48,7 @@ const List<Charyeok> charyeoks = [
     baseEffectValues: {},
     synergyEffectType: {},
     synergyEffectValues: {},
+    description: '없음',
   ),
   Charyeok(
     name: '제갈택의 탐',
@@ -74,6 +62,7 @@ const List<Charyeok> charyeoks = [
     },
     synergyEffectType: {},
     synergyEffectValues: {},
+    description: '전투 시작 후 4턴동안 공격력과 체력이 n%가 된다. (단, PVE 콘텐츠에서만 적용.)',
   ),
   Charyeok(
     name: '우마왕',
@@ -102,6 +91,7 @@ const List<Charyeok> charyeoks = [
       CharyeokGrade.relic: 30,
       CharyeokGrade.legendary: 50,
     },
+    description: '전투 시작 시 자신의 기본 공격력이 n%증가한다. 매턴 n%씩 감소하며 최소 30%까지 감소하고 유지한다.',
   ),
   Charyeok(
     name: '잔다르크',
@@ -124,6 +114,7 @@ const List<Charyeok> charyeoks = [
     },
     synergyEffectType: {},
     synergyEffectValues: {},
+    description: '전추 시작 후 1턴간 일반, 스킬, 미니게임 스킬 공격(주사위 미니게임 미포함) 시 고정 추가데미지 n을 입힌다. 해당 효과는 상대의 일반, 스킬, 미니게임 스킬 방어막 및 피해감소, 데미지 제한 효과를 무시한다.',
   ),
   Charyeok(
     name: '아수라',
@@ -140,6 +131,7 @@ const List<Charyeok> charyeoks = [
       CharyeokGrade.relic: 30,
       CharyeokGrade.legendary: 50,
     },
+    description: '자신의 기본 공격이 특정 확률로 전체 대상으로 변경된다.',
   ),
   Charyeok(
     name: '롱기누스',
@@ -160,6 +152,7 @@ const List<Charyeok> charyeoks = [
       CharyeokGrade.relic: 30,
       CharyeokGrade.legendary: 50,
     },
+    description: '전투 시작 시 자신의 기본 공격력이 n%증가한다. 매턴 n%씩 증가하며 최대 n%까지 증가하고 유지된다.',
   ),
   Charyeok(
     name: '상형권',
@@ -174,5 +167,6 @@ const List<Charyeok> charyeoks = [
     },
     synergyEffectType: {},
     synergyEffectValues: {},
+    description: '전투 시작 시 크리티컬 데미지가 n증가한다. 매턴 n씩 감소하고 최소 n까지 감소 후 유지한다.',
   ),
 ];

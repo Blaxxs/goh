@@ -1383,7 +1383,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               },
             ),
             const SizedBox(height: 16),
-            Text('효과: ${charyeok.baseEffectDescription.replaceFirst('n', effectValueText)}'),
+            Text('효과: ${charyeok.description.replaceFirst('n', effectValueText)}'),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
