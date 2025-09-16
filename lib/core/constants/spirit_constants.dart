@@ -36,30 +36,20 @@ class Spirit {
       return '효과 없음';
     }
     return effects.map((e) {
-      String effectName;
+      final startValue = e.values[0];
+      final endValue = e.values.last;
       switch (e.type) {
         case SpiritEffectType.skillCoefficient:
-          effectName = '스킬 계수';
-          break;
+          return '스킬 계수 +${startValue}%~+${endValue}%';
         case SpiritEffectType.critDamage:
-          effectName = '크리티컬 데미지';
-          break;
+          return '크리티컬 데미지 ${startValue}%~${endValue}% 증가';
         case SpiritEffectType.baseAttack:
-          effectName = '기본 공격력';
-          break;
+          return '기본 공격력 ${startValue.toInt()}~${endValue.toInt()} 증가';
         case SpiritEffectType.normalDamage:
-          effectName = '일반 공격 데미지';
-          break;
+          return '일반 공격 데미지 ${startValue}%~${endValue}% 증가';
         case SpiritEffectType.skillDamage:
-          effectName = '스킬 데미지';
-          break;
+          return '스킬 데미지 ${startValue}%~${endValue}% 증가';
       }
-      final startValue = e.values[0];
-      final endValue = e.values[e.values.length - 1];
-      if (e.type == SpiritEffectType.baseAttack) {
-        return '$effectName ${startValue.toInt()}~${endValue.toInt()} 증가';
-      }
-      return '$effectName ${startValue}%~${endValue}% 증가';
     }).join('\n');
   }
 }
