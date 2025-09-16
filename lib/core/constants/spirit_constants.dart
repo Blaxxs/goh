@@ -42,13 +42,13 @@ class Spirit {
         case SpiritEffectType.skillCoefficient:
           return '스킬 계수 +$startValue%~+$endValue%';
         case SpiritEffectType.critDamage:
-          return '크리티컬 데미지 ${startValue}%~${endValue}% 증가';
+          return '크리티컬 데미지 $startValue%~$endValue% 증가';
         case SpiritEffectType.baseAttack:
           return '기본 공격력 ${startValue.toInt()}~${endValue.toInt()} 증가';
         case SpiritEffectType.normalDamage:
-          return '일반 공격 데미지 ${startValue}%~${endValue}% 증가';
+          return '일반 공격 데미지 $startValue%~$endValue% 증가';
         case SpiritEffectType.skillDamage:
-          return '스킬 데미지 ${startValue}%~${endValue}% 증가';
+          return '스킬 데미지 $startValue%~$endValue% 증가';
       }
     }).join('\n');
   }

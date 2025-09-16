@@ -1408,7 +1408,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
           case SynergyEffectType.none:
             break;
         }
-        synergyDescription = '상성효과: $synergyName ${synergyValue}% 증가';
+        synergyDescription = '상성효과: $synergyName $synergyValue% 증가';
       }
     }
 
