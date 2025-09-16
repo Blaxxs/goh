@@ -1352,8 +1352,10 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   Widget _buildDetailView() {
     final charyeok = _detailedCharyeok!;
     String description = charyeok.description;
+    String synergyDescription = '';
 
     if (_selectedGrade != null) {
+      // Build base effect description
       List<String> values = [];
       if (charyeok.baseEffectValues.containsKey(_selectedGrade)) {
         values.add(charyeok.baseEffectValues[_selectedGrade]![_selectedStar - 1].toString());
@@ -1383,6 +1385,24 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
         } else {
           break; // No more values to replace 'n'
         }
+      }
+
+      // Build synergy effect description
+      if (charyeok.synergyEffectType.containsKey(_selectedGrade) && charyeok.synergyEffectType[_selectedGrade] != SynergyEffectType.none) {
+        final synergyType = charyeok.synergyEffectType[_selectedGrade]!;
+        final synergyValue = charyeok.synergyEffectValues[_selectedGrade]!;
+        String synergyName = '';
+        switch (synergyType) {
+          case SynergyEffectType.skillDamageIncreasePercent:
+            synergyName = '스킬 데미지';
+            break;
+          case SynergyEffectType.normalDamageIncreasePercent:
+            synergyName = '일반 공격 데미지';
+            break;
+          case SynergyEffectType.none:
+            break;
+        }
+        synergyDescription = '상성효과: $synergyName ${synergyValue}% 증가';
       }
     }
 
@@ -1432,6 +1452,10 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
             ),
             const SizedBox(height: 16),
             Text('효과: $description'),
+            if (synergyDescription.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Text(synergyDescription, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
+            ],
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: () {
@@ -1489,55 +1513,71 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
 
   Widget _buildGridView() {
     final displayCrests = crests.where((c) => c.type != CrestType.none).toList();
-    return Column(
-      children: [
-        Text("문장 선택", style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 16),
-        Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: displayCrests.length,
-            itemBuilder: (context, index) {
-              final crest = displayCrests[index];
-              return GestureDetector(
-                onTap: () => _selectCrest(crest),
-                child: GridTile(
-                  footer: Container(
-                    color: Colors.black54,
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      crest.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
+    return SizedBox(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.5,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text("문장 선택", style: Theme.of(context).textTheme.headlineSmall),
+          ),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 3 / 4,
+              ),
+              itemCount: displayCrests.length,
+              itemBuilder: (context, index) {
+                final crest = displayCrests[index];
+                return GestureDetector(
+                  onTap: () => _selectCrest(crest),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          crest.name,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: crest.imagePath != null
+                                ? Image.asset(crest.imagePath!, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey))
+                                : Icon(crest.icon, size: 40, color: Colors.grey),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: crest.imagePath != null
-                      ? Image.asset(crest.imagePath!, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                      : Icon(crest.icon, size: 50),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextButton.icon(
-            icon: const Icon(Icons.cancel),
-            label: const Text("선택 취소"),
-            onPressed: () {
-              Navigator.pop(context, {
-                'crest': crests[0],
-                'value': '',
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 안함"),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'crest': crests[0],
+                  'value': '',
+                });
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -1698,53 +1738,69 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
 
   Widget _buildGridView() {
     final displaySpirits = spirits.where((s) => s.name != '선택 안함').toList();
-    return Column(
-      children: [
-        Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 16),
-        Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: displaySpirits.length,
-            itemBuilder: (context, index) {
-              final spirit = displaySpirits[index];
-              return GestureDetector(
-                onTap: () => _selectSpirit(spirit),
-                child: GridTile(
-                  footer: Container(
-                    color: Colors.black54,
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      spirit.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
+    return SizedBox(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: displaySpirits.length,
+              itemBuilder: (context, index) {
+                final spirit = displaySpirits[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: InkWell(
+                    onTap: () => _selectSpirit(spirit),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            spirit.imagePath,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.contain,
+                            errorBuilder: (c, o, s) => const Icon(Icons.error, size: 60),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(spirit.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                Text(spirit.description, style: Theme.of(context).textTheme.bodySmall),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  child: Image.asset(spirit.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextButton.icon(
-            icon: const Icon(Icons.cancel),
-            label: const Text("선택 취소"),
-            onPressed: () {
-              Navigator.pop(context, {
-                'spirit': spirits[0],
-                'star': 1,
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 안함"),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'spirit': spirits[0],
+                  'star': 1,
+                });
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

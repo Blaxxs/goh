@@ -30,6 +30,38 @@ class Spirit {
     required this.imagePath,
     required this.effects,
   });
+
+  String get description {
+    if (effects.isEmpty) {
+      return '효과 없음';
+    }
+    return effects.map((e) {
+      String effectName;
+      switch (e.type) {
+        case SpiritEffectType.skillCoefficient:
+          effectName = '스킬 계수';
+          break;
+        case SpiritEffectType.critDamage:
+          effectName = '크리티컬 데미지';
+          break;
+        case SpiritEffectType.baseAttack:
+          effectName = '기본 공격력';
+          break;
+        case SpiritEffectType.normalDamage:
+          effectName = '일반 공격 데미지';
+          break;
+        case SpiritEffectType.skillDamage:
+          effectName = '스킬 데미지';
+          break;
+      }
+      final startValue = e.values[0];
+      final endValue = e.values[e.values.length - 1];
+      if (e.type == SpiritEffectType.baseAttack) {
+        return '$effectName ${startValue.toInt()}~${endValue.toInt()} 증가';
+      }
+      return '$effectName ${startValue}%~${endValue}% 증가';
+    }).join('\n');
+  }
 }
 
 const List<Spirit> spirits = [
