@@ -1552,39 +1552,61 @@ class LeaderSelectionDialog extends StatefulWidget {
 }
 
 class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
-  // Removed _detailedLeader;
-  // Removed _selectLeader method
 
-  Widget _buildGridView() {
+  Widget _buildListView() {
     final displayLeaders = leaders.where((l) => l.name != '선택 안함').toList();
     return Column(
       children: [
-        Text("리더 선택", style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 16),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Text("리더 선택", style: Theme.of(context).textTheme.headlineSmall),
+        ),
         Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
+          child: ListView.builder(
             itemCount: displayLeaders.length,
             itemBuilder: (context, index) {
               final leader = displayLeaders[index];
-              return GestureDetector(
-                onTap: () => Navigator.of(context).pop(leader),
-                child: GridTile(
-                  footer: Container(
-                    color: Colors.black54,
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      leader.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: InkWell(
+                  onTap: () => Navigator.of(context).pop(leader),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Image.asset(
+                              leader.imagePath,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.contain,
+                              errorBuilder: (c, o, s) => const Icon(Icons.error, size: 60)
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(leader.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                                  if (leader.skillName != null)
+                                    Text(leader.skillName!, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontStyle: FontStyle.italic, color: Colors.blueGrey)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (leader.skillDescription != null) ...[
+                          const SizedBox(height: 8),
+                          const Divider(),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(leader.skillDescription!, style: Theme.of(context).textTheme.bodyMedium),
+                          ),
+                        ]
+                      ],
                     ),
                   ),
-                  child: Image.asset(leader.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
                 ),
               );
             },
@@ -1606,7 +1628,7 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildGridView();
+    return _buildListView();
   }
 }
 
