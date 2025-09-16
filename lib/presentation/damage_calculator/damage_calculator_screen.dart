@@ -1278,54 +1278,74 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
 
   Widget _buildGridView() {
     final displayCharyeoks = charyeoks.where((c) => c.name != '선택 안함').toList();
-    return Column(
-      children: [
-        Text("차력 선택", style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 16),
-        Expanded(
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 8,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: displayCharyeoks.length,
-            itemBuilder: (context, index) {
-              final charyeok = displayCharyeoks[index];
-              return GestureDetector(
-                onTap: () => _selectCharyeok(charyeok),
-                child: GridTile(
-                  footer: Container(
-                    color: Colors.black54,
-                    padding: const EdgeInsets.all(4.0),
-                    child: Text(
-                      charyeok.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
+    return SizedBox( // Use SizedBox to constrain size
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.7, // Adjust height
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text("차력 선택", style: Theme.of(context).textTheme.headlineSmall),
+          ),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 3 / 4, // Adjust for name + icon
+              ),
+              itemCount: displayCharyeoks.length,
+              itemBuilder: (context, index) {
+                final charyeok = displayCharyeoks[index];
+                return GestureDetector(
+                  onTap: () => _selectCharyeok(charyeok),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          charyeok.name,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Image.asset(
+                              charyeok.imagePath,
+                              fit: BoxFit.contain,
+                              errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Image.asset(charyeok.imagePath, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error)),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextButton.icon(
-            icon: const Icon(Icons.cancel),
-            label: const Text("선택 취소"),
-            onPressed: () {
-              Navigator.pop(context, {
-                'charyeok': charyeoks[0],
-                'grade': null,
-                'star': 1,
-              });
-            },
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 안함"),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'charyeok': charyeoks[0],
+                  'grade': null,
+                  'star': 1,
+                });
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
