@@ -1169,9 +1169,7 @@ class StarSelectorState extends State<StarSelector> {
     }
   }
 
-  void _updateStars(Offset localPosition, double width) {
-    final starWidth = width / 9;
-    final star = (localPosition.dx / starWidth).clamp(0, 8).floor() + 1;
+  void _updateStars(int star) {
     if (star != _currentStar) {
       setState(() {
         _currentStar = star;
@@ -1182,24 +1180,18 @@ class StarSelectorState extends State<StarSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return GestureDetector(
-          onTapDown: (details) => _updateStars(details.localPosition, constraints.maxWidth),
-          onPanStart: (details) => _updateStars(details.localPosition, constraints.maxWidth),
-          onPanUpdate: (details) => _updateStars(details.localPosition, constraints.maxWidth),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(9, (index) {
-              return Icon(
-                index < _currentStar ? Icons.star : Icons.star_border,
-                color: Colors.amber,
-                size: widget.size,
-              );
-            }),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(9, (index) {
+        return IconButton(
+          icon: Icon(
+            index < _currentStar ? Icons.star : Icons.star_border,
+            color: Colors.amber,
+            size: widget.size,
           ),
+          onPressed: () => _updateStars(index + 1),
         );
-      },
+      }),
     );
   }
 }
