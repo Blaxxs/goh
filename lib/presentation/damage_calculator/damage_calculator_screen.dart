@@ -528,7 +528,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => Dialog(
-        child: SpiritSelectionDialog(),
+        child: SpiritSelectionDialog(onDamageRecalculated: _calculateDamage),
       ),
     );
 
@@ -1763,7 +1763,8 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
 }
 
 class SpiritSelectionDialog extends StatefulWidget {
-  const SpiritSelectionDialog({super.key});
+  final VoidCallback onDamageRecalculated;
+  const SpiritSelectionDialog({super.key, required this.onDamageRecalculated});
   @override
   SpiritSelectionDialogState createState() => SpiritSelectionDialogState();
 }
@@ -1869,7 +1870,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
               onChanged: (star) {
                 setState(() {
                   _selectedStar = star;
-                  _calculateDamage(); // Recalculate after state change
+                  widget.onDamageRecalculated(); // Recalculate after state change
                 });
               },
             ),
