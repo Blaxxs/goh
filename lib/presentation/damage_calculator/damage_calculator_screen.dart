@@ -490,6 +490,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       setState(() {
         _selectedSpirit = result['spirit'];
         _selectedSpiritStar = result['star'];
+        _calculateDamage(); // Recalculate after selection
       });
     }
   }
@@ -1823,6 +1824,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
               onChanged: (star) {
                 setState(() {
                   _selectedStar = star;
+                  _calculateDamage(); // Recalculate after state change
                 });
               },
             ),
