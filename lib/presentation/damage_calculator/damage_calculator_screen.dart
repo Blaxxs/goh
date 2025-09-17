@@ -1531,22 +1531,22 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context, {
-                      'charyeok': charyeoks[0],
-                      'grade': null,
-                      'star': 1,
-                    });
-                  },
-                  child: const Text('초기화'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, {
                       'charyeok': _detailedCharyeok,
                       'grade': _selectedGrade,
                       'star': _selectedStar,
                     });
                   },
                   child: Text(_hasChanges ? '저장' : '닫기'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'charyeok': charyeoks[0],
+                      'grade': null,
+                      'star': 1,
+                    });
+                  },
+                  child: const Text('초기화'),
                 ),
               ],
             ),
@@ -1713,20 +1713,20 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
               ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context, {
-                    'crest': crests[0],
-                    'value': '',
-                  });
-                },
-                child: const Text('초기화'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context, {
                     'crest': _detailedCrest,
                     'value': _valueController.text,
                   });
                 },
                 child: Text(_hasChanges ? '저장' : '닫기'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'crest': crests[0],
+                    'value': '',
+                  });
+                },
+                child: const Text('초기화'),
               ),
             ],
           ),
@@ -1855,6 +1855,13 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
       _detailedSpirit = widget.initialSpirit;
       _selectedStar = widget.initialStar;
     }
+  }
+
+  void _selectSpirit(Spirit spirit) {
+    setState(() {
+      _detailedSpirit = spirit;
+      _selectedStar = 1; // Reset star when a new spirit is selected
+    });
   }
 
   Widget _buildGridView() {
@@ -1986,20 +1993,20 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context, {
-                      'spirit': spirits[0],
-                      'star': 1,
-                    });
-                  },
-                  child: const Text('초기화'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, {
                       'spirit': _detailedSpirit,
                       'star': _selectedStar,
                     });
                   },
                   child: Text(_hasChanges ? '저장' : '닫기'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'spirit': spirits[0],
+                      'star': 1,
+                    });
+                  },
+                  child: const Text('초기화'),
                 ),
               ],
             ),
