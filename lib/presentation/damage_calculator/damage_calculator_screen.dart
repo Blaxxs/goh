@@ -86,14 +86,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _accessoryNormalDamageController = TextEditingController();
   final _equipmentNormalDamageController = TextEditingController();
   final _divineItemNormalDamageController = TextEditingController();
-  final _fragmentNormalDamageController = TextEditingController();
   final _accessorySkillDamageController = TextEditingController();
   final _equipmentSkillDamageController = TextEditingController();
   final _divineItemSkillDamageController = TextEditingController();
-  final _fragmentSkillDamageController = TextEditingController();
   final _accessoryMinigameDamageController = TextEditingController();
   final _equipmentMinigameDamageController = TextEditingController();
-  final _fragmentMinigameDamageController = TextEditingController();
   final _rebirthStatValueController = TextEditingController();
   final _crestValueController = TextEditingController();
 
@@ -152,14 +149,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _accessoryNormalDamageController.dispose();
     _equipmentNormalDamageController.dispose();
     _divineItemNormalDamageController.dispose();
-    _fragmentNormalDamageController.dispose();
     _accessorySkillDamageController.dispose();
     _equipmentSkillDamageController.dispose();
     _divineItemSkillDamageController.dispose();
-    _fragmentSkillDamageController.dispose();
     _accessoryMinigameDamageController.dispose();
     _equipmentMinigameDamageController.dispose();
-    _fragmentMinigameDamageController.dispose();
     _rebirthStatValueController.dispose();
     _crestValueController.dispose();
     super.dispose();
@@ -175,14 +169,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _accessoryNormalDamageController.addListener(_calculateDamage);
     _equipmentNormalDamageController.addListener(_calculateDamage);
     _divineItemNormalDamageController.addListener(_calculateDamage);
-    _fragmentNormalDamageController.addListener(_calculateDamage);
     _accessorySkillDamageController.addListener(_calculateDamage);
     _equipmentSkillDamageController.addListener(_calculateDamage);
     _divineItemSkillDamageController.addListener(_calculateDamage);
-    _fragmentSkillDamageController.addListener(_calculateDamage);
     _accessoryMinigameDamageController.addListener(_calculateDamage);
     _equipmentMinigameDamageController.addListener(_calculateDamage);
-    _fragmentMinigameDamageController.addListener(_calculateDamage);
     _rebirthStatValueController.addListener(_calculateDamage);
     _crestValueController.addListener(_calculateDamage);
   }
@@ -197,14 +188,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _accessoryNormalDamageController.removeListener(_calculateDamage);
     _equipmentNormalDamageController.removeListener(_calculateDamage);
     _divineItemNormalDamageController.removeListener(_calculateDamage);
-    _fragmentNormalDamageController.removeListener(_calculateDamage);
     _accessorySkillDamageController.removeListener(_calculateDamage);
     _equipmentSkillDamageController.removeListener(_calculateDamage);
     _divineItemSkillDamageController.removeListener(_calculateDamage);
-    _fragmentSkillDamageController.removeListener(_calculateDamage);
     _accessoryMinigameDamageController.removeListener(_calculateDamage);
     _equipmentMinigameDamageController.removeListener(_calculateDamage);
-    _fragmentMinigameDamageController.removeListener(_calculateDamage);
     _rebirthStatValueController.removeListener(_calculateDamage);
     _crestValueController.removeListener(_calculateDamage);
   }
@@ -426,8 +414,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _getParser(_divineItemNormalDamageController) +
         charyeokNormalDamage +
         rebirthNormalDmgOption +
-        spiritNormalDamage +
-        _getParser(_fragmentNormalDamageController);
+        spiritNormalDamage;
     double normalDmgMultiplier = 1 + (normalDmgSum / 100);
 
     double skillDmgSum = _getParser(_accessorySkillDamageController) +
@@ -436,13 +423,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         spiritSkillDamage +
         charyeokSkillDamage +
         rebirthSkillDmgOption +
-        crestSkillDamage +
-        _getParser(_fragmentSkillDamageController);
+        crestSkillDamage;
     double skillDmgMultiplier = 1 + (skillDmgSum / 100);
 
     double minigameDmgSum = _getParser(_accessoryMinigameDamageController) +
-        _getParser(_equipmentMinigameDamageController) +
-        _getParser(_fragmentMinigameDamageController);
+        _getParser(_equipmentMinigameDamageController);
     double minigameDmgMultiplier = 1 + (minigameDmgSum / 100);
 
     double skillCoeffSum = _selectedCharacter!.skillMultiplier.toDouble() + spiritSkillCoeff;
@@ -995,7 +980,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             children: [
               _buildTextField('악세 일공증', _accessoryNormalDamageController),
               _buildTextField('장비 일공증', _equipmentNormalDamageController),
-              _buildTextField('파편 일공증', _fragmentNormalDamageController),
             ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
           ),
         if (!isHaegaeltaek) // Hide if Haegaeltaek
@@ -1004,7 +988,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             children: [
               _buildTextField('악세 스증', _accessorySkillDamageController),
               _buildTextField('장비 스증', _equipmentSkillDamageController),
-              _buildTextField('파편 스증', _fragmentSkillDamageController),
             ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
           ),
         if (!isHaegaeltaek) // Hide if Haegaeltaek
@@ -1013,7 +996,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             children: [
               _buildTextField('악세 미겜증', _accessoryMinigameDamageController),
               _buildTextField('장비 미겜증', _equipmentMinigameDamageController),
-              _buildTextField('파편 미겜증', _fragmentMinigameDamageController),
             ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
           ),
       ],
