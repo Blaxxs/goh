@@ -473,7 +473,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => Dialog(
-        child: CharyeokSelectionDialog(),
+        child: CharyeokSelectionDialog(
+          initialCharyeok: _selectedCharyeok,
+          initialGrade: _selectedCharyeokGrade,
+          initialStar: _selectedCharyeokStar,
+        ),
       ),
     );
 
@@ -482,6 +486,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeok = result['charyeok'];
         _selectedCharyeokGrade = result['grade'];
         _selectedCharyeokStar = result['star'];
+        _calculateDamage(); // Recalculate after selection
       });
     }
   }
@@ -528,7 +533,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
       builder: (context) => Dialog(
-        child: SpiritSelectionDialog(onDamageRecalculated: _calculateDamage),
+        child: SpiritSelectionDialog(
+          onDamageRecalculated: _calculateDamage,
+          initialSpirit: _selectedSpirit,
+          initialStar: _selectedSpiritStar,
+        ),
       ),
     );
 
@@ -1291,7 +1300,17 @@ extension DropdownDisplay on Object {
 }
 
 class CharyeokSelectionDialog extends StatefulWidget {
-  const CharyeokSelectionDialog({super.key});
+  final Charyeok? initialCharyeok;
+  final CharyeokGrade? initialGrade;
+  final int initialStar;
+
+  const CharyeokSelectionDialog({
+    super.key,
+    this.initialCharyeok,
+    this.initialGrade,
+    this.initialStar = 1,
+  });
+
   @override
   CharyeokSelectionDialogState createState() => CharyeokSelectionDialogState();
 }
@@ -1300,10 +1319,16 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   Charyeok? _detailedCharyeok;
   CharyeokGrade? _selectedGrade;
   int _selectedStar = 1;
+  bool _hasChanges = false; // Track if any changes have been made
 
   @override
   void initState() {
     super.initState();
+    if (widget.initialCharyeok != null && widget.initialCharyeok!.name != '선택 안함') {
+      _detailedCharyeok = widget.initialCharyeok;
+      _selectedGrade = widget.initialGrade;
+      _selectedStar = widget.initialStar;
+    }
   }
 
   void _selectCharyeok(Charyeok charyeok) {
@@ -1489,6 +1514,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               onChanged: (star) {
                 setState(() {
                   _selectedStar = star;
+                  _hasChanges = true;
                 });
               },
             ),
@@ -1499,15 +1525,30 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               Text(synergyDescription, style: const TextStyle(color: Colors.blue, fontWeight: FontWeight.bold)),
             ],
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, {
-                  'charyeok': _detailedCharyeok,
-                  'grade': _selectedGrade,
-                  'star': _selectedStar,
-                });
-              },
-              child: const Text('선택'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'charyeok': charyeoks[0],
+                      'grade': null,
+                      'star': 1,
+                    });
+                  },
+                  child: const Text('초기화'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'charyeok': _detailedCharyeok,
+                      'grade': _selectedGrade,
+                      'star': _selectedStar,
+                    });
+                  },
+                  child: Text(_hasChanges ? '저장' : '닫기'),
+                ),
+              ],
             ),
           ],
         ),
@@ -1534,11 +1575,22 @@ class CrestSelectionDialog extends StatefulWidget {
 class CrestSelectionDialogState extends State<CrestSelectionDialog> {
   Crest? _detailedCrest;
   late TextEditingController _valueController;
+  bool _hasChanges = false; // Track if any changes have been made
 
   @override
   void initState() {
     super.initState();
+    if (widget.initialCrest.type != CrestType.none) {
+      _detailedCrest = widget.initialCrest;
+    }
     _valueController = TextEditingController(text: widget.initialValue);
+    _valueController.addListener(() {
+      if (!_hasChanges) {
+        setState(() {
+          _hasChanges = true;
+        });
+      }
+    });
   }
 
   @override
@@ -1655,14 +1707,28 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
             ),
           ),
           const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context, {
-                'crest': _detailedCrest,
-                'value': _valueController.text,
-              });
-            },
-            child: const Text('선택'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'crest': crests[0],
+                    'value': '',
+                  });
+                },
+                child: const Text('초기화'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'crest': _detailedCrest,
+                    'value': _valueController.text,
+                  });
+                },
+                child: Text(_hasChanges ? '저장' : '닫기'),
+              ),
+            ],
           ),
         ],
       ),
@@ -1764,7 +1830,15 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
 
 class SpiritSelectionDialog extends StatefulWidget {
   final VoidCallback onDamageRecalculated;
-  const SpiritSelectionDialog({super.key, required this.onDamageRecalculated});
+  final Spirit? initialSpirit;
+  final int initialStar;
+
+  const SpiritSelectionDialog({
+    super.key,
+    required this.onDamageRecalculated,
+    this.initialSpirit,
+    this.initialStar = 1,
+  });
   @override
   SpiritSelectionDialogState createState() => SpiritSelectionDialogState();
 }
@@ -1772,11 +1846,15 @@ class SpiritSelectionDialog extends StatefulWidget {
 class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   Spirit? _detailedSpirit;
   int _selectedStar = 1;
+  bool _hasChanges = false; // Track if any changes have been made
 
-  void _selectSpirit(Spirit spirit) {
-    setState(() {
-      _detailedSpirit = spirit;
-    });
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialSpirit != null && widget.initialSpirit!.name != '선택 안함') {
+      _detailedSpirit = widget.initialSpirit;
+      _selectedStar = widget.initialStar;
+    }
   }
 
   Widget _buildGridView() {
@@ -1870,6 +1948,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
               onChanged: (star) {
                 setState(() {
                   _selectedStar = star;
+                  _hasChanges = true; // Mark as changed
                   widget.onDamageRecalculated(); // Recalculate after state change
                 });
               },
@@ -1901,14 +1980,28 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                 }).toList(),
               ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context, {
-                  'spirit': _detailedSpirit,
-                  'star': _selectedStar,
-                });
-              },
-              child: const Text('선택'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'spirit': spirits[0],
+                      'star': 1,
+                    });
+                  },
+                  child: const Text('초기화'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'spirit': _detailedSpirit,
+                      'star': _selectedStar,
+                    });
+                  },
+                  child: Text(_hasChanges ? '저장' : '닫기'),
+                ),
+              ],
             ),
           ],
         ),
