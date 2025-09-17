@@ -137,10 +137,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeokGrade = _selectedCharyeok!.availableGrades[0];
       }
     }
+    _addListenersToControllers();
   }
 
   @override
   void dispose() {
+    _removeListenersFromControllers();
     _baseAttackPowerController.dispose();
     _additionalAttackPowerController.dispose();
     _highSchoolBuffController.dispose();
@@ -161,6 +163,50 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _rebirthStatValueController.dispose();
     _crestValueController.dispose();
     super.dispose();
+  }
+
+  void _addListenersToControllers() {
+    _baseAttackPowerController.addListener(_calculateDamage);
+    _additionalAttackPowerController.addListener(_calculateDamage);
+    _highSchoolBuffController.addListener(_calculateDamage);
+    _powerUpController.addListener(_calculateDamage);
+    _critDamageController.addListener(_calculateDamage);
+    _divineItemCritDamageController.addListener(_calculateDamage);
+    _accessoryNormalDamageController.addListener(_calculateDamage);
+    _equipmentNormalDamageController.addListener(_calculateDamage);
+    _divineItemNormalDamageController.addListener(_calculateDamage);
+    _fragmentNormalDamageController.addListener(_calculateDamage);
+    _accessorySkillDamageController.addListener(_calculateDamage);
+    _equipmentSkillDamageController.addListener(_calculateDamage);
+    _divineItemSkillDamageController.addListener(_calculateDamage);
+    _fragmentSkillDamageController.addListener(_calculateDamage);
+    _accessoryMinigameDamageController.addListener(_calculateDamage);
+    _equipmentMinigameDamageController.addListener(_calculateDamage);
+    _fragmentMinigameDamageController.addListener(_calculateDamage);
+    _rebirthStatValueController.addListener(_calculateDamage);
+    _crestValueController.addListener(_calculateDamage);
+  }
+
+  void _removeListenersFromControllers() {
+    _baseAttackPowerController.removeListener(_calculateDamage);
+    _additionalAttackPowerController.removeListener(_calculateDamage);
+    _highSchoolBuffController.removeListener(_calculateDamage);
+    _powerUpController.removeListener(_calculateDamage);
+    _critDamageController.removeListener(_calculateDamage);
+    _divineItemCritDamageController.removeListener(_calculateDamage);
+    _accessoryNormalDamageController.removeListener(_calculateDamage);
+    _equipmentNormalDamageController.removeListener(_calculateDamage);
+    _divineItemNormalDamageController.removeListener(_calculateDamage);
+    _fragmentNormalDamageController.removeListener(_calculateDamage);
+    _accessorySkillDamageController.removeListener(_calculateDamage);
+    _equipmentSkillDamageController.removeListener(_calculateDamage);
+    _divineItemSkillDamageController.removeListener(_calculateDamage);
+    _fragmentSkillDamageController.removeListener(_calculateDamage);
+    _accessoryMinigameDamageController.removeListener(_calculateDamage);
+    _equipmentMinigameDamageController.removeListener(_calculateDamage);
+    _fragmentMinigameDamageController.removeListener(_calculateDamage);
+    _rebirthStatValueController.removeListener(_calculateDamage);
+    _crestValueController.removeListener(_calculateDamage);
   }
 
   double _getParser(TextEditingController controller) {
@@ -905,8 +951,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   const SizedBox(height: 10),
                   _buildInputFields(),
                   const SizedBox(height: 20),
-                  ElevatedButton(onPressed: _calculateDamage, child: const Text('계산하기')),
-                  const SizedBox(height: 20),
+                  
                   Text(
                     '산출된 공격력: ${formatter.format(_currentAttackPower)}',
                     style: Theme.of(context).textTheme.headlineSmall,
