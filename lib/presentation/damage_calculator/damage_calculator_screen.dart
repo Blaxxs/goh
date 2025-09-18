@@ -1336,6 +1336,8 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
       _selectedGrade = widget.initialGrade;
       _selectedStar = widget.initialStar;
       _selectedFragments = List.from(widget.initialFragments);
+    } else {
+      _selectedFragments = [];
     }
   }
 
@@ -1596,43 +1598,51 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('파편 슬롯', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
-          children: List.generate(_selectedFragments.length, (index) {
-            final fragment = _selectedFragments[index];
-            return GestureDetector(
-              onTap: () async {
-                final selected = await showDialog<Fragment>(
-                  context: context,
-                  builder: (context) => const FragmentSelectionDialog(),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double totalWidth = constraints.maxWidth;
+        final int itemCount = _selectedFragments.length;
+        final double spacing = 8.0;
+        final double iconSize = (totalWidth - (itemCount - 1) * spacing) / itemCount;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('파편 슬롯', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: List.generate(_selectedFragments.length, (index) {
+                final fragment = _selectedFragments[index];
+                return GestureDetector(
+                  onTap: () async {
+                    final selected = await showDialog<Fragment>(
+                      context: context,
+                      builder: (context) => const FragmentSelectionDialog(),
+                    );
+                    if (selected != null) {
+                      setState(() {
+                        _selectedFragments[index] = selected;
+                      });
+                    }
+                  },
+                  child: Container(
+                    width: iconSize,
+                    height: iconSize,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: fragment != null && fragment.name != '선택 안함'
+                        ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
+                        : const Icon(Icons.add),
+                  ),
                 );
-                if (selected != null) {
-                  setState(() {
-                    _selectedFragments[index] = selected;
-                  });
-                }
-              },
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: fragment != null && fragment.name != '선택 안함'
-                    ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                    : const Icon(Icons.add),
-              ),
-            );
-          }),
-        ),
-      ],
+              }),
+            ),
+          ],
+        );
+      },
     );
   }
 
