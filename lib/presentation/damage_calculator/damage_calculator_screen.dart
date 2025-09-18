@@ -6,6 +6,7 @@ import 'package:goh_calculator/core/constants/damage_calculator_constants.dart';
 import 'package:goh_calculator/core/constants/charyeok_constants.dart';
 import 'package:goh_calculator/core/constants/spirit_constants.dart';
 import 'package:intl/intl.dart';
+import 'package:goh_calculator/core/constants/fragment_constants.dart';
 import 'package:goh_calculator/presentation/damage_calculator/character_selection_dialog.dart';
 
 enum RebirthRealm { none, heavenly, demon }
@@ -63,6 +64,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   int _selectedSpiritStar = 1;
   Crest? _selectedCrest;
   Leader? _selectedLeader;
+  List<Fragment?> _selectedFragments = [];
 
   // Rebirth
   RebirthRealm _selectedRebirthRealm = RebirthRealm.none;
@@ -454,6 +456,24 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     });
   }
 
+  int _getFragmentSlotCount(CharyeokGrade? grade) {
+    if (grade == null) return 0;
+    switch (grade) {
+      case CharyeokGrade.normal:
+        return 1;
+      case CharyeokGrade.advanced:
+        return 2;
+      case CharyeokGrade.rare:
+        return 3;
+      case CharyeokGrade.relic:
+        return 4;
+      case CharyeokGrade.legendary:
+        return 6;
+      default:
+        return 0;
+    }
+  }
+
   Future<void> _showCharyeokSelectionDialog() async {
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
@@ -471,6 +491,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeok = result['charyeok'];
         _selectedCharyeokGrade = result['grade'];
         _selectedCharyeokStar = result['star'];
+
+        // Update fragment slots
+        final slotCount = _getFragmentSlotCount(_selectedCharyeokGrade);
+        _selectedFragments = List.generate(slotCount, (index) => fragments[0]); // Initialize with "선택 안함"
+
         _calculateDamage(); // Recalculate after selection
       });
     }
@@ -569,6 +594,52 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _calculateDamage();
       });
     }
+  }
+
+  Widget _buildFragmentSelector() {
+    if (_selectedFragments.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('파편 슬롯', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: List.generate(_selectedFragments.length, (index) {
+            final fragment = _selectedFragments[index];
+            return GestureDetector(
+              onTap: () async {
+                final selected = await showDialog<Fragment>(
+                  context: context,
+                  builder: (context) => const FragmentSelectionDialog(),
+                );
+                if (selected != null) {
+                  setState(() {
+                    _selectedFragments[index] = selected;
+                    _calculateDamage();
+                  });
+                }
+              },
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: fragment != null && fragment.name != '선택 안함'
+                    ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
+                    : const Icon(Icons.add),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
   }
 
   @override
@@ -768,7 +839,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   fit: BoxFit.scaleDown,
                   child: Text(
                       _selectedCrest!.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 10, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Colors.black,)]),
+                      style: const TextStyle(color: Colors.white, fontSize: 10, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Colors.black,)] ),
                   ),
                 ),
             ],
@@ -945,7 +1016,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   const SizedBox(height: 10),
                   _buildInputFields(),
                   const SizedBox(height: 20),
-                  
+                  _buildFragmentSelector(),
+                  const SizedBox(height: 20),
                   Text(
                     '산출된 공격력: ${formatter.format(_currentAttackPower)}',
                     style: Theme.of(context).textTheme.headlineSmall,
@@ -2001,5 +2073,57 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return _detailedSpirit == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class FragmentSelectionDialog extends StatelessWidget {
+  const FragmentSelectionDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text('파편 선택', style: Theme.of(context).textTheme.headlineSmall),
+            ),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: fragments.length,
+                itemBuilder: (context, index) {
+                  final fragment = fragments[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop(fragment);
+                    },
+                    child: Card(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (fragment.name != '선택 안함')
+                            Image.asset(fragment.imagePath, width: 40, height: 40, errorBuilder: (c, o, s) => const Icon(Icons.error))
+                          else
+                            const Icon(Icons.cancel_outlined, size: 40),
+                          Text(fragment.name, textAlign: TextAlign.center),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
