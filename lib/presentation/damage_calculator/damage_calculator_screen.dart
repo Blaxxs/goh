@@ -482,6 +482,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           initialCharyeok: _selectedCharyeok,
           initialGrade: _selectedCharyeokGrade,
           initialStar: _selectedCharyeokStar,
+          initialFragments: _selectedFragments,
         ),
       ),
     );
@@ -491,10 +492,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeok = result['charyeok'];
         _selectedCharyeokGrade = result['grade'];
         _selectedCharyeokStar = result['star'];
-
-        // Update fragment slots
-        final slotCount = _getFragmentSlotCount(_selectedCharyeokGrade);
-        _selectedFragments = List.generate(slotCount, (index) => fragments[0]); // Initialize with "선택 안함"
+        _selectedFragments = result['fragments'];
 
         _calculateDamage(); // Recalculate after selection
       });
@@ -594,52 +592,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _calculateDamage();
       });
     }
-  }
-
-  Widget _buildFragmentSelector() {
-    if (_selectedFragments.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('파편 슬롯', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8.0,
-          runSpacing: 8.0,
-          children: List.generate(_selectedFragments.length, (index) {
-            final fragment = _selectedFragments[index];
-            return GestureDetector(
-              onTap: () async {
-                final selected = await showDialog<Fragment>(
-                  context: context,
-                  builder: (context) => const FragmentSelectionDialog(),
-                );
-                if (selected != null) {
-                  setState(() {
-                    _selectedFragments[index] = selected;
-                    _calculateDamage();
-                  });
-                }
-              },
-              child: Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: fragment != null && fragment.name != '선택 안함'
-                    ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                    : const Icon(Icons.add),
-              ),
-            );
-          }),
-        ),
-      ],
-    );
   }
 
   @override
@@ -1016,8 +968,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   const SizedBox(height: 10),
                   _buildInputFields(),
                   const SizedBox(height: 20),
-                  _buildFragmentSelector(),
-                  const SizedBox(height: 20),
                   Text(
                     '산출된 공격력: ${formatter.format(_currentAttackPower)}',
                     style: Theme.of(context).textTheme.headlineSmall,
@@ -1357,12 +1307,14 @@ class CharyeokSelectionDialog extends StatefulWidget {
   final Charyeok? initialCharyeok;
   final CharyeokGrade? initialGrade;
   final int initialStar;
+  final List<Fragment?> initialFragments;
 
   const CharyeokSelectionDialog({
     super.key,
     this.initialCharyeok,
     this.initialGrade,
     this.initialStar = 1,
+    required this.initialFragments,
   });
 
   @override
@@ -1373,6 +1325,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   Charyeok? _detailedCharyeok;
   CharyeokGrade? _selectedGrade;
   int _selectedStar = 1;
+  late List<Fragment?> _selectedFragments;
   bool _hasChanges = false; // Track if any changes have been made
 
   @override
@@ -1382,6 +1335,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
       _detailedCharyeok = widget.initialCharyeok;
       _selectedGrade = widget.initialGrade;
       _selectedStar = widget.initialStar;
+      _selectedFragments = List.from(widget.initialFragments);
     }
   }
 
@@ -1394,7 +1348,27 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
         _selectedGrade = null;
       }
       _selectedStar = 1;
+      final slotCount = _getFragmentSlotCount(_selectedGrade);
+      _selectedFragments = List.generate(slotCount, (index) => fragments[0]);
     });
+  }
+
+  int _getFragmentSlotCount(CharyeokGrade? grade) {
+    if (grade == null) return 0;
+    switch (grade) {
+      case CharyeokGrade.normal:
+        return 1;
+      case CharyeokGrade.advanced:
+        return 2;
+      case CharyeokGrade.rare:
+        return 3;
+      case CharyeokGrade.relic:
+        return 4;
+      case CharyeokGrade.legendary:
+        return 6;
+      default:
+        return 0;
+    }
   }
 
   Widget _buildGridView() {
@@ -1461,6 +1435,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                   'charyeok': charyeoks[0],
                   'grade': null,
                   'star': 1,
+                  'fragments': [],
                 });
               },
             ),
@@ -1556,6 +1531,8 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                       if (selected) {
                         setState(() {
                           _selectedGrade = grade;
+                          final slotCount = _getFragmentSlotCount(_selectedGrade);
+                          _selectedFragments = List.generate(slotCount, (index) => fragments[0]);
                         });
                       }
                     },
@@ -1573,6 +1550,8 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               },
             ),
             const SizedBox(height: 16),
+            _buildFragmentSelector(),
+            const SizedBox(height: 16),
             Text('효과: $description'),
             if (synergyDescription.isNotEmpty) ...[
               const SizedBox(height: 8),
@@ -1588,6 +1567,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                       'charyeok': _detailedCharyeok,
                       'grade': _selectedGrade,
                       'star': _selectedStar,
+                      'fragments': _selectedFragments,
                     });
                   },
                   child: Text(_hasChanges ? '저장' : '닫기'),
@@ -1598,6 +1578,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                       'charyeok': charyeoks[0],
                       'grade': null,
                       'star': 1,
+                      'fragments': [],
                     });
                   },
                   child: const Text('초기화'),
@@ -1607,6 +1588,51 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFragmentSelector() {
+    if (_selectedFragments.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('파편 슬롯', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: List.generate(_selectedFragments.length, (index) {
+            final fragment = _selectedFragments[index];
+            return GestureDetector(
+              onTap: () async {
+                final selected = await showDialog<Fragment>(
+                  context: context,
+                  builder: (context) => const FragmentSelectionDialog(),
+                );
+                if (selected != null) {
+                  setState(() {
+                    _selectedFragments[index] = selected;
+                  });
+                }
+              },
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: fragment != null && fragment.name != '선택 안함'
+                    ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
+                    : const Icon(Icons.add),
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 
