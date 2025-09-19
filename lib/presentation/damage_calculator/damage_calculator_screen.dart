@@ -1416,9 +1416,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
         return 4;
       case CharyeokGrade.legendary:
         return 6;
-      default:
-        return 0;
-    }
+      }
   }
 
   Widget _buildGridView() {
