@@ -1601,7 +1601,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                         setState(() {
                           _selectedGrade = grade;
                           final slotCount = _getFragmentSlotCount(_selectedGrade);
-                          _selectedFragments = List.generate(slotCount, (index) => fragments[0]);
+                          _selectedFragments = List.generate(slotCount, (index) => Fragment.none());
                         });
                       }
                     },
