@@ -1476,11 +1476,561 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               },
             ),
           ),
-          
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 취소"),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'charyeok': charyeoks[0],
+                  'grade': null,
+                  'star': 1,
+                  'fragments': [],
+                });
+              },
+            ),
+          ),
         ],
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return _detailedCharyeok == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class CrestSelectionDialog extends StatefulWidget {
+  final Crest initialCrest;
+  final String initialValue;
+
+  const CrestSelectionDialog({super.key, required this.initialCrest, required this.initialValue});
+
+  @override
+  CrestSelectionDialogState createState() => CrestSelectionDialogState();
+}
+
+class CrestSelectionDialogState extends State<CrestSelectionDialog> {
+  Crest? _detailedCrest;
+  late TextEditingController _valueController;
+  bool _hasChanges = false; // Track if any changes have been made
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialCrest.type != CrestType.none) {
+      _detailedCrest = widget.initialCrest;
+    }
+    _valueController = TextEditingController(text: widget.initialValue);
+    _valueController.addListener(() {
+      if (!_hasChanges) {
+        setState(() {
+          _hasChanges = true;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _valueController.dispose();
+    super.dispose();
+  }
+
+  void _selectCrest(Crest crest) {
+    setState(() {
+      _detailedCrest = crest;
+    });
+  }
+
+  Widget _buildGridView() {
+    final displayCrests = crests.where((c) => c.type != CrestType.none).toList();
+    return SizedBox(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.5,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text("문장 선택", style: Theme.of(context).textTheme.headlineSmall),
+          ),
+          Expanded(
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 3 / 4,
+              ),
+              itemCount: displayCrests.length,
+              itemBuilder: (context, index) {
+                final crest = displayCrests[index];
+                return GestureDetector(
+                  onTap: () => _selectCrest(crest),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          crest.name,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: crest.imagePath != null
+                                ? Image.asset(crest.imagePath!, fit: BoxFit.contain, errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey))
+                                : Icon(crest.icon, size: 40, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 취소"),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'crest': crests[0],
+                  'value': '',
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailView() {
+    final crest = _detailedCrest!;
+
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedCrest = null)),
+              Expanded(child: Text(crest.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (crest.imagePath != null)
+            Image.asset(crest.imagePath!, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100))
+          else if (crest.icon != null)
+            Icon(crest.icon, size: 100),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextFormField(
+              controller: _valueController,
+              decoration: InputDecoration(
+                labelText: '${crest.name} 값',
+                hintText: 'n% 또는 n 입력',
+                border: const OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'crest': _detailedCrest,
+                    'value': _valueController.text,
+                  });
+                },
+                child: Text(_hasChanges ? '저장' : '닫기'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context, {
+                    'crest': crests[0],
+                    'value': '',
+                  });
+                },
+                child: const Text('초기화'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _detailedCrest == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class LeaderSelectionDialog extends StatefulWidget {
+  const LeaderSelectionDialog({super.key});
+  @override
+  LeaderSelectionDialogState createState() => LeaderSelectionDialogState();
+}
+
+class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
+
+  Widget _buildListView() {
+    final displayLeaders = leaders.where((l) => l.name != '선택 취소').toList();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Text("리더 선택", style: Theme.of(context).textTheme.headlineSmall),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: displayLeaders.length,
+            itemBuilder: (context, index) {
+              final leader = displayLeaders[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                child: InkWell(
+                  onTap: () => Navigator.of(context).pop(leader),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            Image.asset(
+                              leader.imagePath,
+                              width: 60,
+                              height: 60,
+                              fit: BoxFit.contain,
+                              errorBuilder: (c, o, s) => const Icon(Icons.error, size: 60)
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(leader.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                                  if (leader.skillName != null)
+                                    Text(leader.skillName!, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontStyle: FontStyle.italic, color: Colors.blueGrey)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (leader.skillDescription != null) ...[
+                          const SizedBox(height: 8),
+                          const Divider(),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(leader.skillDescription!, style: Theme.of(context).textTheme.bodyMedium),
+                          ),
+                        ]
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextButton.icon(
+            icon: const Icon(Icons.cancel),
+            label: const Text("선택 취소"),
+            onPressed: () {
+              Navigator.pop(context, leaders[0]);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildListView();
+  }
+}
+
+class SpiritSelectionDialog extends StatefulWidget {
+  final VoidCallback onDamageRecalculated;
+  final Spirit? initialSpirit;
+  final int initialStar;
+
+  const SpiritSelectionDialog({
+    super.key,
+    required this.onDamageRecalculated,
+    this.initialSpirit,
+    this.initialStar = 1,
+  });
+  @override
+  SpiritSelectionDialogState createState() => SpiritSelectionDialogState();
+}
+
+class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
+  Spirit? _detailedSpirit;
+  int _selectedStar = 1;
+  bool _hasChanges = false; // Track if any changes have been made
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.initialSpirit != null && widget.initialSpirit!.name != '선택 취소') {
+      _detailedSpirit = widget.initialSpirit;
+      _selectedStar = widget.initialStar;
+    }
+  }
+
+  void _selectSpirit(Spirit spirit) {
+    setState(() {
+      _detailedSpirit = spirit;
+      _selectedStar = 1; // Reset star when a new spirit is selected
+    });
+  }
+
+  Widget _buildGridView() {
+    final displaySpirits = spirits.where((s) => s.name != '선택 취소').toList();
+    return SizedBox(
+      width: double.maxFinite,
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: displaySpirits.length,
+              itemBuilder: (context, index) {
+                final spirit = displaySpirits[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: InkWell(
+                    onTap: () => _selectSpirit(spirit),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            spirit.imagePath,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.contain,
+                            errorBuilder: (c, o, s) => const Icon(Icons.error, size: 60),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(spirit.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                Text(spirit.description, style: Theme.of(context).textTheme.bodySmall),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 취소"),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'spirit': spirits[0],
+                  'star': 1,
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailView() {
+    final spirit = _detailedSpirit!;
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedSpirit = null)),
+                Expanded(child: Text(spirit.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Image.asset(spirit.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
+            const SizedBox(height: 16),
+            StarSelector(
+              initialStar: _selectedStar,
+              onChanged: (star) {
+                setState(() {
+                  _selectedStar = star;
+                  _hasChanges = true; // Mark as changed
+                  widget.onDamageRecalculated(); // Recalculate after state change
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            if (spirit.effects.isNotEmpty)
+              Column(
+                children: spirit.effects.map((effect) {
+                  final value = effect.values[_selectedStar - 1];
+                  String text;
+                  switch (effect.type) {
+                    case SpiritEffectType.skillCoefficient:
+                      text = '스킬 계수 +$value%';
+                      break;
+                    case SpiritEffectType.critDamage:
+                      text = '크리티컬 데미지 $value% 증가';
+                      break;
+                    case SpiritEffectType.baseAttack:
+                      text = '기본 공격력 ${value.toInt()} 증가';
+                      break;
+                    case SpiritEffectType.normalDamage:
+                      text = '일반 공격 데미지 $value% 증가';
+                      break;
+                    case SpiritEffectType.skillDamage:
+                      text = '스킬 데미지 $value% 증가';
+                      break;
+                  }
+                  return Text(text);
+                }).toList(),
+              ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'spirit': _detailedSpirit,
+                      'star': _selectedStar,
+                    });
+                  },
+                  child: Text(_hasChanges ? '저장' : '닫기'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'spirit': spirits[0],
+                      'star': 1,
+                    });
+                  },
+                  child: const Text('초기화'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _detailedSpirit == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class FragmentSelectionDialog extends StatelessWidget {
+  const FragmentSelectionDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.8,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text('파편 선택', style: Theme.of(context).textTheme.headlineSmall),
+            ),
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                ),
+                itemCount: fragments.length,
+                itemBuilder: (context, index) {
+                  final fragment = fragments[index];
+                  return GestureDetector(
+                    onTap: () {
+                      // Return a new instance of Fragment to allow independent value setting
+                      Navigator.of(context).pop(Fragment(
+                        name: fragment.name,
+                        imagePath: fragment.imagePath,
+                        minValue: fragment.minValue,
+                        maxValue: fragment.maxValue,
+                        unit: fragment.unit,
+                        value: fragment.value, // Pass existing value if any
+                      ));
+                    },
+                    child: Card(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (fragment.name != '선택 취소')
+                            Image.asset(fragment.imagePath, width: 40, height: 40, errorBuilder: (c, o, s) => const Icon(Icons.error))
+                          else
+                            const Icon(Icons.cancel_outlined, size: 40),
+                          Text(fragment.name, textAlign: TextAlign.center),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextButton.icon(
+                icon: const Icon(Icons.cancel_outlined),
+                label: const Text("선택 취소"),
+                onPressed: () {
+                  Navigator.pop(context, Fragment.none());
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
   Widget _buildDetailView() {
     final charyeok = _detailedCharyeok!;
