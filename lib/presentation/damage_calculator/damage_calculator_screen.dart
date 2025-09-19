@@ -1420,6 +1420,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
 
   int _getFragmentSlotCount(CharyeokGrade? grade) {
     if (grade == null) return 0;
+    if (grade == CharyeokGrade.legendary) return 6; // 전설 등급은 항상 6칸
     if (_detailedCharyeok != null && _detailedCharyeok!.fragmentSlotCounts != null && _detailedCharyeok!.fragmentSlotCounts!.containsKey(grade)) {
       return _detailedCharyeok!.fragmentSlotCounts![grade]!;
     }
