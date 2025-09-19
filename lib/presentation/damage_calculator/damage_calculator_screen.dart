@@ -1625,17 +1625,6 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                   },
                   child: Text(_hasChanges ? '저장' : '닫기'),
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, {
-                      'charyeok': null,
-                      'grade': null,
-                      'star': 1,
-                      'fragments': [],
-                    });
-                  },
-                  child: const Text('초기화'),
-                ),
               ],
             ),
           ],
