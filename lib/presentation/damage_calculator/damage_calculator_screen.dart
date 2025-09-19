@@ -1405,6 +1405,9 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
 
   int _getFragmentSlotCount(CharyeokGrade? grade) {
     if (grade == null) return 0;
+    if (_detailedCharyeok != null && _detailedCharyeok!.fragmentSlotCounts != null && _detailedCharyeok!.fragmentSlotCounts!.containsKey(grade)) {
+      return _detailedCharyeok!.fragmentSlotCounts![grade]!;
+    }
     switch (grade) {
       case CharyeokGrade.normal:
         return 1;
@@ -1416,9 +1419,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
         return 4;
       case CharyeokGrade.legendary:
         return 6;
-      default:
-        return 0;
-    }
+      }
   }
 
   Widget _buildGridView() {
@@ -1666,45 +1667,46 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                 return Column(
                   children: [
                     GestureDetector(
-                      onTap: () async {
-                        if (!isActive) return; // Do nothing if slot is inactive
-                        final selected = await showDialog<Fragment>(
-                          context: context,
-                          builder: (context) => const FragmentSelectionDialog(),
-                        );
-                        if (selected != null) {
-                          setState(() {
-                            // Create a new Fragment instance to ensure its value is independent
-                            final newFragment = Fragment(
-                              name: selected.name,
-                              imagePath: selected.imagePath,
-                              minValue: selected.minValue,
-                              maxValue: selected.maxValue,
-                              unit: selected.unit,
-                              value: selected.value, // Keep existing value if any
-                            );
-                            _selectedFragments[index] = newFragment;
-                            _initializeFragmentControllers(); // Re-initialize controllers for new fragment
-                            _setHasChanges(true);
-                          });
-                        }
-                      },
+                      onTap: isActive
+                          ? () async {
+                              final selected = await showDialog<Fragment>(
+                                context: context,
+                                builder: (context) => const FragmentSelectionDialog(),
+                              );
+                              if (selected != null) {
+                                setState(() {
+                                  final newFragment = Fragment(
+                                    name: selected.name,
+                                    imagePath: selected.imagePath,
+                                    minValue: selected.minValue,
+                                    maxValue: selected.maxValue,
+                                    unit: selected.unit,
+                                    value: selected.value,
+                                  );
+                                  _selectedFragments[index] = newFragment;
+                                  _initializeFragmentControllers();
+                                  _setHasChanges(true);
+                                });
+                              }
+                            }
+                          : null, // Disable onTap if not active
                       child: Container(
                         width: iconSize,
                         height: iconSize,
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
+                          border: Border.all(color: isActive ? Colors.grey : Colors.grey.shade800),
                           borderRadius: BorderRadius.circular(8),
+                          color: isActive ? null : Colors.grey.shade900, // Darken if inactive
                         ),
                         child: fragment != null && fragment.name != '선택 안함'
                             ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                            : const Icon(Icons.add),
+                            : Icon(Icons.add, color: isActive ? null : Colors.grey.shade600), // Dim icon if inactive
                       ),
                     ),
                     if (isActive && fragment != null && (fragment.minValue != null || fragment.maxValue != null)) ...[
                       const SizedBox(height: 4),
                       SizedBox(
-                        width: iconSize, // Match width of the icon
+                        width: iconSize,
                         child: TextFormField(
                           controller: _fragmentValueControllers[fragment],
                           decoration: InputDecoration(
@@ -1715,6 +1717,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                             border: const OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.number,
+                          enabled: isActive, // Disable text field if slot is inactive
                           onChanged: (text) {
                             fragment.value = double.tryParse(text);
                             _setHasChanges(true);

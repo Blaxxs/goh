@@ -28,6 +28,7 @@ class Charyeok {
   final Map<CharyeokGrade, List<int>>? minValue;
   final Map<CharyeokGrade, List<int>>? increasePerTurn;
   final Map<CharyeokGrade, List<int>>? maxValue;
+  final Map<CharyeokGrade, int>? fragmentSlotCounts; // New property
 
   const Charyeok({
     required this.name,
@@ -43,6 +44,7 @@ class Charyeok {
     this.minValue,
     this.increasePerTurn,
     this.maxValue,
+    this.fragmentSlotCounts, // Initialize new property
   });
 }
 
@@ -57,6 +59,7 @@ const List<Charyeok> charyeoks = [
     synergyEffectType: {},
     synergyEffectValues: {},
     description: '없음',
+    fragmentSlotCounts: {}, // Default empty map
   ),
   Charyeok(
     name: '제갈택의 탐',
@@ -71,6 +74,10 @@ const List<Charyeok> charyeoks = [
     synergyEffectType: {},
     synergyEffectValues: {},
     description: '전투 시작 후 4턴동안 공격력과 체력이 n%가 된다. (단, PVE 콘텐츠에서만 적용.)',
+    fragmentSlotCounts: { // Example: Tam has fewer slots
+      CharyeokGrade.relic: 4,
+      CharyeokGrade.legendary: 5,
+    },
   ),
   Charyeok(
     name: '우마왕',
