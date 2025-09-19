@@ -633,14 +633,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
-                 boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(0, 0, 0, (0.5 * 255).round().toDouble()),
-                    spreadRadius: 2,
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
               ),
               child: ClipOval(
                 child: Image.asset(
