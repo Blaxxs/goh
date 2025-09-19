@@ -909,11 +909,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.secondaryContainer,
                                 borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Colors.grey.shade300, width: 2),
+                                border: Border.all(color: Theme.of(context).colorScheme.outline),
                               ),
-                              child: const Text('캐릭터 선택'),
+                              child: Text('캐릭터 선택', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
                             ),
                           ),
                         ),
