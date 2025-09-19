@@ -1476,6 +1476,21 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               },
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 안함"),
+              onPressed: () {
+                Navigator.pop(context, {
+                  'charyeok': charyeoks[0],
+                  'grade': null,
+                  'star': 1,
+                  'fragments': [],
+                });
+              },
+            ),
+          ),
           
         ],
       ),
@@ -1610,6 +1625,17 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                     });
                   },
                   child: Text(_hasChanges ? '저장' : '닫기'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context, {
+                      'charyeok': charyeoks[0],
+                      'grade': null,
+                      'star': 1,
+                      'fragments': [],
+                    });
+                  },
+                  child: const Text('초기화'),
                 ),
               ],
             ),
