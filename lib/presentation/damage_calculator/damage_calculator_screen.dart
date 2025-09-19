@@ -64,7 +64,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   int _selectedSpiritStar = 1;
   Crest? _selectedCrest;
   Leader? _selectedLeader;
-  List<Fragment?> _selectedFragments = [];
+  List<Fragment> _selectedFragments = [];
 
   // Rebirth
   RebirthRealm _selectedRebirthRealm = RebirthRealm.none;
@@ -307,6 +307,35 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         }
       }
     }
+
+    // --- Fragment Effects ---
+    double fragmentSkillDamage = 0;
+    double fragmentMinigameDamage = 0;
+    double fragmentNormalDamage = 0;
+    double fragmentCritDamage = 0;
+    double fragmentAttack = 0;
+
+    for (var fragment in _selectedFragments) {
+      if (fragment.value != null) {
+        switch (fragment.name) {
+          case '증폭(스킬)의 파편':
+            fragmentSkillDamage += fragment.value!;
+            break;
+          case '증폭(미니게임)의 파편':
+            fragmentMinigameDamage += fragment.value!;
+            break;
+          case '증폭(일반)의 파편':
+            fragmentNormalDamage += fragment.value!;
+            break;
+          case '치명타의 파편':
+            fragmentCritDamage += fragment.value!;
+            break;
+          case '공격의 파편':
+            fragmentAttack += fragment.value!;
+            break;
+        }
+      }
+    }
     
     // --- Rebirth Stat Bonus ---
     double rebirthStatValue = _getParser(_rebirthStatValueController);
@@ -368,7 +397,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     double baseAttackForCharyeok = baseCharacterAttack + rebirthAttackOption + spiritBaseAttack;
 
     // totalBaseAttack now uses baseAttackForCharyeok
-    double totalBaseAttack = (baseAttackForCharyeok * charyeokBaseAttackIncrease) + _getParser(_additionalAttackPowerController) + rebirthAttackBonus;
+    double totalBaseAttack = (baseAttackForCharyeok * charyeokBaseAttackIncrease) + _getParser(_additionalAttackPowerController) + rebirthAttackBonus + fragmentAttack;
 
 
     // --- Part 2: Multipliers ---
@@ -396,7 +425,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         spiritCritDamage +
         crestCritDamage +
         passiveCritDamage +
-        charyeokCritDamage;
+        charyeokCritDamage +
+        fragmentCritDamage;
 
     if (_isCriticalEnabled) {
       critDmgSum += _getParser(_critDamageController); // Add '표기 크뎀' only if critical is enabled
@@ -416,7 +446,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _getParser(_divineItemNormalDamageController) +
         charyeokNormalDamage +
         rebirthNormalDmgOption +
-        spiritNormalDamage;
+        spiritNormalDamage +
+        fragmentNormalDamage;
     double normalDmgMultiplier = 1 + (normalDmgSum / 100);
 
     double skillDmgSum = _getParser(_accessorySkillDamageController) +
@@ -425,11 +456,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         spiritSkillDamage +
         charyeokSkillDamage +
         rebirthSkillDmgOption +
-        crestSkillDamage;
+        crestSkillDamage +
+        fragmentSkillDamage;
     double skillDmgMultiplier = 1 + (skillDmgSum / 100);
 
     double minigameDmgSum = _getParser(_accessoryMinigameDamageController) +
-        _getParser(_equipmentMinigameDamageController);
+        _getParser(_equipmentMinigameDamageController) +
+        fragmentMinigameDamage;
     double minigameDmgMultiplier = 1 + (minigameDmgSum / 100);
 
     double skillCoeffSum = _selectedCharacter!.skillMultiplier.toDouble() + spiritSkillCoeff;
@@ -1289,7 +1322,7 @@ class CharyeokSelectionDialog extends StatefulWidget {
   final Charyeok? initialCharyeok;
   final CharyeokGrade? initialGrade;
   final int initialStar;
-  final List<Fragment?> initialFragments;
+  final List<Fragment> initialFragments;
 
   const CharyeokSelectionDialog({
     super.key,
@@ -1307,7 +1340,8 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   Charyeok? _detailedCharyeok;
   CharyeokGrade? _selectedGrade;
   int _selectedStar = 1;
-  late List<Fragment?> _selectedFragments;
+  late List<Fragment> _selectedFragments;
+  final Map<Fragment, TextEditingController> _fragmentValueControllers = {};
   bool _hasChanges = false; // Track if any changes have been made
 
   @override
@@ -1318,9 +1352,39 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
       _selectedGrade = widget.initialGrade;
       _selectedStar = widget.initialStar;
       _selectedFragments = List.from(widget.initialFragments);
+      _initializeFragmentControllers();
     } else {
       _selectedFragments = [];
     }
+  }
+
+  void _initializeFragmentControllers() {
+    _fragmentValueControllers.forEach((_, controller) => controller.dispose());
+    _fragmentValueControllers.clear();
+    for (var fragment in _selectedFragments) {
+      if (fragment.minValue != null || fragment.maxValue != null) {
+        final controller = TextEditingController(text: fragment.value?.toString() ?? '');
+        controller.addListener(() {
+          fragment.value = double.tryParse(controller.text);
+          _setHasChanges(true);
+        });
+        _fragmentValueControllers[fragment] = controller;
+      }
+    }
+  }
+
+  void _setHasChanges(bool value) {
+    if (_hasChanges != value) {
+      setState(() {
+        _hasChanges = value;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _fragmentValueControllers.forEach((_, controller) => controller.dispose());
+    super.dispose();
   }
 
   void _selectCharyeok(Charyeok charyeok) {
@@ -1333,7 +1397,9 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
       }
       _selectedStar = 1;
       final slotCount = _getFragmentSlotCount(_selectedGrade);
-      _selectedFragments = List.generate(slotCount, (index) => fragments[0]);
+      _selectedFragments = List.generate(slotCount, (index) => Fragment.none());
+      _initializeFragmentControllers();
+      _setHasChanges(true);
     });
   }
 
@@ -1590,49 +1656,74 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
           children: [
             const Text('파편 슬롯', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            Wrap(
+              spacing: spacing,
+              runSpacing: spacing,
               children: List.generate(maxSlots, (index) {
                 final bool isActive = index < activeSlots;
-                final fragment = isActive && _selectedFragments.length > index ? _selectedFragments[index] : null;
+                Fragment? fragment = isActive && _selectedFragments.length > index ? _selectedFragments[index] : null;
 
-                if (isActive) {
-                  return GestureDetector(
-                    onTap: () async {
-                      final selected = await showDialog<Fragment>(
-                        context: context,
-                        builder: (context) => const FragmentSelectionDialog(),
-                      );
-                      if (selected != null) {
-                        setState(() {
-                          _selectedFragments[index] = selected;
-                        });
-                      }
-                    },
-                    child: Container(
-                      width: iconSize,
-                      height: iconSize,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
-                        borderRadius: BorderRadius.circular(8),
+                return Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () async {
+                        if (!isActive) return; // Do nothing if slot is inactive
+                        final selected = await showDialog<Fragment>(
+                          context: context,
+                          builder: (context) => const FragmentSelectionDialog(),
+                        );
+                        if (selected != null) {
+                          setState(() {
+                            // Create a new Fragment instance to ensure its value is independent
+                            final newFragment = Fragment(
+                              name: selected.name,
+                              imagePath: selected.imagePath,
+                              minValue: selected.minValue,
+                              maxValue: selected.maxValue,
+                              unit: selected.unit,
+                              value: selected.value, // Keep existing value if any
+                            );
+                            _selectedFragments[index] = newFragment;
+                            _initializeFragmentControllers(); // Re-initialize controllers for new fragment
+                            _setHasChanges(true);
+                          });
+                        }
+                      },
+                      child: Container(
+                        width: iconSize,
+                        height: iconSize,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: fragment != null && fragment.name != '선택 안함'
+                            ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
+                            : const Icon(Icons.add),
                       ),
-                      child: fragment != null && fragment.name != '선택 안함'
-                          ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                          : const Icon(Icons.add),
                     ),
-                  );
-                } else {
-                  return Container(
-                    width: iconSize,
-                    height: iconSize,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade700),
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.grey.shade800,
-                    ),
-                    child: Icon(Icons.lock, color: Colors.grey.shade600),
-                  );
-                }
+                    if (isActive && fragment != null && (fragment.minValue != null || fragment.maxValue != null)) ...[
+                      const SizedBox(height: 4),
+                      SizedBox(
+                        width: iconSize, // Match width of the icon
+                        child: TextFormField(
+                          controller: _fragmentValueControllers[fragment],
+                          decoration: InputDecoration(
+                            isDense: true,
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                            labelText: '값',
+                            suffixText: fragment.unit,
+                            border: const OutlineInputBorder(),
+                          ),
+                          keyboardType: TextInputType.number,
+                          onChanged: (text) {
+                            fragment!.value = double.tryParse(text);
+                            _setHasChanges(true);
+                          },
+                        ),
+                      ),
+                    ],
+                  ],
+                );
               }),
             ),
           ],
@@ -2134,7 +2225,15 @@ class FragmentSelectionDialog extends StatelessWidget {
                   final fragment = fragments[index];
                   return GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pop(fragment);
+                      // Return a new instance of Fragment to allow independent value setting
+                      Navigator.of(context).pop(Fragment(
+                        name: fragment.name,
+                        imagePath: fragment.imagePath,
+                        minValue: fragment.minValue,
+                        maxValue: fragment.maxValue,
+                        unit: fragment.unit,
+                        value: fragment.value, // Pass existing value if any
+                      ));
                     },
                     child: Card(
                       child: Column(
