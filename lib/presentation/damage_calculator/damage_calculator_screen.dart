@@ -507,7 +507,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeok = result['charyeok'];
         _selectedCharyeokGrade = result['grade'];
         _selectedCharyeokStar = result['star'];
-        _selectedFragments = result['fragments'];
+        // Safely cast the list of fragments, handling the case where it might be empty or dynamic
+        _selectedFragments = (result['fragments'] as List<dynamic>).cast<Fragment>();
 
         _calculateDamage(); // Recalculate after selection
       });
