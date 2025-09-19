@@ -1626,7 +1626,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                 ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context, {
-                      'charyeok': charyeoks[0],
+                      'charyeok': null,
                       'grade': null,
                       'star': 1,
                       'fragments': [],
