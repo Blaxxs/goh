@@ -19,6 +19,25 @@ class Fragment {
   factory Fragment.none() {
     return Fragment(name: '선택 안함', imagePath: '', value: 0);
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Fragment &&
+          runtimeType == other.runtimeType &&
+          name == other.name &&
+          imagePath == other.imagePath &&
+          minValue == other.minValue &&
+          maxValue == other.maxValue &&
+          unit == other.unit; // value는 변경될 수 있으므로 비교 대상에서 제외
+
+  @override
+  int get hashCode =>
+      name.hashCode ^
+      imagePath.hashCode ^
+      minValue.hashCode ^
+      maxValue.hashCode ^
+      unit.hashCode;
 }
 
 List<Fragment> fragments = [
