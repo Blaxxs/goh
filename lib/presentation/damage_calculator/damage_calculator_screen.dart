@@ -1254,25 +1254,35 @@ class StarSelectorState extends State<StarSelector> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final double totalWidth = constraints.maxWidth;
-        const double spacing = 4.0; // 간격
         const int numberOfStars = 9;
-        final double starSize = (totalWidth - (numberOfStars - 1) * spacing) / numberOfStars;
+        const double itemSpacing = 2.0; // 별 사이의 간격
+
+        // Calculate starSize to ensure it fits.
+        // We need to account for numberOfStars * starSize + (numberOfStars - 1) * itemSpacing <= totalWidth
+        // Let's subtract a small buffer from each star to ensure it fits.
+        final double calculatedStarSize = (totalWidth - (numberOfStars - 1) * itemSpacing) / numberOfStars;
+        final double starSize = calculatedStarSize - 1.0; // Subtract 1.0 for a small buffer
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: List.generate(numberOfStars, (index) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: spacing / 2), // 각 별의 좌우에 간격 적용
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(maxWidth: starSize, maxHeight: starSize), // 아이콘 버튼의 최대 크기 제한
-                icon: Icon(
-                  index < _currentStar ? Icons.star : Icons.star_border,
-                  color: Colors.amber,
-                  size: starSize,
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () => _updateStars(index + 1),
+                  child: SizedBox(
+                    width: starSize,
+                    height: starSize,
+                    child: Icon(
+                      index < _currentStar ? Icons.star : Icons.star_border,
+                      color: Colors.amber,
+                      size: starSize, // Icon size matches SizedBox size
+                    ),
+                  ),
                 ),
-                onPressed: () => _updateStars(index + 1),
-              ),
+                if (index < numberOfStars - 1) SizedBox(width: itemSpacing), // 별 사이에 간격 추가
+              ],
             );
           }),
         );
