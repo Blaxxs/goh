@@ -1675,7 +1675,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                           borderRadius: BorderRadius.circular(8),
                           color: isActive ? null : Colors.grey.shade900, // Darken if inactive
                         ),
-                        child: fragment != null && fragment.name != '선택 안함'
+                        child: fragment != null && fragment.name != '선택 취소'
                             ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
                             : (isActive ? const Icon(Icons.add) : Icon(Icons.lock, color: Colors.grey.shade600)), // Show lock icon if inactive
                       ),
@@ -1817,7 +1817,7 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
             padding: const EdgeInsets.all(16.0),
             child: TextButton.icon(
               icon: const Icon(Icons.cancel_outlined),
-              label: const Text("선택 안함"),
+              label: const Text("선택 취소"),
               onPressed: () {
                 Navigator.pop(context, {
                   'crest': crests[0],
@@ -1906,7 +1906,7 @@ class LeaderSelectionDialog extends StatefulWidget {
 class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
 
   Widget _buildListView() {
-    final displayLeaders = leaders.where((l) => l.name != '선택 안함').toList();
+    final displayLeaders = leaders.where((l) => l.name != '선택 취소').toList();
     return Column(
       children: [
         Padding(
@@ -2007,7 +2007,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialSpirit != null && widget.initialSpirit!.name != '선택 안함') {
+    if (widget.initialSpirit != null && widget.initialSpirit!.name != '선택 취소') {
       _detailedSpirit = widget.initialSpirit;
       _selectedStar = widget.initialStar;
     }
@@ -2021,7 +2021,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   }
 
   Widget _buildGridView() {
-    final displaySpirits = spirits.where((s) => s.name != '선택 안함').toList();
+    final displaySpirits = spirits.where((s) => s.name != '선택 취소').toList();
     return SizedBox(
       width: double.maxFinite,
       height: MediaQuery.of(context).size.height * 0.7,
