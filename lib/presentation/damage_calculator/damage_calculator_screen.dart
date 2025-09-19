@@ -1251,20 +1251,32 @@ class StarSelectorState extends State<StarSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(9, (index) {
-        return IconButton(
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-          icon: Icon(
-            index < _currentStar ? Icons.star : Icons.star_border,
-            color: Colors.amber,
-            size: widget.size,
-          ),
-          onPressed: () => _updateStars(index + 1),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double totalWidth = constraints.maxWidth;
+        const double spacing = 4.0; // 간격
+        const int numberOfStars = 9;
+        final double starSize = (totalWidth - (numberOfStars - 1) * spacing) / numberOfStars;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(numberOfStars, (index) {
+            return Padding(
+              padding: EdgeInsets.symmetric(horizontal: spacing / 2), // 각 별의 좌우에 간격 적용
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: BoxConstraints(maxWidth: starSize, maxHeight: starSize), // 아이콘 버튼의 최대 크기 제한
+                icon: Icon(
+                  index < _currentStar ? Icons.star : Icons.star_border,
+                  color: Colors.amber,
+                  size: starSize,
+                ),
+                onPressed: () => _updateStars(index + 1),
+              ),
+            );
+          }),
         );
-      }),
+      },
     );
   }
 }
