@@ -1700,7 +1700,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                         ),
                         child: fragment != null && fragment.name != '선택 안함'
                             ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                            : Icon(Icons.add, color: isActive ? null : Colors.grey.shade600), // Dim icon if inactive
+                            : (isActive ? const Icon(Icons.add) : Icon(Icons.lock, color: Colors.grey.shade600)), // Show lock icon if inactive
                       ),
                     ),
                     if (isActive && fragment != null && (fragment.minValue != null || fragment.maxValue != null)) ...[
