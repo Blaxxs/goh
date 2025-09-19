@@ -1716,7 +1716,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                           ),
                           keyboardType: TextInputType.number,
                           onChanged: (text) {
-                            fragment!.value = double.tryParse(text);
+                            fragment.value = double.tryParse(text);
                             _setHasChanges(true);
                           },
                         ),
