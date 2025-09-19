@@ -1567,7 +1567,9 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
               ],
             ),
             const SizedBox(height: 16),
-            Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
+            charyeok.imagePath.isNotEmpty
+                ? Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100))
+                : const SizedBox(height: 100, child: Center(child: Text('이미지 없음'))), // 또는 다른 플레이스홀더
             const SizedBox(height: 16),
             if (charyeok.availableGrades.isNotEmpty)
               Wrap(
