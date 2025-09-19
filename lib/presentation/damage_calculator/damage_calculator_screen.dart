@@ -23,7 +23,7 @@ class Crest {
 }
 
 const List<Crest> crests = [
-  Crest(name: '선택 취소', type: CrestType.none, icon: Icons.cancel_outlined),
+  Crest(name: '선택 안함', type: CrestType.none, icon: Icons.cancel_outlined),
   Crest(name: '공격강화 문장', type: CrestType.attack, imagePath: 'assets/images/crest/attack.png'),
   Crest(name: '치명피해 문장', type: CrestType.critDamage, imagePath: 'assets/images/crest/fatal.png'),
   Crest(name: '스킬 문장', type: CrestType.skillDamage, imagePath: 'assets/images/crest/skill.png'),
@@ -619,7 +619,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final buffIconSize = otherIconSize * (2/3);
 
     Widget charyeokWidget;
-    if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 취소') {
+    if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
       charyeokWidget = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -724,7 +724,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     );
 
     Widget leaderWidget;
-    if (_selectedLeader != null && _selectedLeader!.name != '선택 취소') {
+    if (_selectedLeader != null && _selectedLeader!.name != '선택 안함') {
       leaderWidget = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -828,7 +828,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     }
 
     Widget spiritWidget;
-    if (_selectedSpirit != null && _selectedSpirit!.name != '선택 취소') {
+    if (_selectedSpirit != null && _selectedSpirit!.name != '선택 안함') {
       spiritWidget = Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1347,7 +1347,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialCharyeok != null && widget.initialCharyeok!.name != '선택 취소') {
+    if (widget.initialCharyeok != null && widget.initialCharyeok!.name != '선택 안함') {
       _detailedCharyeok = widget.initialCharyeok;
       _selectedGrade = widget.initialGrade;
       _selectedStar = widget.initialStar;
@@ -1423,7 +1423,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   }
 
   Widget _buildGridView() {
-    final displayCharyeoks = charyeoks.where((c) => c.name != '선택 취소').toList();
+    final displayCharyeoks = charyeoks.where((c) => c.name != '선택 안함').toList();
     return SizedBox( // Use SizedBox to constrain size
       width: double.maxFinite,
       height: MediaQuery.of(context).size.height * 0.7, // Adjust height
@@ -1675,7 +1675,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                           borderRadius: BorderRadius.circular(8),
                           color: isActive ? null : Colors.grey.shade900, // Darken if inactive
                         ),
-                        child: fragment != null && fragment.name != '선택 취소'
+                        child: fragment != null && fragment.name != '선택 안함'
                             ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
                             : (isActive ? const Icon(Icons.add) : Icon(Icons.lock, color: Colors.grey.shade600)), // Show lock icon if inactive
                       ),
@@ -1817,7 +1817,7 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
             padding: const EdgeInsets.all(16.0),
             child: TextButton.icon(
               icon: const Icon(Icons.cancel_outlined),
-              label: const Text("선택 취소"),
+              label: const Text("선택 안함"),
               onPressed: () {
                 Navigator.pop(context, {
                   'crest': crests[0],
@@ -1906,7 +1906,7 @@ class LeaderSelectionDialog extends StatefulWidget {
 class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
 
   Widget _buildListView() {
-    final displayLeaders = leaders.where((l) => l.name != '선택 취소').toList();
+    final displayLeaders = leaders.where((l) => l.name != '선택 안함').toList();
     return Column(
       children: [
         Padding(
@@ -2007,7 +2007,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   @override
   void initState() {
     super.initState();
-    if (widget.initialSpirit != null && widget.initialSpirit!.name != '선택 취소') {
+    if (widget.initialSpirit != null && widget.initialSpirit!.name != '선택 안함') {
       _detailedSpirit = widget.initialSpirit;
       _selectedStar = widget.initialStar;
     }
@@ -2021,7 +2021,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   }
 
   Widget _buildGridView() {
-    final displaySpirits = spirits.where((s) => s.name != '선택 취소').toList();
+    final displaySpirits = spirits.where((s) => s.name != '선택 안함').toList();
     return SizedBox(
       width: double.maxFinite,
       height: MediaQuery.of(context).size.height * 0.7,
@@ -2074,7 +2074,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
             padding: const EdgeInsets.all(16.0),
             child: TextButton.icon(
               icon: const Icon(Icons.cancel_outlined),
-              label: const Text("선택 취소"),
+              label: const Text("선택 안함"),
               onPressed: () {
                 Navigator.pop(context, {
                   'spirit': spirits[0],
@@ -2219,7 +2219,7 @@ class FragmentSelectionDialog extends StatelessWidget {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          if (fragment.name != '선택 취소')
+                          if (fragment.name != '선택 안함')
                             Image.asset(fragment.imagePath, width: 40, height: 40, errorBuilder: (c, o, s) => const Icon(Icons.error))
                           else
                             const Icon(Icons.cancel_outlined, size: 40),
