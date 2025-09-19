@@ -41,7 +41,6 @@ class Fragment {
 }
 
 List<Fragment> fragments = [
-  Fragment(name: '선택 안함', imagePath: ''),
   Fragment(name: '증폭(스킬)의 파편', imagePath: 'assets/images/fragment/skill_fragment.png', minValue: 2, maxValue: 30, unit: '%'),
   Fragment(name: '증폭(미니게임)의 파편', imagePath: 'assets/images/fragment/minigame_fragment.png', minValue: 2, maxValue: 30, unit: '%'),
   Fragment(name: '증폭(일반)의 파편', imagePath: 'assets/images/fragment/normal_fragment.png', minValue: 2, maxValue: 30, unit: '%'),
