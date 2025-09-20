@@ -38,13 +38,14 @@ class CharacterSelectionDialog extends StatelessWidget {
                       flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
-                        child: Text(
+                        child:                         Text(
                           character.name,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
+
                       ),
                     ),
                     Expanded(

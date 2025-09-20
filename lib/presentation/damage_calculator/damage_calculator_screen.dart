@@ -621,58 +621,49 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     Widget charyeokWidget;
     if (_selectedCharyeok != null && _selectedCharyeok!.name != '선택 안함') {
-      charyeokWidget = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          InkWell(
-            onTap: _showCharyeokSelectionDialog,
-            customBorder: const CircleBorder(),
-            child: Container(
-              width: charyeokIconSize,
-              height: charyeokIconSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  _selectedCharyeok!.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (c, o, s) => const Icon(Icons.error),
+      charyeokWidget = Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
+        ),
+        child: InkWell(
+          onTap: _showCharyeokSelectionDialog,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipOval(
+                  child: Image.asset(
+                    _selectedCharyeok!.imagePath,
+                    fit: BoxFit.cover,
+                    width: charyeokIconSize * 0.8, // Slightly smaller to fit within card
+                    height: charyeokIconSize * 0.8,
+                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _selectedCharyeok!.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              shadows: <Shadow>[
-                Shadow(
-                  offset: Offset(1.0, 1.0),
-                  blurRadius: 2.0,
-                  color: Colors.black,
+                const SizedBox(height: 4),
+                Text(
+                  _selectedCharyeok!.name,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       );
     } else {
-      charyeokWidget = InkWell(
-        onTap: _showCharyeokSelectionDialog,
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Theme.of(context).colorScheme.outline),
-          ),
-          child: Text('차력 선택', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+      charyeokWidget = ElevatedButton.icon(
+        onPressed: _showCharyeokSelectionDialog,
+        icon: const Icon(Icons.add),
+        label: const Text('차력 선택'),
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(charyeokIconSize, charyeokIconSize), // Make it a square button
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: EdgeInsets.zero, // Remove default padding
         ),
       );
     }
@@ -718,163 +709,158 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     Widget leaderWidget;
     if (_selectedLeader != null && _selectedLeader!.name != '선택 안함') {
-      leaderWidget = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          InkWell(
-            onTap: _showLeaderSelectionDialog,
-            customBorder: const CircleBorder(),
-            child: Container(
-              width: otherIconSize,
-              height: otherIconSize,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  _selectedLeader!.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (c, o, s) => const Icon(Icons.error),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              _selectedLeader!.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 2.0,
-                    color: Colors.black,
+      leaderWidget = Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2), // Use theme color for consistency
+        ),
+        child: InkWell(
+          onTap: _showLeaderSelectionDialog,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipOval(
+                  child: Image.asset(
+                    _selectedLeader!.imagePath,
+                    fit: BoxFit.cover,
+                    width: otherIconSize * 0.8, // Slightly smaller to fit within card
+                    height: otherIconSize * 0.8,
+                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 4),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    _selectedLeader!.name,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
       );
     } else {
-      leaderWidget = InkWell(
-        onTap: _showLeaderSelectionDialog,
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Theme.of(context).colorScheme.outline),
-          ),
-          child: Text('리더 선택', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+      leaderWidget = ElevatedButton.icon(
+        onPressed: _showLeaderSelectionDialog,
+        icon: const Icon(Icons.add),
+        label: const Text('리더 선택'),
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(otherIconSize, otherIconSize), // Make it a square button
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: EdgeInsets.zero, // Remove default padding
         ),
       );
     }
 
     Widget crestWidget;
     if (_selectedCrest != null && _selectedCrest!.type != CrestType.none) {
-        crestWidget = Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-                InkWell(
-                    onTap: _showCrestSelectionDialog,
-                    customBorder: const CircleBorder(),
-                    child: Container(
-                        width: otherIconSize,
-                        height: otherIconSize,
-                        decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
+      crestWidget = Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2), // Use theme color for consistency
+        ),
+        child: InkWell(
+          onTap: _showCrestSelectionDialog,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _selectedCrest!.imagePath != null
+                    ? ClipOval(
+                        child: Image.asset(
+                          _selectedCrest!.imagePath!,
+                          fit: BoxFit.cover,
+                          width: otherIconSize * 0.8, // Slightly smaller to fit within card
+                          height: otherIconSize * 0.8,
+                          errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
                         ),
-                        child: _selectedCrest!.imagePath != null
-                            ? ClipOval(child: Image.asset(_selectedCrest!.imagePath!, fit: BoxFit.cover))
-                            : Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: 30),
-                    ),
+                      )
+                    : Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: otherIconSize * 0.8), // Use otherIconSize for consistency
+                const SizedBox(height: 4),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    _selectedCrest!.name,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      crestWidget = ElevatedButton.icon(
+        onPressed: _showCrestSelectionDialog,
+        icon: const Icon(Icons.add),
+        label: const Text('문장 선택'),
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(otherIconSize, otherIconSize), // Make it a square button
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: EdgeInsets.zero, // Remove default padding
+        ),
+      );
+    }
+
+    Widget spiritWidget;
+    if (_selectedSpirit != null && _selectedSpirit!.name != '선택 안함') {
+      spiritWidget = Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2), // Use theme color for consistency
+        ),
+        child: InkWell(
+          onTap: _showSpiritSelectionDialog,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipOval(
+                  child: Image.asset(
+                    _selectedSpirit!.imagePath,
+                    fit: BoxFit.cover,
+                    width: otherIconSize * 0.8, // Slightly smaller to fit within card
+                    height: otherIconSize * 0.8,
+                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
+                  ),
                 ),
                 const SizedBox(height: 4),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
-                      _selectedCrest!.name,
-                      style: const TextStyle(color: Colors.white, fontSize: 10, shadows: <Shadow>[Shadow(offset: Offset(1.0, 1.0), blurRadius: 2.0, color: Colors.black,)] ),
+                    _selectedSpirit!.name,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                   ),
                 ),
-            ],
-        );
-    } else {
-        crestWidget = InkWell(
-          onTap: _showCrestSelectionDialog,
-          borderRadius: BorderRadius.circular(30),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondaryContainer,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(color: Theme.of(context).colorScheme.outline),
-            ),
-            child: Text('문장 선택', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
-          ),
-        );
-    }
-
-    Widget spiritWidget;
-    if (_selectedSpirit != null && _selectedSpirit!.name != '선택 안함') {
-      spiritWidget = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          InkWell(
-            onTap: _showSpiritSelectionDialog,
-            customBorder: const CircleBorder(),
-            child: Container(
-              width: otherIconSize,
-              height: otherIconSize,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-              ),
-              child: ClipOval(
-                child: Image.asset(
-                  _selectedSpirit!.imagePath,
-                  fit: BoxFit.cover,
-                  errorBuilder: (c, o, s) => const Icon(Icons.error),
-                ),
-              ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              _selectedSpirit!.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-                shadows: <Shadow>[
-                  Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 2.0,
-                    color: Colors.black,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+        ),
       );
     } else {
-      spiritWidget = InkWell(
-        onTap: _showSpiritSelectionDialog,
-        borderRadius: BorderRadius.circular(30),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Theme.of(context).colorScheme.outline),
-          ),
-          child: Text('스피릿 선택', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
+      spiritWidget = ElevatedButton.icon(
+        onPressed: _showSpiritSelectionDialog,
+        icon: const Icon(Icons.add),
+        label: const Text('스피릿 선택'),
+        style: ElevatedButton.styleFrom(
+          minimumSize: Size(otherIconSize, otherIconSize), // Make it a square button
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding: EdgeInsets.zero, // Remove default padding
         ),
       );
     }
@@ -887,84 +873,75 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       body: Column(
         children: [
           
-          SizedBox(
-            height: screenHeight * 0.3,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: _selectedCharacter != null
-                      ? InkWell(
-                          onTap: _showCharacterSelectionDialog,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.asset(
-                                _selectedCharacter!.imagePath,
-                                fit: BoxFit.contain,
-                                height: imageContainerHeight * 0.7,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Colors.grey[200],
-                                    child: const Center(child: Text('이미지 없음')),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                _selectedCharacter!.name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  shadows: <Shadow>[
-                                    Shadow(
-                                      offset: Offset(1.0, 1.0),
-                                      blurRadius: 2.0,
-                                      color: Colors.black,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : Center(
-                          child: InkWell(
+          Card(
+            margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+            elevation: 4,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: SizedBox(
+              height: screenHeight * 0.3,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: _selectedCharacter != null
+                        ? InkWell(
                             onTap: _showCharacterSelectionDialog,
-                            borderRadius: BorderRadius.circular(30),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.secondaryContainer,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Theme.of(context).colorScheme.outline),
+                            borderRadius: BorderRadius.circular(12), // Match card border radius
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  _selectedCharacter!.imagePath,
+                                  fit: BoxFit.contain,
+                                  height: imageContainerHeight * 0.7,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey[200],
+                                      child: const Center(child: Text('이미지 없음')),
+                                    );
+                                  },
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _selectedCharacter!.name,
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Center(
+                            child: ElevatedButton.icon(
+                              onPressed: _showCharacterSelectionDialog,
+                              icon: const Icon(Icons.person_add),
+                              label: const Text('캐릭터 선택'),
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                               ),
-                              child: Text('캐릭터 선택', style: TextStyle(color: Theme.of(context).colorScheme.onSecondaryContainer)),
                             ),
                           ),
-                        ),
-                ),
-                Positioned(
-                  top: 0,
-                  left: 8,
-                  bottom: 0,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [leaderWidget, crestWidget, spiritWidget],
                   ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Column(
-                    children: [
-                      charyeokWidget,
-                      const SizedBox(height: 8),
-                      buffWidget,
-                    ],
+                  Positioned(
+                    top: 0,
+                    left: 8,
+                    bottom: 0,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [leaderWidget, crestWidget, spiritWidget],
+                    ),
                   ),
-                ),
-              ],
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Column(
+                      children: [
+                        charyeokWidget,
+                        const SizedBox(height: 8),
+                        buffWidget,
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -999,36 +976,50 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final bool isSatanOrWamira = selectedCharacterName == '사탄' || selectedCharacterName == '와미라';
     final bool isHaegaeltaek = selectedCharacterName == '해갈택';
 
-    return Column(
-      children: [
-        _buildTextField('추가 공격력', _additionalAttackPowerController),
-        const SizedBox(height: 10),
-        
-        if (!isSatanOrWamira) // Hide if Satan or Wamira
-          ExpansionTile(
-            title: const Text('일반 공격 데미지 증가 (%)'),
-            children: [
-              _buildTextField('악세 일공증', _accessoryNormalDamageController),
-              _buildTextField('장비 일공증', _equipmentNormalDamageController),
-            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-          ),
-        if (!isHaegaeltaek) // Hide if Haegaeltaek
-          ExpansionTile(
-            title: const Text('스킬 데미지 증가 (%)'),
-            children: [
-              _buildTextField('악세 스증', _accessorySkillDamageController),
-              _buildTextField('장비 스증', _equipmentSkillDamageController),
-            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-          ),
-        if (!isHaegaeltaek) // Hide if Haegaeltaek
-          ExpansionTile(
-            title: const Text('미니게임 데미지 증가 (%)'),
-            children: [
-              _buildTextField('악세 미겜증', _accessoryMinigameDamageController),
-              _buildTextField('장비 미겜증', _equipmentMinigameDamageController),
-            ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
-          ),
-      ],
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.7, // Adjust width as needed
+                child: _buildTextField('추가 공격력', _additionalAttackPowerController),
+              ),
+            ),
+            const SizedBox(height: 10),
+            
+            if (!isSatanOrWamira) // Hide if Satan or Wamira
+              ExpansionTile(
+                title: const Text('일반 공격 데미지 증가 (%)'),
+                children: [
+                  _buildTextField('악세 일공증', _accessoryNormalDamageController),
+                  _buildTextField('장비 일공증', _equipmentNormalDamageController),
+                ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+              ),
+            if (!isHaegaeltaek) // Hide if Haegaeltaek
+              ExpansionTile(
+                title: const Text('스킬 데미지 증가 (%)'),
+                children: [
+                  _buildTextField('악세 스증', _accessorySkillDamageController),
+                  _buildTextField('장비 스증', _equipmentSkillDamageController),
+                ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+              ),
+            if (!isHaegaeltaek) // Hide if Haegaeltaek
+              ExpansionTile(
+                title: const Text('미니게임 데미지 증가 (%)'),
+                children: [
+                  _buildTextField('악세 미겜증', _accessoryMinigameDamageController),
+                  _buildTextField('장비 미겜증', _equipmentMinigameDamageController),
+                ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1040,89 +1031,121 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       availableStats = [RebirthStat.normalDamage];
     }
 
-    return Column(
-      children: [
-        Row( // Existing Rebirth Row
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed to spaceBetween
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
           children: [
-            ElevatedButton( // Moved Critical button here
-              onPressed: () {
-                setState(() {
-                  _isCriticalEnabled = !_isCriticalEnabled;
-                });
-              },
-              child: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
-            ),
-            Row( // Wrapped Rebirth elements in a Row to keep them together
-              mainAxisSize: MainAxisSize.min,
+            Row( // Existing Rebirth Row
+              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed to spaceBetween
               children: [
-                const Text('환생: '),
-                DropdownButton<RebirthRealm>(
-                  value: _selectedRebirthRealm,
-                  items: RebirthRealm.values.map((realm) {
-                    return DropdownMenuItem<RebirthRealm>(
-                      value: realm,
-                      child: Text(realm.displayName),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
+                ElevatedButton.icon( // Changed to ElevatedButton.icon for better visual
+                  onPressed: () {
                     setState(() {
-                      _selectedRebirthRealm = value ?? RebirthRealm.none;
-                      _selectedRebirthStat = RebirthStat.none; // Reset stat selection
+                      _isCriticalEnabled = !_isCriticalEnabled;
                     });
                   },
-                ),
-                const SizedBox(width: 10),
-                if (_selectedRebirthRealm != RebirthRealm.none)
-                  DropdownButton<int>(
-                    value: _rebirthLevel,
-                    hint: const Text('단계'),
-                    items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
-                    onChanged: (value) {
-                      setState(() {
-                        _rebirthLevel = value ?? 0;
-                      });
-                    },
+                  icon: Icon(_isCriticalEnabled ? Icons.check_circle : Icons.circle_outlined),
+                  label: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest,
+                    foregroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
+                ),
+                Row( // Wrapped Rebirth elements in a Row to keep them together
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded( // Use Expanded to take available space
+                      child: DropdownButtonFormField<RebirthRealm>(
+                        value: _selectedRebirthRealm,
+                        decoration: const InputDecoration(
+                          labelText: '환생',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
+                        ),
+                        items: RebirthRealm.values.map((realm) {
+                          return DropdownMenuItem<RebirthRealm>(
+                            value: realm,
+                            child: Text(realm.displayName),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedRebirthRealm = value ?? RebirthRealm.none;
+                            _selectedRebirthStat = RebirthStat.none; // Reset stat selection
+                          });
+                        },
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    if (_selectedRebirthRealm != RebirthRealm.none)
+                      Expanded( // Use Expanded to take available space
+                        child: DropdownButtonFormField<int>(
+                          value: _rebirthLevel,
+                          decoration: const InputDecoration(
+                            labelText: '단계',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
+                          ),
+                          items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                          onChanged: (value) {
+                            setState(() {
+                              _rebirthLevel = value ?? 0;
+                            });
+                          },
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
+            if (_selectedRebirthRealm != RebirthRealm.none)
+              const SizedBox(height: 10),
+            if (_selectedRebirthRealm != RebirthRealm.none)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Expanded( // Use Expanded to take available space
+                    child: DropdownButtonFormField<RebirthStat>(
+                      value: _selectedRebirthStat,
+                      decoration: const InputDecoration(
+                        labelText: '증가 스탯',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
+                      ),
+                      items: [RebirthStat.none, ...availableStats].map((stat) {
+                        return DropdownMenuItem<RebirthStat>(
+                          value: stat,
+                          child: Text(stat.displayName),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedRebirthStat = value ?? RebirthStat.none;
+                        });
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _buildTextField('스탯 값', _rebirthStatValueController),
+                  ),
+                ],
+              ),
+            if (_isCriticalEnabled) // Only show if critical is enabled
+              Column(
+                children: [
+                  const SizedBox(height: 10), // Add spacing
+                  _buildTextField('표기 크뎀', _critDamageController),
+                ],
+              ),
           ],
         ),
-        if (_selectedRebirthRealm != RebirthRealm.none)
-          const SizedBox(height: 10),
-        if (_selectedRebirthRealm != RebirthRealm.none)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              DropdownButton<RebirthStat>(
-                value: _selectedRebirthStat,
-                hint: const Text('증가 스탯'),
-                items: [RebirthStat.none, ...availableStats].map((stat) {
-                  return DropdownMenuItem<RebirthStat>(
-                    value: stat,
-                    child: Text(stat.displayName),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedRebirthStat = value ?? RebirthStat.none;
-                  });
-                },
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: _buildTextField('스탯 값', _rebirthStatValueController),
-              ),
-            ],
-          ),
-        if (_isCriticalEnabled) // Only show if critical is enabled
-          Column(
-            children: [
-              const SizedBox(height: 10), // Add spacing
-              _buildTextField('표기 크뎀', _critDamageController),
-            ],
-          ),
-      ],
+      ),
     );
   }
 
@@ -1836,7 +1859,7 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
                         Text(
                           crest.name,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1899,7 +1922,13 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
               decoration: InputDecoration(
                 labelText: '${crest.name} 값',
                 hintText: 'n% 또는 n 입력',
-                border: const OutlineInputBorder(),
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)), // Slightly rounded corners
+                ),
+                filled: true,
+                // ignore: deprecated_member_use
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3), // Subtle fill color
+                contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0), // Adjust padding
               ),
               keyboardType: TextInputType.number,
             ),
@@ -1962,8 +1991,11 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
               final leader = displayLeaders[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                elevation: 2, // Added elevation for consistency
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Added rounded corners
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(leader),
+                  borderRadius: BorderRadius.circular(12), // Match card border radius
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -2258,6 +2290,8 @@ class FragmentSelectionDialog extends StatelessWidget {
                       ));
                     },
                     child: Card(
+                      elevation: 2, // Added elevation for consistency
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Added rounded corners
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -2265,7 +2299,7 @@ class FragmentSelectionDialog extends StatelessWidget {
                             Image.asset(fragment.imagePath, width: 40, height: 40, errorBuilder: (c, o, s) => const Icon(Icons.error))
                           else
                             const Icon(Icons.cancel_outlined, size: 40),
-                          Text(fragment.name, textAlign: TextAlign.center),
+                          Text(fragment.name, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold)), // Updated text style
                         ],
                       ),
                     ),
