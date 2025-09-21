@@ -2140,7 +2140,7 @@ class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                     if (_selectedSpirit!.effects.isNotEmpty)
                       ..._selectedSpirit!.effects.where((e) => e.characterDependency == null).map((effect) {
                         return Text(effect.descriptionForStar(_selectedStar));
-                      }).toList(),
+                      }),
                   ],
                 ),
               ),
