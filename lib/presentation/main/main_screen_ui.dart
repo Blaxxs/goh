@@ -35,10 +35,9 @@ class MainScreenUI extends StatelessWidget {
     required BuildContext context,
     required String text,
     required VoidCallback onPressed,
-    double fontSize = 18, // 폰트 크기 조절을 위한 파라미터 추가
+    double fontSize = 16, // 폰트 크기 조절을 위한 파라미터 추가
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    final buttonWidth = MediaQuery.of(context).size.width * 0.6;
 
     return GestureDetector(
       onTap: onPressed,
@@ -47,14 +46,13 @@ class MainScreenUI extends StatelessWidget {
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: Container(
-            width: buttonWidth,
             constraints: const BoxConstraints(minHeight: 40),
             decoration: BoxDecoration(
               color: colorScheme.surface.withAlpha((0.4 * 255).round()),
               borderRadius: BorderRadius.circular(12.0),
               border: Border.all(color: colorScheme.secondary.withAlpha((0.5 * 255).round()))
             ),
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
             alignment: Alignment.center,
             child: Text(
               text,
@@ -84,24 +82,16 @@ class MainScreenUI extends StatelessWidget {
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    final List<Widget> menuButtons = [
-      _buildBlurredButton(context: context, text: '루프 계산기', onPressed: onCalculatorPressed),
-      const SizedBox(height: 12),
-      _buildBlurredButton(context: context, text: '골드 효율 계산기', onPressed: onGoldCalculatorPressed),
-      const SizedBox(height: 12),
-      _buildBlurredButton(context: context, text: '데미지 계산기', onPressed: onDamageCalculatorPressed),
-      const SizedBox(height: 12),
-      _buildBlurredButton(context: context, text: '악세사리 도감', onPressed: onAccessoryPressed),
-      const SizedBox(height: 12),
-      _buildBlurredButton(context: context, text: '일지', onPressed: onJournalPressed),
-      if (EventManager.isEventPeriodActive()) ...[
-        const SizedBox(height: 12),
-        _buildBlurredButton(context: context, text: '상자 기대값 계산기', onPressed: onBoxCalculatorPressed),
-      ],
-      const SizedBox(height: 12),
-      _buildBlurredButton(context: context, text: '악세사리 강화 시뮬레이터', onPressed: onAccessoryEnhancementPressed, fontSize: 16),
-      const SizedBox(height: 12),
-      _buildBlurredButton(context: context, text: '악세사리 옵션 변경 시뮬레이터', onPressed: onAccessoryOptionChangePressed, fontSize: 16),
+    final List<Map<String, dynamic>> menuButtonConfigs = [
+      {'text': '루프 계산기', 'onPressed': onCalculatorPressed, 'fontSize': 16.0},
+      {'text': '골드 효율 계산기', 'onPressed': onGoldCalculatorPressed, 'fontSize': 16.0},
+      {'text': '데미지 계산기', 'onPressed': onDamageCalculatorPressed, 'fontSize': 16.0},
+      {'text': '악세사리 도감', 'onPressed': onAccessoryPressed, 'fontSize': 16.0},
+      {'text': '일지', 'onPressed': onJournalPressed, 'fontSize': 16.0},
+      if (EventManager.isEventPeriodActive()) 
+        {'text': '상자 기대값 계산기', 'onPressed': onBoxCalculatorPressed, 'fontSize': 16.0},
+      {'text': '악세 강화 시뮬', 'onPressed': onAccessoryEnhancementPressed, 'fontSize': 14.0},
+      {'text': '악세 옵변 시뮬', 'onPressed': onAccessoryOptionChangePressed, 'fontSize': 14.0},
     ];
 
     return Scaffold(
@@ -116,18 +106,29 @@ class MainScreenUI extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                bottom: screenHeight * 0.1 + bottomPadding,
+                bottom: screenHeight * 0.05 + bottomPadding,
                 left: 20.0,
                 right: 20.0,
               ),
               child: SizedBox(
-                height: screenHeight * 0.5, // 버튼 목록이 차지할 최대 높이
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: menuButtons,
+                height: screenHeight * 0.45, // 버튼 목록이 차지할 최대 높이
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 2.5, // 버튼의 가로세로 비율
                   ),
+                  itemCount: menuButtonConfigs.length,
+                  itemBuilder: (context, index) {
+                    final config = menuButtonConfigs[index];
+                    return _buildBlurredButton(
+                      context: context,
+                      text: config['text'],
+                      onPressed: config['onPressed'],
+                      fontSize: config['fontSize'],
+                    );
+                  },
                 ),
               ),
             ),
