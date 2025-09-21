@@ -1145,6 +1145,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 20), // Changed to 20
                       ),
+                      itemHeight: 50, // Added to prevent text clipping
                       items: [RebirthStat.none, ...availableStats].map((stat) {
                         return DropdownMenuItem<RebirthStat>(
                           value: stat,
