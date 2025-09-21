@@ -615,8 +615,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     final formatter = NumberFormat('#,###');
     final screenHeight = MediaQuery.of(context).size.height;
     final imageContainerHeight = screenHeight * 0.3;
-    final charyeokIconSize = imageContainerHeight / 3;
-    final otherIconSize = imageContainerHeight * 0.225;
+    final charyeokIconSize = imageContainerHeight / 4;
+    final otherIconSize = imageContainerHeight * 0.18;
     final buffIconSize = otherIconSize * (2/3);
 
     Widget charyeokWidget;
@@ -624,14 +624,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       charyeokWidget = Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 2),
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: _getBorderColorForGrade(_selectedCharyeokGrade), width: 1.5),
         ),
         child: InkWell(
           onTap: _showCharyeokSelectionDialog,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -639,16 +639,16 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   child: Image.asset(
                     _selectedCharyeok!.imagePath,
                     fit: BoxFit.cover,
-                    width: charyeokIconSize * 0.8, // Slightly smaller to fit within card
-                    height: charyeokIconSize * 0.8,
-                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
+                    width: charyeokIconSize * 0.7,
+                    height: charyeokIconSize * 0.7,
+                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   _selectedCharyeok!.name,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -658,12 +658,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     } else {
       charyeokWidget = ElevatedButton.icon(
         onPressed: _showCharyeokSelectionDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('차력 선택'),
+        icon: const Icon(Icons.add, size: 18),
+        label: const Text('차력', style: TextStyle(fontSize: 12)),
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(charyeokIconSize, charyeokIconSize), // Make it a square button
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          padding: EdgeInsets.zero, // Remove default padding
+          minimumSize: Size(charyeokIconSize, charyeokIconSize),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: EdgeInsets.zero,
         ),
       );
     }
@@ -689,12 +689,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             ),
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         const Text(
           '버프',
           style: TextStyle(
             color: Colors.white,
-            fontSize: 10,
+            fontSize: 9,
             shadows: <Shadow>[
               Shadow(
                 offset: Offset(1.0, 1.0),
@@ -712,14 +712,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       leaderWidget = Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2), // Use theme color for consistency
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 1.5),
         ),
         child: InkWell(
           onTap: _showLeaderSelectionDialog,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -727,18 +727,18 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   child: Image.asset(
                     _selectedLeader!.imagePath,
                     fit: BoxFit.cover,
-                    width: otherIconSize * 0.8, // Slightly smaller to fit within card
-                    height: otherIconSize * 0.8,
-                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
+                    width: otherIconSize * 0.7,
+                    height: otherIconSize * 0.7,
+                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
                     _selectedLeader!.name,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -749,12 +749,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     } else {
       leaderWidget = ElevatedButton.icon(
         onPressed: _showLeaderSelectionDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('리더 선택'),
+        icon: const Icon(Icons.add, size: 16),
+        label: const Text('리더', style: TextStyle(fontSize: 11)),
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(otherIconSize, otherIconSize), // Make it a square button
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          padding: EdgeInsets.zero, // Remove default padding
+          minimumSize: Size(otherIconSize, otherIconSize),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: EdgeInsets.zero,
         ),
       );
     }
@@ -764,14 +764,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       crestWidget = Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2), // Use theme color for consistency
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 1.5),
         ),
         child: InkWell(
           onTap: _showCrestSelectionDialog,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -780,19 +780,19 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                         child: Image.asset(
                           _selectedCrest!.imagePath!,
                           fit: BoxFit.cover,
-                          width: otherIconSize * 0.8, // Slightly smaller to fit within card
-                          height: otherIconSize * 0.8,
-                          errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
+                          width: otherIconSize * 0.7,
+                          height: otherIconSize * 0.7,
+                          errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
                         ),
                       )
-                    : Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: otherIconSize * 0.8), // Use otherIconSize for consistency
-                const SizedBox(height: 4),
+                    : Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: otherIconSize * 0.7),
+                const SizedBox(height: 2),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
                     _selectedCrest!.name,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -803,12 +803,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     } else {
       crestWidget = ElevatedButton.icon(
         onPressed: _showCrestSelectionDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('문장 선택'),
+        icon: const Icon(Icons.add, size: 16),
+        label: const Text('문장', style: TextStyle(fontSize: 11)),
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(otherIconSize, otherIconSize), // Make it a square button
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          padding: EdgeInsets.zero, // Remove default padding
+          minimumSize: Size(otherIconSize, otherIconSize),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: EdgeInsets.zero,
         ),
       );
     }
@@ -818,14 +818,14 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       spiritWidget = Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 2), // Use theme color for consistency
+          borderRadius: BorderRadius.circular(8),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline, width: 1.5),
         ),
         child: InkWell(
           onTap: _showSpiritSelectionDialog,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(4.0),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -833,18 +833,18 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   child: Image.asset(
                     _selectedSpirit!.imagePath,
                     fit: BoxFit.cover,
-                    width: otherIconSize * 0.8, // Slightly smaller to fit within card
-                    height: otherIconSize * 0.8,
-                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 40),
+                    width: otherIconSize * 0.7,
+                    height: otherIconSize * 0.7,
+                    errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
                   ),
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
                     _selectedSpirit!.name,
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -855,12 +855,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     } else {
       spiritWidget = ElevatedButton.icon(
         onPressed: _showSpiritSelectionDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('스피릿 선택'),
+        icon: const Icon(Icons.add, size: 16),
+        label: const Text('스피릿', style: TextStyle(fontSize: 11)),
         style: ElevatedButton.styleFrom(
-          minimumSize: Size(otherIconSize, otherIconSize), // Make it a square button
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          padding: EdgeInsets.zero, // Remove default padding
+          minimumSize: Size(otherIconSize, otherIconSize),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: EdgeInsets.zero,
         ),
       );
     }
