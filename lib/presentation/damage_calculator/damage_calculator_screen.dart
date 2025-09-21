@@ -2067,11 +2067,12 @@ class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
       child: SizedBox(
         width: double.maxFinite,
         height: MediaQuery.of(context).size.height * 0.7,
-        child: Column(
-          children: [
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24.0),
-              child: Text("정령 선택", style: Theme.of(context).textTheme.headlineSmall),
+              child: Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
             ),
             Expanded(
               child: GridView.builder(
