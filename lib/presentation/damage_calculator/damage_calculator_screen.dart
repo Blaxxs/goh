@@ -2028,6 +2028,236 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
   }
 }
 
+class SpiritSelectionDialog extends StatefulWidget {
+  final VoidCallback? onDamageRecalculated;
+  final Spirit? initialSpirit;
+  final int? initialStar;
+
+  const SpiritSelectionDialog({
+    super.key,
+    this.onDamageRecalculated,
+    this.initialSpirit,
+    this.initialStar,
+  });
+
+  @override
+  State<SpiritSelectionDialog> createState() => _SpiritSelectionDialogState();
+}
+
+class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
+  Spirit? _selectedSpirit;
+  int _selectedStar = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedSpirit = widget.initialSpirit;
+    _selectedStar = widget.initialStar ?? 1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Filter out the "선택 안함" spirit from the list
+    final displaySpirits = spirits.where((s) => s.name != '선택 안함').toList();
+
+    return Dialog(
+      child: SizedBox(
+        width: double.maxFinite,
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              child: Text("정령 선택", style: Theme.of(context).textTheme.headlineSmall),
+            ),
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 3 / 4,
+                ),
+                itemCount: displaySpirits.length,
+                itemBuilder: (context, index) {
+                  final spirit = displaySpirits[index];
+                  final isSelected = _selectedSpirit == spirit;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedSpirit = spirit;
+                        _selectedStar = 1; // Reset star on new selection
+                      });
+                    },
+                    child: Card(
+                      elevation: isSelected ? 8 : 2,
+                      color: isSelected ? Theme.of(context).colorScheme.primaryContainer : null,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            spirit.name,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.asset(
+                                spirit.imagePath,
+                                fit: BoxFit.contain,
+                                errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            if (_selectedSpirit != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Column(
+                  children: [
+                    Text(_selectedSpirit!.name, style: Theme.of(context).textTheme.titleMedium),
+                    const SizedBox(height: 8),
+                    StarSelector(
+                      initialStar: _selectedStar,
+                      onChanged: (star) {
+                        setState(() {
+                          _selectedStar = star;
+                        });
+                      },
+                    ),
+                     const SizedBox(height: 8),
+                    // Display spirit effects
+                    if (_selectedSpirit!.effects.isNotEmpty)
+                      ..._selectedSpirit!.effects.where((e) => e.characterDependency == null).map((effect) {
+                        return Text(effect.descriptionForStar(_selectedStar));
+                      }).toList(),
+                  ],
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton.icon(
+                    icon: const Icon(Icons.cancel_outlined),
+                    label: const Text("선택 안함"),
+                    onPressed: () {
+                      Navigator.pop(context, {
+                        'spirit': spirits.firstWhere((s) => s.name == '선택 안함'),
+                        'star': 1,
+                      });
+                    },
+                  ),
+                  ElevatedButton(
+                    onPressed: _selectedSpirit != null
+                        ? () {
+                            Navigator.of(context).pop({
+                              'spirit': _selectedSpirit,
+                              'star': _selectedStar,
+                            });
+                          }
+                        : null,
+                    child: const Text('선택'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FragmentSelectionDialog extends StatelessWidget {
+  const FragmentSelectionDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final displayFragments = fragments.where((f) => f.name != '선택 안함').toList();
+    return Dialog(
+      child: SizedBox(
+        width: double.maxFinite,
+        height: MediaQuery.of(context).size.height * 0.7,
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              child: Text("파편 선택", style: Theme.of(context).textTheme.headlineSmall),
+            ),
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 3 / 4,
+                ),
+                itemCount: displayFragments.length,
+                itemBuilder: (context, index) {
+                  final fragment = displayFragments[index];
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).pop(fragment);
+                    },
+                    child: Card(
+                      elevation: 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            fragment.name,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Image.asset(
+                                fragment.imagePath,
+                                fit: BoxFit.contain,
+                                errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextButton.icon(
+                icon: const Icon(Icons.cancel_outlined),
+                label: const Text("선택 안함"),
+                onPressed: () {
+                  Navigator.of(context).pop(fragments.firstWhere((f) => f.name == '선택 안함'));
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class LeaderSelectionDialog extends StatefulWidget {
   const LeaderSelectionDialog({super.key});
   @override
@@ -2113,261 +2343,5 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return _buildListView();
-  }
-}
-
-class SpiritSelectionDialog extends StatefulWidget {
-  final VoidCallback onDamageRecalculated;
-  final Spirit? initialSpirit;
-  final int initialStar;
-
-  const SpiritSelectionDialog({
-    super.key,
-    required this.onDamageRecalculated,
-    this.initialSpirit,
-    this.initialStar = 1,
-  });
-
-  @override
-  SpiritSelectionDialogState createState() => SpiritSelectionDialogState();
-}
-
-class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
-  Spirit? _detailedSpirit;
-  int _selectedStar = 1;
-  bool _hasChanges = false;
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.initialSpirit != null && widget.initialSpirit!.name != '선택 안함') {
-      _detailedSpirit = widget.initialSpirit;
-      _selectedStar = widget.initialStar;
-    }
-  }
-
-  void _selectSpirit(Spirit spirit) {
-    setState(() {
-      _detailedSpirit = spirit;
-      _selectedStar = 1;
-      _hasChanges = true;
-    });
-  }
-
-  Widget _buildGridView() {
-    final displaySpirits = spirits.where((s) => s.name != '선택 안함').toList();
-    return SizedBox(
-      width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.7,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 24.0),
-            child: Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
-          ),
-          Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
-                childAspectRatio: 3 / 4,
-              ),
-              itemCount: displaySpirits.length,
-              itemBuilder: (context, index) {
-                final spirit = displaySpirits[index];
-                return GestureDetector(
-                  onTap: () => _selectSpirit(spirit),
-                  child: Card(
-                    elevation: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          spirit.name,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Image.asset(
-                              spirit.imagePath,
-                              fit: BoxFit.contain,
-                              errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextButton.icon(
-              icon: const Icon(Icons.cancel_outlined),
-              label: const Text("선택 안함"),
-              onPressed: () {
-                Navigator.pop(context, {
-                  'spirit': spirits[0],
-                  'star': 1,
-                });
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailView() {
-    final spirit = _detailedSpirit!;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => setState(() => _detailedSpirit = null)),
-                Expanded(child: Text(spirit.name, style: Theme.of(context).textTheme.titleLarge, overflow: TextOverflow.ellipsis)),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Image.asset(spirit.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100)),
-            const SizedBox(height: 16),
-            StarSelector(
-              initialStar: _selectedStar,
-              onChanged: (star) {
-                setState(() {
-                  _selectedStar = star;
-                  _hasChanges = true;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            ...spirit.effects.map((effect) {
-              return Text('효과: ${effect.descriptionForStar(_selectedStar)}');
-            }).toList(),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, {
-                      'spirit': _detailedSpirit,
-                      'star': _selectedStar,
-                    });
-                  },
-                  child: Text(_hasChanges ? '저장' : '닫기'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(context, {
-                      'spirit': spirits[0],
-                      'star': 1,
-                    });
-                  },
-                  child: const Text('초기화'),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _detailedSpirit == null ? _buildGridView() : _buildDetailView();
-  }
-}
-
-class FragmentSelectionDialog extends StatelessWidget {
-  const FragmentSelectionDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Text("파편 선택", style: Theme.of(context).textTheme.headlineSmall),
-          ),
-          Flexible(
-            child: GridView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
-                childAspectRatio: 0.8,
-              ),
-              itemCount: fragments.length,
-              itemBuilder: (context, index) {
-                final fragment = fragments[index];
-                return GestureDetector(
-                  onTap: () => Navigator.of(context).pop(fragment),
-                  child: Card(
-                    elevation: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Image.asset(
-                              fragment.imagePath,
-                              fit: BoxFit.contain,
-                              errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: Text(
-                              fragment.name,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextButton.icon(
-              icon: const Icon(Icons.cancel_outlined),
-              label: const Text("선택 안함"),
-              onPressed: () {
-                Navigator.pop(context, Fragment.none());
-              },
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
