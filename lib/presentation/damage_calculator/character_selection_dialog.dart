@@ -32,24 +32,19 @@ class CharacterSelectionDialog extends StatelessWidget {
               child: Card(
                 elevation: 2,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start, // Align to top
                   children: [
-                    Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child:                         Text(
-                          character.name,
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+                      child: Text(
+                        character.name,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Expanded(
-                      flex: 3,
+                    Expanded( // Image takes the rest of the space
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Image.asset(
