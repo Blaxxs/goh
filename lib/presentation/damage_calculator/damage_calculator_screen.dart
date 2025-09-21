@@ -889,15 +889,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  _selectedCharacter!.name,
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(height: 8),
                                 Image.asset(
                                   _selectedCharacter!.imagePath,
                                   fit: BoxFit.contain,
-                                  height: imageContainerHeight * 0.7,
+                                  height: imageContainerHeight * 0.8,
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
                                       color: Colors.grey[200],
