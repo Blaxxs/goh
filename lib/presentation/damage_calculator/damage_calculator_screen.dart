@@ -1603,6 +1603,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
     final charyeok = _detailedCharyeok!;
     String description = charyeok.description;
     String synergyDescription = '';
+    String synergyName = '';
 
     if (_selectedGrade != null) {
       List<String> values = [];
@@ -1639,7 +1640,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
       if (charyeok.synergyEffectType.containsKey(_selectedGrade) && charyeok.synergyEffectType[_selectedGrade] != SynergyEffectType.none) {
         final synergyType = charyeok.synergyEffectType[_selectedGrade]!;
         final synergyValue = charyeok.synergyEffectValues[_selectedGrade]!;
-        String synergyName = '';
+        
         switch (synergyType) {
           case SynergyEffectType.skillDamageIncreasePercent:
             synergyName = '스킬 데미지';
