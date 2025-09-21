@@ -1042,64 +1042,69 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             Row( // Existing Rebirth Row
               mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed to spaceBetween
               children: [
-                ElevatedButton.icon( // Changed to ElevatedButton.icon for better visual
-                  onPressed: () {
-                    setState(() {
-                      _isCriticalEnabled = !_isCriticalEnabled;
-                    });
-                  },
-                  icon: Icon(_isCriticalEnabled ? Icons.check_circle : Icons.circle_outlined),
-                  label: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest,
-                    foregroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                Expanded( // Wrap ElevatedButton.icon in Expanded
+                  child: ElevatedButton.icon( // Changed to ElevatedButton.icon for better visual
+                    onPressed: () {
+                      setState(() {
+                        _isCriticalEnabled = !_isCriticalEnabled;
+                      });
+                    },
+                    icon: Icon(_isCriticalEnabled ? Icons.check_circle : Icons.circle_outlined),
+                    label: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest,
+                      foregroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
                   ),
                 ),
-                Row( // Wrapped Rebirth elements in a Row to keep them together
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded( // Use Expanded to take available space
-                      child: DropdownButtonFormField<RebirthRealm>(
-                        value: _selectedRebirthRealm,
-                        decoration: const InputDecoration(
-                          labelText: '환생',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
-                        ),
-                        items: RebirthRealm.values.map((realm) {
-                          return DropdownMenuItem<RebirthRealm>(
-                            value: realm,
-                            child: Text(realm.displayName),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedRebirthRealm = value ?? RebirthRealm.none;
-                            _selectedRebirthStat = RebirthStat.none; // Reset stat selection
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    if (_selectedRebirthRealm != RebirthRealm.none)
+                const SizedBox(width: 10), // Add some spacing between the button and the dropdowns
+                Expanded( // Wrap Rebirth elements in an Expanded Row to keep them together
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       Expanded( // Use Expanded to take available space
-                        child: DropdownButtonFormField<int>(
-                          value: _rebirthLevel,
+                        child: DropdownButtonFormField<RebirthRealm>(
+                          value: _selectedRebirthRealm,
                           decoration: const InputDecoration(
-                            labelText: '단계',
+                            labelText: '환생',
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
                           ),
-                          items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                          items: RebirthRealm.values.map((realm) {
+                            return DropdownMenuItem<RebirthRealm>(
+                              value: realm,
+                              child: Text(realm.displayName),
+                            );
+                          }).toList(),
                           onChanged: (value) {
                             setState(() {
-                              _rebirthLevel = value ?? 0;
+                              _selectedRebirthRealm = value ?? RebirthRealm.none;
+                              _selectedRebirthStat = RebirthStat.none; // Reset stat selection
                             });
                           },
                         ),
                       ),
-                  ],
+                      const SizedBox(width: 10),
+                      if (_selectedRebirthRealm != RebirthRealm.none)
+                        Expanded( // Use Expanded to take available space
+                          child: DropdownButtonFormField<int>(
+                            value: _rebirthLevel,
+                            decoration: const InputDecoration(
+                              labelText: '단계',
+                              border: OutlineInputBorder(),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
+                            ),
+                            items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
+                            onChanged: (value) {
+                              setState(() {
+                                _rebirthLevel = value ?? 0;
+                              });
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
