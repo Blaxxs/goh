@@ -889,6 +889,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Text(
+                                  _selectedCharacter!.name,
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 8),
                                 Image.asset(
                                   _selectedCharacter!.imagePath,
                                   fit: BoxFit.contain,
@@ -899,11 +904,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                                       child: const Center(child: Text('이미지 없음')),
                                     );
                                   },
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  _selectedCharacter!.name,
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
