@@ -1093,6 +1093,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                           ),
+                          itemHeight: 80.0, // Added
                           items: RebirthRealm.values.map((realm) {
                             return DropdownMenuItem<RebirthRealm>(
                               value: realm,
@@ -1144,6 +1145,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                         border: OutlineInputBorder(),
                         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                       ),
+                      itemHeight: 80.0, // Added
                       items: [RebirthStat.none, ...availableStats].map((stat) {
                         return DropdownMenuItem<RebirthStat>(
                           value: stat,
