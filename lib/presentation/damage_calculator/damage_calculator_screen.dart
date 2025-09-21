@@ -1091,7 +1091,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                           decoration: const InputDecoration(
                             labelText: '환생',
                             border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                           ),
                           items: RebirthRealm.values.map((realm) {
                             return DropdownMenuItem<RebirthRealm>(
@@ -1115,7 +1115,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             decoration: const InputDecoration(
                               labelText: '단계',
                               border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                             ),
                             items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
                             onChanged: (value) {
@@ -1142,7 +1142,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       decoration: const InputDecoration(
                         labelText: '증가 스탯',
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                       ),
                       items: [RebirthStat.none, ...availableStats].map((stat) {
                         return DropdownMenuItem<RebirthStat>(
