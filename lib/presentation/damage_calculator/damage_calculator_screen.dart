@@ -1986,6 +1986,7 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
                   borderRadius: BorderRadius.all(Radius.circular(8.0)),
                 ),
                 filled: true,
+                // ignore: deprecated_member_use
                 fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
                 contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
               ),
