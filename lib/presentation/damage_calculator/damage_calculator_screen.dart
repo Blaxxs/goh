@@ -569,6 +569,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           onDamageRecalculated: _calculateDamage,
           initialSpirit: _selectedSpirit,
           initialStar: _selectedSpiritStar,
+          selectedCharacter: _selectedCharacter,
         ),
       ),
     );
@@ -2038,7 +2039,10 @@ class SpiritSelectionDialog extends StatefulWidget {
     this.onDamageRecalculated,
     this.initialSpirit,
     this.initialStar,
+    this.selectedCharacter,
   });
+
+  final Character? selectedCharacter;
 
   @override
   State<SpiritSelectionDialog> createState() => _SpiritSelectionDialogState();
@@ -2138,7 +2142,7 @@ class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                      const SizedBox(height: 8),
                     // Display spirit effects
                     if (_selectedSpirit!.effects.isNotEmpty)
-                      ..._selectedSpirit!.effects.where((e) => e.characterDependency == null).map((effect) {
+                      ..._selectedSpirit!.effects.where((e) => e.characterDependency == null || (widget.selectedCharacter != null && e.characterDependency == widget.selectedCharacter!.englishName)).map((effect) {
                         return Text(effect.descriptionForStar(_selectedStar));
                       }),
                   ],
