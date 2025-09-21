@@ -54,6 +54,12 @@ const List<Character> characters = [
   ),
 ];
 
+const Map<String, String> characterEnglishToKoreanNames = {
+  'satan': '사탄',
+  'mira': '유미라',
+  'haegaltaeg': '제갈택',
+};
+
 class Leader {
   final String name;
   final String imagePath;
