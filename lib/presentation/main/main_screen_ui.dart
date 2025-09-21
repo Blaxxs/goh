@@ -78,6 +78,7 @@ class MainScreenUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     final Color iconColor = Theme.of(context).colorScheme.onSurface.withOpacity(0.8);
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
     final double screenHeight = MediaQuery.of(context).size.height;
