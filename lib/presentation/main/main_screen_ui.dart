@@ -2,26 +2,43 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:goh_calculator/core/services/settings_service.dart';
+import '../../core/services/event_manager.dart';
 
 class MainScreenUI extends StatelessWidget {
-  final VoidCallback onStartPressed;
-  // final VoidCallback onStageSettingsPressed; // 제거됨
+  final VoidCallback onCalculatorPressed;
+  final VoidCallback onGoldCalculatorPressed;
+  final VoidCallback onAccessoryPressed;
+  final VoidCallback onDamageCalculatorPressed;
+  final VoidCallback onJournalPressed;
+  final VoidCallback onBoxCalculatorPressed;
+  final VoidCallback onAccessoryEnhancementPressed;
+  final VoidCallback onAccessoryOptionChangePressed;
+  final VoidCallback onStageSettingsPressed;
   final VoidCallback onAppSettingsPressed;
 
   const MainScreenUI({
     super.key,
-    required this.onStartPressed,
-    // required this.onStageSettingsPressed, // 제거됨
-    required this.onAppSettingsPressed, required SettingsService settingsService,
+    required this.onCalculatorPressed,
+    required this.onGoldCalculatorPressed,
+    required this.onAccessoryPressed,
+    required this.onDamageCalculatorPressed,
+    required this.onJournalPressed,
+    required this.onBoxCalculatorPressed,
+    required this.onAccessoryEnhancementPressed,
+    required this.onAccessoryOptionChangePressed,
+    required this.onStageSettingsPressed,
+    required this.onAppSettingsPressed, 
+    required SettingsService settingsService,
   });
 
   Widget _buildBlurredButton({
     required BuildContext context,
     required String text,
     required VoidCallback onPressed,
+    double fontSize = 18, // 폰트 크기 조절을 위한 파라미터 추가
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    final buttonWidth = MediaQuery.of(context).size.width * 0.7;
+    final buttonWidth = MediaQuery.of(context).size.width * 0.6;
 
     return GestureDetector(
       onTap: onPressed,
@@ -31,19 +48,19 @@ class MainScreenUI extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
           child: Container(
             width: buttonWidth,
-            constraints: const BoxConstraints(minHeight: 50),
+            constraints: const BoxConstraints(minHeight: 40),
             decoration: BoxDecoration(
               color: colorScheme.surface.withAlpha((0.4 * 255).round()),
               borderRadius: BorderRadius.circular(12.0),
               border: Border.all(color: colorScheme.secondary.withAlpha((0.5 * 255).round()))
             ),
-            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
             alignment: Alignment.center,
             child: Text(
               text,
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 20, // 기본 폰트 크기 (main.dart에서 배율 적용됨)
+                fontSize: fontSize, // 파라미터로 받은 폰트 크기 사용
                 fontWeight: FontWeight.bold,
                 color: colorScheme.secondary,
                 shadows: [
@@ -63,10 +80,29 @@ class MainScreenUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
     final Color iconColor = Theme.of(context).colorScheme.onSurface.withOpacity(0.8);
-    final double bottomPadding = MediaQuery.of(context).padding.bottom; // 시스템 하단 패딩
+    final double bottomPadding = MediaQuery.of(context).padding.bottom;
     final double screenHeight = MediaQuery.of(context).size.height;
+
+    final List<Widget> menuButtons = [
+      _buildBlurredButton(context: context, text: '루프 계산기', onPressed: onCalculatorPressed),
+      const SizedBox(height: 12),
+      _buildBlurredButton(context: context, text: '골드 효율 계산기', onPressed: onGoldCalculatorPressed),
+      const SizedBox(height: 12),
+      _buildBlurredButton(context: context, text: '데미지 계산기', onPressed: onDamageCalculatorPressed),
+      const SizedBox(height: 12),
+      _buildBlurredButton(context: context, text: '악세사리 도감', onPressed: onAccessoryPressed),
+      const SizedBox(height: 12),
+      _buildBlurredButton(context: context, text: '일지', onPressed: onJournalPressed),
+      if (EventManager.isEventPeriodActive()) ...[
+        const SizedBox(height: 12),
+        _buildBlurredButton(context: context, text: '상자 기대값 계산기', onPressed: onBoxCalculatorPressed),
+      ],
+      const SizedBox(height: 12),
+      _buildBlurredButton(context: context, text: '악세사리 강화 시뮬레이터', onPressed: onAccessoryEnhancementPressed, fontSize: 16),
+      const SizedBox(height: 12),
+      _buildBlurredButton(context: context, text: '악세사리 옵션 변경 시뮬레이터', onPressed: onAccessoryOptionChangePressed, fontSize: 16),
+    ];
 
     return Scaffold(
       body: Stack(
@@ -77,29 +113,22 @@ class MainScreenUI extends StatelessWidget {
             fit: BoxFit.contain,
           ),
           Align(
-            // 버튼의 Y축 위치 조정 (0.0은 중앙, 1.0은 하단)
-            // 예를 들어 0.6 정도로 설정하면 중앙보다 약간 아래, 이전보다는 위로 이동합니다.
-            // 또는 SizedBox와 Spacer를 활용하여 위치를 조절할 수도 있습니다.
-            // 여기서는 Padding의 bottom 값을 화면 높이의 일정 비율로 설정하여 위로 올립니다.
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                // 화면 높이의 예를 들어 20% 만큼을 하단 여백으로 설정 (버튼이 위로 올라감)
-                // 기존 50.0 고정값 대신 화면 비율에 따라 조절
-                bottom: screenHeight * 0.15 + bottomPadding, // 하단에서 화면 높이의 20% + 시스템 패딩만큼 위로
+                bottom: screenHeight * 0.1 + bottomPadding,
                 left: 20.0,
                 right: 20.0,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildBlurredButton(
-                    context: context,
-                    text: '시작하기',
-                    onPressed: onStartPressed,
+              child: SizedBox(
+                height: screenHeight * 0.5, // 버튼 목록이 차지할 최대 높이
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: menuButtons,
                   ),
-                  // 만약 다른 버튼이 추가된다면 여기에 SizedBox 등으로 간격 조절
-                ],
+                ),
               ),
             ),
           ),
@@ -110,10 +139,20 @@ class MainScreenUI extends StatelessWidget {
                 top: MediaQuery.of(context).padding.top + 10.0,
                 right: 16.0,
               ),
-              child: IconButton(
-                icon: Icon(Icons.settings_applications_outlined, color: iconColor, size: 30),
-                tooltip: '앱 설정',
-                onPressed: onAppSettingsPressed,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.settings_suggest, color: iconColor, size: 30),
+                    tooltip: '스테이지 설정',
+                    onPressed: onStageSettingsPressed,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.settings_applications_outlined, color: iconColor, size: 30),
+                    tooltip: '앱 설정',
+                    onPressed: onAppSettingsPressed,
+                  ),
+                ],
               ),
             ),
           ),

@@ -5,6 +5,15 @@ import '../stage_settings/settings_screen.dart'; // 스테이지 설정 화면
 import 'main_screen_ui.dart';
 import '../app_settings/app_settings_screen.dart'; // 앱 설정 화면 import
 import '../../core/services/settings_service.dart'; // SettingsService import
+import '../gold_calculator/gold_calculator_screen.dart';
+import '../accessory/accessory_screen.dart';
+import '../damage_calculator/damage_calculator_screen.dart';
+import '../journal/journal_screen.dart';
+import '../../core/services/event_manager.dart';
+import '../box_calculator/box_calculator_screen.dart';
+import '../simulator/accessory_enhancement_screen.dart';
+import '../simulator/accessory_option_change_screen.dart';
+
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -17,39 +26,82 @@ class MainScreen extends StatelessWidget {
            settings.vipLevel != null && settings.vipLevel!.isNotEmpty;
   }
 
+  void _navigateToScreen(BuildContext context, Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
+    );
+  }
+
+  void _showSettingsSnackbar(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SettingsScreen(isSetupMode: true)), // isSetupMode 추가
+    ).then((_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('팀 레벨, 달기지 레벨, VIP 등급을 먼저 설정해주세요.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    // final double currentFontSizeMultiplier = SettingsService.instance.fontSizeNotifier.value;
-    // MainScreen은 MaterialApp에서 제공하는 테마를 상속받으므로, 여기서 Theme 위젯으로 감쌀 필요가 없습니다.
-    // 폰트 크기 배율은 main.dart에서 이미 적용됩니다.
     return MainScreenUI(
-        onStartPressed: () {
+        onCalculatorPressed: () {
           if (_areEssentialSettingsSet()) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CalculatorScreen()),
-            );
+            _navigateToScreen(context, const CalculatorScreen());
           } else {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const SettingsScreen(isSetupMode: true)), // isSetupMode 추가
-            ).then((_) {
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('팀 레벨, 달기지 레벨, VIP 등급을 먼저 설정해주세요.'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
-              }
-            });
+            _showSettingsSnackbar(context);
           }
         },
+        onGoldCalculatorPressed: () {
+          if (_areEssentialSettingsSet()) {
+            _navigateToScreen(context, const GoldCalculatorScreen());
+          } else {
+            _showSettingsSnackbar(context);
+          }
+        },
+        onAccessoryPressed: () {
+          _navigateToScreen(context, const AccessoryScreen());
+        },
+        onDamageCalculatorPressed: () {
+          if (_areEssentialSettingsSet()) {
+            _navigateToScreen(context, const DamageCalculatorScreen());
+          } else {
+            _showSettingsSnackbar(context);
+          }
+        },
+        onJournalPressed: () {
+          _navigateToScreen(context, const JournalScreen());
+        },
+        onBoxCalculatorPressed: () {
+          if (EventManager.isEventPeriodActive()) {
+            _navigateToScreen(context, const BoxCalculatorScreen());
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('이벤트 기간이 아닙니다.'),
+                duration: Duration(seconds: 2),
+              ),
+            );
+          }
+        },
+        onAccessoryEnhancementPressed: () {
+          _navigateToScreen(context, const AccessoryEnhancementScreen());
+        },
+        onAccessoryOptionChangePressed: () {
+          _navigateToScreen(context, const AccessoryOptionChangeScreen());
+        },
+        onStageSettingsPressed: () {
+          _navigateToScreen(context, const SettingsScreen());
+        },
         onAppSettingsPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AppSettingsScreen()),
-          );
+          _navigateToScreen(context, const AppSettingsScreen());
         },
         settingsService: SettingsService.instance,
       );
