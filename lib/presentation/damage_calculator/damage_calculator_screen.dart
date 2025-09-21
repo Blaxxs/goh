@@ -95,6 +95,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _equipmentMinigameDamageController = TextEditingController();
   final _rebirthStatValueController = TextEditingController();
   final _crestValueController = TextEditingController();
+  final _elementalDamageController = TextEditingController();
 
   // --- Data Maps ---
   final List<int> demonRebirthAttackBonus = [0, 50, 50, 100, 100, 200, 200, 300, 300, 450];
@@ -157,6 +158,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.dispose();
     _rebirthStatValueController.dispose();
     _crestValueController.dispose();
+    _elementalDamageController.dispose();
     super.dispose();
   }
 
@@ -177,6 +179,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.addListener(_calculateDamage);
     _rebirthStatValueController.addListener(_calculateDamage);
     _crestValueController.addListener(_calculateDamage);
+    _elementalDamageController.addListener(_calculateDamage);
   }
 
   void _removeListenersFromControllers() {
@@ -196,6 +199,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.removeListener(_calculateDamage);
     _rebirthStatValueController.removeListener(_calculateDamage);
     _crestValueController.removeListener(_calculateDamage);
+    _elementalDamageController.removeListener(_calculateDamage);
   }
 
   double _getParser(TextEditingController controller) {
@@ -253,8 +257,6 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       if (charyeok.baseEffectValues.containsKey(grade)) {
         final value = charyeok.baseEffectValues[grade]![star - 1].toDouble();
 
-        // Handle effects that are NOT attackSetPercent or baseAttackIncreasePercent
-        // These are critDamageIncrease and fixedAdditionalDamage
         switch (charyeok.baseEffectType) {
           case CharyeokEffectType.critDamageIncrease:
             charyeokCritDamage = value;
@@ -264,29 +266,22 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             break;
           case CharyeokEffectType.none:
             break;
-          // attackSetPercent and baseAttackIncreasePercent are handled below
           case CharyeokEffectType.attackSetPercent:
           case CharyeokEffectType.baseAttackIncreasePercent:
-            // Do nothing here, handled by specific Charyeok name below
             break;
         }
 
-        // Handle charyeokBaseAttackIncrease (for "기본 공격력이 n%증가한다" type)
         if (charyeok.baseEffectType == CharyeokEffectType.baseAttackIncreasePercent) {
           charyeokBaseAttackIncrease = 1 + (value / 100);
         }
 
-        // Handle charyeokAttackIncrease based on specific Charyeok name
-        if (charyeok.englishName == 'tam') { // 제갈택의 탐: 공격력이 n%가 된다
+        if (charyeok.englishName == 'tam') { 
           charyeokAttackIncrease = value / 100;
-        } else if (charyeok.englishName == 'umawang' || charyeok.englishName == 'longginuseu') { // 우마왕, 롱기누스: 기본 공격력이 n%증가한다 (이것이 totalMultiplier에 영향을 주는 경우)
+        } else if (charyeok.englishName == 'umawang' || charyeok.englishName == 'longginuseu') { 
           charyeokAttackIncrease = 1 + (value / 100);
         } else if (charyeok.baseEffectType == CharyeokEffectType.attackSetPercent) {
-          // Default for other attackSetPercent types if not tam
           charyeokAttackIncrease = value / 100;
         } else if (charyeok.baseEffectType == CharyeokEffectType.baseAttackIncreasePercent) {
-          // Default for other baseAttackIncreasePercent types if not umawang/longginuseu
-          // If baseAttackIncreasePercent also affects totalMultiplier as 1 + n/100, then:
           charyeokAttackIncrease = 1 + (value / 100);
         }
       }
@@ -392,12 +387,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       rebirthAttackBonus = heavenlyRebirthAttackBonus[_rebirthLevel].toDouble();
     }
 
-    // New term: baseAttackForCharyeok includes character base, rebirth stat option, and spirit base attack
     double baseAttackForCharyeok = baseCharacterAttack + rebirthAttackOption + spiritBaseAttack;
-
-    // totalBaseAttack now uses baseAttackForCharyeok
     double totalBaseAttack = (baseAttackForCharyeok * charyeokBaseAttackIncrease) + _getParser(_additionalAttackPowerController) + rebirthAttackBonus + fragmentAttack;
-
 
     // --- Part 2: Multipliers ---
     final int dalgijiLevel = int.tryParse(SettingsService.instance.stageSettings.dalgijiLevel.toString()) ?? 0;
@@ -405,20 +396,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     double moonBaseBuff = 1 + (moonBaseAttackPercent / 100);
 
     double leaderBuff = _selectedLeader?.multiplier ?? 1.0;
-
-    // Changed highSchoolBuff and powerUpBuff calculation as per user's clarification
     double highSchoolBuffMultiplier = 1 + (_getParser(_highSchoolBuffController) / 100);
     double powerUpValue = _getParser(_powerUpController);
     double powerUpBuffMultiplier = (powerUpValue == 0) ? 1.0 : (powerUpValue / 100);
-
-    // charyeokAttackIncrease remains value / 100 (assuming "n%가 된다" type)
-    // crestAttackBuff remains 1 + (crestValue / 100)
-
     double totalMultiplier = leaderBuff * highSchoolBuffMultiplier * moonBaseBuff * charyeokAttackIncrease * powerUpBuffMultiplier * crestAttackBuff;
 
     // --- Part 3: Damage Type Multipliers ---
     double passiveCritDamage = (_selectedCharacter!.passive['critDamage'] as num? ?? 0).toDouble();
-
     double critDmgSum = _getParser(_divineItemCritDamageController) +
         rebirthCritDmgOption +
         spiritCritDamage +
@@ -428,10 +412,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         fragmentCritDamage;
 
     if (_isCriticalEnabled) {
-      critDmgSum += _getParser(_critDamageController); // Add '표기 크뎀' only if critical is enabled
+      critDmgSum += _getParser(_critDamageController);
     }
-
-    
 
     double critDmgMultiplier;
     if (_isCriticalEnabled) {
@@ -466,6 +448,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
     double skillCoeffSum = _selectedCharacter!.skillMultiplier.toDouble() + spiritSkillCoeff;
     double skillCoeffMultiplier = skillCoeffSum / 100;
+    
+    double elementalDamageMultiplier = 1 + (_getParser(_elementalDamageController) / 100);
 
     // --- Final Calculation ---
     double finalDamage = totalBaseAttack * totalMultiplier;
@@ -477,6 +461,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     if (damageType.contains('미니게임 데미지')) finalDamage *= minigameDmgMultiplier;
     
     finalDamage *= skillCoeffMultiplier;
+    finalDamage *= elementalDamageMultiplier;
 
     // --- Part 4: Fixed Additional Damage ---
     double rebirthFixedDamage = 0; 
@@ -506,10 +491,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeok = result['charyeok'];
         _selectedCharyeokGrade = result['grade'];
         _selectedCharyeokStar = result['star'];
-        // Safely cast the list of fragments, handling the case where it might be empty or dynamic
         _selectedFragments = (result['fragments'] as List<dynamic>).cast<Fragment>();
-
-        _calculateDamage(); // Recalculate after selection
+        _calculateDamage();
       });
     }
   }
@@ -568,7 +551,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       setState(() {
         _selectedSpirit = result['spirit'];
         _selectedSpiritStar = result['star'];
-        _calculateDamage(); // Recalculate after selection
+        _calculateDamage();
       });
     }
   }
@@ -581,7 +564,16 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         divineItemNormalDamageController: _divineItemNormalDamageController,
         divineItemSkillDamageController: _divineItemSkillDamageController,
         divineItemCritDamageController: _divineItemCritDamageController,
-        powerUpController: _powerUpController, // ADDED
+        powerUpController: _powerUpController,
+      ),
+    );
+  }
+
+  Future<void> _showElementalDamageDialog() async {
+    await showDialog(
+      context: context,
+      builder: (context) => ElementalDamageDialog(
+        elementalDamageController: _elementalDamageController,
       ),
     );
   }
@@ -686,6 +678,41 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         const SizedBox(height: 2),
         const Text(
           '버프',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 9,
+            shadows: <Shadow>[
+              Shadow(
+                offset: Offset(1.0, 1.0),
+                blurRadius: 2.0,
+                color: Colors.black,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+
+    Widget elementalDamageWidget = Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: _showElementalDamageDialog,
+          customBorder: const CircleBorder(),
+          child: Container(
+            width: buffIconSize,
+            height: buffIconSize,
+            decoration: const BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: const ClipOval(
+              child: Icon(Icons.whatshot, color: Colors.red, size: 20),
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        const Text(
+          '속성',
           style: TextStyle(
             color: Colors.white,
             fontSize: 9,
@@ -855,7 +882,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     child: _selectedCharacter != null
                         ? InkWell(
                             onTap: _showCharacterSelectionDialog,
-                            borderRadius: BorderRadius.circular(12), // Match card border radius
+                            borderRadius: BorderRadius.circular(12),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -902,6 +929,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                         charyeokWidget,
                         const SizedBox(height: 8),
                         buffWidget,
+                        const SizedBox(height: 8),
+                        elementalDamageWidget,
                       ],
                     ),
                   ),
@@ -952,13 +981,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
             Align(
               alignment: Alignment.centerLeft,
               child: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.7, // Adjust width as needed
+                width: MediaQuery.of(context).size.width * 0.7,
                 child: _buildTextField('추가 공격력', _additionalAttackPowerController),
               ),
             ),
             const SizedBox(height: 10),
             
-            if (!isSatanOrWamira) // Hide if Satan or Wamira
+            if (!isSatanOrWamira)
               ExpansionTile(
                 title: const Text('일반 공격 데미지 증가 (%)'),
                 children: [
@@ -966,7 +995,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   _buildTextField('장비 일공증', _equipmentNormalDamageController),
                 ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
               ),
-            if (!isHaegaeltaek) // Hide if Haegaeltaek
+            if (!isHaegaeltaek)
               ExpansionTile(
                 title: const Text('스킬 데미지 증가 (%)'),
                 children: [
@@ -974,7 +1003,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   _buildTextField('장비 스증', _equipmentSkillDamageController),
                 ].map((e) => Padding(padding: const EdgeInsets.symmetric(vertical: 8.0), child: e)).toList(),
               ),
-            if (!isHaegaeltaek) // Hide if Haegaeltaek
+            if (!isHaegaeltaek)
               ExpansionTile(
                 title: const Text('미니게임 데미지 증가 (%)'),
                 children: [
@@ -1004,18 +1033,18 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Row( // Existing Rebirth Row
-              mainAxisAlignment: MainAxisAlignment.spaceBetween, // Changed to spaceBetween
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded( // Wrap ElevatedButton.icon in Expanded
-                  child: ElevatedButton.icon( // Changed to ElevatedButton.icon for better visual
+                Expanded(
+                  child: ElevatedButton.icon(
                     onPressed: () {
                       setState(() {
                         _isCriticalEnabled = !_isCriticalEnabled;
                       });
                     },
                     icon: Icon(_isCriticalEnabled ? Icons.check_circle : Icons.circle_outlined),
-                    label: Text(_isCriticalEnabled ? '크리티컬 비활성화' : '크리티컬 활성화'),
+                    label: const Text('크리티컬'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surfaceContainerHighest,
                       foregroundColor: _isCriticalEnabled ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurfaceVariant,
@@ -1023,18 +1052,18 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 10), // Add some spacing between the button and the dropdowns
-                Expanded( // Wrap Rebirth elements in an Expanded Row to keep them together
+                const SizedBox(width: 10),
+                Expanded(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded( // Use Expanded to take available space
+                      Expanded(
                         child: DropdownButtonFormField<RebirthRealm>(
                           value: _selectedRebirthRealm,
                           decoration: const InputDecoration(
                             labelText: '환생',
                             border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                           ),
                           items: RebirthRealm.values.map((realm) {
                             return DropdownMenuItem<RebirthRealm>(
@@ -1045,20 +1074,20 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                           onChanged: (value) {
                             setState(() {
                               _selectedRebirthRealm = value ?? RebirthRealm.none;
-                              _selectedRebirthStat = RebirthStat.none; // Reset stat selection
+                              _selectedRebirthStat = RebirthStat.none;
                             });
                           },
                         ),
                       ),
                       const SizedBox(width: 10),
                       if (_selectedRebirthRealm != RebirthRealm.none)
-                        Expanded( // Use Expanded to take available space
+                        Expanded(
                           child: DropdownButtonFormField<int>(
                             value: _rebirthLevel,
                             decoration: const InputDecoration(
                               labelText: '단계',
                               border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                             ),
                             items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
                             onChanged: (value) {
@@ -1079,13 +1108,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Expanded( // Use Expanded to take available space
+                  Expanded(
                     child: DropdownButtonFormField<RebirthStat>(
                       value: _selectedRebirthStat,
                       decoration: const InputDecoration(
                         labelText: '증가 스탯',
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8), // Adjust padding
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                       ),
                       items: [RebirthStat.none, ...availableStats].map((stat) {
                         return DropdownMenuItem<RebirthStat>(
@@ -1106,10 +1135,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   ),
                 ],
               ),
-            if (_isCriticalEnabled) // Only show if critical is enabled
+            if (_isCriticalEnabled)
               Column(
                 children: [
-                  const SizedBox(height: 10), // Add spacing
+                  const SizedBox(height: 10),
                   _buildTextField('표기 크뎀', _critDamageController),
                 ],
               ),
@@ -1138,7 +1167,7 @@ class BuffSelectionDialog extends StatelessWidget {
   final TextEditingController divineItemNormalDamageController;
   final TextEditingController divineItemSkillDamageController;
   final TextEditingController divineItemCritDamageController;
-  final TextEditingController powerUpController; // ADDED
+  final TextEditingController powerUpController;
 
   const BuffSelectionDialog({
     super.key,
@@ -1146,7 +1175,7 @@ class BuffSelectionDialog extends StatelessWidget {
     required this.divineItemNormalDamageController,
     required this.divineItemSkillDamageController,
     required this.divineItemCritDamageController,
-    required this.powerUpController, // ADDED
+    required this.powerUpController,
   });
 
   Widget _buildTextField(String label, TextEditingController controller) {
@@ -1173,13 +1202,52 @@ class BuffSelectionDialog extends StatelessWidget {
             const SizedBox(height: 20),
             _buildTextField('하이스쿨 버프', highSchoolBuffController),
             const SizedBox(height: 12),
-            _buildTextField('파워업 (%)', powerUpController), // ADDED
+            _buildTextField('파워업 (%)', powerUpController),
             const SizedBox(height: 12),
             _buildTextField('신기 일공증', divineItemNormalDamageController),
             const SizedBox(height: 12),
             _buildTextField('신기 스증', divineItemSkillDamageController),
             const SizedBox(height: 12),
             _buildTextField('신기 크뎀증', divineItemCritDamageController),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('확인'),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ElementalDamageDialog extends StatelessWidget {
+  final TextEditingController elementalDamageController;
+
+  const ElementalDamageDialog({
+    super.key,
+    required this.elementalDamageController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('속성 피해 정보 입력', style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: elementalDamageController,
+              decoration: const InputDecoration(
+                labelText: '속성 피해',
+                suffixText: '%',
+                border: OutlineInputBorder(),
+              ),
+              keyboardType: TextInputType.number,
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -1240,13 +1308,10 @@ class StarSelectorState extends State<StarSelector> {
       builder: (context, constraints) {
         final double totalWidth = constraints.maxWidth;
         const int numberOfStars = 9;
-        const double itemSpacing = 2.0; // 별 사이의 간격
+        const double itemSpacing = 2.0;
 
-        // Calculate starSize to ensure it fits.
-        // We need to account for numberOfStars * starSize + (numberOfStars - 1) * itemSpacing <= totalWidth
-        // Let's subtract a small buffer from each star to ensure it fits.
         final double calculatedStarSize = (totalWidth - (numberOfStars - 1) * itemSpacing) / numberOfStars;
-        final double starSize = calculatedStarSize - 1.0; // Subtract 1.0 for a small buffer
+        final double starSize = calculatedStarSize - 1.0;
 
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1262,11 +1327,11 @@ class StarSelectorState extends State<StarSelector> {
                     child: Icon(
                       index < _currentStar ? Icons.star : Icons.star_border,
                       color: Colors.amber,
-                      size: starSize, // Icon size matches SizedBox size
+                      size: starSize,
                     ),
                   ),
                 ),
-                if (index < numberOfStars - 1) SizedBox(width: itemSpacing), // 별 사이에 간격 추가
+                if (index < numberOfStars - 1) SizedBox(width: itemSpacing),
               ],
             );
           }),
@@ -1350,7 +1415,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
   int _selectedStar = 1;
   late List<Fragment> _selectedFragments;
   final Map<Fragment, TextEditingController> _fragmentValueControllers = {};
-  bool _hasChanges = false; // Track if any changes have been made
+  bool _hasChanges = false;
 
   @override
   void initState() {
@@ -1413,7 +1478,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
 
   int _getFragmentSlotCount(CharyeokGrade? grade) {
     if (grade == null) return 0;
-    if (grade == CharyeokGrade.legendary) return 6; // 전설 등급은 항상 6칸
+    if (grade == CharyeokGrade.legendary) return 6;
     if (_detailedCharyeok != null && _detailedCharyeok!.fragmentSlotCounts != null && _detailedCharyeok!.fragmentSlotCounts!.containsKey(grade)) {
       return _detailedCharyeok!.fragmentSlotCounts![grade]!;
     }
@@ -1433,9 +1498,9 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
 
   Widget _buildGridView() {
     final displayCharyeoks = charyeoks.where((c) => c.name != '선택 안함').toList();
-    return SizedBox( // Use SizedBox to constrain size
+    return SizedBox(
       width: double.maxFinite,
-      height: MediaQuery.of(context).size.height * 0.7, // Adjust height
+      height: MediaQuery.of(context).size.height * 0.7,
       child: Column(
         children: [
           Padding(
@@ -1449,7 +1514,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                 crossAxisCount: 3,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 3 / 4, // Adjust for name + icon
+                childAspectRatio: 3 / 4,
               ),
               itemCount: displayCharyeoks.length,
               itemBuilder: (context, index) {
@@ -1512,7 +1577,6 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
     String synergyDescription = '';
 
     if (_selectedGrade != null) {
-      // Build base effect description
       List<String> values = [];
       if (charyeok.baseEffectValues.containsKey(_selectedGrade)) {
         values.add(charyeok.baseEffectValues[_selectedGrade]![_selectedStar - 1].toString());
@@ -1525,7 +1589,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
         if (charyeok.maxValue != null && charyeok.maxValue!.containsKey(_selectedGrade)) {
           values.add(charyeok.maxValue![_selectedGrade]![_selectedStar - 1].toString());
         }
-      } else { // For umawang and sanghyeonggwon
+      } else {
         if (charyeok.decreasePerTurn != null && charyeok.decreasePerTurn!.containsKey(_selectedGrade)) {
           values.add(charyeok.decreasePerTurn![_selectedGrade]![_selectedStar - 1].toString());
         }
@@ -1540,11 +1604,10 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
           description = description.replaceFirst('n', values[i]);
           i++;
         } else {
-          break; // No more values to replace 'n'
+          break;
         }
       }
 
-      // Build synergy effect description
       if (charyeok.synergyEffectType.containsKey(_selectedGrade) && charyeok.synergyEffectType[_selectedGrade] != SynergyEffectType.none) {
         final synergyType = charyeok.synergyEffectType[_selectedGrade]!;
         final synergyValue = charyeok.synergyEffectValues[_selectedGrade]!;
@@ -1579,7 +1642,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
             const SizedBox(height: 16),
             charyeok.imagePath.isNotEmpty
                 ? Image.asset(charyeok.imagePath, height: 100, errorBuilder: (c, o, s) => const Icon(Icons.error, size: 100))
-                : const SizedBox(height: 100, child: Center(child: Text('이미지 없음'))), // 또는 다른 플레이스홀더
+                : const SizedBox(height: 100, child: Center(child: Text('이미지 없음'))),
             const SizedBox(height: 16),
             if (charyeok.availableGrades.isNotEmpty)
               Wrap(
@@ -1701,18 +1764,18 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                                 });
                               }
                             }
-                          : null, // Disable onTap if not active
+                          : null,
                       child: Container(
                         width: iconSize,
                         height: iconSize,
                         decoration: BoxDecoration(
                           border: Border.all(color: isActive ? Colors.grey : Colors.grey.shade800),
                           borderRadius: BorderRadius.circular(8),
-                          color: isActive ? null : Colors.grey.shade900, // Darken if inactive
+                          color: isActive ? null : Colors.grey.shade900,
                         ),
                         child: fragment != null && fragment.name != '선택 안함'
                             ? Image.asset(fragment.imagePath, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                            : (isActive ? const Icon(Icons.add) : Icon(Icons.lock, color: Colors.grey.shade600)), // Show lock icon if inactive
+                            : (isActive ? const Icon(Icons.add) : Icon(Icons.lock, color: Colors.grey.shade600)),
                       ),
                     ),
                     if (isActive && fragment != null && (fragment.minValue != null || fragment.maxValue != null)) ...[
@@ -1729,7 +1792,7 @@ class CharyeokSelectionDialogState extends State<CharyeokSelectionDialog> {
                             border: const OutlineInputBorder(),
                           ),
                           keyboardType: TextInputType.number,
-                          enabled: isActive, // Disable text field if slot is inactive
+                          enabled: isActive,
                           onChanged: (text) {
                             fragment.value = double.tryParse(text);
                             _setHasChanges(true);
@@ -1766,7 +1829,7 @@ class CrestSelectionDialog extends StatefulWidget {
 class CrestSelectionDialogState extends State<CrestSelectionDialog> {
   Crest? _detailedCrest;
   late TextEditingController _valueController;
-  bool _hasChanges = false; // Track if any changes have been made
+  bool _hasChanges = false;
 
   @override
   void initState() {
@@ -1893,12 +1956,11 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
                 labelText: '${crest.name} 값',
                 hintText: 'n% 또는 n 입력',
                 border: const OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0)), // Slightly rounded corners
+                  borderRadius: BorderRadius.all(Radius.circular(8.0)),
                 ),
                 filled: true,
-                // ignore: deprecated_member_use
-                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3), // Subtle fill color
-                contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0), // Adjust padding
+                fillColor: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                contentPadding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
               ),
               keyboardType: TextInputType.number,
             ),
@@ -1961,11 +2023,11 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
               final leader = displayLeaders[index];
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                elevation: 2, // Added elevation for consistency
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Added rounded corners
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: InkWell(
                   onTap: () => Navigator.of(context).pop(leader),
-                  borderRadius: BorderRadius.circular(12), // Match card border radius
+                  borderRadius: BorderRadius.circular(12),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Column(
@@ -1999,7 +2061,7 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(leader.skillDescription!, style: Theme.of(context).textTheme.bodyMedium),
                           ),
-                        ]
+                        ],
                       ],
                     ),
                   ),
@@ -2009,13 +2071,11 @@ class LeaderSelectionDialogState extends State<LeaderSelectionDialog> {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: TextButton.icon(
-            icon: const Icon(Icons.cancel),
-            label: const Text("선택 취소"),
-            onPressed: () {
-              Navigator.pop(context, leaders[0]);
-            },
+            icon: const Icon(Icons.cancel_outlined),
+            label: const Text("선택 안함"),
+            onPressed: () => Navigator.of(context).pop(leaders[0]),
           ),
         ),
       ],
@@ -2039,6 +2099,7 @@ class SpiritSelectionDialog extends StatefulWidget {
     this.initialSpirit,
     this.initialStar = 1,
   });
+
   @override
   SpiritSelectionDialogState createState() => SpiritSelectionDialogState();
 }
@@ -2046,7 +2107,7 @@ class SpiritSelectionDialog extends StatefulWidget {
 class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   Spirit? _detailedSpirit;
   int _selectedStar = 1;
-  bool _hasChanges = false; // Track if any changes have been made
+  bool _hasChanges = false;
 
   @override
   void initState() {
@@ -2060,7 +2121,8 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   void _selectSpirit(Spirit spirit) {
     setState(() {
       _detailedSpirit = spirit;
-      _selectedStar = 1; // Reset star when a new spirit is selected
+      _selectedStar = 1;
+      _hasChanges = true;
     });
   }
 
@@ -2076,38 +2138,42 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
             child: Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
           ),
           Expanded(
-            child: ListView.builder(
+            child: GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                childAspectRatio: 3 / 4,
+              ),
               itemCount: displaySpirits.length,
               itemBuilder: (context, index) {
                 final spirit = displaySpirits[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  child: InkWell(
-                    onTap: () => _selectSpirit(spirit),
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Row(
-                        children: [
-                          Image.asset(
-                            spirit.imagePath,
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.contain,
-                            errorBuilder: (c, o, s) => const Icon(Icons.error, size: 60),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(spirit.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 4),
-                                Text(spirit.description, style: Theme.of(context).textTheme.bodySmall),
-                              ],
+                return GestureDetector(
+                  onTap: () => _selectSpirit(spirit),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          spirit.name,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Image.asset(
+                              spirit.imagePath,
+                              fit: BoxFit.contain,
+                              errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 );
@@ -2134,7 +2200,6 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
 
   Widget _buildDetailView() {
     final spirit = _detailedSpirit!;
-
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -2155,37 +2220,19 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
               onChanged: (star) {
                 setState(() {
                   _selectedStar = star;
-                  _hasChanges = true; // Mark as changed
-                  widget.onDamageRecalculated(); // Recalculate after state change
+                  _hasChanges = true;
                 });
               },
             ),
             const SizedBox(height: 16),
-            if (spirit.effects.isNotEmpty)
-              Column(
-                children: spirit.effects.map((effect) {
-                  final value = effect.values[_selectedStar - 1];
-                  String text;
-                  switch (effect.type) {
-                    case SpiritEffectType.skillCoefficient:
-                      text = '스킬 계수 +$value%';
-                      break;
-                    case SpiritEffectType.critDamage:
-                      text = '크리티컬 데미지 $value% 증가';
-                      break;
-                    case SpiritEffectType.baseAttack:
-                      text = '기본 공격력 ${value.toInt()} 증가';
-                      break;
-                    case SpiritEffectType.normalDamage:
-                      text = '일반 공격 데미지 $value% 증가';
-                      break;
-                    case SpiritEffectType.skillDamage:
-                      text = '스킬 데미지 $value% 증가';
-                      break;
-                  }
-                  return Text(text);
-                }).toList(),
-              ),
+            ...spirit.effects.map((effect) {
+              String effectText = '효과: ';
+              if (effect.characterDependency != null) {
+                effectText += '(${effect.characterDependency} 전용) ';
+              }
+              effectText += effect.description.replaceFirst('n', effect.values[_selectedStar - 1].toString());
+              return Text(effectText);
+            }).toList(),
             const SizedBox(height: 24),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -2219,67 +2266,5 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return _detailedSpirit == null ? _buildGridView() : _buildDetailView();
-  }
-}
-
-class FragmentSelectionDialog extends StatelessWidget {
-  const FragmentSelectionDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      child: SizedBox(
-        width: MediaQuery.of(context).size.width * 0.8,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text('파편 선택', style: Theme.of(context).textTheme.headlineSmall),
-            ),
-            Expanded(
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                ),
-                itemCount: fragments.length,
-                itemBuilder: (context, index) {
-                  final fragment = fragments[index];
-                  return GestureDetector(
-                    onTap: () {
-                      // Return a new instance of Fragment to allow independent value setting
-                      Navigator.of(context).pop(Fragment(
-                        name: fragment.name,
-                        imagePath: fragment.imagePath,
-                        minValue: fragment.minValue,
-                        maxValue: fragment.maxValue,
-                        unit: fragment.unit,
-                        value: fragment.value, // Pass existing value if any
-                      ));
-                    },
-                    child: Card(
-                      elevation: 2, // Added elevation for consistency
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), // Added rounded corners
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (fragment.name != '선택 안함')
-                            Image.asset(fragment.imagePath, width: 40, height: 40, errorBuilder: (c, o, s) => const Icon(Icons.error))
-                          else
-                            const Icon(Icons.cancel_outlined, size: 40),
-                          Text(fragment.name, textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold)), // Updated text style
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
