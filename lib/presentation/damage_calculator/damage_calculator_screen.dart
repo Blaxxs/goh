@@ -1143,7 +1143,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       decoration: const InputDecoration(
                         labelText: '증가 스탯',
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 20), // Changed to 20
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12), // Changed to 12
                       ),
                       itemHeight: 50, // Added to prevent text clipping
                       items: [RebirthStat.none, ...availableStats].map((stat) {
