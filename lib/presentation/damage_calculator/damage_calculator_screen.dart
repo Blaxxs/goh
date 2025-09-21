@@ -319,10 +319,10 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         final synergyValue = charyeok.synergyEffectValues[grade]!.toDouble();
         switch (synergyType) {
           case SynergyEffectType.skillDamageIncreasePercent:
-            charyeokSkillDamage = synergyValue;
+            synergyName = '스킬 데미지';
             break;
           case SynergyEffectType.normalDamageIncreasePercent:
-            charyeokNormalDamage = synergyValue;
+            synergyName = '일반 공격 데미지';
             break;
           case SynergyEffectType.none:
             break;
@@ -1091,9 +1091,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                           decoration: const InputDecoration(
                             labelText: '환생',
                             border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 20), // Changed to 20
                           ),
-                          itemHeight: 80.0, // Added
                           items: RebirthRealm.values.map((realm) {
                             return DropdownMenuItem<RebirthRealm>(
                               value: realm,
@@ -1116,7 +1115,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             decoration: const InputDecoration(
                               labelText: '단계',
                               border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 20), // Changed to 20
                             ),
                             items: List.generate(10, (index) => DropdownMenuItem(value: index, child: Text('$index'))),
                             onChanged: (value) {
@@ -1143,9 +1142,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                       decoration: const InputDecoration(
                         labelText: '증가 스탯',
                         border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 20), // Changed to 20
                       ),
-                      itemHeight: 80.0, // Added
                       items: [RebirthStat.none, ...availableStats].map((stat) {
                         return DropdownMenuItem<RebirthStat>(
                           value: stat,
@@ -2197,7 +2195,7 @@ class FragmentSelectionDialog extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24.0),
               child: Text("파편 선택", style: Theme.of(context).textTheme.headlineSmall),
-            ),
+          ),
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
