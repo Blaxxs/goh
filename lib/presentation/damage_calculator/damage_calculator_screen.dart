@@ -76,7 +76,8 @@ extension SpiritEffectDisplay on SpiritEffect {
         break;
     }
     if (characterDependency != null) {
-      return '($characterDependency 전용) $description';
+      final koreanName = characterEnglishToKoreanNames[characterDependency] ?? characterDependency;
+      return '($koreanName 전용) $description';
     }
     return description;
   }
