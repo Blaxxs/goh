@@ -317,6 +317,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       if (charyeok.synergyEffectType.containsKey(grade)) {
         final synergyType = charyeok.synergyEffectType[grade]!;
         final synergyValue = charyeok.synergyEffectValues[grade]!.toDouble();
+        String synergyName = '';
         switch (synergyType) {
           case SynergyEffectType.skillDamageIncreasePercent:
             synergyName = '스킬 데미지';
