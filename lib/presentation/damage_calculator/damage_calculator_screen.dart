@@ -1093,6 +1093,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                             border: OutlineInputBorder(),
                             contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                           ),
+                          itemHeight: 56.0,
                           items: RebirthRealm.values.map((realm) {
                             return DropdownMenuItem<RebirthRealm>(
                               value: realm,
