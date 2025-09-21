@@ -2070,7 +2070,7 @@ class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 24.0),
-              child: Text("정령 선택", style: Theme.of(context).textTheme.headlineSmall),
+              child: Text("스피릿 선택", style: Theme.of(context).textTheme.headlineSmall),
             ),
             Expanded(
               child: GridView.builder(
