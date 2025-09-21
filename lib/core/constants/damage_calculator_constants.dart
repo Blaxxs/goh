@@ -55,9 +55,9 @@ const List<Character> characters = [
 ];
 
 const Map<String, String> characterEnglishToKoreanNames = {
-  'satan': '사탄',
-  'mira': '유미라',
-  'haegaltaeg': '제갈택',
+  'satan': '헤일로의 발현 사탄:666',
+  'mira': 'Wi-Fi 오른팔의 유미라',
+  'haegaltaeg': '해적 제갈택',
 };
 
 class Leader {
