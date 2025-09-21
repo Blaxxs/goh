@@ -54,6 +54,34 @@ Color _getBorderColorForGrade(CharyeokGrade? grade) {
   }
 }
 
+extension SpiritEffectDisplay on SpiritEffect {
+  String descriptionForStar(int star) {
+    final value = values[star - 1];
+    String description;
+    switch (type) {
+      case SpiritEffectType.skillCoefficient:
+        description = '스킬 계수 +${value}%';
+        break;
+      case SpiritEffectType.critDamage:
+        description = '크리티컬 데미지 ${value}% 증가';
+        break;
+      case SpiritEffectType.baseAttack:
+        description = '기본 공격력 ${value.toInt()} 증가';
+        break;
+      case SpiritEffectType.normalDamage:
+        description = '일반 공격 데미지 ${value}% 증가';
+        break;
+      case SpiritEffectType.skillDamage:
+        description = '스킬 데미지 ${value}% 증가';
+        break;
+    }
+    if (characterDependency != null) {
+      return '($characterDependency 전용) $description';
+    }
+    return description;
+  }
+}
+
 class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   // Selections
   Character? _selectedCharacter;
@@ -2192,8 +2220,8 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                 });
               },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -2226,12 +2254,7 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
             ),
             const SizedBox(height: 16),
             ...spirit.effects.map((effect) {
-              String effectText = '효과: ';
-              if (effect.characterDependency != null) {
-                effectText += '(${effect.characterDependency} 전용) ';
-              }
-              effectText += effect.description.replaceFirst('n', effect.values[_selectedStar - 1].toString());
-              return Text(effectText);
+              return Text('효과: ${effect.descriptionForStar(_selectedStar)}');
             }).toList(),
             const SizedBox(height: 24),
             Row(
@@ -2266,5 +2289,85 @@ class SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
   @override
   Widget build(BuildContext context) {
     return _detailedSpirit == null ? _buildGridView() : _buildDetailView();
+  }
+}
+
+class FragmentSelectionDialog extends StatelessWidget {
+  const FragmentSelectionDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Text("파편 선택", style: Theme.of(context).textTheme.headlineSmall),
+          ),
+          Flexible(
+            child: GridView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 8,
+                childAspectRatio: 0.8,
+              ),
+              itemCount: fragments.length,
+              itemBuilder: (context, index) {
+                final fragment = fragments[index];
+                return GestureDetector(
+                  onTap: () => Navigator.of(context).pop(fragment),
+                  child: Card(
+                    elevation: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Image.asset(
+                              fragment.imagePath,
+                              fit: BoxFit.contain,
+                              errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Text(
+                              fragment.name,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.cancel_outlined),
+              label: const Text("선택 안함"),
+              onPressed: () {
+                Navigator.pop(context, Fragment.none());
+              },
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
