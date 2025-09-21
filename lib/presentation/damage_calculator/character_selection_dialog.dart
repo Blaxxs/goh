@@ -22,39 +22,26 @@ class CharacterSelectionDialog extends StatelessWidget {
             crossAxisCount: 3,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
-            childAspectRatio: 0.8,
+            childAspectRatio: 1.0,
           ),
           itemCount: displayCharacters.length,
           itemBuilder: (context, index) {
             final character = displayCharacters[index];
             return GestureDetector(
               onTap: () => Navigator.of(context).pop(character),
-              child: Card(
-                elevation: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start, // Align to top
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
-                      child: Text(
-                        character.name,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+              child: Tooltip(
+                message: character.name,
+                child: Card(
+                  elevation: 2,
+                  clipBehavior: Clip.antiAlias, // Ensures the image respects the card's rounded corners
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Image.asset(
+                      character.imagePath,
+                      fit: BoxFit.contain,
+                      errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
                     ),
-                    Expanded( // Image takes the rest of the space
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Image.asset(
-                          character.imagePath,
-                          fit: BoxFit.contain,
-                          errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             );
