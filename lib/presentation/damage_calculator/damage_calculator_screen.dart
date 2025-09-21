@@ -632,22 +632,17 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClipOval(
                   child: Image.asset(
                     _selectedCharyeok!.imagePath,
                     fit: BoxFit.cover,
-                    width: charyeokIconSize * 0.7,
-                    height: charyeokIconSize * 0.7,
+                    width: charyeokIconSize * 0.8,
+                    height: charyeokIconSize * 0.8,
                     errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
                   ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  _selectedCharyeok!.name,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -720,24 +715,16 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClipOval(
                   child: Image.asset(
                     _selectedLeader!.imagePath,
                     fit: BoxFit.cover,
-                    width: otherIconSize * 0.7,
-                    height: otherIconSize * 0.7,
+                    width: otherIconSize * 0.8,
+                    height: otherIconSize * 0.8,
                     errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    _selectedLeader!.name,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
@@ -772,6 +759,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 _selectedCrest!.imagePath != null
@@ -779,21 +767,12 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                         child: Image.asset(
                           _selectedCrest!.imagePath!,
                           fit: BoxFit.cover,
-                          width: otherIconSize * 0.7,
-                          height: otherIconSize * 0.7,
+                          width: otherIconSize * 0.8,
+                          height: otherIconSize * 0.8,
                           errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
                         ),
                       )
-                    : Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: otherIconSize * 0.7),
-                const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    _selectedCrest!.name,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                    : Icon(_selectedCrest!.icon, color: Colors.blueGrey, size: otherIconSize * 0.8),
               ],
             ),
           ),
@@ -826,24 +805,16 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 ClipOval(
                   child: Image.asset(
                     _selectedSpirit!.imagePath,
                     fit: BoxFit.cover,
-                    width: otherIconSize * 0.7,
-                    height: otherIconSize * 0.7,
+                    width: otherIconSize * 0.8,
+                    height: otherIconSize * 0.8,
                     errorBuilder: (c, o, s) => const Icon(Icons.error, size: 30),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    _selectedSpirit!.name,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                 ),
               ],
