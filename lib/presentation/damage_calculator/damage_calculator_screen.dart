@@ -125,8 +125,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedCharacter = characters[0];
-    _baseAttackPowerController.text = _selectedCharacter!.baseAttackPower.toString();
+    _selectedCharacter = null;
     _selectedSpirit = spirits[0];
     _selectedCrest = crests[0];
     _selectedLeader = leaders[0];
