@@ -2142,7 +2142,7 @@ class _SpiritSelectionDialogState extends State<SpiritSelectionDialog> {
                      const SizedBox(height: 8),
                     // Display spirit effects
                     if (_selectedSpirit!.effects.isNotEmpty)
-                      ..._selectedSpirit!.effects.where((e) => e.characterDependency == null || (widget.selectedCharacter != null && e.characterDependency == widget.selectedCharacter!.englishName)).map((effect) {
+                      ..._selectedSpirit!.effects.map((effect) {
                         return Text(effect.descriptionForStar(_selectedStar));
                       }),
                   ],
