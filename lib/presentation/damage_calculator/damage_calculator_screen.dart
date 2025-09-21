@@ -60,19 +60,19 @@ extension SpiritEffectDisplay on SpiritEffect {
     String description;
     switch (type) {
       case SpiritEffectType.skillCoefficient:
-        description = '스킬 계수 +${value}%';
+        description = '스킬 계수 +$value%';
         break;
       case SpiritEffectType.critDamage:
-        description = '크리티컬 데미지 ${value}% 증가';
+        description = '크리티컬 데미지 $value% 증가';
         break;
       case SpiritEffectType.baseAttack:
         description = '기본 공격력 ${value.toInt()} 증가';
         break;
       case SpiritEffectType.normalDamage:
-        description = '일반 공격 데미지 ${value}% 증가';
+        description = '일반 공격 데미지 $value% 증가';
         break;
       case SpiritEffectType.skillDamage:
-        description = '스킬 데미지 ${value}% 증가';
+        description = '스킬 데미지 $value% 증가';
         break;
     }
     if (characterDependency != null) {
@@ -316,14 +316,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
 
       if (charyeok.synergyEffectType.containsKey(grade)) {
         final synergyType = charyeok.synergyEffectType[grade]!;
-        final synergyValue = charyeok.synergyEffectValues[grade]!.toDouble();
-        String synergyName = '';
+        charyeok.synergyEffectValues[grade]!.toDouble();
         switch (synergyType) {
           case SynergyEffectType.skillDamageIncreasePercent:
-            synergyName = '스킬 데미지';
             break;
           case SynergyEffectType.normalDamageIncreasePercent:
-            synergyName = '일반 공격 데미지';
             break;
           case SynergyEffectType.none:
             break;
