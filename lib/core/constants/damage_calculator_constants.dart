@@ -104,3 +104,28 @@ const List<Leader> leaders = [
     skillDescription: '아군 캐릭터의 공격력과 체력이 2배 증가하고, 아군의 회피와 크리티컬이 150 증가한다.',
   ),
 ];
+
+enum ElementType {
+  fire,
+  wood,
+  water,
+  light,
+  dark,
+}
+
+extension ElementTypeExtension on ElementType {
+  String get displayName {
+    switch (this) {
+      case ElementType.fire:
+        return '불속성';
+      case ElementType.wood:
+        return '나무속성';
+      case ElementType.water:
+        return '물속성';
+      case ElementType.light:
+        return '빛속성';
+      case ElementType.dark:
+        return '어둠속성';
+    }
+  }
+}

@@ -124,7 +124,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
   final _equipmentMinigameDamageController = TextEditingController();
   final _rebirthStatValueController = TextEditingController();
   final _crestValueController = TextEditingController();
-  final _elementalDamageController = TextEditingController();
+  late Map<ElementType, TextEditingController> _elementalDamageControllers;
 
   // --- Data Maps ---
   final List<int> demonRebirthAttackBonus = [0, 50, 50, 100, 100, 200, 200, 300, 300, 450];
@@ -165,6 +165,9 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         _selectedCharyeokGrade = _selectedCharyeok!.availableGrades[0];
       }
     }
+    _elementalDamageControllers = {
+      for (var type in ElementType.values) type: TextEditingController()
+    };
     _addListenersToControllers();
   }
 
@@ -187,7 +190,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.dispose();
     _rebirthStatValueController.dispose();
     _crestValueController.dispose();
-    _elementalDamageController.dispose();
+    _elementalDamageControllers.forEach((key, value) => value.dispose());
     super.dispose();
   }
 
@@ -208,7 +211,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.addListener(_calculateDamage);
     _rebirthStatValueController.addListener(_calculateDamage);
     _crestValueController.addListener(_calculateDamage);
-    _elementalDamageController.addListener(_calculateDamage);
+    _elementalDamageControllers.forEach((key, value) => value.addListener(_calculateDamage));
   }
 
   void _removeListenersFromControllers() {
@@ -228,7 +231,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     _equipmentMinigameDamageController.removeListener(_calculateDamage);
     _rebirthStatValueController.removeListener(_calculateDamage);
     _crestValueController.removeListener(_calculateDamage);
-    _elementalDamageController.removeListener(_calculateDamage);
+    _elementalDamageControllers.forEach((key, value) => value.removeListener(_calculateDamage));
   }
 
   double _getParser(TextEditingController controller) {
@@ -476,7 +479,11 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     double skillCoeffSum = _selectedCharacter!.skillMultiplier.toDouble() + spiritSkillCoeff;
     double skillCoeffMultiplier = skillCoeffSum / 100;
     
-    double elementalDamageMultiplier = 1 + (_getParser(_elementalDamageController) / 100);
+    double totalElementalDamage = 0;
+    _elementalDamageControllers.forEach((type, controller) {
+      totalElementalDamage += _getParser(controller);
+    });
+    double elementalDamageMultiplier = 1 + (totalElementalDamage / 100);
 
     // --- Final Calculation ---
     double finalDamage = totalBaseAttack * totalMultiplier;
@@ -601,7 +608,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
     await showDialog(
       context: context,
       builder: (context) => ElementalDamageDialog(
-        elementalDamageController: _elementalDamageController,
+        elementalDamageControllers: _elementalDamageControllers,
       ),
     );
   }
@@ -1250,11 +1257,11 @@ class BuffSelectionDialog extends StatelessWidget {
 }
 
 class ElementalDamageDialog extends StatelessWidget {
-  final TextEditingController elementalDamageController;
+  final Map<ElementType, TextEditingController> elementalDamageControllers;
 
   const ElementalDamageDialog({
     super.key,
-    required this.elementalDamageController,
+    required this.elementalDamageControllers,
   });
 
   @override
@@ -1267,15 +1274,18 @@ class ElementalDamageDialog extends StatelessWidget {
           children: [
             Text('속성 피해 정보 입력', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 20),
-            TextFormField(
-              controller: elementalDamageController,
-              decoration: const InputDecoration(
-                labelText: '속성 피해',
-                suffixText: '%',
-                border: OutlineInputBorder(),
+            ...ElementType.values.map((type) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: TextFormField(
+                controller: elementalDamageControllers[type],
+                decoration: InputDecoration(
+                  labelText: type.displayName,
+                  suffixText: '%',
+                  border: const OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
               ),
-              keyboardType: TextInputType.number,
-            ),
+            )),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
