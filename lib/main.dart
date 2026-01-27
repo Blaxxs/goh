@@ -302,9 +302,7 @@ class FirebaseTestScreen extends StatefulWidget {
 class _FirebaseTestScreenState extends State<FirebaseTestScreen> {
   // 1. 여기에 사진에서 보신 주소를 그대로 넣었습니다.
 // main.dart 파일 아래쪽 _FirebaseTestScreenState 부분입니다.
-final DatabaseReference _dbRef = FirebaseDatabase.instance
-    .refFromURL("https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app")
-    .child("message");
+final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
 
   String _serverData = "데이터를 가져오는 중...";
 
