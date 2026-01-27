@@ -300,7 +300,7 @@ class FirebaseTestScreen extends StatefulWidget {
 }
 
 class _FirebaseTestScreenState extends State<FirebaseTestScreen> {
-final DatabaseReference _dbRef = FirebaseDatabase.instance.refFromURL("https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app").child("message");
+final DatabaseReference _dbRef = FirebaseDatabase.instance.refFromURL("https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app/").child("message");
   String _serverData = "데이터를 가져오는 중...";
 
   @override
