@@ -300,42 +300,52 @@ class FirebaseTestScreen extends StatefulWidget {
 }
 
 class _FirebaseTestScreenState extends State<FirebaseTestScreen> {
-final DatabaseReference _dbRef = FirebaseDatabase.instance.refFromURL("https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app/").child("message");
+  // 1. 여기에 사진에서 보신 주소를 그대로 넣었습니다.
+  final DatabaseReference _dbRef = FirebaseDatabase.instance
+      .refFromURL("https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app")
+      .child("message");
+
   String _serverData = "데이터를 가져오는 중...";
 
   @override
   void initState() {
     super.initState();
-    // 서버의 'message' 값이 바뀌면 자동으로 실행됨
+    // 서버 감시 시작
     _dbRef.onValue.listen((event) {
+      // 서버에서 글자를 가져옵니다.
       final String? value = event.snapshot.value?.toString();
-      setState(() {
-        _serverData = value ?? "서버에 데이터가 없습니다.";
-      });
+      if (mounted) {
+        setState(() {
+          // 글자가 있으면 보여주고, 없으면 안내 문구를 띄웁니다.
+          _serverData = value ?? "서버에 'message'를 추가해주세요!";
+        });
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Firebase 연동 성공!")),
+      appBar: AppBar(title: const Text("Firebase 연동 완료!")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Firebase에서 보낸 메시지:"),
+            const Text("실시간 서버 메시지:"),
             const SizedBox(height: 20),
+            // 서버에서 수정한 글자가 실시간으로 여기에 나타납니다!
             Text(
               _serverData,
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
-                // 원래 가려던 로딩 화면으로 이동해보기
+                // 원래 만들던 로딩 화면으로 넘어가는 버튼입니다.
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const LoadingScreen()));
               },
-              child: const Text("기존 로딩 화면으로 가기"),
+              child: const Text("원래 로딩 화면으로 이동"),
             )
           ],
         ),
