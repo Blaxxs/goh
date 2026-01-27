@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "173517946754",
+    "project_id": "gohcalculator",
+    "storage_bucket": "gohcalculator.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:173517946754:android:417293a7ff90d60420599b",
+        "android_client_info": {
+          "package_name": "com.hikari.goh_calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD4bTkwTKJl_ioS-Ux-FZK_jXtiUBcIbqQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

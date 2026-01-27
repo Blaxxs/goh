@@ -4,9 +4,15 @@ import 'package:flutter_localizations/flutter_localizations.dart'; // Localizati
 import 'package:intl/date_symbol_data_local.dart'; // For initializeDateFormatting
 import 'presentation/loading/loading_screen.dart';
 import 'core/services/settings_service.dart';
+import 'package:firebase_core/firebase_core.dart'; // 추가
+import 'firebase_options.dart'; // 추가 (flutterfire configure로 생성된 파일)
+import 'package:firebase_database/firebase_database.dart'; // 추가
 
 void main() async { // async로 변경
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 바인딩 초기화
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await initializeDateFormatting(); // 날짜 포맷 초기화 (모든 로케일 또는 특정 로케일)
                                     // 예: await initializeDateFormatting('ko_KR', null);
   runApp(const MyApp());
@@ -268,7 +274,7 @@ class MyApp extends StatelessWidget {
               theme: _buildTheme(Brightness.light, currentFontSizeMultiplier),
               darkTheme: _buildTheme(Brightness.dark, currentFontSizeMultiplier),
               themeMode: currentThemeMode,
-              home: const LoadingScreen(),
+              home: const FirebaseTestScreen(),
               localizationsDelegates: const [ // MaterialApp 레벨에 설정
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
@@ -283,6 +289,57 @@ class MyApp extends StatelessWidget {
           },
         );
       },
+    );
+  }
+}
+class FirebaseTestScreen extends StatefulWidget {
+  const FirebaseTestScreen({super.key});
+
+  @override
+  State<FirebaseTestScreen> createState() => _FirebaseTestScreenState();
+}
+
+class _FirebaseTestScreenState extends State<FirebaseTestScreen> {
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
+  String _serverData = "데이터를 가져오는 중...";
+
+  @override
+  void initState() {
+    super.initState();
+    // 서버의 'message' 값이 바뀌면 자동으로 실행됨
+    _dbRef.onValue.listen((event) {
+      final String? value = event.snapshot.value?.toString();
+      setState(() {
+        _serverData = value ?? "서버에 데이터가 없습니다.";
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Firebase 연동 성공!")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Firebase에서 보낸 메시지:"),
+            const SizedBox(height: 20),
+            Text(
+              _serverData,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
+            ),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: () {
+                // 원래 가려던 로딩 화면으로 이동해보기
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoadingScreen()));
+              },
+              child: const Text("기존 로딩 화면으로 가기"),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
