@@ -325,7 +325,7 @@ final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Firebase 연동 완료!")),
+      appBar: AppBar(title: const Text("불러오는중")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -344,7 +344,7 @@ final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
                 // 원래 만들던 로딩 화면으로 넘어가는 버튼입니다.
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const LoadingScreen()));
               },
-              child: const Text("원래 로딩 화면으로 이동"),
+              child: const Text("시작 화면으로 이동"),
             )
           ],
         ),
