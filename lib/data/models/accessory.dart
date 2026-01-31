@@ -50,7 +50,7 @@ class Accessory {
     return Accessory(
       id: id,
       name: json['name']?.toString() ?? '',
-      imageUrl: autoImageUrl, // 이제 DB에 imageUrl 필드가 없어도 자동으로 생성됩니다!
+      imageUrl: json['imageUrl']?.toString() ?? autoImageUrl, // 전달받은 imageUrl이 있으면 우선 사용
       part: json['part']?.toString() ?? '',
       restrictions: json['restrictions']?.toString() ?? '',
       options: optionsList,
