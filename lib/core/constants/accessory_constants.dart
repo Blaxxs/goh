@@ -442,7 +442,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[sa]',
     name: '수호신의 축복[사]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[sa].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -454,7 +454,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[yu]',
     name: '수호신의 축복[유]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[yu].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -466,7 +466,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'halloween_candy_basket',
     name: '할로윈 사탕 바구니',
-    imagePath: 'assets/images/accessories/halloween_candy_basket.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -477,7 +477,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'halloween_skull_gourd',
     name: '할로윈 해골 바가지',
-    imagePath: 'assets/images/accessories/halloween_skull_gourd.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -488,7 +488,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'happy_happy_mini_tree',
     name: '해피해피 미니트리',
-    imagePath: 'assets/images/accessories/happy_happy_mini_tree.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -500,7 +500,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'happy_snowman',
     name: '해피 눈사람',
-    imagePath: 'assets/images/accessories/happy_snowman.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -511,7 +511,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'headband_of_jealousy',
     name: '질투의 머리띠',
-    imagePath: 'assets/images/accessories/headband_of_jealousy.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -522,7 +522,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'heart_gift_box',
     name: '하트 선물상자',
-    imagePath: 'assets/images/accessories/heart_gift_box.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -534,7 +534,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'hourglass_of_sin',
     name: '죄업의 모래시계',
-    imagePath: 'assets/images/accessories/hourglass_of_sin.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -546,7 +546,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'hwanwoongs_hat',
     name: '환웅의 갓',
-    imagePath: 'assets/images/accessories/hwanwoongs_hat.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '남자 캐릭터 전용',
     options: [
@@ -557,7 +557,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'jet_black_fox_ears',
     name: '칠흑의 여우귀',
-    imagePath: 'assets/images/accessories/jet_black_fox_ears.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '암흑계약 박일아 전용',
     options: [
@@ -568,7 +568,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'kings_seal',
     name: '국왕의 옥새',
-    imagePath: 'assets/images/accessories/kings_seal.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -579,7 +579,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'little_witch_park_il-ahs_magic_broom',
     name: '꼬마마녀 박일아의 마법빗자루',
-    imagePath: 'assets/images/accessories/little_witch_park_il-ahs_magic_broom.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -590,7 +590,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'lords_robe',
     name: '로드의 로브',
-    imagePath: 'assets/images/accessories/lords_robe.png',
+    imageUrl: "",
     part: '머리', // 부위 데이터가 '머리'로 되어 있어 그대로 사용.
     restrictions: '전 직업 착용 가능',
     options: [
@@ -601,7 +601,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'lucky_four_leaf_clover',
     name: '행운의 네잎클로버',
-    imagePath: 'assets/images/accessories/lucky_four_leaf_clover.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -612,7 +612,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'lucky_jin_mori_roulette',
     name: '복불복 진모리 룰렛',
-    imagePath: 'assets/images/accessories/lucky_jin_mori_roulette.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
