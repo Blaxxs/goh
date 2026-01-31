@@ -1,4 +1,4 @@
-// accessory.dart
+// lib/data/models/accessory.dart
 
 class AccessoryOption {
   final String optionName;
@@ -9,7 +9,7 @@ class AccessoryOption {
     required this.optionValue,
   });
 
-  // --- 추가: JSON 데이터를 객체로 변환 ---
+  // Firebase JSON 데이터를 객체로 변환하는 생성자
   factory AccessoryOption.fromJson(Map<String, dynamic> json) {
     return AccessoryOption(
       optionName: json['optionName'] ?? '',
@@ -35,7 +35,7 @@ class Accessory {
     required this.options,
   });
 
-  // --- 추가: Firebase 데이터를 객체로 변환 ---
+  // Firebase JSON 데이터를 객체로 변환하는 생성자
   factory Accessory.fromJson(Map<String, dynamic> json) {
     var list = json['options'] as List? ?? [];
     List<AccessoryOption> optionsList = 
