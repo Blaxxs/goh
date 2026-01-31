@@ -24,6 +24,19 @@ void main() async {
   await AccessoryDataManager().loadAccessories(); // <<< 악세사리 데이터 로드
   await initializeDateFormatting(); // 날짜 포맷 초기화 (모든 로케일 또는 특정 로케일)
   // 예: await initializeDateFormatting('ko_KR', null);
+
+  try {
+    await AccessoryDataManager().loadAccessories(); // <<< 악세사리 데이터 로드
+  } catch (e) {
+    debugPrint('Accessory data load error: $e');
+  }
+
+  try {
+    await initializeDateFormatting(); // 날짜 포맷 초기화 (모든 로케일 또는 특정 로케일)
+  } catch (e) {
+    debugPrint('Date formatting init error: $e');
+  }
+
   runApp(const MyApp());
 }
 
