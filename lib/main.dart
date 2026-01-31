@@ -11,10 +11,15 @@ import 'firebase_options.dart';
 void main() async {
   // async로 변경
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 바인딩 초기화
-  if (Firebase.apps.isEmpty) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  try {
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  } catch (e) {
+    // 이미 초기화된 경우 등 예외 발생 시 무시하고 진행
+    debugPrint('Firebase initialization error (ignored): $e');
   }
   await AccessoryDataManager().loadAccessories(); // <<< 악세사리 데이터 로드
   await initializeDateFormatting(); // 날짜 포맷 초기화 (모든 로케일 또는 특정 로케일)
