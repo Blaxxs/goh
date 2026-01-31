@@ -5,6 +5,7 @@ import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
 import '../../core/services/database_service.dart'; 
 import 'accessory_screen_ui.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AccessoryScreen extends StatefulWidget {
   final bool isPickerMode;
