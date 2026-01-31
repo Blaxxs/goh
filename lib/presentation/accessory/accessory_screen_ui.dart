@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart'; // 패키지 import 필수
+import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../data/models/accessory.dart';
 
 class AccessoryScreenUI extends StatelessWidget {
@@ -58,31 +59,35 @@ class AccessoryScreenUI extends StatelessWidget {
                       Expanded(
                         flex: 2,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
                           decoration: BoxDecoration(
                             color: Colors.blueGrey[50],
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              value: searchOption,
-                              items: searchOptions.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500)),
-                                );
-                              }).toList(),
-                              onChanged: onSearchOptionChanged,
-                              icon: const Icon(Icons.keyboard_arrow_down,
-                                  color: Colors.black54),
-                              borderRadius: BorderRadius.circular(8.0),
-                              offset: const Offset(0, 8),
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            value: searchOption,
+                            items: searchOptions.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500)),
+                              );
+                            }).toList(),
+                            onChanged: onSearchOptionChanged,
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
                             ),
+                            dropdownStyleData: DropdownStyleData(
+                              borderRadius: BorderRadius.circular(8.0),
+                              offset: const Offset(0, 0),
+                            ),
+                            buttonStyleData: const ButtonStyleData(
+                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                            ),
+                            underline: const SizedBox(),
                           ),
                         ),
                       ),
@@ -129,62 +134,70 @@ class AccessoryScreenUI extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
                           decoration: BoxDecoration(
                             color: Colors.blueGrey[50],
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              value: selectedPartFilter ?? '전체',
-                              items: partFilterOptions.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500)),
-                                );
-                              }).toList(),
-                              onChanged: onPartFilterChanged,
-                              icon: const Icon(Icons.keyboard_arrow_down,
-                                  color: Colors.black54),
-                              borderRadius: BorderRadius.circular(8.0),
-                              offset: const Offset(0, 8),
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            value: selectedPartFilter ?? '전체',
+                            items: partFilterOptions.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500)),
+                              );
+                            }).toList(),
+                            onChanged: onPartFilterChanged,
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
                             ),
+                            dropdownStyleData: DropdownStyleData(
+                              borderRadius: BorderRadius.circular(8.0),
+                              offset: const Offset(0, 0),
+                            ),
+                            buttonStyleData: const ButtonStyleData(
+                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                            ),
+                            underline: const SizedBox(),
                           ),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
                           decoration: BoxDecoration(
                             color: Colors.blueGrey[50],
                             borderRadius: BorderRadius.circular(8.0),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                              isExpanded: true,
-                              value: sortOption,
-                              items: sortOptions.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500)),
-                                );
-                              }).toList(),
-                              onChanged: onSortChanged,
-                              icon: const Icon(Icons.keyboard_arrow_down,
-                                  color: Colors.black54),
-                              borderRadius: BorderRadius.circular(8.0),
-                              offset: const Offset(0, 8),
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            value: sortOption,
+                            items: sortOptions.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500)),
+                              );
+                            }).toList(),
+                            onChanged: onSortChanged,
+                            iconStyleData: const IconStyleData(
+                              icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
                             ),
+                            dropdownStyleData: DropdownStyleData(
+                              borderRadius: BorderRadius.circular(8.0),
+                              offset: const Offset(0, 0),
+                            ),
+                            buttonStyleData: const ButtonStyleData(
+                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                            ),
+                            underline: const SizedBox(),
                           ),
                         ),
                       ),
