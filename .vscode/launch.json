@@ -6,6 +6,7 @@
     "configurations": [
         {
             "name": "flutter_application",
+            "name": "goh_calculator (Chrome)",
             "request": "launch",
             "type": "dart"
         },
@@ -20,6 +21,10 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+            "args": [
+                "--web-renderer",
+                "html"
+            ]
         }
     ]
 }
