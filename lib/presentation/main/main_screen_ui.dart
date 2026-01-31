@@ -54,41 +54,33 @@ class _MainScreenUIState extends State<MainScreenUI> {
     });
   }
 
-  // 기존 버튼 빌더 함수 (그대로 유지)
-  Widget _buildBlurredButton({
+  // [수정] 가시성을 높이고 반응형 디자인을 적용한 버튼 빌더
+  Widget _buildMenuButton({
     required BuildContext context,
     required String text,
     required VoidCallback onPressed,
-    double fontSize = 16,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
-    return GestureDetector(
-      onTap: onPressed,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12.0),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 40),
-            decoration: BoxDecoration(
-                color: colorScheme.surface.withAlpha((0.4 * 255).round()),
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(
-                    color:
-                        colorScheme.secondary.withAlpha((0.5 * 255).round()))),
-            padding:
-                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
-            alignment: Alignment.center,
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: fontSize,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.secondary,
-              ),
-            ),
-          ),
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: colorScheme.surface.withOpacity(0.8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12.0),
+        ),
+        side: BorderSide(
+          color: colorScheme.secondary.withOpacity(0.7),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        softWrap: true, // 텍스트가 길 경우 자동으로 줄바꿈
+        style: TextStyle(
+          fontSize: 15, // 모든 버튼의 폰트 사이즈를 15로 통일
+          fontWeight: FontWeight.bold,
+          color: colorScheme.secondary,
         ),
       ),
     );
@@ -103,43 +95,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double screenHeight = MediaQuery.of(context).size.height;
 
     final List<Map<String, dynamic>> menuButtonConfigs = [
-      {
-        'text': '루프 계산기',
-        'onPressed': widget.onCalculatorPressed,
-        'fontSize': 16.0
-      },
-      {
-        'text': '골드 효율 계산기',
-        'onPressed': widget.onGoldCalculatorPressed,
-        'fontSize': 16.0
-      },
-      {
-        'text': '데미지 계산기',
-        'onPressed': widget.onDamageCalculatorPressed,
-        'fontSize': 16.0
-      },
-      {
-        'text': '악세사리 도감',
-        'onPressed': widget.onAccessoryPressed,
-        'fontSize': 16.0
-      },
-      {'text': '일지', 'onPressed': widget.onJournalPressed, 'fontSize': 16.0},
+      {'text': '루프 계산기', 'onPressed': widget.onCalculatorPressed},
+      {'text': '골드 효율 계산기', 'onPressed': widget.onGoldCalculatorPressed},
+      {'text': '데미지 계산기', 'onPressed': widget.onDamageCalculatorPressed},
+      {'text': '악세사리 도감', 'onPressed': widget.onAccessoryPressed},
+      {'text': '일지', 'onPressed': widget.onJournalPressed},
       if (EventManager.isEventPeriodActive())
-        {
-          'text': '상자 기대값 계산기',
-          'onPressed': widget.onBoxCalculatorPressed,
-          'fontSize': 16.0
-        },
-      {
-        'text': '악세 강화 시뮬',
-        'onPressed': widget.onAccessoryEnhancementPressed,
-        'fontSize': 14.0
-      },
-      {
-        'text': '악세 옵변 시뮬',
-        'onPressed': widget.onAccessoryOptionChangePressed,
-        'fontSize': 14.0
-      },
+        {'text': '상자 기대값 계산기', 'onPressed': widget.onBoxCalculatorPressed},
+      {'text': '악세 강화 시뮬', 'onPressed': widget.onAccessoryEnhancementPressed},
+      {'text': '악세 옵변 시뮬', 'onPressed': widget.onAccessoryOptionChangePressed},
     ];
 
     return Scaffold(
@@ -187,26 +151,17 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 left: 20.0,
                 right: 20.0,
               ),
-              child: SizedBox(
-                height: screenHeight * 0.45,
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 2.5,
-                  ),
-                  itemCount: menuButtonConfigs.length,
-                  itemBuilder: (context, index) {
-                    final config = menuButtonConfigs[index];
-                    return _buildBlurredButton(
-                      context: context,
-                      text: config['text'],
-                      onPressed: config['onPressed'],
-                      fontSize: config['fontSize'],
-                    );
-                  },
-                ),
+              child: Wrap(
+                spacing: 12.0, // 버튼 사이의 가로 간격
+                runSpacing: 12.0, // 버튼 사이의 세로 간격
+                alignment: WrapAlignment.center,
+                children: menuButtonConfigs.map((config) {
+                  return _buildMenuButton(
+                    context: context,
+                    text: config['text'],
+                    onPressed: config['onPressed'],
+                  );
+                }).toList(),
               ),
             ),
           ),
