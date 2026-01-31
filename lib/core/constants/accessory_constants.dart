@@ -80,7 +80,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'alexs_hat',
     name: '알렉스의 모자',
-    imagePath: 'assets/images/accessories/alexs_hat.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -91,7 +91,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'ayam_of_the_west_witch',
     name: '서쪽 마녀의 아얌',
-    imagePath: 'assets/images/accessories/ayam_of_the_west_witch.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '여자 캐릭터 전용',
     options: [
@@ -102,7 +102,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'backpack_full_of_snacks',
     name: '간식가득 책가방',
-    imagePath: 'assets/images/accessories/backpack_full_of_snacks.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -113,7 +113,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'baek_seung-cheols_hat',
     name: '백승철의 복두',
-    imagePath: 'assets/images/accessories/baek_seung-cheols_hat.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '남자 캐릭터 전용',
     options: [
@@ -124,7 +124,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'beep_beep_hat',
     name: '삐약삐약 모자',
-    imagePath: 'assets/images/accessories/beep_beep_hat.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '병아리 롯 전용',
     options: [
@@ -135,7 +135,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'black_cross_earrings',
     name: '검은 십자가 귀걸이',
-    imagePath: 'assets/images/accessories/black_cross_earrings.png',
+    imageUrl: "",
     part: '머리', // 부위 데이터가 '머리'로 되어 있어 그대로 사용. '귀걸이'가 맞다면 수정 필요.
     restrictions: '전 직업 착용 가능',
     options: [
@@ -146,7 +146,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'black_ring',
     name: '검은 반지',
-    imagePath: 'assets/images/accessories/black_ring.png',
+    imageUrl: "",
     part: '손', // 부위 데이터가 '손'으로 되어 있어 그대로 사용. '반지'가 맞다면 수정 필요.
     restrictions: '환생 LV.9 이상',
     options: [
@@ -158,7 +158,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'blue_dragons_lantern',
     name: '청룡의 등채',
-    imagePath: 'assets/images/accessories/blue_dragons_lantern.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -169,7 +169,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'candy_blade',
     name: '캔디 블레이드',
-    imagePath: 'assets/images/accessories/candy_blade.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -180,7 +180,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'ceos_luxury_necklace',
     name: '대표님의 명품목걸이',
-    imagePath: 'assets/images/accessories/ceos_luxury_necklace.png',
+    imageUrl: "",
     part: '머리', // 부위 데이터가 '머리'로 되어 있어 그대로 사용. '목걸이'가 맞다면 수정 필요.
     restrictions: '전 직업 착용 가능',
     options: [
@@ -191,7 +191,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'cherry_blossom_mask',
     name: '벚꽃 마스크',
-    imagePath: 'assets/images/accessories/cherry_blossom_mask.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -202,7 +202,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'cherry_blossom_snowglobe',
     name: '벚꽃 스노글로브',
-    imagePath: 'assets/images/accessories/cherry_blossom_snowglobe.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -213,7 +213,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'chess_choco_macaron_hat',
     name: '체스초코 마카롱 모자',
-    imagePath: 'assets/images/accessories/chess_choco_macaron_hat.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -224,7 +224,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'chicken_tail_fishing_rod',
     name: '닭꼬리 낚싯대',
-    imagePath: 'assets/images/accessories/chicken_tail_fishing_rod.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -235,7 +235,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'choker_of_life',
     name: '생명의 초커',
-    imagePath: 'assets/images/accessories/choker_of_life.png',
+    imageUrl: "",
     part: '머리', // 부위 데이터가 '머리'로 되어 있어 그대로 사용. '목걸이'가 맞다면 수정 필요.
     restrictions: '전 직업 착용 가능',
     options: [
@@ -246,7 +246,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'chungmugongs_helmet',
     name: '충무공의 투구',
-    imagePath: 'assets/images/accessories/chungmugongs_helmet.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -257,7 +257,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'costume_nurse_cap',
     name: '코스튬 너스캡',
-    imagePath: 'assets/images/accessories/costume_nurse_cap.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -268,7 +268,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'cutie_mini_fan',
     name: '큐티 미니 선풍기',
-    imagePath: 'assets/images/accessories/cutie_mini_fan.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -279,7 +279,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'daepodong_burger',
     name: '대포동 버거',
-    imagePath: 'assets/images/accessories/daepodong_burger.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -290,7 +290,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'earrings_of_fighting_god',
     name: '투신의 귀걸이',
-    imagePath: 'assets/images/accessories/earrings_of_fighting_god.png',
+    imageUrl: "",
     part: '머리', // 부위 데이터가 '머리'로 되어 있어 그대로 사용. '귀걸이'가 맞다면 수정 필요.
     restrictions: '환생 LV.3 이상',
     options: [
@@ -301,7 +301,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'essence_of_the_demon_king',
     name: '마왕의 정수',
-    imagePath: 'assets/images/accessories/essence_of_the_demon_king.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -312,7 +312,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'fan_of_cheering',
     name: '응원의 부채',
-    imagePath: 'assets/images/accessories/fan_of_cheering.png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -323,7 +323,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'fox_ears_of_fascination',
     name: '매혹의 여우귀',
-    imagePath: 'assets/images/accessories/fox_ears_of_fascination.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '암흑계약 박일아 전용',
     options: [
@@ -334,7 +334,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'grand_mages_hat',
     name: '대마도사의 모자',
-    imagePath: 'assets/images/accessories/grand_mages_hat.png',
+    imageUrl: "",
     part: '머리',
     restrictions: '전 직업 착용 가능',
     options: [
@@ -346,7 +346,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[chuk]',
     name: '수호신의 축복[축]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[chuk].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -358,7 +358,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[jin]',
     name: '수호신의 축복[진]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[jin].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -370,7 +370,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[sin]',
     name: '수호신의 축복[신]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[sin].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -382,7 +382,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[sul]',
     name: '수호신의 축복[술]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[sul].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -394,7 +394,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[in]',
     name: '수호신의 축복[인]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[in].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -406,7 +406,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[ja]',
     name: '수호신의 축복[자]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[ja].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -418,7 +418,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[mi]',
     name: '수호신의 축복[미]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[mi].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [
@@ -430,7 +430,7 @@ const List<Accessory> allAccessories = [
    Accessory(
     id: 'guardians_blessing_[oh]',
     name: '수호신의 축복[오]',
-    imagePath: 'assets/images/accessories/guardians_blessing_[oh].png',
+    imageUrl: "",
     part: '손',
     restrictions: '환생 LV.1 이상',
     options: [

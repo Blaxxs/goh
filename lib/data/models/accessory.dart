@@ -31,7 +31,7 @@ class Accessory {
     required this.imageUrl,
     required this.part,
     required this.restrictions,
-    required this.options,
+    required this.options, required String imagePath,
   });
 
 factory Accessory.fromJson(Map<String, dynamic> json) {
