@@ -51,43 +51,50 @@ class AccessoryScreenUI extends StatelessWidget {
               padding: const EdgeInsets.all(12.0),
               child: Column(
                 children: [
-                  // --- 검색 영역 ---
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // 검색 옵션
-                      DropdownButton<String>(
-                        value: searchOption,
-                        items: searchOptions.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: onSearchOptionChanged,
-                        underline: Container(), // 밑줄 제거
+                      Expanded(
+                        flex: 2,
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: '검색',
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 0),
+                            border: OutlineInputBorder(),
+                          ),
+                          value: searchOption,
+                          items: searchOptions.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value, overflow: TextOverflow.ellipsis),
+                            );
+                          }).toList(),
+                          onChanged: onSearchOptionChanged,
+                        ),
                       ),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 8),
                       // 검색창
                       Expanded(
-                        child: TextField(
-                          controller: searchController,
-                          decoration: InputDecoration(
-                            hintText: '검색...',
-                            prefixIcon: const Icon(Icons.search, size: 20),
-                            suffixIcon: currentSearchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear, size: 20),
-                                    onPressed: onClearSearch,
-                                  )
-                                : null,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              borderSide: BorderSide.none,
+                        flex: 3,
+                        child: SizedBox(
+                          height: 48, // DropdownButtonFormField와 높이 맞추기
+                          child: TextField(
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              hintText: '검색...',
+                              prefixIcon: const Icon(Icons.search, size: 20),
+                              suffixIcon: currentSearchQuery.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear, size: 20),
+                                      onPressed: onClearSearch,
+                                    )
+                                  : null,
+                              border: const OutlineInputBorder(),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
                             ),
-                            filled: true,
-                            fillColor: Colors.grey[200],
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 10),
                           ),
                         ),
                       ),
