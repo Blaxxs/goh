@@ -52,35 +52,60 @@ class AccessoryScreenUI extends StatelessWidget {
               child: Column(
                 children: [
                   // --- 검색 영역 ---
-                  TextField(
-                    controller: searchController,
-                    decoration: InputDecoration(
-                      hintText: '$searchOption으로 검색...',
-                      prefixIcon: Padding(
-                        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                        child: DropdownButton<String>(
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: DropdownButtonFormField<String>(
+                          isDense: true,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
                           value: searchOption,
                           items: searchOptions.map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child:
+                                  Text(value, overflow: TextOverflow.ellipsis),
                             );
                           }).toList(),
                           onChanged: onSearchOptionChanged,
-                          underline: Container(), // 밑줄 제거
-                          isExpanded: false,
                         ),
                       ),
-                      suffixIcon: currentSearchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, size: 20),
-                              onPressed: onClearSearch,
-                            )
-                          : null,
-                      border: const OutlineInputBorder(),
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                    ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        flex: 3,
+                        child: TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            hintText: '검색...',
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            prefixIcon: const Icon(Icons.search, size: 20),
+                            suffixIcon: currentSearchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear, size: 20),
+                                    onPressed: onClearSearch,
+                                  )
+                                : null,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12),
                   // --- 필터 및 정렬 영역 ---
