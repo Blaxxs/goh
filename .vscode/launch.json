@@ -4,10 +4,7 @@
         {
             "name": "goh_calculator",
             "request": "launch",
-            "type": "dart",
-            "args": [
-                "--web-renderer", "html" 
-            ]
-        }
+            "type": "dart"
+        }       
     ]
 }
