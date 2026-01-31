@@ -1,4 +1,5 @@
 // lib/presentation/simulator/ui/accessory_enhancement_screen_ui.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import intl package
 import '../../data/models/accessory.dart'; // Accessory model
@@ -291,12 +292,11 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                       child: SizedBox(
                         width: 100, // 이미지 크기 더 줄임 (120 -> 100)
                         height: 100, // 이미지 크기 더 줄임 (120 -> 100)
-                        child: Image.asset(
-                          selectedAccessory!.imagePath,
+                        child: CachedNetworkImage(
+                          imageUrl: selectedAccessory!.imageUrl,
                           fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(Icons.broken_image_outlined, size: 80, color: theme.hintColor);
-                          },
+                          placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+                          errorWidget: (context, url, error) => Icon(Icons.broken_image_outlined, size: 80, color: theme.hintColor),
                         ),
                       ),
                     ),

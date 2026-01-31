@@ -77,9 +77,9 @@ class _AccessoryOptionChangeScreenState extends State<AccessoryOptionChangeScree
   void _resetScreenState() {
     if (!mounted) return;
     Accessory? newAccessory;
-    if (allAccessories.isNotEmpty) {
-      final randomIndex = Random().nextInt(allAccessories.length);
-      newAccessory = allAccessories[randomIndex];
+    if (AccessoryDataManager().allAccessories.isNotEmpty) {
+      final randomIndex = Random().nextInt(AccessoryDataManager().allAccessories.length);
+      newAccessory = AccessoryDataManager().allAccessories[randomIndex];
     }
     _updateAccessory(newAccessory);
   }

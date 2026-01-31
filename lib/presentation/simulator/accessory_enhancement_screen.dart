@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:math'; // Random 사용
 import '../../data/models/accessory.dart'; // Accessory model
 import '../accessory/accessory_screen.dart'; // To use as a picker
-import '../../core/constants/accessory_constants.dart'; // allAccessories 사용
+import '../../core/constants/accessory_constants.dart'; // AccessoryDataManager().allAccessories 사용
 import 'accessory_enhancement_screen_ui.dart';
 
 class AccessoryEnhancementScreen extends StatefulWidget {
@@ -102,9 +102,9 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
   void _resetScreenState() {
     if (!mounted) return;
     setState(() {
-      if (allAccessories.isNotEmpty) {
-        final randomIndex = Random().nextInt(allAccessories.length);
-        _selectedAccessory = allAccessories[randomIndex];
+      if (AccessoryDataManager().allAccessories.isNotEmpty) {
+        final randomIndex = Random().nextInt(AccessoryDataManager().allAccessories.length);
+        _selectedAccessory = AccessoryDataManager().allAccessories[randomIndex];
       } else {
         _selectedAccessory = null;
       }

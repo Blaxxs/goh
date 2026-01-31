@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart'; // 네트워크 이미지 캐싱 패키지
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
-import '../../core/services/database_service.dart';
 import 'accessory_screen_ui.dart';
 
 class AccessoryScreen extends StatefulWidget {
-  final bool isPickerMode; // 강화 화면 등에서 선택 모드로 사용할 때 true
+  final bool isPickerMode;
   const AccessoryScreen({super.key, this.isPickerMode = false});
 
   @override
@@ -15,7 +14,6 @@ class AccessoryScreen extends StatefulWidget {
 
 class _AccessoryScreenState extends State<AccessoryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final DatabaseService _dbService = DatabaseService(); // DB 서비스 인스턴스
 
   String? _selectedPartFilter;
   String _searchQuery = "";
@@ -26,8 +24,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void initState() {
     super.initState();
-    // 필터 옵션 초기화 (accessoryParts 상수는 constants 파일에 정의됨)
-    _partFilterOptions = ['전체', ...accessoryParts.toSet()];
+    // 데이터 매니저에서 부위 목록을 가져와 필터 옵션을 초기화합니다.
+    _partFilterOptions = ['전체', ...AccessoryDataManager().accessoryParts.toSet()];
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -54,12 +52,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     _searchController.clear();
   }
 
-  // 상세 정보 다이얼로그 (Firebase Storage 이미지 연동)
   void _showAccessoryDetails(BuildContext context, Accessory accessory) {
-    // ID를 기반으로 Firebase Storage URL 생성
-    final String storageUrl = 
-        "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F${accessory.id}.png?alt=media";
-
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -69,9 +62,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // 네트워크 이미지 캐싱 적용
                 CachedNetworkImage(
-                  imageUrl: storageUrl,
+                  imageUrl: accessory.imageUrl, // Accessory 객체의 imageUrl 사용
                   height: 150,
                   fit: BoxFit.contain,
                   placeholder: (context, url) => const SizedBox(
@@ -122,59 +114,47 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // AccessoryDataManager에서 미리 로드된 데이터를 가져옵니다.
+    final List<Accessory> accessories = AccessoryDataManager().allAccessories;
+
+    // 필터링 로직을 적용합니다.
+    List<Accessory> displayList = accessories.where((acc) {
+      final matchesSearch = acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesPart = _selectedPartFilter == null || 
+                         _selectedPartFilter == '전체' || 
+                         acc.part == _selectedPartFilter;
+      return matchesSearch && matchesPart;
+    }).toList();
+
+    // 정렬 로직을 적용합니다.
+    if (_sortOption == '이름 (가나다순)') {
+      displayList.sort((a, b) => a.name.compareTo(b.name));
+    } else if (_sortOption == '이름 (ABC순)') {
+      displayList.sort((a, b) => a.id.compareTo(b.id));
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
       ),
-      body: StreamBuilder<List<Accessory>>(
-        stream: _dbService.getAccessoriesStream(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('에러 발생: ${snapshot.error}'));
+      body: AccessoryScreenUI(
+        searchController: _searchController,
+        filteredAccessories: displayList,
+        selectedPartFilter: _selectedPartFilter,
+        partFilterOptions: _partFilterOptions,
+        onPartFilterChanged: _handlePartFilterChanged,
+        onAccessoryTap: (ctx, acc) {
+          if (widget.isPickerMode) {
+            Navigator.of(context).pop(acc);
+          } else {
+            _showAccessoryDetails(ctx, acc);
           }
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          final accessories = snapshot.data ?? [];
-
-          // 4. 필터링 로직 적용
-          List<Accessory> displayList = accessories.where((acc) {
-            final matchesSearch = acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
-            final matchesPart = _selectedPartFilter == null || 
-                               _selectedPartFilter == '전체' || 
-                               acc.part == _selectedPartFilter;
-            return matchesSearch && matchesPart;
-          }).toList();
-
-          // 5. 정렬 로직 적용
-          if (_sortOption == '이름 (가나다순)') {
-            displayList.sort((a, b) => a.name.compareTo(b.name));
-          } else if (_sortOption == '이름 (ABC순)') {
-            displayList.sort((a, b) => a.id.compareTo(b.id));
-          }
-
-          // 6. UI 위젯에 가공된 데이터 전달
-          return AccessoryScreenUI(
-            searchController: _searchController,
-            filteredAccessories: displayList,
-            selectedPartFilter: _selectedPartFilter,
-            partFilterOptions: _partFilterOptions,
-            onPartFilterChanged: _handlePartFilterChanged,
-            onAccessoryTap: (ctx, acc) {
-              if (widget.isPickerMode) {
-                Navigator.of(context).pop(acc);
-              } else {
-                _showAccessoryDetails(ctx, acc);
-              }
-            },
-            currentSearchQuery: _searchQuery,
-            onClearSearch: _clearSearch,
-            sortOption: _sortOption,
-            sortOptions: _sortOptions,
-            onSortChanged: (val) => setState(() => _sortOption = val!),
-          );
         },
+        currentSearchQuery: _searchQuery,
+        onClearSearch: _clearSearch,
+        sortOption: _sortOption,
+        sortOptions: _sortOptions,
+        onSortChanged: (val) => setState(() => _sortOption = val!),
       ),
     );
   }

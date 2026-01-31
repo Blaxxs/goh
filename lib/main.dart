@@ -1,18 +1,19 @@
 // lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // Localizations delegate import
-import 'package:intl/date_symbol_data_local.dart'; // For initializeDateFormatting
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:goh_calculator/core/constants/accessory_constants.dart';
 import 'presentation/loading/loading_screen.dart';
 import 'core/services/settings_service.dart';
-import 'package:firebase_core/firebase_core.dart'; // 추가
-import 'firebase_options.dart'; // 추가 (flutterfire configure로 생성된 파일)
-import 'package:firebase_database/firebase_database.dart'; // 추가
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async { // async로 변경
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 바인딩 초기화
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await AccessoryDataManager().loadAccessories(); // <<< 악세사리 데이터 로드
   await initializeDateFormatting(); // 날짜 포맷 초기화 (모든 로케일 또는 특정 로케일)
                                     // 예: await initializeDateFormatting('ko_KR', null);
   runApp(const MyApp());
@@ -274,7 +275,7 @@ class MyApp extends StatelessWidget {
               theme: _buildTheme(Brightness.light, currentFontSizeMultiplier),
               darkTheme: _buildTheme(Brightness.dark, currentFontSizeMultiplier),
               themeMode: currentThemeMode,
-              home: const FirebaseTestScreen(),
+              home: const LoadingScreen(),
               localizationsDelegates: const [ // MaterialApp 레벨에 설정
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
@@ -289,66 +290,6 @@ class MyApp extends StatelessWidget {
           },
         );
       },
-    );
-  }
-}
-class FirebaseTestScreen extends StatefulWidget {
-  const FirebaseTestScreen({super.key});
-
-  @override
-  State<FirebaseTestScreen> createState() => _FirebaseTestScreenState();
-}
-
-class _FirebaseTestScreenState extends State<FirebaseTestScreen> {
-  // 1. 여기에 사진에서 보신 주소를 그대로 넣었습니다.
-// main.dart 파일 아래쪽 _FirebaseTestScreenState 부분입니다.
-final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
-
-  String _serverData = "데이터를 가져오는 중...";
-
-  @override
-  void initState() {
-    super.initState();
-    // 서버 감시 시작
-    _dbRef.onValue.listen((event) {
-      // 서버에서 글자를 가져옵니다.
-      final String? value = event.snapshot.value?.toString();
-      if (mounted) {
-        setState(() {
-          // 글자가 있으면 보여주고, 없으면 안내 문구를 띄웁니다.
-          _serverData = value ?? "서버에 'message'를 추가해주세요!";
-        });
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("불러오는중")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("실시간 서버 메시지:"),
-            const SizedBox(height: 20),
-            // 서버에서 수정한 글자가 실시간으로 여기에 나타납니다!
-            Text(
-              _serverData,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.blue),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                // 원래 만들던 로딩 화면으로 넘어가는 버튼입니다.
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const LoadingScreen()));
-              },
-              child: const Text("시작 화면으로 이동"),
-            )
-          ],
-        ),
-      ),
     );
   }
 }
