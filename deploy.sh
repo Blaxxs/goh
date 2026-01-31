@@ -14,7 +14,7 @@ set -e
 
 # 1. GitHub Pages 주소 형식에 맞게 웹 앱을 빌드합니다.
 echo "Building Flutter web app for release..."
-# --web-renderer html: 이미지 CORS 문제를 우회하기 위해 HTML 렌더러 사용 (CanvasKit 대신 <img> 태그 사용)
+# index.html에 렌더러 설정이 포함되어 있으므로 별도 옵션 없이 빌드합니다.
 flutter build web --release --base-href "/${REPOSITORY_NAME}/"
 
 # 2. 빌드 결과물이 있는 디렉토리로 이동합니다.
