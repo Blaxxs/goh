@@ -1,5 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
-import '../../data/models/accessory.dart';
+import '../../../../data/models/accessory.dart';
 
 class DatabaseService {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref();
