@@ -20,6 +20,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   late List<String> _partFilterOptions;
   String _sortOption = '기본';
   final List<String> _sortOptions = ['기본', '이름 (가나다순)', '이름 (ABC순)'];
+  String _searchOption = '이름';
+  final List<String> _searchOptions = ['이름', '옵션'];
 
   @override
   void initState() {
@@ -49,6 +51,14 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     setState(() {
       _selectedPartFilter = newValue;
     });
+  }
+
+  void _handleSearchOptionChanged(String? newValue) {
+    if (newValue != null) {
+      setState(() {
+        _searchOption = newValue;
+      });
+    }
   }
 
   void _clearSearch() {
@@ -126,8 +136,24 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
     // 필터링 로직을 적용합니다.
     List<Accessory> displayList = accessories.where((acc) {
-      final matchesSearch =
-          acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
+      bool matchesSearch;
+      if (_searchQuery.isEmpty) {
+        matchesSearch = true;
+      } else if (_searchOption == '이름') {
+        matchesSearch =
+            acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
+      } else if (_searchOption == '옵션') {
+        matchesSearch = acc.options.any((option) =>
+            option.optionName
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()) ||
+            option.optionValue
+                .toLowerCase()
+                .contains(_searchQuery.toLowerCase()));
+      } else {
+        matchesSearch = true;
+      }
+
       final matchesPart = _selectedPartFilter == null ||
           _selectedPartFilter == '전체' ||
           acc.part == _selectedPartFilter;
@@ -163,6 +189,9 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         sortOption: _sortOption,
         sortOptions: _sortOptions,
         onSortChanged: (val) => setState(() => _sortOption = val!),
+        searchOption: _searchOption,
+        searchOptions: _searchOptions,
+        onSearchOptionChanged: _handleSearchOptionChanged,
       ),
     );
   }
