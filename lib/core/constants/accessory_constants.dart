@@ -33,7 +33,7 @@ class AccessoryDataManager {
       final DataSnapshot snapshot = await ref.get();
 
       if (snapshot.exists && snapshot.value != null) {
-        final Map<String, dynamic> data = Map<String, dynamic>.from(snapshot.value as Map);
+        final Map<String, dynamic> data = Map<String, dynamic>.from((snapshot.value as Map)['accessories'] as Map);
         final List<Accessory> loadedAccessories = [];
         final Set<String> parts = <String>{};
 

@@ -118,10 +118,6 @@ class AccessoryScreenUI extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final accessory = filteredAccessories[index];
 
-                    // Firebase Storage URL 자동 생성 (id 기반)
-                    final String storageUrl = 
-                        "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F${accessory.id}.png?alt=media";
-
                     return GestureDetector(
                       onTap: () => onAccessoryTap(context, accessory),
                       child: Card(
@@ -137,7 +133,7 @@ class AccessoryScreenUI extends StatelessWidget {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: CachedNetworkImage(
-                                  imageUrl: storageUrl,
+                                  imageUrl: accessory.imageUrl,
                                   fit: BoxFit.contain,
                                   placeholder: (context, url) => const Center(
                                     child: SizedBox(
