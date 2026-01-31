@@ -1,15 +1,15 @@
 // lib/accessory_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart'; // 추가
-import '../../core/services/database_service.dart'; // 서비스 파일 경로
-import '../../data/models/accessory.dart'; // Accessory 모델 클래스를 직접 import 합니다.
-import '../../core/constants/accessory_constants.dart'; // Accessory 클래스 포함
+import 'package:firebase_database/firebase_database.dart';
+import '../../data/models/accessory.dart';
+import '../../core/constants/accessory_constants.dart';
+import '../../core/services/database_service.dart'; 
 import 'accessory_screen_ui.dart';
 
 class AccessoryScreen extends StatefulWidget {
-  final bool isPickerMode; // Add this
-  const AccessoryScreen({super.key, this.isPickerMode = false}); // Initialize
+  final bool isPickerMode;
+  const AccessoryScreen({super.key, this.isPickerMode = false});
 
   @override
   State<AccessoryScreen> createState() => _AccessoryScreenState();
@@ -17,7 +17,8 @@ class AccessoryScreen extends StatefulWidget {
 
 class _AccessoryScreenState extends State<AccessoryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<Accessory> _filteredAccessories = [];
+  final DatabaseService _dbService = DatabaseService(); // DB 서비스 연결
+
   String? _selectedPartFilter;
   String _searchQuery = "";
   late List<String> _partFilterOptions;
@@ -27,9 +28,9 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void initState() {
     super.initState();
+    // 부위 필터 옵션 초기화 (accessoryParts 상수는 유지)
     _partFilterOptions = ['전체', ...accessoryParts.toSet()];
     _searchController.addListener(_onSearchChanged);
-    _updateAccessories(); // 초기 데이터 로드 및 정렬
   }
 
   @override
@@ -40,122 +41,61 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   }
 
   void _onSearchChanged() {
-    if (_searchQuery != _searchController.text) {
-      // setState를 _updateAccessories() 내부에서 호출하므로 여기서는 상태만 변경
+    setState(() {
       _searchQuery = _searchController.text;
-      _updateAccessories();
-    }
+    });
+  }
+
+  void _handlePartFilterChanged(String? newValue) {
+    setState(() {
+      _selectedPartFilter = newValue;
+    });
+  }
+
+  void _handleSortChanged(String? newValue) {
+    setState(() {
+      _sortOption = newValue ?? '기본';
+    });
   }
 
   void _clearSearch() {
     _searchController.clear();
   }
 
-  void _updateAccessories() {
-    List<Accessory> results = List.from(allAccessories);
-
-    // 부위 필터
-    if (_selectedPartFilter != null && _selectedPartFilter != '전체') {
-      results = results.where((acc) => acc.part == _selectedPartFilter).toList();
-    }
-
-    // 검색어 필터
-    if (_searchQuery.isNotEmpty) {
-      String query = _searchQuery.toLowerCase();
-      results = results.where((acc) {
-        return acc.name.toLowerCase().contains(query) ||
-            acc.part.toLowerCase().contains(query) ||
-            acc.restrictions.toLowerCase().contains(query) ||
-            acc.options.any((option) =>
-                option.optionName.toLowerCase().contains(query) ||
-                option.optionValue.toLowerCase().contains(query));
-      }).toList();
-    }
-
-    // 정렬
-    if (_sortOption == '이름 (가나다순)') {
-      results.sort((a, b) => a.name.compareTo(b.name));
-    } else if (_sortOption == '이름 (ABC순)') {
-      results.sort((a, b) => a.id.compareTo(b.id));
-    }
-
-    setState(() {
-      _filteredAccessories = results;
-    });
-  }
-
-  void _handlePartFilterChanged(String? newValue) {
-    setState(() {
-        _selectedPartFilter = (newValue == '전체') ? null : newValue;
-        _updateAccessories();
-    });
-  }
-
-  void _handleSortChanged(String? newValue) {
-    if (newValue == null) return;
-    setState(() {
-        _sortOption = newValue;
-        _updateAccessories();
-    });
-  }
-
-  // --- 악세사리 상세 정보 표시 (애니메이션 추가) ---
+  // 악세사리 상세 정보 다이얼로그
   void _showAccessoryDetails(BuildContext context, Accessory accessory) {
-    // If in picker mode, pop with the selected accessory
-    if (widget.isPickerMode) {
-      Navigator.of(context).pop(accessory);
-      return;
-    }
-
-    // Otherwise, show the details dialog
-    const Duration transitionDuration = Duration(milliseconds: 300); // 애니메이션 시간
-
     showGeneralDialog(
       context: context,
-      barrierDismissible: true, // 배경 탭하여 닫기 활성화
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54, // 반투명 배경
-      transitionDuration: transitionDuration,
-      pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
-        // 다이얼로그 내용 구성
-        return ScaleTransition( // 확대/축소 애니메이션
-          scale: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-          child: FadeTransition( // 페이드 인/아웃 애니메이션
-            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+      barrierDismissible: true,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (buildContext, animation1, animation2) {
+        return Center(
+          child: SingleChildScrollView(
             child: AlertDialog(
-              title: Text(accessory.name, textAlign: TextAlign.center),
-              contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-              content: SingleChildScrollView(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
+              title: Text(accessory.name, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+              content: SizedBox(
+                width: double.maxFinite,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Center(
-                      child: Image.asset(
-                        accessory.imagePath,
-                        height: 120,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(Icons.broken_image_outlined, size: 80, color: Colors.grey);
-                        },
-                      ),
+                    Image.asset(
+                      accessory.imagePath, 
+                      height: 100, 
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 15),
                     _buildDetailRowDialog('부위:', accessory.part),
                     _buildDetailRowDialog('착용 제한:', accessory.restrictions),
-                    const Divider(height: 20),
-                    Text('옵션:', style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
-                    if (accessory.options.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: Text('옵션 없음', style: TextStyle(fontStyle: FontStyle.italic)),
-                      )
-                    else
-                      ...accessory.options.map((opt) => Padding(
-                            padding: const EdgeInsets.only(left: 8.0, top: 2.0, bottom: 2.0),
-                            child: Text('• ${opt.optionName}: ${opt.optionValue}'),
-                          )),
+                    const Divider(),
+                    const Text('옵션', style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 5),
+                    ...accessory.options.map((opt) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2.0),
+                          child: Text('${opt.optionName}: ${opt.optionValue}'),
+                        )),
                   ],
                 ),
               ),
@@ -163,9 +103,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
               actions: <Widget>[
                 TextButton(
                   child: const Text('닫기'),
-                  onPressed: () {
-                    Navigator.of(buildContext).pop(); // 여기서 buildContext 사용
-                  },
+                  onPressed: () => Navigator.of(buildContext).pop(),
                 ),
               ],
             ),
@@ -174,9 +112,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       },
     );
   }
-  // --- 상세 정보 표시 끝 ---
 
-  // 다이얼로그 내용 행 빌더 (변경 없음)
   Widget _buildDetailRowDialog(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3.0),
@@ -192,18 +128,54 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return AccessoryScreenUI(
-      searchController: _searchController,
-      filteredAccessories: _filteredAccessories,
-      selectedPartFilter: _selectedPartFilter,
-      partFilterOptions: _partFilterOptions,
-      onPartFilterChanged: _handlePartFilterChanged,
-      onAccessoryTap: _showAccessoryDetails, // 애니메이션 적용된 함수 전달
-      currentSearchQuery: _searchQuery,
-      onClearSearch: _clearSearch,
-      sortOption: _sortOption,
-      sortOptions: _sortOptions,
-      onSortChanged: _handleSortChanged,
+    // StreamBuilder를 사용하여 Firebase의 실시간 변화를 UI에 즉시 반영
+    return StreamBuilder<List<Accessory>>(
+      stream: _dbService.getAccessoriesStream(),
+      builder: (context, snapshot) {
+        // 데이터를 가져오는 중일 때
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        
+        // 에러 발생 시
+        if (snapshot.hasError) {
+          return Scaffold(body: Center(child: Text("데이터 로드 오류: ${snapshot.error}")));
+        }
+
+        // 실시간 데이터 리스트 (비어있을 경우 빈 리스트)
+        final List<Accessory> allAccessoriesFromDB = snapshot.data ?? [];
+
+        // 실시간 데이터에 검색 및 부위 필터 적용
+        List<Accessory> displayList = allAccessoriesFromDB.where((acc) {
+          final matchesSearch = acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
+          final matchesPart = _selectedPartFilter == null || 
+                             _selectedPartFilter == '전체' || 
+                             acc.part == _selectedPartFilter;
+          return matchesSearch && matchesPart;
+        }).toList();
+
+        // 정렬 옵션 적용
+        if (_sortOption == '이름 (가나다순)') {
+          displayList.sort((a, b) => a.name.compareTo(b.name));
+        } else if (_sortOption == '이름 (ABC순)') {
+          displayList.sort((a, b) => a.id.compareTo(b.id));
+        }
+
+        // 완성된 리스트를 UI 템플릿에 전달
+        return AccessoryScreenUI(
+          searchController: _searchController,
+          filteredAccessories: displayList,
+          selectedPartFilter: _selectedPartFilter,
+          partFilterOptions: _partFilterOptions,
+          onPartFilterChanged: _handlePartFilterChanged,
+          onAccessoryTap: _showAccessoryDetails,
+          currentSearchQuery: _searchQuery,
+          onClearSearch: _clearSearch,
+          sortOption: _sortOption,
+          sortOptions: _sortOptions,
+          onSortChanged: _handleSortChanged,
+        );
+      },
     );
   }
 }
