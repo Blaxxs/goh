@@ -151,7 +151,7 @@ class AccessoryOptionChangeScreenUI extends StatelessWidget {
               child: SizedBox(
                 width: 100, // Reduced image size
                 height: 100, // Reduced image size
-                child: Image.asset(
+                child: Image.network(
                   selectedAccessory!.imageUrl,
                   fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) => Icon(
