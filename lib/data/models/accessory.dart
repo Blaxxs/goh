@@ -9,10 +9,9 @@ class AccessoryOption {
     required this.optionValue,
   });
 
-  // Firebase JSON 데이터를 객체로 변환하는 생성자
   factory AccessoryOption.fromJson(Map<String, dynamic> json) {
     return AccessoryOption(
-      optionName: json['optionName'] ?? '',
+      optionName: json['optionName']?.toString() ?? '',
       optionValue: json['optionValue']?.toString() ?? '',
     );
   }
@@ -35,18 +34,19 @@ class Accessory {
     required this.options,
   });
 
-  // Firebase JSON 데이터를 객체로 변환하는 생성자
   factory Accessory.fromJson(Map<String, dynamic> json) {
+    // options가 리스트가 아닌 경우에도 대응
     var list = json['options'] as List? ?? [];
-    List<AccessoryOption> optionsList = 
-        list.map((i) => AccessoryOption.fromJson(Map<String, dynamic>.from(i))).toList();
+    List<AccessoryOption> optionsList = list
+        .map((i) => AccessoryOption.fromJson(Map<String, dynamic>.from(i)))
+        .toList();
 
     return Accessory(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      imagePath: json['imagePath'] ?? '',
-      part: json['part'] ?? '',
-      restrictions: json['restrictions'] ?? '',
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? 'Unknown',
+      imagePath: json['imagePath']?.toString() ?? '',
+      part: json['part']?.toString() ?? '',
+      restrictions: json['restrictions']?.toString() ?? '',
       options: optionsList,
     );
   }
