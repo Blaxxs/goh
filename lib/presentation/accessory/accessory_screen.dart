@@ -1,14 +1,12 @@
-// lib/accessory_screen.dart
-
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // 네트워크 이미지 캐싱 패키지
 import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
-import '../../core/services/database_service.dart'; 
+import '../../core/services/database_service.dart';
 import 'accessory_screen_ui.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 class AccessoryScreen extends StatefulWidget {
-  final bool isPickerMode;
+  final bool isPickerMode; // 강화 화면 등에서 선택 모드로 사용할 때 true
   const AccessoryScreen({super.key, this.isPickerMode = false});
 
   @override
@@ -17,7 +15,7 @@ class AccessoryScreen extends StatefulWidget {
 
 class _AccessoryScreenState extends State<AccessoryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final DatabaseService _dbService = DatabaseService();
+  final DatabaseService _dbService = DatabaseService(); // DB 서비스 인스턴스
 
   String? _selectedPartFilter;
   String _searchQuery = "";
@@ -28,6 +26,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void initState() {
     super.initState();
+    // 필터 옵션 초기화 (accessoryParts 상수는 constants 파일에 정의됨)
     _partFilterOptions = ['전체', ...accessoryParts.toSet()];
     _searchController.addListener(_onSearchChanged);
   }
@@ -61,6 +60,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     _searchController.clear();
   }
 
+  // --- 상세 정보 표시 다이얼로그 (네트워크 이미지 적용) ---
   void _showAccessoryDetails(BuildContext context, Accessory accessory) {
     showGeneralDialog(
       context: context,
@@ -72,24 +72,40 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           child: SingleChildScrollView(
             child: AlertDialog(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15.0)),
-              title: Text(accessory.name, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(
+                accessory.name, 
+                textAlign: TextAlign.center, 
+                style: const TextStyle(fontWeight: FontWeight.bold)
+              ),
               content: SizedBox(
                 width: double.maxFinite,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 이미지 404 에러 방지 처리
-                    if (accessory.imagePath.isNotEmpty)
-                      Image.asset(
-                        accessory.imagePath,
+                    // --- 이미지 표시 부분 (CachedNetworkImage 사용) ---
+                    if (accessory.imageUrl.isNotEmpty)
+                      CachedNetworkImage(
+                        imageUrl: accessory.imageUrl,
                         height: 100,
                         fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) => 
-                          const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                        // 로딩 중 표시할 위젯
+                        placeholder: (context, url) => const SizedBox(
+                          height: 100,
+                          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                        ),
+                        // 에러 발생 시 표시할 위젯
+                        errorWidget: (context, url, error) => const Icon(
+                          Icons.broken_image, 
+                          size: 100, 
+                          color: Colors.grey
+                        ),
                       )
                     else
+                      // URL이 없는 경우 기본 아이콘
                       const Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
+                    
                     const SizedBox(height: 15),
+                    
                     _buildDetailRowDialog('부위:', accessory.part),
                     _buildDetailRowDialog('착용 제한:', accessory.restrictions),
                     const Divider(),
@@ -108,9 +124,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                   child: const Text('닫기'),
                   onPressed: () => Navigator.of(buildContext).pop(),
                 ),
+                // 선택 모드일 경우 '선택' 버튼 표시
                 if (widget.isPickerMode)
                   ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(accessory),
+                    onPressed: () {
+                      Navigator.of(context).pop(accessory); // 선택된 객체 반환
+                    },
                     child: const Text('선택'),
                   ),
               ],
@@ -136,16 +155,24 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // StreamBuilder를 사용하여 Firebase 데이터 변경을 실시간 감지
     return StreamBuilder<List<Accessory>>(
       stream: _dbService.getAccessoriesStream(),
       builder: (context, snapshot) {
+        // 1. 로딩 상태 처리
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
+        
+        // 2. 에러 상태 처리
+        if (snapshot.hasError) {
+          return Scaffold(body: Center(child: Text("데이터 로드 중 오류가 발생했습니다: ${snapshot.error}")));
+        }
 
+        // 3. 데이터 가져오기 (없으면 빈 리스트)
         final accessories = snapshot.data ?? [];
 
-        // 필터링 및 정렬 로직
+        // 4. 검색 및 필터링 로직 적용
         List<Accessory> displayList = accessories.where((acc) {
           final matchesSearch = acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
           final matchesPart = _selectedPartFilter == null || 
@@ -154,23 +181,26 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           return matchesSearch && matchesPart;
         }).toList();
 
+        // 5. 정렬 로직 적용
         if (_sortOption == '이름 (가나다순)') {
           displayList.sort((a, b) => a.name.compareTo(b.name));
         } else if (_sortOption == '이름 (ABC순)') {
           displayList.sort((a, b) => a.id.compareTo(b.id));
         }
 
+        // 6. UI 위젯에 가공된 데이터 전달
         return AccessoryScreenUI(
           searchController: _searchController,
           filteredAccessories: displayList,
           selectedPartFilter: _selectedPartFilter,
           partFilterOptions: _partFilterOptions,
           onPartFilterChanged: _handlePartFilterChanged,
+          // 탭 이벤트 처리 (선택 모드일 때 바로 반환할지, 상세를 보여줄지 결정)
           onAccessoryTap: (ctx, acc) {
             if (widget.isPickerMode) {
-              Navigator.of(context).pop(acc);
+              Navigator.of(context).pop(acc); // 바로 선택하고 닫기
             } else {
-              _showAccessoryDetails(ctx, acc);
+              _showAccessoryDetails(ctx, acc); // 상세 정보 보여주기
             }
           },
           currentSearchQuery: _searchQuery,
