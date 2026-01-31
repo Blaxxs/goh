@@ -3,5 +3,6 @@
     "auto-commit": [
       "*"
     ]
-  }
+  },
+  "java.configuration.updateBuildConfiguration": "interactive"
 }
