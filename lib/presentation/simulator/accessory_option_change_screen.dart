@@ -227,30 +227,6 @@ class _AccessoryOptionChangeScreenState
     });
   }
 
-  // 옵션별 등장 가중치 반환 (높을수록 잘 나옴)
-  int _getOptionWeight(String optionName) {
-    // 1. 희귀 옵션 (매우 낮은 확률)
-    if (optionName == AccessoryOptionNames.rabbitMaxHpChancePercent ||
-        optionName == AccessoryOptionNames.spaceTravelReturnChancePercent ||
-        optionName == AccessoryOptionNames.hpRegenPerTurn) {
-      return 5;
-    }
-
-    // 2. 고급 옵션 (% 수치, 관통, 저항 등 - 낮은 확률)
-    if (optionName.contains('%') ||
-        optionName == AccessoryOptionNames.critChanceFlat ||
-        optionName == AccessoryOptionNames.critDamageFlat ||
-        optionName == AccessoryOptionNames.critResistFlat ||
-        optionName == AccessoryOptionNames.accuracyFlat ||
-        optionName == AccessoryOptionNames.evasionFlat) {
-      return 40;
-    }
-
-    // 3. 일반 옵션 (깡스탯 - 높은 확률)
-    // 공격력 증가, 체력 증가, 방어력 증가 등
-    return 100;
-  }
-
   // 랜덤 옵션을 생성하는 헬퍼 함수 (실제 게임 로직에 따라 구현 필요)
   AccessoryOption _generateRandomOption(
       {required int forSlot, required List<AccessoryOption> existingOptions}) {
