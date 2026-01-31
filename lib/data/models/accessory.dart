@@ -1,24 +1,30 @@
-// lib/models/accessory.dart (또는 Accessory 클래스가 정의된 파일)
+// accessory.dart
 
 class AccessoryOption {
-  final String optionName; // 예: "공격력 증가", "치명타 확률", "화염 속성 강화"
-  final String optionValue;  // 예: "+100", "+5%", "+10%" (문자열로 저장하여 "+", "%" 등 다양한 형식 표현)
-                           // 또는 double/int 타입으로 저장하고, 표시는 별도로 처리할 수도 있습니다.
-                           // 여기서는 표시 그대로 문자열로 저장하는 것으로 가정합니다.
+  final String optionName;
+  final String optionValue;
 
   const AccessoryOption({
     required this.optionName,
     required this.optionValue,
   });
+
+  // --- 추가: JSON 데이터를 객체로 변환 ---
+  factory AccessoryOption.fromJson(Map<String, dynamic> json) {
+    return AccessoryOption(
+      optionName: json['optionName'] ?? '',
+      optionValue: json['optionValue']?.toString() ?? '',
+    );
+  }
 }
 
 class Accessory {
   final String id;
   final String name;
   final String imagePath;
-  final String part; 
+  final String part;
   final String restrictions;
-  final List<AccessoryOption> options; // 옵션 목록을 리스트로 관리
+  final List<AccessoryOption> options;
 
   const Accessory({
     required this.id,
@@ -26,6 +32,22 @@ class Accessory {
     required this.imagePath,
     required this.part,
     required this.restrictions,
-    required this.options, // 옵션 목록을 필수로 받도록 변경
+    required this.options,
   });
+
+  // --- 추가: Firebase 데이터를 객체로 변환 ---
+  factory Accessory.fromJson(Map<String, dynamic> json) {
+    var list = json['options'] as List? ?? [];
+    List<AccessoryOption> optionsList = 
+        list.map((i) => AccessoryOption.fromJson(Map<String, dynamic>.from(i))).toList();
+
+    return Accessory(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      imagePath: json['imagePath'] ?? '',
+      part: json['part'] ?? '',
+      restrictions: json['restrictions'] ?? '',
+      options: optionsList,
+    );
+  }
 }
