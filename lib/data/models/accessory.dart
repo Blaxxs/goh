@@ -40,7 +40,6 @@ class Accessory {
     // 프로젝트 ID를 기반으로 한 Storage 기본 주소 (서울 리전 기준)
     // 파일이 accessories 폴더 안에 있다면 아래와 같이 조합됩니다.
     // final String autoImageUrl = 'assets/images/accessories/$id.png';
-    final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$id.png?alt=media";
     final String encodedId = Uri.encodeComponent(id);
     final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media";
 
