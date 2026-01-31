@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart'; // 추가
-import '../../core/services/database_service.dart'; // 서비스 파일 경로
+import '../../database_service.dart'; // 서비스 파일 경로
 import '../../data/models/accessory.dart'; // Accessory 모델 클래스를 직접 import 합니다.
 import '../../core/constants/accessory_constants.dart'; // Accessory 클래스 포함
 import 'accessory_screen_ui.dart';
