@@ -81,7 +81,9 @@ class AccessoryScreenUI extends StatelessWidget {
                               icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
-                              borderRadius: BorderRadius.circular(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
@@ -156,7 +158,9 @@ class AccessoryScreenUI extends StatelessWidget {
                               icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
-                              borderRadius: BorderRadius.circular(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
@@ -191,7 +195,9 @@ class AccessoryScreenUI extends StatelessWidget {
                               icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
-                              borderRadius: BorderRadius.circular(8.0),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
