@@ -117,6 +117,11 @@ class AccessoryScreenUI extends StatelessWidget {
                   itemCount: filteredAccessories.length,
                   itemBuilder: (context, index) {
                     final accessory = filteredAccessories[index];
+
+                    // Firebase Storage URL 자동 생성 (id 기반)
+                    final String storageUrl = 
+                        "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F${accessory.id}.png?alt=media";
+
                     return GestureDetector(
                       onTap: () => onAccessoryTap(context, accessory),
                       child: Card(
@@ -127,29 +132,25 @@ class AccessoryScreenUI extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // 1. 이미지 영역 (네트워크 이미지 적용)
+                            // 1. 이미지 영역 (네트워크 이미지 및 자동 경로 적용)
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: accessory.imageUrl.isNotEmpty
-                                    ? CachedNetworkImage(
-                                        imageUrl: accessory.imageUrl,
-                                        fit: BoxFit.contain,
-                                        // 로딩 중 표시
-                                        placeholder: (context, url) => const Center(
-                                          child: SizedBox(
-                                            width: 20,
-                                            height: 20,
-                                            child: CircularProgressIndicator(strokeWidth: 2),
-                                          ),
-                                        ),
-                                        // 에러 시 표시
-                                        errorWidget: (context, url, error) => const Icon(
-                                          Icons.broken_image,
-                                          color: Colors.grey,
-                                        ),
-                                      )
-                                    : const Icon(Icons.image_not_supported, color: Colors.grey),
+                                child: CachedNetworkImage(
+                                  imageUrl: storageUrl,
+                                  fit: BoxFit.contain,
+                                  placeholder: (context, url) => const Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) => const Icon(
+                                    Icons.broken_image,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                             ),
                             // 2. 텍스트 정보 영역
