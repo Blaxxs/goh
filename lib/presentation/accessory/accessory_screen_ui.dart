@@ -120,6 +120,9 @@ class AccessoryScreenUI extends StatelessWidget {
                   itemCount: filteredAccessories.length,
                   itemBuilder: (context, index) {
                     final accessory = filteredAccessories[index];
+                    
+                    // 디버깅을 위해 이미지 URL 출력
+                    print('Loading image for ${accessory.name}: ${accessory.imageUrl}');
 
                     return GestureDetector(
                       onTap: () => onAccessoryTap(context, accessory),
