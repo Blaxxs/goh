@@ -34,24 +34,25 @@ class Accessory {
     required this.options,
   });
 
-  factory Accessory.fromJson(Map<String, dynamic> json) {
+factory Accessory.fromJson(Map<String, dynamic> json) {
   final String id = json['id']?.toString() ?? '';
   
-  // 1. 본인의 Firebase 프로젝트 ID로 변경하세요.
-  const String projectId = "YOUR_PROJECT_ID"; 
-  // 2. Storage 폴더 구조에 맞게 베이스 URL 설정
-  // %2F는 폴더 구분자(/)를 의미합니다.
-  final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/$projectId.appspot.com/o/accessories%2F$id.png?alt=media";
+  // 프로젝트 ID를 기반으로 한 Storage 기본 주소 (서울 리전 기준)
+  // 파일이 accessories 폴더 안에 있다면 아래와 같이 조합됩니다.
+  final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$id.png?alt=media";
+
+  var list = json['options'] as List? ?? [];
+  List<AccessoryOption> optionsList = list
+      .map((i) => AccessoryOption.fromJson(Map<String, dynamic>.from(i)))
+      .toList();
 
   return Accessory(
     id: id,
-    name: json['name'] ?? '',
-    imageUrl: autoImageUrl, // 이제 DB에 URL이 없어도 ID만 있으면 자동 생성됨!
-    part: json['part'] ?? '',
-    restrictions: json['restrictions'] ?? '',
-    options: (json['options'] as List? ?? [])
-        .map((i) => AccessoryOption.fromJson(Map<String, dynamic>.from(i)))
-        .toList(),
+    name: json['name']?.toString() ?? '',
+    imageUrl: autoImageUrl, // 이제 DB에 imageUrl 필드가 없어도 자동으로 생성됩니다!
+    part: json['part']?.toString() ?? '',
+    restrictions: json['restrictions']?.toString() ?? '',
+    options: optionsList,
   );
 }
 }
