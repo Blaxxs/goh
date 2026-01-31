@@ -1,7 +1,6 @@
 // lib/accessory_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
 import '../../core/services/database_service.dart'; 
@@ -17,7 +16,7 @@ class AccessoryScreen extends StatefulWidget {
 
 class _AccessoryScreenState extends State<AccessoryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  final DatabaseService _dbService = DatabaseService(); // DB 서비스 연결
+  final DatabaseService _dbService = DatabaseService();
 
   String? _selectedPartFilter;
   String _searchQuery = "";
@@ -28,7 +27,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void initState() {
     super.initState();
-    // 부위 필터 옵션 초기화 (accessoryParts 상수는 유지)
     _partFilterOptions = ['전체', ...accessoryParts.toSet()];
     _searchController.addListener(_onSearchChanged);
   }
@@ -62,7 +60,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     _searchController.clear();
   }
 
-  // 악세사리 상세 정보 다이얼로그
   void _showAccessoryDetails(BuildContext context, Accessory accessory) {
     showGeneralDialog(
       context: context,
@@ -80,12 +77,17 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(
-                      accessory.imagePath, 
-                      height: 100, 
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),
-                    ),
+                    // 이미지 404 에러 방지 처리
+                    if (accessory.imagePath.isNotEmpty)
+                      Image.asset(
+                        accessory.imagePath,
+                        height: 100,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) => 
+                          const Icon(Icons.broken_image, size: 100, color: Colors.grey),
+                      )
+                    else
+                      const Icon(Icons.image_not_supported, size: 100, color: Colors.grey),
                     const SizedBox(height: 15),
                     _buildDetailRowDialog('부위:', accessory.part),
                     _buildDetailRowDialog('착용 제한:', accessory.restrictions),
@@ -105,6 +107,11 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                   child: const Text('닫기'),
                   onPressed: () => Navigator.of(buildContext).pop(),
                 ),
+                if (widget.isPickerMode)
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(accessory),
+                    child: const Text('선택'),
+                  ),
               ],
             ),
           ),
@@ -128,25 +135,17 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // StreamBuilder를 사용하여 Firebase의 실시간 변화를 UI에 즉시 반영
     return StreamBuilder<List<Accessory>>(
       stream: _dbService.getAccessoriesStream(),
       builder: (context, snapshot) {
-        // 데이터를 가져오는 중일 때
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(body: Center(child: CircularProgressIndicator()));
         }
-        
-        // 에러 발생 시
-        if (snapshot.hasError) {
-          return Scaffold(body: Center(child: Text("데이터 로드 오류: ${snapshot.error}")));
-        }
 
-        // 실시간 데이터 리스트 (비어있을 경우 빈 리스트)
-        final List<Accessory> allAccessoriesFromDB = snapshot.data ?? [];
+        final accessories = snapshot.data ?? [];
 
-        // 실시간 데이터에 검색 및 부위 필터 적용
-        List<Accessory> displayList = allAccessoriesFromDB.where((acc) {
+        // 필터링 및 정렬 로직
+        List<Accessory> displayList = accessories.where((acc) {
           final matchesSearch = acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
           final matchesPart = _selectedPartFilter == null || 
                              _selectedPartFilter == '전체' || 
@@ -154,21 +153,25 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           return matchesSearch && matchesPart;
         }).toList();
 
-        // 정렬 옵션 적용
         if (_sortOption == '이름 (가나다순)') {
           displayList.sort((a, b) => a.name.compareTo(b.name));
         } else if (_sortOption == '이름 (ABC순)') {
           displayList.sort((a, b) => a.id.compareTo(b.id));
         }
 
-        // 완성된 리스트를 UI 템플릿에 전달
         return AccessoryScreenUI(
           searchController: _searchController,
           filteredAccessories: displayList,
           selectedPartFilter: _selectedPartFilter,
           partFilterOptions: _partFilterOptions,
           onPartFilterChanged: _handlePartFilterChanged,
-          onAccessoryTap: _showAccessoryDetails,
+          onAccessoryTap: (ctx, acc) {
+            if (widget.isPickerMode) {
+              Navigator.of(context).pop(acc);
+            } else {
+              _showAccessoryDetails(ctx, acc);
+            }
+          },
           currentSearchQuery: _searchQuery,
           onClearSearch: _clearSearch,
           sortOption: _sortOption,
