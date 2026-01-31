@@ -20,7 +20,7 @@ class AccessoryOption {
 class Accessory {
   final String id;
   final String name;
-  final String imageUrl; // 로컬 애셋 경로 또는 네트워크 URL 저장
+  final String imageUrl; // 로컬 경로 대신 네트워크 URL 저장
   final String part;
   final String restrictions;
   final List<AccessoryOption> options;
@@ -37,8 +37,10 @@ class Accessory {
   factory Accessory.fromJson(Map<String, dynamic> json) {
     final String id = json['id']?.toString() ?? '';
 
-    // 데이터베이스에 저장된 imagePath를 직접 사용
-    final String imageUrl = json['imagePath']?.toString() ?? '';
+    // 프로젝트 ID를 기반으로 한 Storage 기본 주소 (서울 리전 기준)
+    // 파일이 accessories 폴더 안에 있다면 아래와 같이 조합됩니다.
+    // final String autoImageUrl = 'assets/images/accessories/$id.png';
+    final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/goh-calculator.appspot.com/o/accessories%2F$id.png?alt=media";
 
     var list = json['options'] as List? ?? [];
     List<AccessoryOption> optionsList = list
@@ -48,7 +50,7 @@ class Accessory {
     return Accessory(
       id: id,
       name: json['name']?.toString() ?? '',
-      imageUrl: imageUrl, // DB의 imagePath 값을 사용
+      imageUrl: autoImageUrl, // 이제 DB에 imageUrl 필드가 없어도 자동으로 생성됩니다!
       part: json['part']?.toString() ?? '',
       restrictions: json['restrictions']?.toString() ?? '',
       options: optionsList,

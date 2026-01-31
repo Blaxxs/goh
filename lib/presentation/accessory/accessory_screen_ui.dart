@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart'; // 패키지 import 필수
 import '../../data/models/accessory.dart';
 
 class AccessoryScreenUI extends StatelessWidget {
@@ -130,19 +131,26 @@ class AccessoryScreenUI extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // 1. 이미지 영역 (로컬 애셋 이미지 사용)
+                            // 1. 이미지 영역 (네트워크 이미지 및 자동 경로 적용)
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  accessory.imageUrl,
+                                child: CachedNetworkImage(
+                                  imageUrl: accessory.imageUrl,
                                   fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(
-                                      Icons.broken_image,
-                                      color: Colors.grey,
-                                    );
-                                  },
+                                  placeholder: (context, url) => const Center(
+                                    child: SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
+                                    ),
+                                  ),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(
+                                    Icons.broken_image,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                               ),
                             ),
