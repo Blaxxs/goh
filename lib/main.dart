@@ -11,9 +11,11 @@ import 'firebase_options.dart';
 void main() async {
   // async로 변경
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 바인딩 초기화
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
   await AccessoryDataManager().loadAccessories(); // <<< 악세사리 데이터 로드
   await initializeDateFormatting(); // 날짜 포맷 초기화 (모든 로케일 또는 특정 로케일)
   // 예: await initializeDateFormatting('ko_KR', null);
