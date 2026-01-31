@@ -21,9 +21,6 @@ void main() async {
     // 이미 초기화된 경우 등 예외 발생 시 무시하고 진행
     debugPrint('Firebase initialization error (ignored): $e');
   }
-  await AccessoryDataManager().loadAccessories(); // <<< 악세사리 데이터 로드
-  await initializeDateFormatting(); // 날짜 포맷 초기화 (모든 로케일 또는 특정 로케일)
-  // 예: await initializeDateFormatting('ko_KR', null);
 
   try {
     await AccessoryDataManager().loadAccessories(); // <<< 악세사리 데이터 로드
