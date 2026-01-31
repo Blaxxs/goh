@@ -5,6 +5,7 @@
             "name": "goh_calculator (Chrome)",
             "request": "launch",
             "type": "dart",
+            "deviceId": "chrome",
             "args": [
                 "--web-renderer",
                 "html"
