@@ -53,13 +53,14 @@ class AccessoryScreenUI extends StatelessWidget {
                 children: [
                   // --- 검색 영역 ---
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 2,
                         child: DropdownButtonFormField<String>(
                           isDense: true,
                           decoration: InputDecoration(
+                            labelText: '검색 기준',
                             filled: true,
                             fillColor: Colors.grey[100],
                             contentPadding: const EdgeInsets.symmetric(
@@ -86,7 +87,7 @@ class AccessoryScreenUI extends StatelessWidget {
                         child: TextField(
                           controller: searchController,
                           decoration: InputDecoration(
-                            hintText: '검색...',
+                            hintText: '검색어를 입력하세요...',
                             filled: true,
                             fillColor: Colors.grey[100],
                             prefixIcon: const Icon(Icons.search, size: 20),
@@ -113,17 +114,24 @@ class AccessoryScreenUI extends StatelessWidget {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
+                          isDense: true,
+                          decoration: InputDecoration(
                             labelText: '부위',
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 0),
-                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                           value: selectedPartFilter ?? '전체',
                           items: partFilterOptions.map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child: Text(value,
+                                  overflow: TextOverflow.ellipsis),
                             );
                           }).toList(),
                           onChanged: onPartFilterChanged,
@@ -132,17 +140,24 @@ class AccessoryScreenUI extends StatelessWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: DropdownButtonFormField<String>(
-                          decoration: const InputDecoration(
+                          isDense: true,
+                          decoration: InputDecoration(
                             labelText: '정렬',
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 0),
-                            border: OutlineInputBorder(),
+                            filled: true,
+                            fillColor: Colors.grey[100],
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 12),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide.none,
+                            ),
                           ),
                           value: sortOption,
                           items: sortOptions.map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,
-                              child: Text(value),
+                              child: Text(value,
+                                  overflow: TextOverflow.ellipsis),
                             );
                           }).toList(),
                           onChanged: onSortChanged,
