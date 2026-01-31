@@ -14,6 +14,9 @@ class AccessoryScreenUI extends StatelessWidget {
   final String sortOption;
   final List<String> sortOptions;
   final ValueChanged<String?> onSortChanged;
+  final String searchOption;
+  final List<String> searchOptions;
+  final ValueChanged<String?> onSearchOptionChanged;
 
   const AccessoryScreenUI({
     super.key,
@@ -28,80 +31,114 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.sortOption,
     required this.sortOptions,
     required this.onSortChanged,
+    required this.searchOption,
+    required this.searchOptions,
+    required this.onSearchOptionChanged,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // --- 검색 및 필터 영역 ---
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              // 검색창
-              TextField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  hintText: '악세사리 이름 검색',
-                  prefixIcon: const Icon(Icons.search),
-                  suffixIcon: currentSearchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear),
-                          onPressed: onClearSearch,
-                        )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-                ),
-              ),
-              const SizedBox(height: 8),
-              // 필터 및 정렬 드롭다운
-              Row(
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
                 children: [
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: '부위 선택',
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                        border: OutlineInputBorder(),
+                  // --- 검색 영역 ---
+                  Row(
+                    children: [
+                      // 검색 옵션
+                      DropdownButton<String>(
+                        value: searchOption,
+                        items: searchOptions.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: onSearchOptionChanged,
+                        underline: Container(), // 밑줄 제거
                       ),
-                      value: selectedPartFilter ?? '전체',
-                      items: partFilterOptions.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: onPartFilterChanged,
-                    ),
+                      const SizedBox(width: 12),
+                      // 검색창
+                      Expanded(
+                        child: TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            hintText: '검색...',
+                            prefixIcon: const Icon(Icons.search, size: 20),
+                            suffixIcon: currentSearchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear, size: 20),
+                                    onPressed: onClearSearch,
+                                  )
+                                : null,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide.none,
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[200],
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 10),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        labelText: '정렬',
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                        border: OutlineInputBorder(),
+                  const SizedBox(height: 12),
+                  // --- 필터 및 정렬 영역 ---
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: '부위',
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 0),
+                            border: OutlineInputBorder(),
+                          ),
+                          value: selectedPartFilter ?? '전체',
+                          items: partFilterOptions.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: onPartFilterChanged,
+                        ),
                       ),
-                      value: sortOption,
-                      items: sortOptions.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: onSortChanged,
-                    ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            labelText: '정렬',
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 0),
+                            border: OutlineInputBorder(),
+                          ),
+                          value: sortOption,
+                          items: sortOptions.map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          onChanged: onSortChanged,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
 
@@ -111,11 +148,11 @@ class AccessoryScreenUI extends StatelessWidget {
               ? const Center(child: Text("검색 결과가 없습니다."))
               : GridView.builder(
                   padding: const EdgeInsets.all(8.0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3, // 한 줄에 3개
+                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                    maxCrossAxisExtent: 150, // 각 아이템의 최대 너비
                     crossAxisSpacing: 8.0,
                     mainAxisSpacing: 8.0,
-                    childAspectRatio: 0.75, // 아이템 비율 조정
+                    childAspectRatio: 0.7, // 아이템 비율 조정
                   ),
                   itemCount: filteredAccessories.length,
                   itemBuilder: (context, index) {
@@ -124,63 +161,61 @@ class AccessoryScreenUI extends StatelessWidget {
                     return GestureDetector(
                       onTap: () => onAccessoryTap(context, accessory),
                       child: Card(
-                        elevation: 2,
+                        clipBehavior: Clip.antiAlias, // 이미지가 카드의 경계를 넘지 않도록
+                        elevation: 3,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // 1. 이미지 영역 (네트워크 이미지 및 자동 경로 적용)
+                            // 1. 이미지 영역
                             Expanded(
-                              child: Padding(
+                              child: Container(
+                                color: Colors.grey[200],
                                 padding: const EdgeInsets.all(8.0),
                                 child: CachedNetworkImage(
                                   imageUrl: accessory.imageUrl,
                                   fit: BoxFit.contain,
                                   placeholder: (context, url) => const Center(
                                     child: SizedBox(
-                                      width: 20,
-                                      height: 20,
+                                      width: 24,
+                                      height: 24,
                                       child: CircularProgressIndicator(
-                                          strokeWidth: 2),
+                                          strokeWidth: 2.5),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
                                       const Icon(
-                                    Icons.broken_image,
+                                    Icons.image_not_supported_outlined,
                                     color: Colors.grey,
                                   ),
                                 ),
                               ),
                             ),
                             // 2. 텍스트 정보 영역
-                            Container(
-                              padding: const EdgeInsets.all(4.0),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[100],
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(10),
-                                  bottomRight: Radius.circular(10),
-                                ),
-                              ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0, vertical: 6.0),
                               child: Column(
                                 children: [
                                   Text(
                                     accessory.name,
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 13,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
+                                  const SizedBox(height: 2),
                                   Text(
                                     accessory.part,
                                     style: TextStyle(
-                                      fontSize: 10,
-                                      color: Colors.grey[600],
+                                      fontSize: 11,
+                                      color: Colors.grey[700],
                                     ),
                                   ),
                                 ],
