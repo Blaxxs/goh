@@ -53,6 +53,10 @@ class AccessoryDataManager {
           final String encodedId = Uri.encodeComponent(key);
           final String imageUrl = 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
           accessoryData['imageUrl'] = imageUrl;
+          
+          if (kDebugMode) {
+            print('Generated Image URL for $key: $imageUrl');
+          }
 
           final accessory = Accessory.fromJson(accessoryData);
           loadedAccessories.add(accessory);
