@@ -296,7 +296,6 @@ class _AccessoryOptionChangeScreenState
           random.nextInt(_possibleChangeableOptions.length)];
     }
 
-    return availableOptions[random.nextInt(availableOptions.length)];
     // 가중치 기반 랜덤 선택 로직
     int totalWeight = 0;
     for (var option in availableOptions) {
