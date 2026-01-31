@@ -54,7 +54,8 @@ class AccessoryScreenUI extends StatelessWidget {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                 ),
               ),
               const SizedBox(height: 8),
@@ -65,7 +66,8 @@ class AccessoryScreenUI extends StatelessWidget {
                     child: DropdownButtonFormField<String>(
                       decoration: const InputDecoration(
                         labelText: '부위 선택',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                         border: OutlineInputBorder(),
                       ),
                       value: selectedPartFilter ?? '전체',
@@ -83,7 +85,8 @@ class AccessoryScreenUI extends StatelessWidget {
                     child: DropdownButtonFormField<String>(
                       decoration: const InputDecoration(
                         labelText: '정렬',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                         border: OutlineInputBorder(),
                       ),
                       value: sortOption,
@@ -139,10 +142,12 @@ class AccessoryScreenUI extends StatelessWidget {
                                     child: SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                      child: CircularProgressIndicator(
+                                          strokeWidth: 2),
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) => const Icon(
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(
                                     Icons.broken_image,
                                     color: Colors.grey,
                                   ),

@@ -31,9 +31,11 @@ class _BoxCalculatorScreenState extends State<BoxCalculatorScreen> {
 
   void _calculate() {
     // 각 입력 필드에서 상자 개수를 가져옵니다.
-    final int normalBoxCount = int.tryParse(_normalBoxCountController.text) ?? 0;
+    final int normalBoxCount =
+        int.tryParse(_normalBoxCountController.text) ?? 0;
     final int rareBoxCount = int.tryParse(_rareBoxCountController.text) ?? 0;
-    final int legendaryBoxCount = int.tryParse(_legendaryBoxCountController.text) ?? 0;
+    final int legendaryBoxCount =
+        int.tryParse(_legendaryBoxCountController.text) ?? 0;
 
     // 참고: 이 변경에 따라 BoxCalculatorLogic의 계산 메서드도 수정이 필요할 수 있습니다.
     // 예를 들어, 아래와 같이 세 가지 상자 개수를 모두 받아

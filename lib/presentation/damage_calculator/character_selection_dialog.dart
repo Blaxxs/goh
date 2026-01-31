@@ -6,13 +6,15 @@ class CharacterSelectionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayCharacters = characters.where((c) => c.name != '선택 안함').toList();
+    final displayCharacters =
+        characters.where((c) => c.name != '선택 안함').toList();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Text("캐릭터 선택", style: Theme.of(context).textTheme.headlineSmall),
+          child:
+              Text("캐릭터 선택", style: Theme.of(context).textTheme.headlineSmall),
         ),
         GridView.builder(
           shrinkWrap: true,
@@ -35,22 +37,28 @@ class CharacterSelectionDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start, // Align to top
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4.0, horizontal: 2.0),
                       child: Text(
                         character.name,
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.bold),
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    Expanded( // Image takes the rest of the space
+                    Expanded(
+                      // Image takes the rest of the space
                       child: Padding(
                         padding: const EdgeInsets.all(2.0),
                         child: Image.asset(
                           character.imagePath,
                           fit: BoxFit.contain,
-                          errorBuilder: (c, o, s) => const Icon(Icons.error, color: Colors.grey),
+                          errorBuilder: (c, o, s) =>
+                              const Icon(Icons.error, color: Colors.grey),
                         ),
                       ),
                     ),

@@ -5,7 +5,6 @@ import '../../core/constants/stage_constants.dart'; // stageList 사용 (정확�
 import 'settings_screen_ui.dart';
 import '../../core/services/settings_service.dart';
 
-
 class SettingsScreen extends StatefulWidget {
   final bool isSetupMode; // 최초 설정 모드 여부
   const SettingsScreen({super.key, this.isSetupMode = false}); // 기본값 false
@@ -34,7 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _clearTimeControllers = {
       for (var stage in stageNameList) stage: TextEditingController()
     };
-    _selectedJjolCounts = { for (var stage in stageNameList) stage: null };
+    _selectedJjolCounts = {for (var stage in stageNameList) stage: null};
 
     // SettingsService에서 초기 설정값 로드
     // SettingsService.instance.loadAllSettings()는 LoadingScreen에서 이미 호출됨.
@@ -89,7 +88,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // SettingsService의 saveStageSettings는 내부적으로 메모리 캐시도 업데이트합니다.
     await SettingsService.instance.saveStageSettings(currentSettings);
 
-    if (showSnackbar && mounted) { // SnackBar 표시는 옵션으로 제어
+    if (showSnackbar && mounted) {
+      // SnackBar 표시는 옵션으로 제어
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('설정이 저장되었습니다.')),
       );
@@ -97,15 +97,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   void _handleSavePressed() {
-     if (_formKey.currentState?.validate() ?? false) { // 명시적 저장 시에는 유효성 검사
-        _saveSettings(showSnackbar: true); // 저장 버튼 클릭 시에는 SnackBar 표시
-      } else {
-        if (mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('입력 값을 확인해주세요.')),
-          );
-        }
+    if (_formKey.currentState?.validate() ?? false) {
+      // 명시적 저장 시에는 유효성 검사
+      _saveSettings(showSnackbar: true); // 저장 버튼 클릭 시에는 SnackBar 표시
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('입력 값을 확인해주세요.')),
+        );
       }
+    }
   }
 
   void _resetFormFields() {
@@ -116,11 +117,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       _selectedVipLevel = null;
       _selectedJjolCounts.updateAll((_, __) => null);
     });
-     if (mounted) {
-       ScaffoldMessenger.of(context).showSnackBar(
-         const SnackBar(content: Text('입력 정보가 초기화되었습니다.')),
-       );
-     }
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('입력 정보가 초기화되었습니다.')),
+      );
+    }
   }
 
   void _handleResetPressed() {
@@ -129,7 +130,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('초기화 확인'),
-          content: const Text('화면에 입력된 정보를 모두 지우시겠습니까?\n(저장 버튼을 누르기 전까지는 실제 설정이 변경되지 않습니다.)'),
+          content: const Text(
+              '화면에 입력된 정보를 모두 지우시겠습니까?\n(저장 버튼을 누르기 전까지는 실제 설정이 변경되지 않습니다.)'),
           actions: <Widget>[
             TextButton(
               child: const Text('NO'),
@@ -150,7 +152,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     // SettingsScreenUI는 Scaffold를 포함하고 있으므로,
@@ -164,10 +165,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
       selectedVipLevel: _selectedVipLevel,
       selectedJjolCounts: _selectedJjolCounts,
       onVipLevelChanged: (value) {
-        setState(() { _selectedVipLevel = value; });
+        setState(() {
+          _selectedVipLevel = value;
+        });
       },
       onJjolCountChanged: (stageName, value) {
-         setState(() { _selectedJjolCounts[stageName] = value; });
+        setState(() {
+          _selectedJjolCounts[stageName] = value;
+        });
       },
       onSavePressed: _handleSavePressed,
       onResetPressed: _handleResetPressed,

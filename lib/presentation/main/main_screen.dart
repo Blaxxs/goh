@@ -14,16 +14,18 @@ import '../box_calculator/box_calculator_screen.dart';
 import '../simulator/accessory_enhancement_screen.dart';
 import '../simulator/accessory_option_change_screen.dart';
 
-
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
 
   // 필수 설정 확인 함수
   bool _areEssentialSettingsSet() {
     final settings = SettingsService.instance.stageSettings;
-    return settings.teamLevel != null && settings.teamLevel!.isNotEmpty &&
-           settings.dalgijiLevel != null && settings.dalgijiLevel!.isNotEmpty &&
-           settings.vipLevel != null && settings.vipLevel!.isNotEmpty;
+    return settings.teamLevel != null &&
+        settings.teamLevel!.isNotEmpty &&
+        settings.dalgijiLevel != null &&
+        settings.dalgijiLevel!.isNotEmpty &&
+        settings.vipLevel != null &&
+        settings.vipLevel!.isNotEmpty;
   }
 
   void _navigateToScreen(BuildContext context, Widget screen) {
@@ -36,7 +38,9 @@ class MainScreen extends StatelessWidget {
   void _showSettingsSnackbar(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SettingsScreen(isSetupMode: true)), // isSetupMode 추가
+      MaterialPageRoute(
+          builder: (context) =>
+              const SettingsScreen(isSetupMode: true)), // isSetupMode 추가
     ).then((_) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -52,58 +56,58 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MainScreenUI(
-        onCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const CalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
-        },
-        onGoldCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const GoldCalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
-        },
-        onAccessoryPressed: () {
-          _navigateToScreen(context, const AccessoryScreen());
-        },
-        onDamageCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const DamageCalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
-        },
-        onJournalPressed: () {
-          _navigateToScreen(context, const JournalScreen());
-        },
-        onBoxCalculatorPressed: () {
-          if (EventManager.isEventPeriodActive()) {
-            _navigateToScreen(context, const BoxCalculatorScreen());
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('이벤트 기간이 아닙니다.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-        },
-        onAccessoryEnhancementPressed: () {
-          _navigateToScreen(context, const AccessoryEnhancementScreen());
-        },
-        onAccessoryOptionChangePressed: () {
-          _navigateToScreen(context, const AccessoryOptionChangeScreen());
-        },
-        onStageSettingsPressed: () {
-          _navigateToScreen(context, const SettingsScreen());
-        },
-        onAppSettingsPressed: () {
-          _navigateToScreen(context, const AppSettingsScreen());
-        },
-        settingsService: SettingsService.instance,
-      );
+      onCalculatorPressed: () {
+        if (_areEssentialSettingsSet()) {
+          _navigateToScreen(context, const CalculatorScreen());
+        } else {
+          _showSettingsSnackbar(context);
+        }
+      },
+      onGoldCalculatorPressed: () {
+        if (_areEssentialSettingsSet()) {
+          _navigateToScreen(context, const GoldCalculatorScreen());
+        } else {
+          _showSettingsSnackbar(context);
+        }
+      },
+      onAccessoryPressed: () {
+        _navigateToScreen(context, const AccessoryScreen());
+      },
+      onDamageCalculatorPressed: () {
+        if (_areEssentialSettingsSet()) {
+          _navigateToScreen(context, const DamageCalculatorScreen());
+        } else {
+          _showSettingsSnackbar(context);
+        }
+      },
+      onJournalPressed: () {
+        _navigateToScreen(context, const JournalScreen());
+      },
+      onBoxCalculatorPressed: () {
+        if (EventManager.isEventPeriodActive()) {
+          _navigateToScreen(context, const BoxCalculatorScreen());
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('이벤트 기간이 아닙니다.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onAccessoryEnhancementPressed: () {
+        _navigateToScreen(context, const AccessoryEnhancementScreen());
+      },
+      onAccessoryOptionChangePressed: () {
+        _navigateToScreen(context, const AccessoryOptionChangeScreen());
+      },
+      onStageSettingsPressed: () {
+        _navigateToScreen(context, const SettingsScreen());
+      },
+      onAppSettingsPressed: () {
+        _navigateToScreen(context, const AppSettingsScreen());
+      },
+      settingsService: SettingsService.instance,
+    );
   }
 }

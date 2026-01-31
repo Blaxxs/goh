@@ -4,9 +4,29 @@
 
 // VIP 등급 목록
 const List<String> vipLevels = [
-  'VIP14', 'VIP13', 'VIP12', 'VIP11', 'VIP10', 'VIP9', 'VIP8', 'VIP7', 'VIP6',
-  'VIP5', 'VIP4', 'VIP3', 'VIP2', 'VIP1', 'VVIP3', 'VVIP2', 'VVIP1',
-  'SVIP3', 'SVIP2', 'SVIP1', 'SSVIP3', 'SSVIP2', 'SSVIP1',
+  'VIP14',
+  'VIP13',
+  'VIP12',
+  'VIP11',
+  'VIP10',
+  'VIP9',
+  'VIP8',
+  'VIP7',
+  'VIP6',
+  'VIP5',
+  'VIP4',
+  'VIP3',
+  'VIP2',
+  'VIP1',
+  'VVIP3',
+  'VVIP2',
+  'VVIP1',
+  'SVIP3',
+  'SVIP2',
+  'SVIP1',
+  'SSVIP3',
+  'SSVIP2',
+  'SSVIP1',
 ];
 
 // VIP 등급별 *추가* 보너스 데이터 (스테미너, 자동교체 슬롯 - 누적 적용됨)
@@ -65,7 +85,27 @@ const Map<String, Map<String, double>> vipMultiplierBonuses = {
 
 // VIP 레벨 순서 (낮은 등급 -> 높은 등급), 보너스 누적 계산 시 사용
 const List<String> vipLevelOrder = [
-  'VIP14', 'VIP13', 'VIP12', 'VIP11', 'VIP10', 'VIP9', 'VIP8', 'VIP7', 'VIP6',
-  'VIP5', 'VIP4', 'VIP3', 'VIP2', 'VIP1', 'VVIP3', 'VVIP2', 'VVIP1',
-  'SVIP3', 'SVIP2', 'SVIP1', 'SSVIP3', 'SSVIP2', 'SSVIP1',
+  'VIP14',
+  'VIP13',
+  'VIP12',
+  'VIP11',
+  'VIP10',
+  'VIP9',
+  'VIP8',
+  'VIP7',
+  'VIP6',
+  'VIP5',
+  'VIP4',
+  'VIP3',
+  'VIP2',
+  'VIP1',
+  'VVIP3',
+  'VVIP2',
+  'VVIP1',
+  'SVIP3',
+  'SVIP2',
+  'SVIP1',
+  'SSVIP3',
+  'SSVIP2',
+  'SSVIP1',
 ];

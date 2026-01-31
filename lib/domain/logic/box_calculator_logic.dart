@@ -61,8 +61,12 @@ class BoxCalculatorLogic {
         Reward(name: '금코인', quantity: 5, probability: 0.085),
         Reward(name: '속성석', quantity: 15, probability: 0.3),
         Reward(name: '씨앗', quantity: 1, probability: 0.065),
-        Reward(name: '싸움의 흔적 조각(100개 = 악세사리 1개)', quantity: 100, probability: 0.0125),
-        Reward(name: '손수건 조각(100개 = 악세사리 1개)', quantity: 100, probability: 0.0125),
+        Reward(
+            name: '싸움의 흔적 조각(100개 = 악세사리 1개)',
+            quantity: 100,
+            probability: 0.0125),
+        Reward(
+            name: '손수건 조각(100개 = 악세사리 1개)', quantity: 100, probability: 0.0125),
         Reward(name: '전설 BOX', quantity: 1, probability: 0.025),
       ],
     ),
@@ -150,8 +154,10 @@ class BoxCalculatorLogic {
           if (reward.name == '희귀 BOX') {
             pendingRare += normalToOpen * reward.probability * reward.quantity;
           } else {
-            final expected = normalToOpen * reward.probability * reward.quantity;
-            totalExpectedQuantities.update(reward.name, (v) => v + expected, ifAbsent: () => expected);
+            final expected =
+                normalToOpen * reward.probability * reward.quantity;
+            totalExpectedQuantities.update(reward.name, (v) => v + expected,
+                ifAbsent: () => expected);
           }
         }
       }
@@ -162,10 +168,12 @@ class BoxCalculatorLogic {
         totalCost += rareToOpen * boxData.cost;
         for (final reward in boxData.rewards) {
           if (reward.name == '전설 BOX') {
-            pendingLegendary += rareToOpen * reward.probability * reward.quantity;
+            pendingLegendary +=
+                rareToOpen * reward.probability * reward.quantity;
           } else if (!boxItemNames.contains(reward.name)) {
             final expected = rareToOpen * reward.probability * reward.quantity;
-            totalExpectedQuantities.update(reward.name, (v) => v + expected, ifAbsent: () => expected);
+            totalExpectedQuantities.update(reward.name, (v) => v + expected,
+                ifAbsent: () => expected);
           }
         }
       }
@@ -176,8 +184,10 @@ class BoxCalculatorLogic {
         totalCost += legendaryToOpen * boxData.cost;
         for (final reward in boxData.rewards) {
           if (!boxItemNames.contains(reward.name)) {
-            final expected = legendaryToOpen * reward.probability * reward.quantity;
-            totalExpectedQuantities.update(reward.name, (v) => v + expected, ifAbsent: () => expected);
+            final expected =
+                legendaryToOpen * reward.probability * reward.quantity;
+            totalExpectedQuantities.update(reward.name, (v) => v + expected,
+                ifAbsent: () => expected);
           }
         }
       }
@@ -198,10 +208,12 @@ class BoxCalculatorLogic {
       totalCost += (pendingRare * boxData.cost).round();
       for (final reward in boxData.rewards) {
         if (reward.name == '전설 BOX') {
-          pendingLegendary += pendingRare * reward.probability * reward.quantity;
+          pendingLegendary +=
+              pendingRare * reward.probability * reward.quantity;
         } else if (!boxItemNames.contains(reward.name)) {
           final expected = pendingRare * reward.probability * reward.quantity;
-          totalExpectedQuantities.update(reward.name, (v) => v + expected, ifAbsent: () => expected);
+          totalExpectedQuantities.update(reward.name, (v) => v + expected,
+              ifAbsent: () => expected);
         }
       }
     }
@@ -212,13 +224,18 @@ class BoxCalculatorLogic {
       totalCost += (pendingLegendary * boxData.cost).round();
       for (final reward in boxData.rewards) {
         if (!boxItemNames.contains(reward.name)) {
-          final expected = pendingLegendary * reward.probability * reward.quantity;
-          totalExpectedQuantities.update(reward.name, (v) => v + expected, ifAbsent: () => expected);
+          final expected =
+              pendingLegendary * reward.probability * reward.quantity;
+          totalExpectedQuantities.update(reward.name, (v) => v + expected,
+              ifAbsent: () => expected);
         }
       }
     }
 
-    final results = totalExpectedQuantities.entries.map((e) => ExpectedValueResult(itemName: e.key, expectedValue: e.value)).toList();
+    final results = totalExpectedQuantities.entries
+        .map(
+            (e) => ExpectedValueResult(itemName: e.key, expectedValue: e.value))
+        .toList();
 
     // 사용자 정의 순서에 따라 결과 목록 정렬
     results.sort((a, b) {
@@ -237,9 +254,13 @@ class BoxCalculatorLogic {
 
       // 같은 그룹 내에서는 정의된 순서 또는 알파벳 순으로 정렬
       if (categoryA == 0) {
-        return _rewardSortOrderTop.indexOf(a.itemName).compareTo(_rewardSortOrderTop.indexOf(b.itemName));
+        return _rewardSortOrderTop
+            .indexOf(a.itemName)
+            .compareTo(_rewardSortOrderTop.indexOf(b.itemName));
       } else if (categoryA == 2) {
-        return _rewardSortOrderBottom.indexOf(a.itemName).compareTo(_rewardSortOrderBottom.indexOf(b.itemName));
+        return _rewardSortOrderBottom
+            .indexOf(a.itemName)
+            .compareTo(_rewardSortOrderBottom.indexOf(b.itemName));
       }
       return a.itemName.compareTo(b.itemName); // 중간 그룹은 알파벳순
     });

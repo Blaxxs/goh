@@ -71,11 +71,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
           child: Container(
             constraints: const BoxConstraints(minHeight: 40),
             decoration: BoxDecoration(
-              color: colorScheme.surface.withAlpha((0.4 * 255).round()),
-              borderRadius: BorderRadius.circular(12.0),
-              border: Border.all(color: colorScheme.secondary.withAlpha((0.5 * 255).round()))
-            ),
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
+                color: colorScheme.surface.withAlpha((0.4 * 255).round()),
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(
+                    color:
+                        colorScheme.secondary.withAlpha((0.5 * 255).round()))),
+            padding:
+                const EdgeInsets.symmetric(vertical: 10.0, horizontal: 12.0),
             alignment: Alignment.center,
             child: Text(
               text,
@@ -94,21 +96,50 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
   @override
   Widget build(BuildContext context) {
-    final Color iconColor = Theme.of(context).colorScheme.onSurface.withOpacity(0.8);
+    final Color iconColor =
+        Theme.of(context).colorScheme.onSurface.withOpacity(0.8);
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
     final double topPadding = MediaQuery.of(context).padding.top;
     final double screenHeight = MediaQuery.of(context).size.height;
 
     final List<Map<String, dynamic>> menuButtonConfigs = [
-      {'text': '루프 계산기', 'onPressed': widget.onCalculatorPressed, 'fontSize': 16.0},
-      {'text': '골드 효율 계산기', 'onPressed': widget.onGoldCalculatorPressed, 'fontSize': 16.0},
-      {'text': '데미지 계산기', 'onPressed': widget.onDamageCalculatorPressed, 'fontSize': 16.0},
-      {'text': '악세사리 도감', 'onPressed': widget.onAccessoryPressed, 'fontSize': 16.0},
+      {
+        'text': '루프 계산기',
+        'onPressed': widget.onCalculatorPressed,
+        'fontSize': 16.0
+      },
+      {
+        'text': '골드 효율 계산기',
+        'onPressed': widget.onGoldCalculatorPressed,
+        'fontSize': 16.0
+      },
+      {
+        'text': '데미지 계산기',
+        'onPressed': widget.onDamageCalculatorPressed,
+        'fontSize': 16.0
+      },
+      {
+        'text': '악세사리 도감',
+        'onPressed': widget.onAccessoryPressed,
+        'fontSize': 16.0
+      },
       {'text': '일지', 'onPressed': widget.onJournalPressed, 'fontSize': 16.0},
       if (EventManager.isEventPeriodActive())
-        {'text': '상자 기대값 계산기', 'onPressed': widget.onBoxCalculatorPressed, 'fontSize': 16.0},
-      {'text': '악세 강화 시뮬', 'onPressed': widget.onAccessoryEnhancementPressed, 'fontSize': 14.0},
-      {'text': '악세 옵변 시뮬', 'onPressed': widget.onAccessoryOptionChangePressed, 'fontSize': 14.0},
+        {
+          'text': '상자 기대값 계산기',
+          'onPressed': widget.onBoxCalculatorPressed,
+          'fontSize': 16.0
+        },
+      {
+        'text': '악세 강화 시뮬',
+        'onPressed': widget.onAccessoryEnhancementPressed,
+        'fontSize': 14.0
+      },
+      {
+        'text': '악세 옵변 시뮬',
+        'onPressed': widget.onAccessoryOptionChangePressed,
+        'fontSize': 14.0
+      },
     ];
 
     return Scaffold(
@@ -119,7 +150,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
             'assets/images/main_logo.png',
             fit: BoxFit.contain,
           ),
-          
+
           // [추가] 실시간 공지사항 영역 (화면 상단)
           if (_noticeMessage.isNotEmpty)
             Positioned(
@@ -131,11 +162,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     color: Colors.black.withOpacity(0.3),
                     child: Text(
                       _noticeMessage,
-                      style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w500),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500),
                       overflow: TextOverflow.ellipsis, // 길면 생략
                     ),
                   ),
@@ -175,7 +210,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
               ),
             ),
           ),
-          
+
           // 상단 설정 버튼 영역
           Align(
             alignment: Alignment.topRight,
@@ -188,11 +223,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: Icon(Icons.settings_suggest, color: iconColor, size: 30),
+                    icon: Icon(Icons.settings_suggest,
+                        color: iconColor, size: 30),
                     onPressed: widget.onStageSettingsPressed,
                   ),
                   IconButton(
-                    icon: Icon(Icons.settings_applications_outlined, color: iconColor, size: 30),
+                    icon: Icon(Icons.settings_applications_outlined,
+                        color: iconColor, size: 30),
                     onPressed: widget.onAppSettingsPressed,
                   ),
                 ],

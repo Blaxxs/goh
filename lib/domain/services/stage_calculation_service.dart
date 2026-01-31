@@ -4,7 +4,6 @@
 import '../../core/constants/monster_constants.dart';
 
 class StageCalculationService {
-
   int? getMonsterRequiredExp(String? monsterName, String? monsterGrade) {
     if (monsterName == null || monsterGrade == null) {
       return null;
@@ -21,9 +20,13 @@ class StageCalculationService {
     return runs.ceilToDouble();
   }
 
-  double? calculateTotalLoops(int autoSwapSlots, String? jjolCountPerStageStr, double? runsPerMonster) {
+  double? calculateTotalLoops(
+      int autoSwapSlots, String? jjolCountPerStageStr, double? runsPerMonster) {
     int? jjolCount = int.tryParse(jjolCountPerStageStr ?? '');
-    if (jjolCount == null || jjolCount <= 0 || runsPerMonster == null || runsPerMonster <= 0) {
+    if (jjolCount == null ||
+        jjolCount <= 0 ||
+        runsPerMonster == null ||
+        runsPerMonster <= 0) {
       return null;
     }
     double totalMonsters = (autoSwapSlots + jjolCount).toDouble();

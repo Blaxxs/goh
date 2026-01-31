@@ -35,12 +35,14 @@ class JournalEntry {
   // JSON 형태로부터 JournalEntry 객체 생성
   factory JournalEntry.fromJson(Map<String, dynamic> json) {
     return JournalEntry(
-      date: DateTime.parse(json['date'] as String), // ISO 8601 문자열을 DateTime으로 파싱
+      date:
+          DateTime.parse(json['date'] as String), // ISO 8601 문자열을 DateTime으로 파싱
       stage: json['stage'] as String,
       consumedSoulStones: json['consumedSoulStones'] as int,
       earnedSoulStones: json['earnedSoulStones'] as int,
       earnedGold: json['earnedGold'] as int? ?? 0, // null일 경우 0으로 초기화
-      earnedGoldDemons: json['earnedGoldDemons'] as int? ?? 0, // null일 경우 0으로 초기화
+      earnedGoldDemons:
+          json['earnedGoldDemons'] as int? ?? 0, // null일 경우 0으로 초기화
     );
   }
 }

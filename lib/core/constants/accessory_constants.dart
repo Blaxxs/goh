@@ -13,7 +13,8 @@ import '../../data/models/accessory.dart';
 /// 2. Access the loaded data via `AccessoryDataManager().allAccessories` and `AccessoryDataManager().accessoryParts`.
 class AccessoryDataManager {
   // --- Singleton Setup ---
-  static final AccessoryDataManager _instance = AccessoryDataManager._internal();
+  static final AccessoryDataManager _instance =
+      AccessoryDataManager._internal();
   factory AccessoryDataManager() {
     return _instance;
   }
@@ -29,17 +30,19 @@ class AccessoryDataManager {
   /// and automatically generates the corresponding Firebase Storage URL for the image.
   Future<void> loadAccessories() async {
     try {
-      final DatabaseReference ref = FirebaseDatabase.instance.ref('accessories');
+      final DatabaseReference ref =
+          FirebaseDatabase.instance.ref('accessories');
       final DataSnapshot snapshot = await ref.get();
 
       if (snapshot.exists && snapshot.value != null) {
-        final Map<String, dynamic> data = Map<String, dynamic>.from((snapshot.value as Map)['accessories'] as Map);
+        final Map<String, dynamic> data =
+            Map<String, dynamic>.from(snapshot.value as Map);
         final List<Accessory> loadedAccessories = [];
         final Set<String> parts = <String>{};
 
         data.forEach((key, value) {
           final accessoryData = Map<String, dynamic>.from(value as Map);
-          
+
           // Use the Firebase key as the ID. This ensures the ID is always present
           // and matches the image name in Firebase Storage.
           accessoryData['id'] = key;
@@ -59,7 +62,8 @@ class AccessoryDataManager {
         accessoryParts.sort();
 
         if (kDebugMode) {
-          print('Successfully loaded ${allAccessories.length} accessories and ${accessoryParts.length} parts.');
+          print(
+              'Successfully loaded ${allAccessories.length} accessories and ${accessoryParts.length} parts.');
         }
       } else {
         if (kDebugMode) {
@@ -76,7 +80,6 @@ class AccessoryDataManager {
     }
   }
 }
-
 
 // 옵션 이름을 상수로 관리하는 클래스
 class AccessoryOptionNames {
@@ -115,14 +118,33 @@ class AccessoryOptionNames {
   static const String spaceTravelReturnChancePercent = '우주여행 돌아올 확률 %증가';
 
   static final Set<String> _allOptionNames = {
-    atkPercent, hpPercent, activeSkillDmgPercent, basicAtkDmgPercent,
-    miniGameSkillDmgPercent, dotDmgPercent, penetrationChancePercent,
-    penetrationResistPercent, counterAttackChancePercent,
-    skillCooldownIncreaseResistPercent, allBadEffectResistPercent,
-    recoveryEffectPercent, allDmgTakenReducePercent, activeSkillDmgTakenReducePercent,
-    basicAtkDmgTakenReducePercent, dotDmgTakenReducePercent, attackPowerFlat,
-    accuracyFlat, evasionFlat, critChanceFlat, critDamageFlat, critResistFlat,
-    hpFlat, defenseFlat, hpRegenPerTurn, summonAtkFlat, rabbitMaxHpChancePercent,
+    atkPercent,
+    hpPercent,
+    activeSkillDmgPercent,
+    basicAtkDmgPercent,
+    miniGameSkillDmgPercent,
+    dotDmgPercent,
+    penetrationChancePercent,
+    penetrationResistPercent,
+    counterAttackChancePercent,
+    skillCooldownIncreaseResistPercent,
+    allBadEffectResistPercent,
+    recoveryEffectPercent,
+    allDmgTakenReducePercent,
+    activeSkillDmgTakenReducePercent,
+    basicAtkDmgTakenReducePercent,
+    dotDmgTakenReducePercent,
+    attackPowerFlat,
+    accuracyFlat,
+    evasionFlat,
+    critChanceFlat,
+    critDamageFlat,
+    critResistFlat,
+    hpFlat,
+    defenseFlat,
+    hpRegenPerTurn,
+    summonAtkFlat,
+    rabbitMaxHpChancePercent,
     spaceTravelReturnChancePercent,
   };
 

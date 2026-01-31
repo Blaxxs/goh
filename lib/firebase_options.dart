@@ -48,7 +48,8 @@ class DefaultFirebaseOptions {
     authDomain: 'gohcalculator.firebaseapp.com',
     storageBucket: 'gohcalculator.firebasestorage.app',
     measurementId: 'G-6L3MFX45JK',
-    databaseURL: 'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
@@ -57,7 +58,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '173517946754',
     projectId: 'gohcalculator',
     storageBucket: 'gohcalculator.firebasestorage.app',
-    databaseURL: 'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
@@ -67,7 +69,8 @@ class DefaultFirebaseOptions {
     projectId: 'gohcalculator',
     storageBucket: 'gohcalculator.firebasestorage.app',
     iosBundleId: 'com.example.flutterApplication',
-    databaseURL: 'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -77,7 +80,8 @@ class DefaultFirebaseOptions {
     projectId: 'gohcalculator',
     storageBucket: 'gohcalculator.firebasestorage.app',
     iosBundleId: 'com.example.flutterApplication',
-    databaseURL: 'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -88,6 +92,7 @@ class DefaultFirebaseOptions {
     authDomain: 'gohcalculator.firebaseapp.com',
     storageBucket: 'gohcalculator.firebasestorage.app',
     measurementId: 'G-WG35RR6VBV',
-    databaseURL: 'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
+    databaseURL:
+        'https://gohcalculator-default-rtdb.asia-southeast1.firebasedatabase.app',
   );
 }

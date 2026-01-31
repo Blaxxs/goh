@@ -55,15 +55,21 @@ class SettingsScreenUI extends StatelessWidget {
           const SizedBox(width: 8),
           Expanded(
             flex: 30,
-            child: Text('클리어 시간(초)', style: headerStyle, textAlign: TextAlign.center),
+            child: Text('클리어 시간(초)',
+                style: headerStyle, textAlign: TextAlign.center),
           ),
           const SizedBox(width: 8),
           Expanded(
             flex: 20,
-            child: Text('쫄 갯수', style: headerStyle, textAlign: TextAlign.center),
+            child:
+                Text('쫄 갯수', style: headerStyle, textAlign: TextAlign.center),
           ),
           const SizedBox(width: 8),
-          Expanded(flex: 17, child: Text('임의설정', style: headerStyle, textAlign: TextAlign.center)), // 비율 조정을 통해 15% 감소
+          Expanded(
+              flex: 17,
+              child: Text('임의설정',
+                  style: headerStyle,
+                  textAlign: TextAlign.center)), // 비율 조정을 통해 15% 감소
         ],
       ),
     );
@@ -71,10 +77,13 @@ class SettingsScreenUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle saveButtonStyle = Theme.of(context).elevatedButtonTheme.style ?? ElevatedButton.styleFrom();
+    final ButtonStyle saveButtonStyle =
+        Theme.of(context).elevatedButtonTheme.style ??
+            ElevatedButton.styleFrom();
     final ButtonStyle resetButtonStyle = OutlinedButton.styleFrom(
-       foregroundColor: Theme.of(context).colorScheme.error,
-       side: BorderSide(color: Theme.of(context).colorScheme.error.withAlpha(150)),
+      foregroundColor: Theme.of(context).colorScheme.error,
+      side:
+          BorderSide(color: Theme.of(context).colorScheme.error.withAlpha(150)),
     );
     final theme = Theme.of(context);
     // 스테이지 목록에 적용할 30% 감소된 폰트 스타일
@@ -86,15 +95,21 @@ class SettingsScreenUI extends StatelessWidget {
 
     // 테마에서 현재 적용된 titleMedium 폰트 크기를 가져옵니다.
     // (기본 16.0 * (2/3) * 사용자 설정 배율)이 적용된 값입니다.
-    final double titleMediumFontSize = theme.textTheme.titleMedium?.fontSize ?? (16.0 * (2.0/3.0)); 
+    final double titleMediumFontSize =
+        theme.textTheme.titleMedium?.fontSize ?? (16.0 * (2.0 / 3.0));
 
     // TextFormField와 Dropdown의 contentPadding 계산
     const double textFormFieldVerticalPadding = 12.0;
-    const EdgeInsets textFormFieldContentPadding = EdgeInsets.symmetric(horizontal: 10.0, vertical: textFormFieldVerticalPadding);
-    
+    const EdgeInsets textFormFieldContentPadding = EdgeInsets.symmetric(
+        horizontal: 10.0, vertical: textFormFieldVerticalPadding);
+
     // 드롭다운 아이콘이 텍스트보다 클 경우를 고려하여 드롭다운의 수직 패딩을 동적으로 조정
-    final double dropdownCalculatedVerticalPadding = (textFormFieldVerticalPadding - titleMediumFontSize * 0.25).clamp(9.0, textFormFieldVerticalPadding); // 최소 클램핑 값을 8.0에서 9.0으로 조정
-    final EdgeInsets dropdownInputDecorationContentPadding = EdgeInsets.symmetric(horizontal: 10.0, vertical: dropdownCalculatedVerticalPadding);
+    final double dropdownCalculatedVerticalPadding =
+        (textFormFieldVerticalPadding - titleMediumFontSize * 0.25).clamp(
+            9.0, textFormFieldVerticalPadding); // 최소 클램핑 값을 8.0에서 9.0으로 조정
+    final EdgeInsets dropdownInputDecorationContentPadding =
+        EdgeInsets.symmetric(
+            horizontal: 10.0, vertical: dropdownCalculatedVerticalPadding);
     final double dynamicIconSize = titleMediumFontSize * 1.7; // 아이콘 크기도 동적으로 계산
 
     // 스테이지 이름을 한글 가나다순으로 정렬
@@ -105,7 +120,7 @@ class SettingsScreenUI extends StatelessWidget {
       appBar: AppBar(
         leading: isSetupMode // isSetupMode에 따라 뒤로가기 버튼 표시 여부 결정
             ? null // 최초 설정 모드에서는 뒤로가기 버튼 숨김
-            : IconButton( 
+            : IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -118,7 +133,8 @@ class SettingsScreenUI extends StatelessWidget {
           ),
         ),
       ),
-      body: SafeArea( // 네비게이션 바와 겹침 방지
+      body: SafeArea(
+        // 네비게이션 바와 겹침 방지
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
           child: Form(
@@ -141,10 +157,13 @@ class SettingsScreenUI extends StatelessWidget {
                           contentPadding: textFormFieldContentPadding,
                         ),
                         validator: (value) {
-                          if (isSetupMode && (value == null || value.isEmpty)) { // 최초 설정 모드일 때 필수 검사
+                          if (isSetupMode && (value == null || value.isEmpty)) {
+                            // 최초 설정 모드일 때 필수 검사
                             return '팀 레벨 필수';
                           }
-                          if (int.tryParse(value!) == null) { return '숫자만'; }
+                          if (int.tryParse(value!) == null) {
+                            return '숫자만';
+                          }
                           return null;
                         },
                       ),
@@ -163,10 +182,13 @@ class SettingsScreenUI extends StatelessWidget {
                           contentPadding: textFormFieldContentPadding,
                         ),
                         validator: (value) {
-                          if (isSetupMode && (value == null || value.isEmpty)) { // 최초 설정 모드일 때 필수 검사
+                          if (isSetupMode && (value == null || value.isEmpty)) {
+                            // 최초 설정 모드일 때 필수 검사
                             return '달기지 레벨 필수';
                           }
-                          if (int.tryParse(value!) == null) { return '숫자만'; }
+                          if (int.tryParse(value!) == null) {
+                            return '숫자만';
+                          }
                           return null;
                         },
                       ),
@@ -178,7 +200,8 @@ class SettingsScreenUI extends StatelessWidget {
                         decoration: InputDecoration(
                           labelText: 'VIP 등급', // 레이블 추가
                           isDense: true,
-                          contentPadding: dropdownInputDecorationContentPadding, // 드롭다운용 패딩 사용
+                          contentPadding:
+                              dropdownInputDecorationContentPadding, // 드롭다운용 패딩 사용
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -186,38 +209,51 @@ class SettingsScreenUI extends StatelessWidget {
                         isExpanded: true,
                         buttonStyleData: ButtonStyleData(
                           // height: 50, // 고정 높이 제거
-                          padding: const EdgeInsets.only(left: 0, right: 10), // VIP 드롭다운 오른쪽 패딩 조정
+                          padding: const EdgeInsets.only(
+                              left: 0, right: 10), // VIP 드롭다운 오른쪽 패딩 조정
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8.0),
-                            color: theme.inputDecorationTheme.fillColor ?? theme.canvasColor,
+                            color: theme.inputDecorationTheme.fillColor ??
+                                theme.canvasColor,
                           ),
                         ),
-                        hint: Container(alignment: Alignment.centerLeft, child: Text('VIP 등급', style: (theme.textTheme.titleMedium ?? const TextStyle(fontSize: 14.0)).copyWith(color: theme.hintColor), softWrap: false, overflow: TextOverflow.ellipsis)),
+                        hint: Container(
+                            alignment: Alignment.centerLeft,
+                            child: Text('VIP 등급',
+                                style: (theme.textTheme.titleMedium ??
+                                        const TextStyle(fontSize: 14.0))
+                                    .copyWith(color: theme.hintColor),
+                                softWrap: false,
+                                overflow: TextOverflow.ellipsis)),
                         items: vipLevels.map((String item) {
                           return DropdownMenuItem<String>(
                             value: item,
                             child: Text(
                               item, overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleMedium, // 테마 폰트 스타일 직접 사용
+                              style: theme
+                                  .textTheme.titleMedium, // 테마 폰트 스타일 직접 사용
                             ),
                           );
                         }).toList(),
                         value: selectedVipLevel,
                         onChanged: onVipLevelChanged,
                         validator: (value) {
-                          if (isSetupMode && (value == null || value.isEmpty)) { // 최초 설정 모드일 때 필수 검사
+                          if (isSetupMode && (value == null || value.isEmpty)) {
+                            // 최초 설정 모드일 때 필수 검사
                             return 'VIP 등급 필수';
                           }
                           return null;
                         },
-                        iconStyleData: IconStyleData( // const 제거
-                          icon: const Icon(Icons.arrow_drop_down, color: Colors.grey), // Icon은 const 유지 가능
+                        iconStyleData: IconStyleData(
+                          // const 제거
+                          icon: const Icon(Icons.arrow_drop_down,
+                              color: Colors.grey), // Icon은 const 유지 가능
                           iconSize: dynamicIconSize, // 계산된 동적 아이콘 크기 사용
                         ),
                         dropdownStyleData: DropdownStyleData(
                           maxHeight: 300,
                           offset: const Offset(0, -4),
-                           decoration: BoxDecoration(
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           scrollbarTheme: ScrollbarThemeData(
@@ -234,10 +270,12 @@ class SettingsScreenUI extends StatelessWidget {
                           return vipLevels.map((item) {
                             return Container(
                               alignment: Alignment.centerLeft, // 텍스트를 왼쪽에 정렬
-                              padding: const EdgeInsets.symmetric(horizontal: 0.0), // 필요시 패딩 조정
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 0.0), // 필요시 패딩 조정
                               child: Text(
                                 item,
-                                style: theme.textTheme.titleMedium, // 테마 폰트 스타일 직접 사용
+                                style: theme
+                                    .textTheme.titleMedium, // 테마 폰트 스타일 직접 사용
                                 softWrap: false, // 한 줄로 표시
                                 overflow: TextOverflow.ellipsis, // 넘칠 경우 ... 처리
                               ),
@@ -253,7 +291,9 @@ class SettingsScreenUI extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text('스테이지별 설정', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                const Text('스테이지별 설정',
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 _buildStageSettingsHeader(context),
                 const Divider(height: 1),
@@ -283,9 +323,12 @@ class SettingsScreenUI extends StatelessWidget {
                               controller: clearTimeControllers[stageName],
                               style: reducedListTextStyle,
                               textAlign: TextAlign.center,
-                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                              keyboardType:
+                                  const TextInputType.numberWithOptions(
+                                      decimal: true),
                               inputFormatters: [
-                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
+                                FilteringTextInputFormatter.allow(
+                                    RegExp(r'^\d*\.?\d{0,2}$')),
                               ],
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(),
@@ -294,7 +337,8 @@ class SettingsScreenUI extends StatelessWidget {
                               ),
                               validator: (value) {
                                 if (value != null && value.isNotEmpty) {
-                                  final double? parsedValue = double.tryParse(value);
+                                  final double? parsedValue =
+                                      double.tryParse(value);
                                   if (parsedValue == null) {
                                     return '숫자';
                                   }
@@ -312,7 +356,8 @@ class SettingsScreenUI extends StatelessWidget {
                             child: DropdownButtonFormField2<String>(
                               decoration: InputDecoration(
                                 isDense: true,
-                                contentPadding: dropdownInputDecorationContentPadding,
+                                contentPadding:
+                                    dropdownInputDecorationContentPadding,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -320,21 +365,27 @@ class SettingsScreenUI extends StatelessWidget {
                               isExpanded: true,
                               items: jjolCounts.map((String count) {
                                 return DropdownMenuItem<String>(
-                                    value: count, child: Center(child: Text(count, style: reducedListTextStyle)));
+                                    value: count,
+                                    child: Center(
+                                        child: Text(count,
+                                            style: reducedListTextStyle)));
                               }).toList(),
                               value: selectedJjolCounts[stageName],
                               onChanged: (String? value) {
                                 onJjolCountChanged(stageName, value);
                               },
                               buttonStyleData: ButtonStyleData(
-                                padding: const EdgeInsets.only(left: 0, right: 10),
+                                padding:
+                                    const EdgeInsets.only(left: 0, right: 10),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
-                                  color: theme.inputDecorationTheme.fillColor ?? theme.canvasColor,
+                                  color: theme.inputDecorationTheme.fillColor ??
+                                      theme.canvasColor,
                                 ),
                               ),
                               iconStyleData: IconStyleData(
-                                icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                                icon: const Icon(Icons.arrow_drop_down,
+                                    color: Colors.grey),
                                 iconSize: dynamicIconSize,
                               ),
                               dropdownStyleData: DropdownStyleData(
@@ -346,7 +397,8 @@ class SettingsScreenUI extends StatelessWidget {
                                 scrollbarTheme: ScrollbarThemeData(
                                   radius: const Radius.circular(40),
                                   thickness: WidgetStateProperty.all(6),
-                                  thumbVisibility: WidgetStateProperty.all(true),
+                                  thumbVisibility:
+                                      WidgetStateProperty.all(true),
                                 ),
                               ),
                               menuItemStyleData: const MenuItemStyleData(
@@ -374,10 +426,14 @@ class SettingsScreenUI extends StatelessWidget {
                             child: IconButton(
                               onPressed: () {
                                 final random = Random();
-                                final randomClearTime = (random.nextInt(31) + 30).toString(); // 30 ~ 60
-                                final randomJjolCount = (random.nextInt(4) + 1).toString(); // 1 ~ 4
+                                final randomClearTime =
+                                    (random.nextInt(31) + 30)
+                                        .toString(); // 30 ~ 60
+                                final randomJjolCount =
+                                    (random.nextInt(4) + 1).toString(); // 1 ~ 4
 
-                                clearTimeControllers[stageName]?.text = randomClearTime;
+                                clearTimeControllers[stageName]?.text =
+                                    randomClearTime;
                                 onJjolCountChanged(stageName, randomJjolCount);
                               },
                               icon: const Icon(Icons.casino_outlined),
@@ -423,11 +479,13 @@ class SettingsScreenUI extends StatelessWidget {
                 // const SizedBox(height: 12), // "모든 값 임의 설정" 버튼과 하단 버튼들 사이 간격
                 //여기 위까지
                 if (isSetupMode) // 최초 설정 모드일 때 "설정 완료" 버튼 표시
-                  SizedBox( // 버튼 너비를 화면에 맞게 조절하기 위해 SizedBox 사용
+                  SizedBox(
+                    // 버튼 너비를 화면에 맞게 조절하기 위해 SizedBox 사용
                     width: double.infinity,
                     child: ElevatedButton(
                       style: saveButtonStyle.copyWith(
-                        padding: WidgetStateProperty.all(const EdgeInsets.symmetric(vertical: 12)),
+                        padding: WidgetStateProperty.all(
+                            const EdgeInsets.symmetric(vertical: 12)),
                       ),
                       onPressed: () {
                         if (formKey.currentState?.validate() ?? false) {
@@ -435,15 +493,17 @@ class SettingsScreenUI extends StatelessWidget {
                           // 홈 화면 대신 루프 계산기 화면으로 이동
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const CalculatorScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const CalculatorScreen()),
                           );
                         } else {
-                           ScaffoldMessenger.of(context).showSnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('필수 항목을 모두 입력해주세요.')),
                           );
                         }
                       },
-                      child: const Text('설정 완료', style: TextStyle(fontSize: 16)),
+                      child:
+                          const Text('설정 완료', style: TextStyle(fontSize: 16)),
                     ),
                   )
                 else // 일반 모드일 때 기존 버튼들 표시

@@ -68,7 +68,7 @@ class EventManager {
     },
   };
 
- // 활성화된 이벤트 스테이지 ID 목록 반환
+  // 활성화된 이벤트 스테이지 ID 목록 반환
   static List<String> get eventStageIds {
     if (!isEventPeriodActive()) {
       return [];

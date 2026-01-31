@@ -87,40 +87,40 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   // 에러 UI 생성 헬퍼 위젯
   Widget _buildErrorUI(Object? error) {
-     return Scaffold(
-       body: Center(
-         child: Padding(
-           padding: const EdgeInsets.all(16.0),
-           child: Column(
-             mainAxisAlignment: MainAxisAlignment.center,
-             children: [
-               const Icon(Icons.error_outline, color: Colors.red, size: 60),
-               const SizedBox(height: 20),
-               const Text(
-                 '앱 초기화 중 오류가 발생했습니다.',
-                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                 textAlign: TextAlign.center,
-               ),
-               const SizedBox(height: 10),
-               Text(
-                 error.toString(), // 실제 에러 메시지 표시
-                 textAlign: TextAlign.center,
-               ),
-               const SizedBox(height: 20),
-               ElevatedButton(
-                 onPressed: () {
-                   // 오류 발생 시에도 기본값으로 메인 화면 이동 시도
-                   Navigator.pushReplacement(
-                     context,
-                     MaterialPageRoute(builder: (_) => const MainScreen()),
-                   );
-                 },
-                 child: const Text('기본값으로 계속하기'),
-               )
-             ],
-           ),
-         ),
-       ),
-     );
-   }
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.error_outline, color: Colors.red, size: 60),
+              const SizedBox(height: 20),
+              const Text(
+                '앱 초기화 중 오류가 발생했습니다.',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Text(
+                error.toString(), // 실제 에러 메시지 표시
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // 오류 발생 시에도 기본값으로 메인 화면 이동 시도
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MainScreen()),
+                  );
+                },
+                child: const Text('기본값으로 계속하기'),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

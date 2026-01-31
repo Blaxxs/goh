@@ -23,7 +23,8 @@ class CalculatorScreen extends StatefulWidget {
 }
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
-  CalculatorSettings _currentCalcSettings = CalculatorSettings(selectedLeader: leaderList[0]);
+  CalculatorSettings _currentCalcSettings =
+      CalculatorSettings(selectedLeader: leaderList[0]);
 
   int _calculatedMaxStamina = 0;
   int _calculatedAutoSwapSlots = 0;
@@ -39,7 +40,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   bool _hideUnconfiguredStages = false;
 
   final CalculatorLogic _calculatorLogic = CalculatorLogic();
-  final StageCalculationService _stageCalculationService = StageCalculationService();
+  final StageCalculationService _stageCalculationService =
+      StageCalculationService();
   Timer? _dialogCloseTimer;
 
   final NumberFormat _integerFormatter = NumberFormat('#,##0');
@@ -55,7 +57,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     super.initState();
     _currentCalcSettings = SettingsService.instance.calculatorSettings;
     _selectedTimeFormat = '시/분';
-    _hideUnconfiguredStages = SettingsService.instance.appSettings.hideUnconfiguredStagesInCalculator;
+    _hideUnconfiguredStages =
+        SettingsService.instance.appSettings.hideUnconfiguredStagesInCalculator;
     // 저장된 정렬 옵션 로드, 없으면 기본값
     _selectedSortOption = CalculatorSortOption.values.firstWhere(
       (e) => e.toString() == _currentCalcSettings.calculatorSortOption,
@@ -73,7 +76,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     _dialogCloseTimer?.cancel();
     // 계산기 설정 저장 (메모리 -> 파일)
     // dispose 시점에 _selectedSortOption을 _currentCalcSettings에 반영하여 저장
-    final settingsToSave = _currentCalcSettings.copyWith(calculatorSortOption: _selectedSortOption.toString());
+    final settingsToSave = _currentCalcSettings.copyWith(
+        calculatorSortOption: _selectedSortOption.toString());
     SettingsService.instance.saveCalculatorSettings(settingsToSave);
     super.dispose();
   }
@@ -85,24 +89,28 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final requiredMonsterExpStr = _requiredMonsterExp != null
         ? _integerFormatter.format(_requiredMonsterExp)
         : '몬스터 선택 필요';
-    final calculatedMaxStaminaStr = _integerFormatter.format(_calculatedMaxStamina);
-    final calculatedAutoSwapSlotsStr = _integerFormatter.format(_calculatedAutoSwapSlots);
+    final calculatedMaxStaminaStr =
+        _integerFormatter.format(_calculatedMaxStamina);
+    final calculatedAutoSwapSlotsStr =
+        _integerFormatter.format(_calculatedAutoSwapSlots);
 
     const fadeDuration = Duration(milliseconds: 300);
     showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      barrierColor: Colors.black54,
-      transitionDuration: fadeDuration,
-      pageBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation) {
-        return StatefulBuilder(
-          builder: (BuildContext dialogContext, StateSetter setState) {
+        context: context,
+        barrierDismissible: true,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.black54,
+        transitionDuration: fadeDuration,
+        pageBuilder: (BuildContext buildContext, Animation<double> animation,
+            Animation<double> secondaryAnimation) {
+          return StatefulBuilder(
+              builder: (BuildContext dialogContext, StateSetter setState) {
             if (_dialogCloseTimer == null || !_dialogCloseTimer!.isActive) {
-                _dialogCloseTimer = Timer(const Duration(seconds: 3), () {
-                  if (dialogContext.mounted) Navigator.pop(dialogContext);
-                });
-              }
+              _dialogCloseTimer = Timer(const Duration(seconds: 3), () {
+                if (dialogContext.mounted) Navigator.pop(dialogContext);
+              });
+            }
             return AlertDialog(
               title: const Text("기본 정보"),
               content: SingleChildScrollView(
@@ -132,16 +140,17 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 ),
               ],
             );
-          }
-        );
-      },
-      transitionBuilder: (BuildContext buildContext, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
-        return FadeTransition(
-          opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
-          child: child,
-        );
-      }
-    ).whenComplete(() {
+          });
+        },
+        transitionBuilder: (BuildContext buildContext,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child) {
+          return FadeTransition(
+            opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+            child: child,
+          );
+        }).whenComplete(() {
       _dialogCloseTimer?.cancel();
       _dialogCloseTimer = null;
     });
@@ -155,6 +164,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       MaterialPageRoute(builder: (context) => const SettingsScreen()),
     );
   }
+
   // 스테이지 위치 스낵바 표시
   void _showStageLocationSnackBar(String location) {
     if (!mounted) return;
@@ -182,11 +192,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 _buildDetailRow('최종 경험치 (루프 당):', data.finalExpPerLoopStr),
                 const SizedBox(height: 8),
                 _buildDetailRow('기본 골드:', data.baseGoldStr),
-                _buildDetailRow('최종 골드 (루프 당):', data.finalGoldPerSingleLoopStr),
+                _buildDetailRow(
+                    '최종 골드 (루프 당):', data.finalGoldPerSingleLoopStr),
                 const SizedBox(height: 8),
-                 _buildDetailRow('클리어 시간 설정:', data.configuredClearTime), // 설정값 표시 추가
-                 _buildDetailRow('쫄 개수 설정:', data.configuredJjolCount), // 설정값 표시 추가
-                 const SizedBox(height: 8),
+                _buildDetailRow(
+                    '클리어 시간 설정:', data.configuredClearTime), // 설정값 표시 추가
+                _buildDetailRow(
+                    '쫄 개수 설정:', data.configuredJjolCount), // 설정값 표시 추가
+                const SizedBox(height: 8),
                 _buildDetailRow('쫄 1마리 만렙까지 클리어:', data.runsToMaxStr),
                 _buildDetailRow('전체 루프 종료까지 클리어:', data.totalLoopsStr),
                 _buildDetailRow('총 소모 스테미너:', data.totalStaminaStr),
@@ -222,28 +235,41 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   Future<void> _updateDerivedData({bool updateStageResults = true}) async {
     if (!mounted) return; // 위젯이 마운트되지 않았으면 중단
 
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
 
     final stageSettings = SettingsService.instance.stageSettings;
-    _calculatedMaxStamina = _calculatorLogic.calculateMaxStamina(stageSettings.teamLevel, stageSettings.vipLevel);
-    _calculatedAutoSwapSlots = _calculatorLogic.calculateAutoSwapSlots(stageSettings.vipLevel, stageSettings.dalgijiLevel);
-    _requiredMonsterExp = _stageCalculationService.getMonsterRequiredExp(_currentCalcSettings.selectedMonsterName, _currentCalcSettings.selectedMonsterGrade);
+    _calculatedMaxStamina = _calculatorLogic.calculateMaxStamina(
+        stageSettings.teamLevel, stageSettings.vipLevel);
+    _calculatedAutoSwapSlots = _calculatorLogic.calculateAutoSwapSlots(
+        stageSettings.vipLevel, stageSettings.dalgijiLevel);
+    _requiredMonsterExp = _stageCalculationService.getMonsterRequiredExp(
+        _currentCalcSettings.selectedMonsterName,
+        _currentCalcSettings.selectedMonsterGrade);
 
     List<StageDisplayData>? newStageResultsData;
     double? newMaxPositiveSoulStoneValue;
 
     if (updateStageResults) {
       // 스테이지 결과 데이터 준비 (비동기 처리 될 수 있음)
-      newStageResultsData = await _prepareStageDisplayData(requiredExp: _requiredMonsterExp, autoSwapSlots: _calculatedAutoSwapSlots);
+      newStageResultsData = await _prepareStageDisplayData(
+          requiredExp: _requiredMonsterExp,
+          autoSwapSlots: _calculatedAutoSwapSlots);
       // 최대 양수 영혼석 값 계산
-      newMaxPositiveSoulStoneValue = _findMaxPositiveSoulStone(newStageResultsData);
+      newMaxPositiveSoulStoneValue =
+          _findMaxPositiveSoulStone(newStageResultsData);
 
       // --- 정렬 로직 적용 ---
       newStageResultsData.sort((a, b) {
         switch (_selectedSortOption) {
           case CalculatorSortOption.soulStone:
-            double? valA = _showSoulStonesPerMinute ? a.soulStonesPerMinValue : a.soulStonesValue;
-            double? valB = _showSoulStonesPerMinute ? b.soulStonesPerMinValue : b.soulStonesValue;
+            double? valA = _showSoulStonesPerMinute
+                ? a.soulStonesPerMinValue
+                : a.soulStonesValue;
+            double? valB = _showSoulStonesPerMinute
+                ? b.soulStonesPerMinValue
+                : b.soulStonesValue;
             if (a.settingsIncomplete && !b.settingsIncomplete) return 1;
             if (!a.settingsIncomplete && b.settingsIncomplete) return -1;
             if (a.settingsIncomplete && b.settingsIncomplete) return 0;
@@ -252,8 +278,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
             if (valA == null && valB == null) return 0;
             return valB!.compareTo(valA!);
           case CalculatorSortOption.gold:
-            double? valA = _showGoldPerMinute ? _parseGoldString(a.goldPerMinStr) : _parseGoldString(a.loopGoldStr);
-            double? valB = _showGoldPerMinute ? _parseGoldString(b.goldPerMinStr) : _parseGoldString(b.loopGoldStr);
+            double? valA = _showGoldPerMinute
+                ? _parseGoldString(a.goldPerMinStr)
+                : _parseGoldString(a.loopGoldStr);
+            double? valB = _showGoldPerMinute
+                ? _parseGoldString(b.goldPerMinStr)
+                : _parseGoldString(b.loopGoldStr);
             if (a.settingsIncomplete && !b.settingsIncomplete) return 1;
             if (!a.settingsIncomplete && b.settingsIncomplete) return -1;
             if (a.settingsIncomplete && b.settingsIncomplete) return 0;
@@ -277,7 +307,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         if (newStageResultsData != null) {
           _stageDisplayResults = newStageResultsData;
         }
-        _maxPositiveSoulStoneValue = newMaxPositiveSoulStoneValue ?? _findMaxPositiveSoulStone(_stageDisplayResults);
+        _maxPositiveSoulStoneValue = newMaxPositiveSoulStoneValue ??
+            _findMaxPositiveSoulStone(_stageDisplayResults);
         _isLoading = false;
       });
     }
@@ -289,8 +320,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     return double.tryParse(goldStr.replaceAll(',', ''));
   }
 
-
-   // 결과 리스트에서 가장 높은 양수 영혼석 값 찾기 (루프 또는 분당)
+  // 결과 리스트에서 가장 높은 양수 영혼석 값 찾기 (루프 또는 분당)
   double? _findMaxPositiveSoulStone(List<StageDisplayData> results) {
     double? maxVal;
     for (var data in results) {
@@ -312,7 +342,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     if (!mounted) return;
     SettingsService.instance.updateCalculatorSettingsInMemory(newSettings);
     setState(() {
-       _currentCalcSettings = newSettings;
+      _currentCalcSettings = newSettings;
     });
     _updateDerivedData();
   }
@@ -323,7 +353,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final currentGrade = _currentCalcSettings.selectedMonsterGrade;
     String? finalGrade = currentGrade;
     bool gradeResetNeeded = false;
-    if (newMonsterName != null && currentGrade == '6성' &&
+    if (newMonsterName != null &&
+        currentGrade == '6성' &&
         (newMonsterName == '까마귀' || newMonsterName == '요원')) {
       finalGrade = null;
       gradeResetNeeded = true;
@@ -353,157 +384,276 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     int? requiredExp,
     int autoSwapSlots,
   ) {
-    final currentStageBaseData = stageBaseData; // stage_constants.dart에서 getter를 통해 가져옴
+    final currentStageBaseData =
+        stageBaseData; // stage_constants.dart에서 getter를 통해 가져옴
     final currentClearTimeStr = stageSettings.stageClearTimes[stageName];
     final jjolCountPerStageStr = stageSettings.stageJjolCounts[stageName];
 
-    final bool settingsIncomplete = (currentClearTimeStr == null || currentClearTimeStr.isEmpty || double.tryParse(currentClearTimeStr) == null || double.parse(currentClearTimeStr) <= 0) ||
-                                  (jjolCountPerStageStr == null || jjolCountPerStageStr.isEmpty);
+    final bool settingsIncomplete = (currentClearTimeStr == null ||
+            currentClearTimeStr.isEmpty ||
+            double.tryParse(currentClearTimeStr) == null ||
+            double.parse(currentClearTimeStr) <= 0) ||
+        (jjolCountPerStageStr == null || jjolCountPerStageStr.isEmpty);
 
-    final finalExpPerLoop = _calculatorLogic.calculateFinalExpPerLoop( stageName, calcSettings.expHotTime, calcSettings.expBoost, calcSettings.pass, calcSettings.reverseElement, stageSettings.vipLevel);
-    final finalGoldPerSingleLoop = _calculatorLogic.calculateFinalGoldPerLoop( stageName, calcSettings.goldHotTime, calcSettings.goldBoost, stageSettings.vipLevel, calcSettings.selectedLeader);
-    final runsToMax = _stageCalculationService.calculateRunsToMax( finalExpPerLoop, requiredExp);
-    final totalLoops = _stageCalculationService.calculateTotalLoops( autoSwapSlots, jjolCountPerStageStr, runsToMax);
-    
+    final finalExpPerLoop = _calculatorLogic.calculateFinalExpPerLoop(
+        stageName,
+        calcSettings.expHotTime,
+        calcSettings.expBoost,
+        calcSettings.pass,
+        calcSettings.reverseElement,
+        stageSettings.vipLevel);
+    final finalGoldPerSingleLoop = _calculatorLogic.calculateFinalGoldPerLoop(
+        stageName,
+        calcSettings.goldHotTime,
+        calcSettings.goldBoost,
+        stageSettings.vipLevel,
+        calcSettings.selectedLeader);
+    final runsToMax = _stageCalculationService.calculateRunsToMax(
+        finalExpPerLoop, requiredExp);
+    final totalLoops = _stageCalculationService.calculateTotalLoops(
+        autoSwapSlots, jjolCountPerStageStr, runsToMax);
+
     double? batchesNeeded;
     int? jjolCount = int.tryParse(jjolCountPerStageStr ?? '');
     if (jjolCount != null && jjolCount > 0 && autoSwapSlots >= 0) {
       double totalMonsters = (autoSwapSlots + jjolCount).toDouble();
       batchesNeeded = (totalMonsters / jjolCount).ceilToDouble();
     }
-    
+
     double? totalLoopGold;
     if (runsToMax != null && batchesNeeded != null) {
       totalLoopGold = runsToMax * batchesNeeded * finalGoldPerSingleLoop;
     }
-    
+
     double? totalTimeInSeconds;
     double? clearTimeDouble = double.tryParse(currentClearTimeStr ?? '');
     if (totalLoops != null && clearTimeDouble != null && clearTimeDouble > 0) {
       totalTimeInSeconds = totalLoops * clearTimeDouble;
     }
-    
-    final staminaCost = (currentStageBaseData[stageName]?['staminaCost'] as num?)?.toDouble() ?? 0.0;
-    final totalStamina = (runsToMax != null && batchesNeeded != null && staminaCost > 0) ? (runsToMax * batchesNeeded * staminaCost) : null;
-    
-    final double? calculatedSoulStones = _calculatorLogic.calculateSoulStonesPerEffectiveLoop(
-        stageName: stageName, selectedMonsterGrade: calcSettings.selectedMonsterGrade, jjolCountPerStageStr: jjolCountPerStageStr,
-        autoSwapSlots: autoSwapSlots, finalExpPerLoop: finalExpPerLoop, requiredMonsterExp: requiredExp,
-        clearTimeStr: currentClearTimeStr, teamLevel: stageSettings.teamLevel, vipLevel: stageSettings.vipLevel);
-        
+
+    final staminaCost =
+        (currentStageBaseData[stageName]?['staminaCost'] as num?)?.toDouble() ??
+            0.0;
+    final totalStamina =
+        (runsToMax != null && batchesNeeded != null && staminaCost > 0)
+            ? (runsToMax * batchesNeeded * staminaCost)
+            : null;
+
+    final double? calculatedSoulStones =
+        _calculatorLogic.calculateSoulStonesPerEffectiveLoop(
+            stageName: stageName,
+            selectedMonsterGrade: calcSettings.selectedMonsterGrade,
+            jjolCountPerStageStr: jjolCountPerStageStr,
+            autoSwapSlots: autoSwapSlots,
+            finalExpPerLoop: finalExpPerLoop,
+            requiredMonsterExp: requiredExp,
+            clearTimeStr: currentClearTimeStr,
+            teamLevel: stageSettings.teamLevel,
+            vipLevel: stageSettings.vipLevel);
+
     final double goldPerMin = _calculatorLogic.calculateGoldPerMin(
-        stageName, calcSettings.goldHotTime, calcSettings.goldBoost, currentClearTimeStr, stageSettings.vipLevel, calcSettings.selectedLeader);
-        
+        stageName,
+        calcSettings.goldHotTime,
+        calcSettings.goldBoost,
+        currentClearTimeStr,
+        stageSettings.vipLevel,
+        calcSettings.selectedLeader);
+
     double? soulStonesPerMin;
-    if (calculatedSoulStones != null && totalTimeInSeconds != null && totalTimeInSeconds > 0) {
+    if (calculatedSoulStones != null &&
+        totalTimeInSeconds != null &&
+        totalTimeInSeconds > 0) {
       soulStonesPerMin = calculatedSoulStones / (totalTimeInSeconds / 60.0);
     }
-    
+
     final double expPerMin = _calculatorLogic.calculateExpPerMin(
-        stageName, calcSettings.expHotTime, calcSettings.expBoost, calcSettings.pass, calcSettings.reverseElement, currentClearTimeStr, stageSettings.vipLevel);
+        stageName,
+        calcSettings.expHotTime,
+        calcSettings.expBoost,
+        calcSettings.pass,
+        calcSettings.reverseElement,
+        currentClearTimeStr,
+        stageSettings.vipLevel);
 
     return _StageCalculationDetails(
-      settingsIncomplete: settingsIncomplete, finalExpPerLoop: finalExpPerLoop, finalGoldPerSingleLoop: finalGoldPerSingleLoop,
-      runsToMax: runsToMax, totalLoops: totalLoops, totalLoopGold: totalLoopGold, totalTimeInSeconds: totalTimeInSeconds,
-      totalStamina: totalStamina, calculatedSoulStones: calculatedSoulStones, goldPerMin: goldPerMin,
-      soulStonesPerMin: soulStonesPerMin, expPerMin: expPerMin, location: currentStageBaseData[stageName]?['location'] ?? '-',
-      configuredClearTimeRaw: currentClearTimeStr ?? '', configuredJjolCountRaw: jjolCountPerStageStr ?? '',
-      baseClearRewardExp: currentStageBaseData[stageName]?['baseClearRewardExp'],
-      baseClearRewardGold: currentStageBaseData[stageName]?['baseClearRewardGold'],
+      settingsIncomplete: settingsIncomplete,
+      finalExpPerLoop: finalExpPerLoop,
+      finalGoldPerSingleLoop: finalGoldPerSingleLoop,
+      runsToMax: runsToMax,
+      totalLoops: totalLoops,
+      totalLoopGold: totalLoopGold,
+      totalTimeInSeconds: totalTimeInSeconds,
+      totalStamina: totalStamina,
+      calculatedSoulStones: calculatedSoulStones,
+      goldPerMin: goldPerMin,
+      soulStonesPerMin: soulStonesPerMin,
+      expPerMin: expPerMin,
+      location: currentStageBaseData[stageName]?['location'] ?? '-',
+      configuredClearTimeRaw: currentClearTimeStr ?? '',
+      configuredJjolCountRaw: jjolCountPerStageStr ?? '',
+      baseClearRewardExp: currentStageBaseData[stageName]
+          ?['baseClearRewardExp'],
+      baseClearRewardGold: currentStageBaseData[stageName]
+          ?['baseClearRewardGold'],
     );
   }
 
-  StageDisplayData _formatStageDetails( String stageName, _StageCalculationDetails details, String selectedTimeFormat) {
-    final totalTimeStr = _formatDurationByUnit(details.totalTimeInSeconds, selectedTimeFormat);
-    final String soulStonesStr = details.calculatedSoulStones == null ? '-' : _integerFormatter.format(details.calculatedSoulStones!.round());
-    final String loopGoldStr = details.totalLoopGold == null ? '-' : _integerFormatter.format(details.totalLoopGold!.round());
-    
+  StageDisplayData _formatStageDetails(String stageName,
+      _StageCalculationDetails details, String selectedTimeFormat) {
+    final totalTimeStr =
+        _formatDurationByUnit(details.totalTimeInSeconds, selectedTimeFormat);
+    final String soulStonesStr = details.calculatedSoulStones == null
+        ? '-'
+        : _integerFormatter.format(details.calculatedSoulStones!.round());
+    final String loopGoldStr = details.totalLoopGold == null
+        ? '-'
+        : _integerFormatter.format(details.totalLoopGold!.round());
+
     String soulStonesPerMinStr;
-    if (details.soulStonesPerMin == null || details.soulStonesPerMin!.isNaN || details.soulStonesPerMin!.isInfinite) {
+    if (details.soulStonesPerMin == null ||
+        details.soulStonesPerMin!.isNaN ||
+        details.soulStonesPerMin!.isInfinite) {
       soulStonesPerMinStr = '-';
     } else {
       soulStonesPerMinStr = _decimalFormatter.format(details.soulStonesPerMin);
     }
-    
-    final String goldPerMinStr = (details.goldPerMin <= 0 || details.goldPerMin.isNaN || details.goldPerMin.isInfinite) ? '-' : _integerFormatter.format(details.goldPerMin.round());
-    
-    final configuredClearTimeDisplay = details.configuredClearTimeRaw.isNotEmpty == true ? '${details.configuredClearTimeRaw} 초' : '미설정';
-    final configuredJjolCountDisplay = details.configuredJjolCountRaw.isNotEmpty == true ? details.configuredJjolCountRaw : '미설정';
-    
-    final baseExpStr = details.baseClearRewardExp != null ? _integerFormatter.format(details.baseClearRewardExp) : '-';
-    final baseGoldStr = details.baseClearRewardGold != null ? _integerFormatter.format(details.baseClearRewardGold) : '-';
-    final finalExpPerLoopStr = _integerFormatter.format(details.finalExpPerLoop.round());
-    final finalGoldPerSingleLoopStr = _integerFormatter.format(details.finalGoldPerSingleLoop.round());
-    final expPerMinStrOutput = (details.expPerMin.isNaN || details.expPerMin.isInfinite) ? '-' : _integerFormatter.format(details.expPerMin.round());
-    final runsToMaxStrOutput = (details.runsToMax == null || details.runsToMax!.isNaN || details.runsToMax!.isInfinite) ? '-' : _integerFormatter.format(details.runsToMax!.round());
-    final totalLoopsStrOutput = (details.totalLoops == null || details.totalLoops!.isNaN || details.totalLoops!.isInfinite) ? '-' : _integerFormatter.format(details.totalLoops!.round());
-    final totalStaminaStrOutput = (details.totalStamina == null || details.totalStamina!.isNaN || details.totalStamina!.isInfinite) ? '-' : _integerFormatter.format(details.totalStamina!.round());
+
+    final String goldPerMinStr = (details.goldPerMin <= 0 ||
+            details.goldPerMin.isNaN ||
+            details.goldPerMin.isInfinite)
+        ? '-'
+        : _integerFormatter.format(details.goldPerMin.round());
+
+    final configuredClearTimeDisplay =
+        details.configuredClearTimeRaw.isNotEmpty == true
+            ? '${details.configuredClearTimeRaw} 초'
+            : '미설정';
+    final configuredJjolCountDisplay =
+        details.configuredJjolCountRaw.isNotEmpty == true
+            ? details.configuredJjolCountRaw
+            : '미설정';
+
+    final baseExpStr = details.baseClearRewardExp != null
+        ? _integerFormatter.format(details.baseClearRewardExp)
+        : '-';
+    final baseGoldStr = details.baseClearRewardGold != null
+        ? _integerFormatter.format(details.baseClearRewardGold)
+        : '-';
+    final finalExpPerLoopStr =
+        _integerFormatter.format(details.finalExpPerLoop.round());
+    final finalGoldPerSingleLoopStr =
+        _integerFormatter.format(details.finalGoldPerSingleLoop.round());
+    final expPerMinStrOutput =
+        (details.expPerMin.isNaN || details.expPerMin.isInfinite)
+            ? '-'
+            : _integerFormatter.format(details.expPerMin.round());
+    final runsToMaxStrOutput = (details.runsToMax == null ||
+            details.runsToMax!.isNaN ||
+            details.runsToMax!.isInfinite)
+        ? '-'
+        : _integerFormatter.format(details.runsToMax!.round());
+    final totalLoopsStrOutput = (details.totalLoops == null ||
+            details.totalLoops!.isNaN ||
+            details.totalLoops!.isInfinite)
+        ? '-'
+        : _integerFormatter.format(details.totalLoops!.round());
+    final totalStaminaStrOutput = (details.totalStamina == null ||
+            details.totalStamina!.isNaN ||
+            details.totalStamina!.isInfinite)
+        ? '-'
+        : _integerFormatter.format(details.totalStamina!.round());
 
     return StageDisplayData(
-      stageName: stageName, totalTimeStr: totalTimeStr, soulStonesStr: soulStonesStr, loopGoldStr: loopGoldStr, soulStonesPerMinStr: soulStonesPerMinStr, goldPerMinStr: goldPerMinStr, location: details.location, configuredClearTime: configuredClearTimeDisplay, configuredJjolCount: configuredJjolCountDisplay, baseExpStr: baseExpStr, baseGoldStr: baseGoldStr, finalExpPerLoopStr: finalExpPerLoopStr, finalGoldPerSingleLoopStr: finalGoldPerSingleLoopStr, expPerMinStr: expPerMinStrOutput, runsToMaxStr: runsToMaxStrOutput, totalLoopsStr: totalLoopsStrOutput, totalStaminaStr: totalStaminaStrOutput,
-      settingsIncomplete: details.settingsIncomplete, soulStonesValue: details.calculatedSoulStones, soulStonesPerMinValue: details.soulStonesPerMin,
+      stageName: stageName,
+      totalTimeStr: totalTimeStr,
+      soulStonesStr: soulStonesStr,
+      loopGoldStr: loopGoldStr,
+      soulStonesPerMinStr: soulStonesPerMinStr,
+      goldPerMinStr: goldPerMinStr,
+      location: details.location,
+      configuredClearTime: configuredClearTimeDisplay,
+      configuredJjolCount: configuredJjolCountDisplay,
+      baseExpStr: baseExpStr,
+      baseGoldStr: baseGoldStr,
+      finalExpPerLoopStr: finalExpPerLoopStr,
+      finalGoldPerSingleLoopStr: finalGoldPerSingleLoopStr,
+      expPerMinStr: expPerMinStrOutput,
+      runsToMaxStr: runsToMaxStrOutput,
+      totalLoopsStr: totalLoopsStrOutput,
+      totalStaminaStr: totalStaminaStrOutput,
+      settingsIncomplete: details.settingsIncomplete,
+      soulStonesValue: details.calculatedSoulStones,
+      soulStonesPerMinValue: details.soulStonesPerMin,
     );
   }
 
   // 스테이지 결과 표시 데이터 준비 (비동기 처리 가능)
-  Future<List<StageDisplayData>> _prepareStageDisplayData({ required int? requiredExp, required int autoSwapSlots}) async {
-      List<StageDisplayData> results = [];
-      final stageSettings = SettingsService.instance.stageSettings;
-      final calcSettings = _currentCalcSettings;
-      int stageCounter = 0;
+  Future<List<StageDisplayData>> _prepareStageDisplayData(
+      {required int? requiredExp, required int autoSwapSlots}) async {
+    List<StageDisplayData> results = [];
+    final stageSettings = SettingsService.instance.stageSettings;
+    final calcSettings = _currentCalcSettings;
+    int stageCounter = 0;
 
-      for (String stageName in stageNameList) {
-          final details = _calculateSingleStageDetails(stageName, stageSettings, calcSettings, requiredExp, autoSwapSlots);
-          results.add(_formatStageDetails(stageName, details, _selectedTimeFormat));
-          
-          stageCounter++;
-          if (stageCounter % _stageProcessingBatchSize == 0) {
-            await Future.delayed(Duration.zero);
-            if (!mounted) break;
-          }
+    for (String stageName in stageNameList) {
+      final details = _calculateSingleStageDetails(
+          stageName, stageSettings, calcSettings, requiredExp, autoSwapSlots);
+      results.add(_formatStageDetails(stageName, details, _selectedTimeFormat));
+
+      stageCounter++;
+      if (stageCounter % _stageProcessingBatchSize == 0) {
+        await Future.delayed(Duration.zero);
+        if (!mounted) break;
       }
-      await Future.delayed(Duration.zero); // Ensure one last yield if loop finishes
-      return results;
+    }
+    await Future.delayed(
+        Duration.zero); // Ensure one last yield if loop finishes
+    return results;
   }
 
   // 시간을 선택된 단위로 포맷팅하는 함수
   String _formatDurationByUnit(double? totalSeconds, String format) {
-      if (totalSeconds == null || totalSeconds.isNaN || totalSeconds.isInfinite) {
-          return '-';
-      }
-      if (totalSeconds <= 0) {
-        switch (format) {
-          case '초': return '0초';
-          case '분': return '0분';
-          case '시/분': return '00분';
-        }
-      }
-      switch (format) {
-          case '초':
-              return '${_integerFormatter.format(totalSeconds.ceil())}초';
-          case '분':
-              final int roundedMinutes = (totalSeconds / 60.0).round();
-              return '${_integerFormatter.format(roundedMinutes)}분';
-          case '시/분':
-              int roundedTotalMinutes = (totalSeconds / 60.0).round();
-              int totalHours = roundedTotalMinutes ~/ 60;
-              int minutes = roundedTotalMinutes % 60;
-              String minutesStr = minutes.toString().padLeft(2, '0');
-              if (totalHours == 0) {
-                return '$minutesStr분';
-              } else {
-                String hoursStr = totalHours.toString();
-                return '$hoursStr시간 $minutesStr분';
-              }
-      }
+    if (totalSeconds == null || totalSeconds.isNaN || totalSeconds.isInfinite) {
       return '-';
+    }
+    if (totalSeconds <= 0) {
+      switch (format) {
+        case '초':
+          return '0초';
+        case '분':
+          return '0분';
+        case '시/분':
+          return '00분';
+      }
+    }
+    switch (format) {
+      case '초':
+        return '${_integerFormatter.format(totalSeconds.ceil())}초';
+      case '분':
+        final int roundedMinutes = (totalSeconds / 60.0).round();
+        return '${_integerFormatter.format(roundedMinutes)}분';
+      case '시/분':
+        int roundedTotalMinutes = (totalSeconds / 60.0).round();
+        int totalHours = roundedTotalMinutes ~/ 60;
+        int minutes = roundedTotalMinutes % 60;
+        String minutesStr = minutes.toString().padLeft(2, '0');
+        if (totalHours == 0) {
+          return '$minutesStr분';
+        } else {
+          String hoursStr = totalHours.toString();
+          return '$hoursStr시간 $minutesStr분';
+        }
+    }
+    return '-';
   }
 
-   // 정렬 옵션 변경 핸들러
+  // 정렬 옵션 변경 핸들러
   void _handleSortOptionChanged(CalculatorSortOption? newValue) {
     if (newValue != null && _selectedSortOption != newValue) {
-      final newSettings = _currentCalcSettings.copyWith(calculatorSortOption: newValue.toString());
-      SettingsService.instance.updateCalculatorSettingsInMemory(newSettings); // 메모리 내 설정 즉시 업데이트
+      final newSettings = _currentCalcSettings.copyWith(
+          calculatorSortOption: newValue.toString());
+      SettingsService.instance
+          .updateCalculatorSettingsInMemory(newSettings); // 메모리 내 설정 즉시 업데이트
       setState(() {
         _selectedSortOption = newValue;
         _currentCalcSettings = newSettings; // 로컬 상태도 업데이트
@@ -519,7 +669,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         _hideUnconfiguredStages = value;
       });
       // Save this preference
-      SettingsService.instance.updateAppSettings(hideUnconfiguredStagesInCalculator: value);
+      SettingsService.instance
+          .updateAppSettings(hideUnconfiguredStagesInCalculator: value);
     }
   }
 
@@ -549,36 +700,43 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           onStageSettingsPressed: _navigateToStageSettings, // 콜백 전달
           onToggleSoulStoneView: () {
             if (mounted) {
-              setState(() => _showSoulStonesPerMinute = !_showSoulStonesPerMinute);
+              setState(
+                  () => _showSoulStonesPerMinute = !_showSoulStonesPerMinute);
               _updateDerivedData(updateStageResults: false);
             }
           },
           onToggleGoldView: () {
-             if (mounted) {
-               setState(() => _showGoldPerMinute = !_showGoldPerMinute);
-               _updateDerivedData(updateStageResults: false);
-             }
+            if (mounted) {
+              setState(() => _showGoldPerMinute = !_showGoldPerMinute);
+              _updateDerivedData(updateStageResults: false);
+            }
           },
-          onExpHotTimeChanged: (value) => _updateCalcSettings(_currentCalcSettings.copyWith(expHotTime: value)),
-          onGoldHotTimeChanged: (value) => _updateCalcSettings(_currentCalcSettings.copyWith(goldHotTime: value)),
-          onExpBoostChanged: (value) => _updateCalcSettings(_currentCalcSettings.copyWith(expBoost: value)),
-          onGoldBoostChanged: (value) => _updateCalcSettings(_currentCalcSettings.copyWith(goldBoost: value)),
-          onPassChanged: (value) => _updateCalcSettings(_currentCalcSettings.copyWith(pass: value)),
-          onReverseElementChanged: (value) => _updateCalcSettings(_currentCalcSettings.copyWith(reverseElement: value)),
-          onLeaderChanged: (value) => _updateCalcSettings(_currentCalcSettings.copyWith(selectedLeader: value ?? leaderList[0])),
+          onExpHotTimeChanged: (value) => _updateCalcSettings(
+              _currentCalcSettings.copyWith(expHotTime: value)),
+          onGoldHotTimeChanged: (value) => _updateCalcSettings(
+              _currentCalcSettings.copyWith(goldHotTime: value)),
+          onExpBoostChanged: (value) => _updateCalcSettings(
+              _currentCalcSettings.copyWith(expBoost: value)),
+          onGoldBoostChanged: (value) => _updateCalcSettings(
+              _currentCalcSettings.copyWith(goldBoost: value)),
+          onPassChanged: (value) =>
+              _updateCalcSettings(_currentCalcSettings.copyWith(pass: value)),
+          onReverseElementChanged: (value) => _updateCalcSettings(
+              _currentCalcSettings.copyWith(reverseElement: value)),
+          onLeaderChanged: (value) => _updateCalcSettings(_currentCalcSettings
+              .copyWith(selectedLeader: value ?? leaderList[0])),
           onMonsterNameChanged: _handleMonsterNameChanged,
           onMonsterGradeChanged: (value) {
-              _updateCalcSettings(_currentCalcSettings.copyWith(
-                  selectedMonsterGrade: () => value
-              ));
+            _updateCalcSettings(_currentCalcSettings.copyWith(
+                selectedMonsterGrade: () => value));
           },
           onTimeFormatChanged: (value) {
-              if(mounted) {
-                setState(() {
-                  _selectedTimeFormat = value ?? '시/분';
-                });
-                 _updateDerivedData();
-              }
+            if (mounted) {
+              setState(() {
+                _selectedTimeFormat = value ?? '시/분';
+              });
+              _updateDerivedData();
+            }
           },
           selectedSortOption: _selectedSortOption,
           onSortOptionChanged: _handleSortOptionChanged,
@@ -587,7 +745,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
         ),
         if (_isLoading)
           Container(
-            color: Colors.black.withAlpha((0.5 * 255).round()), // withOpacity(0.5) 대신 withAlpha 사용
+            color: Colors.black.withAlpha(
+                (0.5 * 255).round()), // withOpacity(0.5) 대신 withAlpha 사용
             child: const Center(
               child: CircularProgressIndicator(),
             ),
@@ -602,8 +761,10 @@ class _StageCalculationDetails {
   final bool settingsIncomplete;
   final double finalExpPerLoop;
   final double finalGoldPerSingleLoop;
-  final double? runsToMax; // StageCalculationService.calculateRunsToMax 반환 타입이 double?
-  final double? totalLoops; // StageCalculationService.calculateTotalLoops 반환 타입이 double?
+  final double?
+      runsToMax; // StageCalculationService.calculateRunsToMax 반환 타입이 double?
+  final double?
+      totalLoops; // StageCalculationService.calculateTotalLoops 반환 타입이 double?
   final double? totalLoopGold;
   final double? totalTimeInSeconds;
   final double? totalStamina;
@@ -618,10 +779,22 @@ class _StageCalculationDetails {
   final num? baseClearRewardGold;
 
   _StageCalculationDetails({
-    required this.settingsIncomplete, required this.finalExpPerLoop, required this.finalGoldPerSingleLoop,
-    this.runsToMax, this.totalLoops, this.totalLoopGold, this.totalTimeInSeconds, this.totalStamina,
-    this.calculatedSoulStones, required this.goldPerMin, this.soulStonesPerMin, required this.expPerMin,
-    required this.location, required this.configuredClearTimeRaw, required this.configuredJjolCountRaw,
-    this.baseClearRewardExp, this.baseClearRewardGold,
+    required this.settingsIncomplete,
+    required this.finalExpPerLoop,
+    required this.finalGoldPerSingleLoop,
+    this.runsToMax,
+    this.totalLoops,
+    this.totalLoopGold,
+    this.totalTimeInSeconds,
+    this.totalStamina,
+    this.calculatedSoulStones,
+    required this.goldPerMin,
+    this.soulStonesPerMin,
+    required this.expPerMin,
+    required this.location,
+    required this.configuredClearTimeRaw,
+    required this.configuredJjolCountRaw,
+    this.baseClearRewardExp,
+    this.baseClearRewardGold,
   });
 }

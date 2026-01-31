@@ -25,7 +25,10 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   void initState() {
     super.initState();
     // 데이터 매니저에서 부위 목록을 가져와 필터 옵션을 초기화합니다.
-    _partFilterOptions = ['전체', ...AccessoryDataManager().accessoryParts.toSet()];
+    _partFilterOptions = [
+      '전체',
+      ...AccessoryDataManager().accessoryParts.toSet()
+    ];
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -57,7 +60,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(accessory.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+          title: Text(accessory.name,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -72,18 +76,21 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                   ),
                   errorWidget: (context, url, error) => const SizedBox(
                     height: 150,
-                    child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                    child:
+                        Icon(Icons.broken_image, size: 80, color: Colors.grey),
                   ),
                 ),
                 const SizedBox(height: 16),
                 _buildDetailRow('부위', accessory.part),
                 _buildDetailRow('착용 제한', accessory.restrictions),
                 const Divider(),
-                const Text('기본 옵션', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('기본 옵션',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 ...accessory.options.map((option) => Padding(
                       padding: const EdgeInsets.symmetric(vertical: 2.0),
-                      child: Text('${option.optionName}: ${option.optionValue}'),
+                      child:
+                          Text('${option.optionName}: ${option.optionValue}'),
                     )),
               ],
             ),
@@ -119,10 +126,11 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
     // 필터링 로직을 적용합니다.
     List<Accessory> displayList = accessories.where((acc) {
-      final matchesSearch = acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
-      final matchesPart = _selectedPartFilter == null || 
-                         _selectedPartFilter == '전체' || 
-                         acc.part == _selectedPartFilter;
+      final matchesSearch =
+          acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesPart = _selectedPartFilter == null ||
+          _selectedPartFilter == '전체' ||
+          acc.part == _selectedPartFilter;
       return matchesSearch && matchesPart;
     }).toList();
 

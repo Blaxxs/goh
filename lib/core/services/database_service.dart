@@ -22,7 +22,8 @@ class DatabaseService {
       } else if (rawData is List) {
         for (var item in rawData) {
           if (item != null) {
-            accessories.add(Accessory.fromJson(Map<String, dynamic>.from(item)));
+            accessories
+                .add(Accessory.fromJson(Map<String, dynamic>.from(item)));
           }
         }
       }

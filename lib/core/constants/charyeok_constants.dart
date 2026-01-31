@@ -74,7 +74,8 @@ const List<Charyeok> charyeoks = [
     synergyEffectType: {},
     synergyEffectValues: {},
     description: '전투 시작 후 4턴동안 공격력과 체력이 n%가 된다. (단, PVE 콘텐츠에서만 적용.)',
-    fragmentSlotCounts: { // Example: Tam has fewer slots
+    fragmentSlotCounts: {
+      // Example: Tam has fewer slots
       CharyeokGrade.relic: 4,
       CharyeokGrade.legendary: 5,
     },
@@ -135,21 +136,76 @@ const List<Charyeok> charyeoks = [
     ],
     baseEffectType: CharyeokEffectType.fixedAdditionalDamage,
     baseEffectValues: {
-      CharyeokGrade.normal: [6000, 11000, 16000, 20000, 26000, 32000, 38000, 44000, 50000],
-      CharyeokGrade.advanced: [9600, 18000, 26000, 32000, 42000, 51000, 61000, 71000, 80000],
-      CharyeokGrade.rare: [18000, 33000, 48000, 60000, 78000, 96000, 114000, 132000, 150000],
-      CharyeokGrade.relic: [36000, 66000, 96000, 120000, 156000, 192000, 228000, 264000, 300000],
-      CharyeokGrade.legendary: [60000, 110000, 160000, 200000, 260000, 320000, 380000, 440000, 500000],
+      CharyeokGrade.normal: [
+        6000,
+        11000,
+        16000,
+        20000,
+        26000,
+        32000,
+        38000,
+        44000,
+        50000
+      ],
+      CharyeokGrade.advanced: [
+        9600,
+        18000,
+        26000,
+        32000,
+        42000,
+        51000,
+        61000,
+        71000,
+        80000
+      ],
+      CharyeokGrade.rare: [
+        18000,
+        33000,
+        48000,
+        60000,
+        78000,
+        96000,
+        114000,
+        132000,
+        150000
+      ],
+      CharyeokGrade.relic: [
+        36000,
+        66000,
+        96000,
+        120000,
+        156000,
+        192000,
+        228000,
+        264000,
+        300000
+      ],
+      CharyeokGrade.legendary: [
+        60000,
+        110000,
+        160000,
+        200000,
+        260000,
+        320000,
+        380000,
+        440000,
+        500000
+      ],
     },
     synergyEffectType: {},
     synergyEffectValues: {},
-    description: '전추 시작 후 1턴간 일반, 스킬, 미니게임 스킬 공격(주사위 미니게임 미포함) 시 고정 추가데미지 n을 입힌다. 해당 효과는 상대의 일반, 스킬, 미니게임 스킬 방어막 및 피해감소, 데미지 제한 효과를 무시한다.',
+    description:
+        '전추 시작 후 1턴간 일반, 스킬, 미니게임 스킬 공격(주사위 미니게임 미포함) 시 고정 추가데미지 n을 입힌다. 해당 효과는 상대의 일반, 스킬, 미니게임 스킬 방어막 및 피해감소, 데미지 제한 효과를 무시한다.',
   ),
   Charyeok(
     name: '아수라',
     englishName: 'asula',
     imagePath: 'assets/images/charyeok/asula.png',
-    availableGrades: [CharyeokGrade.rare, CharyeokGrade.relic, CharyeokGrade.legendary],
+    availableGrades: [
+      CharyeokGrade.rare,
+      CharyeokGrade.relic,
+      CharyeokGrade.legendary
+    ],
     baseEffectType: CharyeokEffectType.none,
     baseEffectValues: {},
     synergyEffectType: {
@@ -166,7 +222,11 @@ const List<Charyeok> charyeoks = [
     name: '롱기누스',
     englishName: 'longginuseu',
     imagePath: 'assets/images/charyeok/longginuseu.png',
-    availableGrades: [CharyeokGrade.rare, CharyeokGrade.relic, CharyeokGrade.legendary],
+    availableGrades: [
+      CharyeokGrade.rare,
+      CharyeokGrade.relic,
+      CharyeokGrade.legendary
+    ],
     baseEffectType: CharyeokEffectType.baseAttackIncreasePercent,
     baseEffectValues: {
       CharyeokGrade.rare: [10, 11, 12, 13, 14, 15, 16, 18, 20],
@@ -197,7 +257,11 @@ const List<Charyeok> charyeoks = [
     name: '상형권',
     englishName: 'sanghyeonggwon',
     imagePath: 'assets/images/charyeok/sanghyeonggwon.png',
-    availableGrades: [CharyeokGrade.rare, CharyeokGrade.relic, CharyeokGrade.legendary],
+    availableGrades: [
+      CharyeokGrade.rare,
+      CharyeokGrade.relic,
+      CharyeokGrade.legendary
+    ],
     baseEffectType: CharyeokEffectType.critDamageIncrease,
     baseEffectValues: {
       CharyeokGrade.rare: [70, 71, 72, 74, 78, 82, 86, 92, 100],

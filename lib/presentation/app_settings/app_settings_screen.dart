@@ -29,7 +29,8 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   Future<void> _loadAppVersion() async {
     try {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      if (mounted) { // 위젯이 여전히 마운트 상태인지 확인
+      if (mounted) {
+        // 위젯이 여전히 마운트 상태인지 확인
         setState(() {
           _appVersion = '${packageInfo.version} (${packageInfo.buildNumber})';
         });

@@ -50,7 +50,8 @@ class GoldCalculatorLogic {
     List<GoldEfficiencyResult> results = [];
     if (selectedDurationMinutes <= 0) return results;
 
-    final double totalSelectedSeconds = (selectedDurationMinutes * 60).toDouble();
+    final double totalSelectedSeconds =
+        (selectedDurationMinutes * 60).toDouble();
 
     for (String stageName in stageNameList) {
       final stageData = stageBaseData[stageName];
@@ -62,15 +63,27 @@ class GoldCalculatorLogic {
       }
 
       final String? clearTimeStr = stageSettings.stageClearTimes[stageName];
-      final double? clearTimeSeconds = double.tryParse(clearTimeStr ?? ''); // 이 값을 사용
+      final double? clearTimeSeconds =
+          double.tryParse(clearTimeStr ?? ''); // 이 값을 사용
       final String location = stageData['location'] as String? ?? '위치 정보 없음';
-      final double baseStageGold = (stageData['baseClearRewardGold'] as num?)?.toDouble() ?? 0.0;
+      final double baseStageGold =
+          (stageData['baseClearRewardGold'] as num?)?.toDouble() ?? 0.0;
 
-      final double finalGoldPerRunNoTimeNoBoostLeaderVip = _baseCalculatorLogic.calculateFinalGoldPerLoop(
-        stageName, false, false, stageSettings.vipLevel, bonusSettings.selectedLeader,
+      final double finalGoldPerRunNoTimeNoBoostLeaderVip =
+          _baseCalculatorLogic.calculateFinalGoldPerLoop(
+        stageName,
+        false,
+        false,
+        stageSettings.vipLevel,
+        bonusSettings.selectedLeader,
       );
-      final double finalGoldPerRunWithAllCurrentBonuses = _baseCalculatorLogic.calculateFinalGoldPerLoop(
-        stageName, bonusSettings.goldHotTime, bonusSettings.goldBoost, stageSettings.vipLevel, bonusSettings.selectedLeader,
+      final double finalGoldPerRunWithAllCurrentBonuses =
+          _baseCalculatorLogic.calculateFinalGoldPerLoop(
+        stageName,
+        bonusSettings.goldHotTime,
+        bonusSettings.goldBoost,
+        stageSettings.vipLevel,
+        bonusSettings.selectedLeader,
       );
 
       // clearTimeSeconds가 null이거나 0 이하일 때 (스테이지 설정 미완료 시)
@@ -92,45 +105,63 @@ class GoldCalculatorLogic {
       }
 
       // --- 이하 로직에서 clearTimeSeconds는 유효한 양수라고 가정 ---
-      final double runsOverSelectedDuration = (totalSelectedSeconds / clearTimeSeconds).floorToDouble();
+      final double runsOverSelectedDuration =
+          (totalSelectedSeconds / clearTimeSeconds).floorToDouble();
       double expectedGoldFromStage = 0;
 
       if (runsOverSelectedDuration > 0) {
-        final double baseGoldPerRunForBonusCalc = finalGoldPerRunNoTimeNoBoostLeaderVip;
+        final double baseGoldPerRunForBonusCalc =
+            finalGoldPerRunNoTimeNoBoostLeaderVip;
         double hotTimeBonusAmountPerRun = 0;
         if (bonusSettings.goldHotTime) {
-          final double goldWithHotTimeOnly = _baseCalculatorLogic.calculateFinalGoldPerLoop(
-              stageName, true, false, stageSettings.vipLevel, bonusSettings.selectedLeader);
-          hotTimeBonusAmountPerRun = goldWithHotTimeOnly - baseGoldPerRunForBonusCalc;
+          final double goldWithHotTimeOnly =
+              _baseCalculatorLogic.calculateFinalGoldPerLoop(stageName, true,
+                  false, stageSettings.vipLevel, bonusSettings.selectedLeader);
+          hotTimeBonusAmountPerRun =
+              goldWithHotTimeOnly - baseGoldPerRunForBonusCalc;
         }
         double boostBonusAmountPerRun = 0;
         if (bonusSettings.goldBoost) {
-          final double goldWithBoostOnly = _baseCalculatorLogic.calculateFinalGoldPerLoop(
-              stageName, false, true, stageSettings.vipLevel, bonusSettings.selectedLeader);
-          boostBonusAmountPerRun = goldWithBoostOnly - baseGoldPerRunForBonusCalc;
+          final double goldWithBoostOnly =
+              _baseCalculatorLogic.calculateFinalGoldPerLoop(stageName, false,
+                  true, stageSettings.vipLevel, bonusSettings.selectedLeader);
+          boostBonusAmountPerRun =
+              goldWithBoostOnly - baseGoldPerRunForBonusCalc;
         }
         double totalBonusGoldFromHotTime = 0;
         double totalBonusGoldFromBoost = 0;
         if (bonusSettings.goldHotTime) {
-            const int hotTimeDurationLimitMinutes = 120;
-            final double hotTimeDurationLimitSeconds = (hotTimeDurationLimitMinutes * 60).toDouble();
-            double runsPossibleInHotTimeWindow = (hotTimeDurationLimitSeconds / clearTimeSeconds).floorToDouble();
-            double runsActuallyInHotTime = min(runsOverSelectedDuration, runsPossibleInHotTimeWindow);
-            totalBonusGoldFromHotTime = runsActuallyInHotTime * hotTimeBonusAmountPerRun;
+          const int hotTimeDurationLimitMinutes = 120;
+          final double hotTimeDurationLimitSeconds =
+              (hotTimeDurationLimitMinutes * 60).toDouble();
+          double runsPossibleInHotTimeWindow =
+              (hotTimeDurationLimitSeconds / clearTimeSeconds).floorToDouble();
+          double runsActuallyInHotTime =
+              min(runsOverSelectedDuration, runsPossibleInHotTimeWindow);
+          totalBonusGoldFromHotTime =
+              runsActuallyInHotTime * hotTimeBonusAmountPerRun;
         }
-        if (bonusSettings.goldBoost && boostDurationMinutesFromUI != null && boostDurationMinutesFromUI > 0) {
-            final double boostDurationLimitSeconds = (boostDurationMinutesFromUI * 60).toDouble();
-            double runsPossibleInBoostWindow = (boostDurationLimitSeconds / clearTimeSeconds).floorToDouble();
-            double runsActuallyInBoost = min(runsOverSelectedDuration, runsPossibleInBoostWindow);
-            totalBonusGoldFromBoost = runsActuallyInBoost * boostBonusAmountPerRun;
+        if (bonusSettings.goldBoost &&
+            boostDurationMinutesFromUI != null &&
+            boostDurationMinutesFromUI > 0) {
+          final double boostDurationLimitSeconds =
+              (boostDurationMinutesFromUI * 60).toDouble();
+          double runsPossibleInBoostWindow =
+              (boostDurationLimitSeconds / clearTimeSeconds).floorToDouble();
+          double runsActuallyInBoost =
+              min(runsOverSelectedDuration, runsPossibleInBoostWindow);
+          totalBonusGoldFromBoost =
+              runsActuallyInBoost * boostBonusAmountPerRun;
         } else if (bonusSettings.goldBoost) {
-            totalBonusGoldFromBoost = runsOverSelectedDuration * boostBonusAmountPerRun;
+          totalBonusGoldFromBoost =
+              runsOverSelectedDuration * boostBonusAmountPerRun;
         }
-        expectedGoldFromStage = (baseGoldPerRunForBonusCalc * runsOverSelectedDuration) +
-                                totalBonusGoldFromHotTime +
-                                totalBonusGoldFromBoost;
+        expectedGoldFromStage =
+            (baseGoldPerRunForBonusCalc * runsOverSelectedDuration) +
+                totalBonusGoldFromHotTime +
+                totalBonusGoldFromBoost;
       } else {
-         results.add(GoldEfficiencyResult(
+        results.add(GoldEfficiencyResult(
           stageName: stageName,
           location: location,
           baseStageGold: baseStageGold,
@@ -141,7 +172,8 @@ class GoldCalculatorLogic {
           expectedGoldFromDemons: 0,
           totalExpectedGold: 0,
           expectedDemonCounts: {},
-          clearTimeSeconds: clearTimeSeconds, // 유효하지만 runsOverSelectedDuration이 0인 경우
+          clearTimeSeconds:
+              clearTimeSeconds, // 유효하지만 runsOverSelectedDuration이 0인 경우
         ));
         continue;
       }
@@ -149,20 +181,29 @@ class GoldCalculatorLogic {
       double expectedGoldFromDemons = 0;
       Map<String, double> expectedDemonCounts = {};
       final List<DropInfo>? drops = (stageData['drops'] as List<dynamic>?)
-          ?.whereType<DropInfo>().toList();
+          ?.whereType<DropInfo>()
+          .toList();
 
       if (drops != null && drops.isNotEmpty) {
         for (DropInfo dropInfo in drops) {
-          if (dropInfo.category == DropCategory.goldDemon && goldDemonSellPrices.containsKey(dropInfo.itemId)) {
-            double averageQuantityDropped = (dropInfo.minQuantity + dropInfo.maxQuantity) / 2.0;
-            double expectedCountOfThisDemon = runsOverSelectedDuration * dropInfo.probability * averageQuantityDropped;
-            expectedDemonCounts[dropInfo.itemId] = (expectedDemonCounts[dropInfo.itemId] ?? 0) + expectedCountOfThisDemon;
-            expectedGoldFromDemons += expectedCountOfThisDemon * (goldDemonSellPrices[dropInfo.itemId] ?? 0);
+          if (dropInfo.category == DropCategory.goldDemon &&
+              goldDemonSellPrices.containsKey(dropInfo.itemId)) {
+            double averageQuantityDropped =
+                (dropInfo.minQuantity + dropInfo.maxQuantity) / 2.0;
+            double expectedCountOfThisDemon = runsOverSelectedDuration *
+                dropInfo.probability *
+                averageQuantityDropped;
+            expectedDemonCounts[dropInfo.itemId] =
+                (expectedDemonCounts[dropInfo.itemId] ?? 0) +
+                    expectedCountOfThisDemon;
+            expectedGoldFromDemons += expectedCountOfThisDemon *
+                (goldDemonSellPrices[dropInfo.itemId] ?? 0);
           }
         }
       }
 
-      final double totalExpectedGold = expectedGoldFromStage + (sellGoldDemons ? expectedGoldFromDemons : 0);
+      final double totalExpectedGold =
+          expectedGoldFromStage + (sellGoldDemons ? expectedGoldFromDemons : 0);
 
       results.add(GoldEfficiencyResult(
         stageName: stageName,

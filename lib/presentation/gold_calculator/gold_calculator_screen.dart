@@ -8,7 +8,6 @@ import '../../core/constants/drop_item_constants.dart';
 import '../../core/constants/leader_constants.dart';
 import '../stage_settings/settings_screen.dart'; // SettingsScreen import
 
-
 // 정렬 옵션 Enum
 enum GoldSortOption { stageName, totalGold }
 
@@ -35,7 +34,8 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
   late bool _goldBoost;
   late bool _sellGoldDemons;
   bool _hideUnconfiguredStages = false; // "간략히" 보기 상태 변수
-  final TextEditingController _boostDurationController = TextEditingController();
+  final TextEditingController _boostDurationController =
+      TextEditingController();
 
   final NumberFormat _integerFormatter = NumberFormat('#,##0');
   late GoldSortOption _selectedSortOption;
@@ -47,12 +47,15 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
 
     final calculatorSettings = SettingsService.instance.calculatorSettings;
     // 4. 리더 선택 기본값을 "리더 없음"으로 설정 (leaderList[0]이 "리더 없음"이라고 가정)
-    _selectedLeader = calculatorSettings.selectedLeader ?? (leaderList.isNotEmpty ? leaderList[0] : null);
+    _selectedLeader = calculatorSettings.selectedLeader ??
+        (leaderList.isNotEmpty ? leaderList[0] : null);
     _goldHotTime = calculatorSettings.goldHotTime;
-    _hideUnconfiguredStages = SettingsService.instance.appSettings.hideUnconfiguredStagesInGoldCalculator; // 설정 로드
+    _hideUnconfiguredStages = SettingsService
+        .instance.appSettings.hideUnconfiguredStagesInGoldCalculator; // 설정 로드
     _goldBoost = calculatorSettings.goldBoost;
     _sellGoldDemons = calculatorSettings.sellGoldDemons;
-    _boostDurationController.text = calculatorSettings.goldBoostDurationMinutes?.toString() ?? '';
+    _boostDurationController.text =
+        calculatorSettings.goldBoostDurationMinutes?.toString() ?? '';
     // 저장된 정렬 옵션 로드, 없으면 기본값
     _selectedSortOption = GoldSortOption.values.firstWhere(
       (e) => e.toString() == calculatorSettings.goldCalculatorSortOption,
@@ -103,14 +106,17 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
   }
 
   void _saveCurrentSettings() {
-    final currentSettings = SettingsService.instance.calculatorSettings.copyWith(
-        selectedLeader: _selectedLeader,
-        goldHotTime: _goldHotTime,
-        goldBoost: _goldBoost,
-        goldCalculatorSelectedMinutes: _currentSelectedMinutes > 0 ? _currentSelectedMinutes : null, // 0분은 저장하지 않음 (기본값으로 처리)
-        sellGoldDemons: _sellGoldDemons,
-        goldBoostDurationMinutes: int.tryParse(_boostDurationController.text),
-        goldCalculatorSortOption: _selectedSortOption.toString(),
+    final currentSettings =
+        SettingsService.instance.calculatorSettings.copyWith(
+      selectedLeader: _selectedLeader,
+      goldHotTime: _goldHotTime,
+      goldBoost: _goldBoost,
+      goldCalculatorSelectedMinutes: _currentSelectedMinutes > 0
+          ? _currentSelectedMinutes
+          : null, // 0분은 저장하지 않음 (기본값으로 처리)
+      sellGoldDemons: _sellGoldDemons,
+      goldBoostDurationMinutes: int.tryParse(_boostDurationController.text),
+      goldCalculatorSortOption: _selectedSortOption.toString(),
     );
     SettingsService.instance.saveCalculatorSettings(currentSettings);
   }
@@ -137,8 +143,9 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
   }
 
   void _onBoostDurationChanged() {
-     _calculateEfficiencies();
+    _calculateEfficiencies();
   }
+
   // 스테이지 설정 화면으로 이동하는 함수
   void _navigateToStageSettings() {
     if (!mounted) return;
@@ -147,6 +154,7 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
       MaterialPageRoute(builder: (context) => const SettingsScreen()),
     );
   }
+
   // 분 입력 필드 포커스 변경 시 (Request 3)
   void _onManualTimeFocusChange() {
     if (!_manualTimeFocusNode.hasFocus) {
@@ -162,10 +170,11 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
       final currentMinutesFromText = int.tryParse(currentText);
 
       // 수동 입력값이 시간 선택 옵션과 다르면, 시간 선택 옵션을 null로 변경
-      if (_selectedTimeOption != null && currentMinutesFromText != _selectedTimeOption!.minutes) {
-         if (mounted) {
-            setState(() => _selectedTimeOption = null);
-         }
+      if (_selectedTimeOption != null &&
+          currentMinutesFromText != _selectedTimeOption!.minutes) {
+        if (mounted) {
+          setState(() => _selectedTimeOption = null);
+        }
       }
       // 여기서 _calculateEfficiencies()를 호출하지 않음
     }
@@ -191,29 +200,31 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
         }
       }
       if (_selectedTimeOption != matchingOption) {
-         if (mounted) { // setState는 mounted 확인 후 호출
-            setState(() {
-              _selectedTimeOption = matchingOption;
-            });
-         }
+        if (mounted) {
+          // setState는 mounted 확인 후 호출
+          setState(() {
+            _selectedTimeOption = matchingOption;
+          });
+        }
         // _selectedTimeOption = matchingOption; // setState 밖에서 직접 변경 X
         changed = true; // selectedTimeOption 변경도 UI 변경으로 간주
       }
     } else if (inputText.isEmpty && _selectedTimeOption != null) {
-       // 입력값이 비워졌지만, 이전에 TimeOption이 선택된 경우 해당 값으로 복원
-       if (_currentSelectedMinutes != _selectedTimeOption!.minutes) {
-         _currentSelectedMinutes = _selectedTimeOption!.minutes;
-         _manualTimeController.text = _currentSelectedMinutes.toString(); // 컨트롤러도 업데이트
-         changed = true;
-       }
+      // 입력값이 비워졌지만, 이전에 TimeOption이 선택된 경우 해당 값으로 복원
+      if (_currentSelectedMinutes != _selectedTimeOption!.minutes) {
+        _currentSelectedMinutes = _selectedTimeOption!.minutes;
+        _manualTimeController.text =
+            _currentSelectedMinutes.toString(); // 컨트롤러도 업데이트
+        changed = true;
+      }
     } else if (inputText.isEmpty && _selectedTimeOption == null) {
-        // 입력값이 비워지고, TimeOption도 선택 안된 경우 계산을 위한 분은 0으로 설정
-        if (_currentSelectedMinutes != 0) {
-            _currentSelectedMinutes = 0;
-            // _manualTimeController.text는 이미 비어있으므로 변경 불필요
-            // _selectedTimeOption은 이미 null이므로 변경 불필요
-            changed = true;
-        }
+      // 입력값이 비워지고, TimeOption도 선택 안된 경우 계산을 위한 분은 0으로 설정
+      if (_currentSelectedMinutes != 0) {
+        _currentSelectedMinutes = 0;
+        // _manualTimeController.text는 이미 비어있으므로 변경 불필요
+        // _selectedTimeOption은 이미 null이므로 변경 불필요
+        changed = true;
+      }
     }
 
     if (changed && mounted) {
@@ -222,7 +233,9 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
 
     if (triggerRecalculate && changed) {
       _calculateEfficiencies();
-    } else if (triggerRecalculate && manualMinutes == null && inputText.isNotEmpty) {
+    } else if (triggerRecalculate &&
+        manualMinutes == null &&
+        inputText.isNotEmpty) {
       // 유효하지 않은 입력(숫자가 아님)이고 계산을 트리거해야 하는 경우,
       // 이전 유효한 값으로 계산하거나 오류 메시지 표시
       // 여기서는 현재 _currentSelectedMinutes 값으로 계산 시도 (또는 마지막 유효값으로)
@@ -232,10 +245,10 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
 
   void _handleManualTimeSubmitted() {
     // 키보드의 완료 버튼(엔터 등)을 눌렀을 때 호출
-    _manualTimeFocusNode.unfocus(); // 포커스를 해제하여 _onManualTimeFocusChange가 호출되도록 함
-                                     // 또는 여기서 직접 _updateMinutesFromManualInput(triggerRecalculate: true); 호출 가능
+    _manualTimeFocusNode
+        .unfocus(); // 포커스를 해제하여 _onManualTimeFocusChange가 호출되도록 함
+    // 또는 여기서 직접 _updateMinutesFromManualInput(triggerRecalculate: true); 호출 가능
   }
-
 
   void _calculateEfficiencies() {
     // 분 입력 필드가 포커스를 가지고 있다면, 계산 전 포커스 해제하여 최종값 반영
@@ -256,7 +269,8 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
     if (mounted) setState(() => _isLoading = true);
 
     final stageSettings = SettingsService.instance.stageSettings;
-    final currentBonusSettings = SettingsService.instance.calculatorSettings.copyWith(
+    final currentBonusSettings =
+        SettingsService.instance.calculatorSettings.copyWith(
       selectedLeader: _selectedLeader,
       goldHotTime: _goldHotTime,
       goldBoost: _goldBoost,
@@ -283,8 +297,10 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
     calculatedResults.sort((a, b) {
       switch (_selectedSortOption) {
         case GoldSortOption.totalGold:
-          bool isASettingsIncomplete = a.clearTimeSeconds == null || a.clearTimeSeconds! <= 0;
-          bool isBSettingsIncomplete = b.clearTimeSeconds == null || b.clearTimeSeconds! <= 0;
+          bool isASettingsIncomplete =
+              a.clearTimeSeconds == null || a.clearTimeSeconds! <= 0;
+          bool isBSettingsIncomplete =
+              b.clearTimeSeconds == null || b.clearTimeSeconds! <= 0;
 
           if (isASettingsIncomplete && !isBSettingsIncomplete) return 1;
           if (!isASettingsIncomplete && isBSettingsIncomplete) return -1;
@@ -306,7 +322,8 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
 
   void _handleSortOptionChanged(GoldSortOption? newValue) {
     if (newValue != null && _selectedSortOption != newValue) {
-      if (mounted) { // setState 호출 전 mounted 확인
+      if (mounted) {
+        // setState 호출 전 mounted 확인
         setState(() {
           _selectedSortOption = newValue;
         });
@@ -321,7 +338,8 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
         _hideUnconfiguredStages = value;
       });
       // 변경된 설정을 SettingsService를 통해 저장
-      SettingsService.instance.updateAppSettings(hideUnconfiguredStagesInGoldCalculator: value);
+      SettingsService.instance
+          .updateAppSettings(hideUnconfiguredStagesInGoldCalculator: value);
     }
   }
 
@@ -338,7 +356,8 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
           return '$demonName: ${entry.value.toStringAsFixed(2)}개 (예상 ${_integerFormatter.format(expectedGoldFromThisDemonType.round())}골드)';
         }).join('\n');
 
-        if (result.expectedDemonCounts.isEmpty) demonDetails = '해당 스테이지 돈악마 드랍 정보 없음';
+        if (result.expectedDemonCounts.isEmpty)
+          demonDetails = '해당 스테이지 돈악마 드랍 정보 없음';
 
         String clearTimeDisplay;
         if (result.clearTimeSeconds != null && result.clearTimeSeconds! > 0) {
@@ -354,16 +373,30 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
               children: <Widget>[
                 _buildDetailDialogRow('스테이지 위치:', result.location),
                 _buildDetailDialogRow('클리어 시간:', clearTimeDisplay),
-                _buildDetailDialogRow('기본 골드(1회):', _integerFormatter.format(result.baseStageGold.round())),
-                _buildDetailDialogRow('최종 골드(1회, 현재보너스):', _integerFormatter.format(result.finalGoldPerSingleRunWithBonus.round())),
-                _buildDetailDialogRow('설정 시간 내 클리어 횟수:', '${_integerFormatter.format(result.runsOverSelectedDuration.round())}회'),
+                _buildDetailDialogRow('기본 골드(1회):',
+                    _integerFormatter.format(result.baseStageGold.round())),
+                _buildDetailDialogRow(
+                    '최종 골드(1회, 현재보너스):',
+                    _integerFormatter
+                        .format(result.finalGoldPerSingleRunWithBonus.round())),
+                _buildDetailDialogRow('설정 시간 내 클리어 횟수:',
+                    '${_integerFormatter.format(result.runsOverSelectedDuration.round())}회'),
                 const SizedBox(height: 8),
-                const Text('돈악마 드랍 기대값:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const Text('돈악마 드랍 기대값:',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(demonDetails),
-                _buildDetailDialogRow('총 돈악마 판매 예상 골드:', _integerFormatter.format(result.expectedGoldFromDemons.round())),
-                 const Divider(height: 16),
-                _buildDetailDialogRow('총 예상 스테이지 골드:', _integerFormatter.format(result.expectedGoldFromStage.round())),
-                 _buildDetailDialogRow('총 예상 최종 골드:', _integerFormatter.format(result.totalExpectedGold.round()), isBold: true),
+                _buildDetailDialogRow(
+                    '총 돈악마 판매 예상 골드:',
+                    _integerFormatter
+                        .format(result.expectedGoldFromDemons.round())),
+                const Divider(height: 16),
+                _buildDetailDialogRow(
+                    '총 예상 스테이지 골드:',
+                    _integerFormatter
+                        .format(result.expectedGoldFromStage.round())),
+                _buildDetailDialogRow('총 예상 최종 골드:',
+                    _integerFormatter.format(result.totalExpectedGold.round()),
+                    isBold: true),
               ],
             ),
           ),
@@ -380,15 +413,22 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
     );
   }
 
-  Widget _buildDetailDialogRow(String label, String value, {bool isBold = false}) {
+  Widget _buildDetailDialogRow(String label, String value,
+      {bool isBold = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline, // 기준선을 맞추도록 변경
         textBaseline: TextBaseline.alphabetic, // 알파벳 기준선 사용
         children: [
-          Text('$label ', style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
-          Expanded(child: Text(value, style: TextStyle(fontWeight: isBold ? FontWeight.bold : FontWeight.normal))),
+          Text('$label ',
+              style: TextStyle(
+                  fontWeight: isBold ? FontWeight.bold : FontWeight.normal)),
+          Expanded(
+              child: Text(value,
+                  style: TextStyle(
+                      fontWeight:
+                          isBold ? FontWeight.bold : FontWeight.normal))),
         ],
       ),
     );
@@ -404,21 +444,23 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
           bool needsRecalculate = false;
           setState(() {
             if (_selectedTimeOption != newValue) {
-               _selectedTimeOption = newValue;
-               // needsRecalculate = true; // 시간 선택 변경 시 즉시 계산하도록 유지
+              _selectedTimeOption = newValue;
+              // needsRecalculate = true; // 시간 선택 변경 시 즉시 계산하도록 유지
             }
             if (newValue != null) {
               if (_currentSelectedMinutes != newValue.minutes) {
                 _currentSelectedMinutes = newValue.minutes;
-                _manualTimeController.text = newValue.minutes.toString(); // 수동 입력 필드도 업데이트
+                _manualTimeController.text =
+                    newValue.minutes.toString(); // 수동 입력 필드도 업데이트
                 needsRecalculate = true;
               }
               if (_manualTimeFocusNode.hasFocus) {
                 _manualTimeFocusNode.unfocus();
               }
-            } else { // newValue가 null이면 (예: "시간 선택"을 누르거나 수동 입력 시작)
-                // _currentSelectedMinutes는 현재 manualTimeController의 값 또는 기본값으로 유지
-                // _manualTimeController.clear(); // 이렇게 하면 사용자가 수동 입력 시작 시 비워짐
+            } else {
+              // newValue가 null이면 (예: "시간 선택"을 누르거나 수동 입력 시작)
+              // _currentSelectedMinutes는 현재 manualTimeController의 값 또는 기본값으로 유지
+              // _manualTimeController.clear(); // 이렇게 하면 사용자가 수동 입력 시작 시 비워짐
             }
           });
           if (needsRecalculate) _calculateEfficiencies();
@@ -450,7 +492,8 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
             ScaffoldMessenger.of(context).removeCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text('골드 핫타임은 12:00~14:00까지 진행되며, 계산 시 최대 120분까지만 적용됩니다.'),
+                content:
+                    Text('골드 핫타임은 12:00~14:00까지 진행되며, 계산 시 최대 120분까지만 적용됩니다.'),
                 duration: Duration(seconds: 3),
               ),
             );
@@ -462,7 +505,7 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
       onGoldBoostChanged: (bool value) {
         if (mounted) {
           setState(() => _goldBoost = value);
-           _calculateEfficiencies();
+          _calculateEfficiencies();
         }
       },
       boostDurationController: _boostDurationController,

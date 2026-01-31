@@ -11,6 +11,7 @@ const String _baseImagePath = 'assets/images/boxes';
 const String _normalBoxImage = '$_baseImagePath/normal_box.png';
 const String _rareBoxImage = '$_baseImagePath/rare_box.png';
 const String _legendaryBoxImage = '$_baseImagePath/legendary_box.png';
+
 class BoxCalculatorScreenUI extends StatelessWidget {
   final TextEditingController normalBoxCountController;
   final TextEditingController rareBoxCountController;
@@ -30,11 +31,13 @@ class BoxCalculatorScreenUI extends StatelessWidget {
   });
 
   // Modified: Removed 'label' parameter, changed labelText to hintText
-  Widget _buildBoxCountInput(BuildContext context, TextEditingController controller) {
+  Widget _buildBoxCountInput(
+      BuildContext context, TextEditingController controller) {
     return TextFormField(
       controller: controller,
       decoration: const InputDecoration(
-        contentPadding: EdgeInsets.symmetric(vertical: 6.0, horizontal: 12.0), // 행 높이 25% 감소
+        contentPadding: EdgeInsets.symmetric(
+            vertical: 6.0, horizontal: 12.0), // 행 높이 25% 감소
         hintText: '개수 입력', // 3. Shorter hint text for a more compact field
         border: OutlineInputBorder(),
       ),
@@ -45,7 +48,8 @@ class BoxCalculatorScreenUI extends StatelessWidget {
   }
 
   // New helper method to build each box input row
-  Widget _buildBoxInputRow(BuildContext context, String boxName, String imagePath, TextEditingController controller) {
+  Widget _buildBoxInputRow(BuildContext context, String boxName,
+      String imagePath, TextEditingController controller) {
     final textTheme = Theme.of(context).textTheme;
     return Row(
       children: [
@@ -61,7 +65,8 @@ class BoxCalculatorScreenUI extends StatelessWidget {
         const Spacer(), // 이미지와 입력칸 사이의 여백
         SizedBox(
           width: 150.0, // 입력창 너비 25% 증가 (120 -> 150)
-          child: _buildBoxCountInput(context, controller), // Call the modified input field builder
+          child: _buildBoxCountInput(
+              context, controller), // Call the modified input field builder
         ),
         const Spacer(), // 입력칸과 '개' 단위 사이의 여백
         Text('개', style: textTheme.titleMedium),
@@ -124,7 +129,9 @@ class BoxCalculatorScreenUI extends StatelessWidget {
     final isDarkMode = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      drawer: const AppDrawer(currentScreen: AppScreen.boxCalculator), // 이제 AppScreen은 box_constants.dart에서 직접 가져옵니다.
+      drawer: const AppDrawer(
+          currentScreen: AppScreen
+              .boxCalculator), // 이제 AppScreen은 box_constants.dart에서 직접 가져옵니다.
       appBar: AppBar(
         title: const Text('상자 기대값 계산기'),
       ),
@@ -132,8 +139,9 @@ class BoxCalculatorScreenUI extends StatelessWidget {
         onTap: () => FocusScope.of(context).unfocus(), // 화면 다른 곳 터치 시 키보드 숨기기
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
-          child: Column( // Column의 crossAxisAlignment는 stretch로 유지하여 ElevatedButton 등이 전체 너비를 차지하도록 함
-            crossAxisAlignment: CrossAxisAlignment.stretch, 
+          child: Column(
+            // Column의 crossAxisAlignment는 stretch로 유지하여 ElevatedButton 등이 전체 너비를 차지하도록 함
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text(
                 '콜라보 던전 상자 기대값 계산기',
@@ -144,13 +152,16 @@ class BoxCalculatorScreenUI extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               // Replaced with new helper method for Normal Box
-              _buildBoxInputRow(context, normalBox, _normalBoxImage, normalBoxCountController),
+              _buildBoxInputRow(context, normalBox, _normalBoxImage,
+                  normalBoxCountController),
               const SizedBox(height: 8),
               // Replaced with new helper method for Rare Box
-              _buildBoxInputRow(context, rareBox, _rareBoxImage, rareBoxCountController),
+              _buildBoxInputRow(
+                  context, rareBox, _rareBoxImage, rareBoxCountController),
               const SizedBox(height: 8),
               // Replaced with new helper method for Legendary Box
-              _buildBoxInputRow(context, legendaryBox, _legendaryBoxImage, legendaryBoxCountController),
+              _buildBoxInputRow(context, legendaryBox, _legendaryBoxImage,
+                  legendaryBoxCountController),
               const SizedBox(height: 16),
               Text(
                 '상자 오픈 필요 골드: ${integerFormatter.format(totalGoldCost)}',
@@ -190,18 +201,24 @@ class BoxCalculatorScreenUI extends StatelessWidget {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: results.length,
-                      separatorBuilder: (context, index) => const Divider(height: 1, indent: 16, endIndent: 16),
+                      separatorBuilder: (context, index) =>
+                          const Divider(height: 1, indent: 16, endIndent: 16),
                       itemBuilder: (context, index) {
                         final result = results[index];
-                        final highlightColor = _getHighlightColor(result.itemName, isDarkMode: isDarkMode);
+                        final highlightColor = _getHighlightColor(
+                            result.itemName,
+                            isDarkMode: isDarkMode);
 
                         // 보상 목록의 폰트 스타일 정의 (기존 대비 20% 감소)
-                        final baseResultTextStyle = textTheme.titleMedium?.copyWith(
-                          fontSize: (textTheme.titleMedium?.fontSize ?? 16.0) * 0.8,
+                        final baseResultTextStyle =
+                            textTheme.titleMedium?.copyWith(
+                          fontSize:
+                              (textTheme.titleMedium?.fontSize ?? 16.0) * 0.8,
                         );
 
                         TextStyle? titleStyle = baseResultTextStyle;
-                        TextStyle? trailingStyle = baseResultTextStyle?.copyWith(
+                        TextStyle? trailingStyle =
+                            baseResultTextStyle?.copyWith(
                           color: theme.colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                         );
@@ -214,8 +231,10 @@ class BoxCalculatorScreenUI extends StatelessWidget {
                             Shadow(offset: Offset(1, 1), color: Colors.black),
                             Shadow(offset: Offset(-1, 1), color: Colors.black),
                           ];
-                          titleStyle = baseResultTextStyle?.copyWith(color: highlightColor, shadows: textOutline);
-                          trailingStyle = trailingStyle?.copyWith(color: highlightColor, shadows: textOutline);
+                          titleStyle = baseResultTextStyle?.copyWith(
+                              color: highlightColor, shadows: textOutline);
+                          trailingStyle = trailingStyle?.copyWith(
+                              color: highlightColor, shadows: textOutline);
                         }
 
                         return ListTile(

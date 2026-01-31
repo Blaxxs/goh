@@ -39,7 +39,8 @@ List<String> get stageNameList {
     EventManager.eventStagesData.forEach((eventStageId, eventStageInfo) {
       // eventStageInfo Map 안에 'name' 키가 있고, 그 값이 String이라고 가정합니다.
       if (eventStageInfo['name'] != null && eventStageInfo['name'] is String) {
-        if (!names.contains(eventStageInfo['name'] as String)) { // 중복 추가 방지
+        if (!names.contains(eventStageInfo['name'] as String)) {
+          // 중복 추가 방지
           names.add(eventStageInfo['name'] as String);
         }
       }

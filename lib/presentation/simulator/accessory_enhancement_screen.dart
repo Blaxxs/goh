@@ -10,10 +10,12 @@ class AccessoryEnhancementScreen extends StatefulWidget {
   const AccessoryEnhancementScreen({super.key});
 
   @override
-  State<AccessoryEnhancementScreen> createState() => _AccessoryEnhancementScreenState();
+  State<AccessoryEnhancementScreen> createState() =>
+      _AccessoryEnhancementScreenState();
 }
 
-class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen> {
+class _AccessoryEnhancementScreenState
+    extends State<AccessoryEnhancementScreen> {
   Accessory? _selectedAccessory;
   int _currentEnhancementLevel = 0;
   int? _targetEnhancementLevel; // 목표 등급은 현재 등급보다 높아야 하므로 nullable
@@ -48,10 +50,10 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
     _resetScreenState(); // 최초 진입 시 화면 전체 초기화 (랜덤 악세사리 선택 포함)
   }
 
-
   Future<void> _selectAccessory(BuildContext context) async {
     Accessory? pickedAccessory;
-    debugPrint("[AccessoryEnhancementScreen] _selectAccessory: Attempting to navigate to AccessoryScreen...");
+    debugPrint(
+        "[AccessoryEnhancementScreen] _selectAccessory: Attempting to navigate to AccessoryScreen...");
     try {
       pickedAccessory = await Navigator.push<Accessory>(
         context,
@@ -59,10 +61,13 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
           builder: (context) => const AccessoryScreen(isPickerMode: true),
         ),
       );
-      debugPrint("[AccessoryEnhancementScreen] _selectAccessory: Returned from AccessoryScreen. Accessory was picked: ${pickedAccessory != null}");
+      debugPrint(
+          "[AccessoryEnhancementScreen] _selectAccessory: Returned from AccessoryScreen. Accessory was picked: ${pickedAccessory != null}");
     } catch (e, s) {
-      debugPrint("[AccessoryEnhancementScreen] _selectAccessory: Error during Navigator.push: $e");
-      debugPrint("[AccessoryEnhancementScreen] _selectAccessory: Stacktrace: $s");
+      debugPrint(
+          "[AccessoryEnhancementScreen] _selectAccessory: Error during Navigator.push: $e");
+      debugPrint(
+          "[AccessoryEnhancementScreen] _selectAccessory: Stacktrace: $s");
       // 오류 발생 시 사용자에게 알림 (선택 사항)
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -74,15 +79,18 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
 
     if (pickedAccessory != null && mounted) {
       // 디버깅: 선택된 악세사리 정보 출력
-      debugPrint("[AccessoryEnhancementScreen] Accessory picked: ${pickedAccessory.name}, ID: ${pickedAccessory.id}");
+      debugPrint(
+          "[AccessoryEnhancementScreen] Accessory picked: ${pickedAccessory.name}, ID: ${pickedAccessory.id}");
       setState(() {
         _selectedAccessory = pickedAccessory; // 선택된 악세사리로 업데이트
-        _resetForNewAccessorySelection();    // 나머지 상태 초기화
+        _resetForNewAccessorySelection(); // 나머지 상태 초기화
       });
     } else {
-      debugPrint("[AccessoryEnhancementScreen] _selectAccessory: No accessory picked or widget not mounted after return. Picked: ${pickedAccessory?.name}, Mounted: $mounted");
+      debugPrint(
+          "[AccessoryEnhancementScreen] _selectAccessory: No accessory picked or widget not mounted after return. Picked: ${pickedAccessory?.name}, Mounted: $mounted");
     }
   }
+
   // 통계 초기화 함수
   void _resetStatistics() {
     if (!mounted) return;
@@ -93,7 +101,7 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
       _failDowngradeCount = 0;
       _isAutoEnhancing = false;
       _totalConsumedStones = 0; // 누적 소모 숫돌이 초기화
-      _totalConsumedGold = 0;   // 누적 소모 골드 초기화
+      _totalConsumedGold = 0; // 누적 소모 골드 초기화
       _consumedAidsCount.clear();
     });
   }
@@ -103,7 +111,8 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
     if (!mounted) return;
     setState(() {
       if (AccessoryDataManager().allAccessories.isNotEmpty) {
-        final randomIndex = Random().nextInt(AccessoryDataManager().allAccessories.length);
+        final randomIndex =
+            Random().nextInt(AccessoryDataManager().allAccessories.length);
         _selectedAccessory = AccessoryDataManager().allAccessories[randomIndex];
       } else {
         _selectedAccessory = null;
@@ -150,18 +159,24 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
 
     // 현재 강화 시도의 비용 가져오기
     final costs = _selectedOptionCount == 1
-        ? AccessoryEnhancementScreenUI.enhancementCostsOneOption[_currentEnhancementLevel]
-        : AccessoryEnhancementScreenUI.enhancementCostsTwoPlusOptions[_currentEnhancementLevel];
-    
+        ? AccessoryEnhancementScreenUI
+            .enhancementCostsOneOption[_currentEnhancementLevel]
+        : AccessoryEnhancementScreenUI
+            .enhancementCostsTwoPlusOptions[_currentEnhancementLevel];
+
     // UI에서 확률 가져오기 (실제로는 UI의 static const를 직접 참조하거나, 별도 로직 클래스로 분리)
-    final baseProbs = AccessoryEnhancementScreenUI.baseEnhancementProbabilities[_currentEnhancementLevel] ??
-      {'success': 0.0, 'fail_no_change': 0.0, 'downgrade': 0.0};
+    final baseProbs = AccessoryEnhancementScreenUI
+            .baseEnhancementProbabilities[_currentEnhancementLevel] ??
+        {'success': 0.0, 'fail_no_change': 0.0, 'downgrade': 0.0};
     final double baseSuccess = baseProbs['success']!;
     final double baseFailNoChange = baseProbs['fail_no_change']!;
     final double baseDowngrade = baseProbs['downgrade']!;
 
-    final double aidBonusValue = AccessoryEnhancementScreenUI.enhancementAidBonuses[_selectedEnhancementAid] ?? 0.0;
-    bool isSpecialAidNoDowngrade = _selectedEnhancementAid.startsWith('스페셜') && _selectedEnhancementAid != '스페셜 특급 보조제';
+    final double aidBonusValue = AccessoryEnhancementScreenUI
+            .enhancementAidBonuses[_selectedEnhancementAid] ??
+        0.0;
+    bool isSpecialAidNoDowngrade = _selectedEnhancementAid.startsWith('스페셜') &&
+        _selectedEnhancementAid != '스페셜 특급 보조제';
     bool isSuperSpecialAid100Success = _selectedEnhancementAid == '스페셜 특급 보조제';
 
     double finalSuccessChance;
@@ -180,7 +195,8 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
       finalDowngradeChance = baseDowngrade; // 하락 확률은 기본값 유지
 
       // 2. 스페셜 보조제의 "하락 방지" 효과 적용 (특급 제외)
-      if (isSpecialAidNoDowngrade) { // 하락 확률을 실패-유지 확률로 전환
+      if (isSpecialAidNoDowngrade) {
+        // 하락 확률을 실패-유지 확률로 전환
         finalDowngradeChance = 0.0;
       }
     }
@@ -191,47 +207,53 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
     // 상태 업데이트를 setState 블록으로 그룹화
     if (!mounted) return;
     setState(() {
-    // 보조제 소모 기록 (실제 강화 시도 전에)
-    if (_selectedEnhancementAid != '선택 안함') {
-      if (mounted) {
-        setState(() {
-          _consumedAidsCount[_selectedEnhancementAid] = (_consumedAidsCount[_selectedEnhancementAid] ?? 0) + 1;
-        });
+      // 보조제 소모 기록 (실제 강화 시도 전에)
+      if (_selectedEnhancementAid != '선택 안함') {
+        if (mounted) {
+          setState(() {
+            _consumedAidsCount[_selectedEnhancementAid] =
+                (_consumedAidsCount[_selectedEnhancementAid] ?? 0) + 1;
+          });
+        }
       }
-    }
       _totalConsumedStones += stoneCost;
       _totalConsumedGold += goldCost;
       _attemptCount++;
-    final randomValue = Random().nextDouble();
-    // String resultMessage; // 강화 결과 알림 제거로 인해 사용되지 않음
-    // int previousLevel = _currentEnhancementLevel; // 강화 결과 알림 제거로 인해 사용되지 않음
+      final randomValue = Random().nextDouble();
+      // String resultMessage; // 강화 결과 알림 제거로 인해 사용되지 않음
+      // int previousLevel = _currentEnhancementLevel; // 강화 결과 알림 제거로 인해 사용되지 않음
 
-    if (randomValue < finalSuccessChance) { // 성공
-      if (mounted) {
-        setState(() {
-          _currentEnhancementLevel++;
-          _successCount++;
-        });
+      if (randomValue < finalSuccessChance) {
+        // 성공
+        if (mounted) {
+          setState(() {
+            _currentEnhancementLevel++;
+            _successCount++;
+          });
+        }
+        // resultMessage = '${_selectedAccessory!.name} 강화 성공! (${_currentEnhancementLevel - 1}강 -> $_currentEnhancementLevel강)'; // 이전 레벨을 직접 계산하거나, 필요시 previousLevel 다시 사용
+      } else if (randomValue < finalSuccessChance + finalDowngradeChance) {
+        // 하락 (하락 확률이 0이 아닌 경우)
+        if (mounted) {
+          setState(() {
+            _failDowngradeCount++;
+            _currentEnhancementLevel =
+                max(0, _currentEnhancementLevel - 1); // 0강 밑으로 내려가지 않도록
+          });
+        }
+        // resultMessage = '${_selectedAccessory!.name} 강화 실패... 단계 하락. (${_currentEnhancementLevel + 1}강 -> $_currentEnhancementLevel강)'; // 이전 레벨을 직접 계산하거나, 필요시 previousLevel 다시 사용
+        // 자동 강화 중지 조건은 아래에서 공통으로 처리
+      } else {
+        // 유지
+        if (mounted) {
+          setState(() {
+            _failKeepCount++;
+          });
+        }
+        // resultMessage = '${_selectedAccessory!.name} 강화 실패. 단계 유지. ($_currentEnhancementLevel강)';
+        // 자동 강화 중지 조건은 아래에서 공통으로 처리
       }
-      // resultMessage = '${_selectedAccessory!.name} 강화 성공! (${_currentEnhancementLevel - 1}강 -> $_currentEnhancementLevel강)'; // 이전 레벨을 직접 계산하거나, 필요시 previousLevel 다시 사용
-    } else if (randomValue < finalSuccessChance + finalDowngradeChance) { // 하락 (하락 확률이 0이 아닌 경우)
-      if (mounted) {
-        setState(() {
-          _failDowngradeCount++;
-          _currentEnhancementLevel = max(0, _currentEnhancementLevel - 1); // 0강 밑으로 내려가지 않도록
-        });
-      }
-      // resultMessage = '${_selectedAccessory!.name} 강화 실패... 단계 하락. (${_currentEnhancementLevel + 1}강 -> $_currentEnhancementLevel강)'; // 이전 레벨을 직접 계산하거나, 필요시 previousLevel 다시 사용
-      // 자동 강화 중지 조건은 아래에서 공통으로 처리
-    } else { // 유지
-      if (mounted) {
-        setState(() {
-          _failKeepCount++;
-        });
-      }
-      // resultMessage = '${_selectedAccessory!.name} 강화 실패. 단계 유지. ($_currentEnhancementLevel강)';
-      // 자동 강화 중지 조건은 아래에서 공통으로 처리
-    }});
+    });
   }
 
   // 자동 강화 루프
@@ -241,26 +263,32 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
 
       // 목표 달성 또는 최대 강화 도달 시 자동 강화 중지
       if (_currentEnhancementLevel >= 9 ||
-          (_targetEnhancementLevel != null && _currentEnhancementLevel >= _targetEnhancementLevel!)) {
+          (_targetEnhancementLevel != null &&
+              _currentEnhancementLevel >= _targetEnhancementLevel!)) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('자동 강화가 완료되었습니다.'), duration: Duration(seconds: 2)),
+            const SnackBar(
+                content: Text('자동 강화가 완료되었습니다.'),
+                duration: Duration(seconds: 2)),
           );
         }
         break; // 루프 종료
       }
 
-      await Future.delayed(const Duration(milliseconds: 10)); // 다음 강화 시도 전 짧은 지연
+      await Future.delayed(
+          const Duration(milliseconds: 10)); // 다음 강화 시도 전 짧은 지연
     }
     // 루프가 끝나면 (중지 버튼, 목표 달성 등) isAutoEnhancing 상태를 false로 변경
     if (mounted) {
       setState(() => _isAutoEnhancing = false);
     }
   }
+
   @override
   Widget build(BuildContext context) {
     // 디버깅: UI 빌드 시 선택된 악세사리 상태 출력
-    debugPrint("[AccessoryEnhancementScreen] Building UI. Selected Accessory: ${_selectedAccessory?.name ?? 'None'}");
+    debugPrint(
+        "[AccessoryEnhancementScreen] Building UI. Selected Accessory: ${_selectedAccessory?.name ?? 'None'}");
 
     return AccessoryEnhancementScreenUI(
       selectedAccessory: _selectedAccessory,
@@ -271,15 +299,18 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
           setState(() {
             _currentEnhancementLevel = newValue;
             // 현재 강화 단계가 변경되면 목표 강화 단계도 유효한지 확인하고 조정
-            if (_targetEnhancementLevel != null && _targetEnhancementLevel! <= _currentEnhancementLevel) {
-              _targetEnhancementLevel = null; // 또는 _currentEnhancementLevel + 1로 설정
+            if (_targetEnhancementLevel != null &&
+                _targetEnhancementLevel! <= _currentEnhancementLevel) {
+              _targetEnhancementLevel =
+                  null; // 또는 _currentEnhancementLevel + 1로 설정
             }
           });
         }
       },
       targetEnhancementLevel: _targetEnhancementLevel,
       onTargetEnhancementLevelChanged: (int? newValue) {
-        if (mounted) { // newValue가 null일 수도 있음 (선택 해제)
+        if (mounted) {
+          // newValue가 null일 수도 있음 (선택 해제)
           setState(() {
             _targetEnhancementLevel = newValue;
           });
@@ -300,11 +331,13 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
           setState(() {
             if (_isAutoEnhancing) return; // 강화 중에는 스위치 조작 방지
             _isAutoEnhanceMode = value;
-            if (!value) { // 자동 강화 모드가 꺼지면 목표 레벨도 초기화 (선택적)
+            if (!value) {
+              // 자동 강화 모드가 꺼지면 목표 레벨도 초기화 (선택적)
               _targetEnhancementLevel = null;
             } else {
               // 자동 강화 모드 켰을 때, 목표 레벨이 현재 레벨보다 낮거나 같으면 초기화
-              if (_targetEnhancementLevel != null && _targetEnhancementLevel! <= _currentEnhancementLevel) {
+              if (_targetEnhancementLevel != null &&
+                  _targetEnhancementLevel! <= _currentEnhancementLevel) {
                 _targetEnhancementLevel = null;
               }
             }
@@ -313,7 +346,8 @@ class _AccessoryEnhancementScreenState extends State<AccessoryEnhancementScreen>
       },
       isAutoEnhancing: _isAutoEnhancing,
       onEnhanceButtonPressed: _handleEnhanceButtonPressed, // 강화 실행 함수 연결
-      onStopAutoEnhancePressed: () { // 중지 콜백
+      onStopAutoEnhancePressed: () {
+        // 중지 콜백
         if (mounted) {
           setState(() {
             _isAutoEnhancing = false;
