@@ -57,28 +57,31 @@ class AccessoryScreenUI extends StatelessWidget {
                     children: [
                       Expanded(
                         flex: 2,
-                        child: DropdownButtonFormField<String>(
-                          isDense: true,
-                          decoration: InputDecoration(
-                            labelText: '검색 기준',
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 12),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey[50],
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: searchOption,
+                              items: searchOptions.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value,
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500)),
+                                );
+                              }).toList(),
+                              onChanged: onSearchOptionChanged,
+                              icon: const Icon(Icons.keyboard_arrow_down,
+                                  color: Colors.black54),
                             ),
                           ),
-                          value: searchOption,
-                          items: searchOptions.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child:
-                                  Text(value, overflow: TextOverflow.ellipsis),
-                            );
-                          }).toList(),
-                          onChanged: onSearchOptionChanged,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -89,8 +92,9 @@ class AccessoryScreenUI extends StatelessWidget {
                           decoration: InputDecoration(
                             hintText: '검색어를 입력하세요...',
                             filled: true,
-                            fillColor: Colors.grey[100],
-                            prefixIcon: const Icon(Icons.search, size: 20),
+                            fillColor: Colors.blueGrey[50],
+                            prefixIcon:
+                                const Icon(Icons.search, color: Colors.black54),
                             suffixIcon: currentSearchQuery.isNotEmpty
                                 ? IconButton(
                                     icon: const Icon(Icons.clear, size: 20),
@@ -98,8 +102,17 @@ class AccessoryScreenUI extends StatelessWidget {
                                   )
                                 : null,
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(color: Colors.grey.shade300),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                  color: Theme.of(context).primaryColor),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 12, horizontal: 10),
@@ -113,54 +126,60 @@ class AccessoryScreenUI extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: DropdownButtonFormField<String>(
-                          isDense: true,
-                          decoration: InputDecoration(
-                            labelText: '부위',
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 12),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey[50],
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: selectedPartFilter ?? '전체',
+                              items: partFilterOptions.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value,
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500)),
+                                );
+                              }).toList(),
+                              onChanged: onPartFilterChanged,
+                              icon: const Icon(Icons.keyboard_arrow_down,
+                                  color: Colors.black54),
                             ),
                           ),
-                          value: selectedPartFilter ?? '전체',
-                          items: partFilterOptions.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value,
-                                  overflow: TextOverflow.ellipsis),
-                            );
-                          }).toList(),
-                          onChanged: onPartFilterChanged,
                         ),
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: DropdownButtonFormField<String>(
-                          isDense: true,
-                          decoration: InputDecoration(
-                            labelText: '정렬',
-                            filled: true,
-                            fillColor: Colors.grey[100],
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 12),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          decoration: BoxDecoration(
+                            color: Colors.blueGrey[50],
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: sortOption,
+                              items: sortOptions.map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value,
+                                      style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500)),
+                                );
+                              }).toList(),
+                              onChanged: onSortChanged,
+                              icon: const Icon(Icons.keyboard_arrow_down,
+                                  color: Colors.black54),
                             ),
                           ),
-                          value: sortOption,
-                          items: sortOptions.map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value,
-                                  overflow: TextOverflow.ellipsis),
-                            );
-                          }).toList(),
-                          onChanged: onSortChanged,
                         ),
                       ),
                     ],
