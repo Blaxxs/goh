@@ -257,26 +257,41 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                           width: 1),
                                       borderRadius: BorderRadius.circular(4),
                                     ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: imageUrl,
-                                      fit: BoxFit.contain,
-                                      placeholder: (context, url) =>
-                                          const Center(
-                                        child:
-                                            CircularProgressIndicator(),
-                                      ),
-                                      errorWidget:
-                                          (context, url, error) =>
-                                              const Center(
-                                        child: Icon(
-                                            Icons.broken_image,
-                                            size: 20,
-                                            color: Colors.grey),
+                                    child: Tooltip(
+                                      message: imageUrl,
+                                      child: CachedNetworkImage(
+                                        imageUrl: imageUrl,
+                                        fit: BoxFit.contain,
+                                        placeholder: (context, url) =>
+                                            const Center(
+                                          child:
+                                              CircularProgressIndicator(),
+                                        ),
+                                        errorWidget:
+                                            (context, url, error) =>
+                                                const Center(
+                                          child: Icon(
+                                              Icons.broken_image,
+                                              size: 20,
+                                              color: Colors.grey),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 );
                               },
+                            ),
+                          )
+                        else
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              '세트 악세사리 이미지: 미설정',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
                           ),
                         const SizedBox(height: 10),
