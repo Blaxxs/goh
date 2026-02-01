@@ -125,14 +125,15 @@ class Accessory {
     final String encodedId = Uri.encodeComponent(id);
     final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media";
 
-    var list = json['options'] as List? ?? [];
-    List<AccessoryOption> optionsList = list
-        .map((i) => AccessoryOption.fromJson(Map<String, dynamic>.from(i)))
+    var optionsList = json['options'] as List? ?? [];
+    List<AccessoryOption> options = optionsList
+        .map((i) => AccessoryOption.fromJson(
+            i is Map ? Map<String, dynamic>.from(i) : {}))
         .toList();
 
-    var setList = json['setOptions'] as List? ?? [];
-    List<AccessorySetOption> setOptionsList = setList
-        .map((i) => AccessorySetOption.fromJson(Map<String, dynamic>.from(i)))
+    var setOptionsList = json['setOptions'] as List? ?? [];
+    List<AccessorySetOption> setOptions = setOptionsList
+        .map((i) => AccessorySetOption.fromJson(i))
         .toList();
 
     return Accessory(
@@ -141,8 +142,8 @@ class Accessory {
       imageUrl: json['imageUrl']?.toString() ?? autoImageUrl, // 전달받은 imageUrl이 있으면 우선 사용
       part: json['part']?.toString() ?? '',
       restrictions: json['restrictions']?.toString() ?? '',
-      options: optionsList,
-      setOptions: setOptionsList,
+      options: options,
+      setOptions: setOptions,
     );
   }
 }
