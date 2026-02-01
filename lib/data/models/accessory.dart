@@ -81,6 +81,7 @@ class Accessory {
   final String part;
   final String restrictions;
   final List<AccessoryOption> options;
+  final List<AccessorySetOption> setOptions;
 
   const Accessory({
     required this.id,
@@ -89,6 +90,7 @@ class Accessory {
     required this.part,
     required this.restrictions,
     required this.options,
+    this.setOptions = const [],
   });
 
   factory Accessory.fromJson(Map<String, dynamic> json) {
@@ -105,6 +107,11 @@ class Accessory {
         .map((i) => AccessoryOption.fromJson(Map<String, dynamic>.from(i)))
         .toList();
 
+    var setList = json['setOptions'] as List? ?? [];
+    List<AccessorySetOption> setOptionsList = setList
+        .map((i) => AccessorySetOption.fromJson(Map<String, dynamic>.from(i)))
+        .toList();
+
     return Accessory(
       id: id,
       name: json['name']?.toString() ?? '',
@@ -112,6 +119,7 @@ class Accessory {
       part: json['part']?.toString() ?? '',
       restrictions: json['restrictions']?.toString() ?? '',
       options: optionsList,
+      setOptions: setOptionsList,
     );
   }
 }
