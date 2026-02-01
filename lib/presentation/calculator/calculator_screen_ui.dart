@@ -363,6 +363,7 @@ class CalculatorScreenUI extends StatelessWidget {
                               VerticalDivider(
                                   width: 8,
                                   thickness: 1,
+                                  // ignore: deprecated_member_use
                                   color: theme.dividerColor.withOpacity(0.5)),
                               Expanded(
                                   child: Center(
@@ -372,6 +373,7 @@ class CalculatorScreenUI extends StatelessWidget {
                               VerticalDivider(
                                   width: 8,
                                   thickness: 1,
+                                  // ignore: deprecated_member_use
                                   color: theme.dividerColor.withOpacity(0.5)),
                               Expanded(
                                   child: Center(
@@ -615,6 +617,7 @@ class CalculatorScreenUI extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     // ignore: deprecated_member_use
                                     color: theme.scaffoldBackgroundColor
+                                        // ignore: deprecated_member_use
                                         .withOpacity(0.85), // 배경색으로 가독성 확보
                                     borderRadius: BorderRadius.circular(4),
                                   ),
