@@ -122,9 +122,10 @@ class CalculatorLogic {
     final Map<String, dynamic>? currentStageData =
         stageBaseData[stageName]; // stageBaseData getter 사용
     if (currentStageData == null) {
-      if (kDebugMode)
+      if (kDebugMode) {
         print(
             "[CalcLogic] Stage data not found for $stageName in calculateFinalExpPerLoop");
+      }
       return 0.0;
     }
 

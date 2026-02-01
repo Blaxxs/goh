@@ -64,6 +64,7 @@ class AppSettingsScreenUI extends StatelessWidget {
       // ignore: deprecated_member_use
       leading: Icon(icon,
           color: theme.colorScheme.onSurface
+              // ignore: deprecated_member_use
               .withOpacity(0.85)), // 아이콘 색상을 onSurface 색상으로 변경하여 가독성 개선
       title: Text(title,
           style: theme.textTheme.titleSmall?.copyWith(
@@ -75,6 +76,7 @@ class AppSettingsScreenUI extends StatelessWidget {
         subtitle,
         // ignore: deprecated_member_use
         style: theme.textTheme.bodyMedium?.copyWith(
+            // ignore: deprecated_member_use
             color: theme.textTheme.bodySmall?.color?.withOpacity(0.9)),
         softWrap: true,
       ),
