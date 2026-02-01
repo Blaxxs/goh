@@ -154,6 +154,8 @@ class _AccessoryDetailDialog extends StatefulWidget {
 
 class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
   late Map<String, int> _stageIndexMap; // 각 세트 옵션의 현재 단계 인덱스 저장 (setId -> stageIndex)
+  // 공통 단계 인덱스 (세트 옵션이 2개일 때 통합 제어에 사용)
+  int _sharedStageIndex = 0;
 
   @override
   void initState() {
@@ -201,47 +203,88 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
             // 세트 옵션 표시
             if (widget.accessory.setOptions.isNotEmpty) ...[
               const SizedBox(height: 16),
-                const Divider(),
-                Text(
+              const Divider(),
+              Text(
                 '세트 옵션 : ${widget.accessory.setOptions.map((s) => s.setName).join(' / ')}',
                 style: const TextStyle(
-                  fontWeight: FontWeight.bold, color: Colors.deepOrange),
-                ),
-                const SizedBox(height: 12),
-              ...widget.accessory.setOptions.map((setOption) {
-                int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
+                    fontWeight: FontWeight.bold, color: Colors.deepOrange),
+              ),
+              const SizedBox(height: 12),
 
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12.0),
-                  child: Container(
-                    padding: const EdgeInsets.all(8.0),
-                    decoration: BoxDecoration(
-                      color: Colors.orange[50],
-                      border: Border.all(color: Colors.orange[300]!),
-                      borderRadius: BorderRadius.circular(6),
+              // 두 개의 세트 옵션이 있는 경우, 상하(수직) 배치 및 단계 컨트롤 통합
+              if (widget.accessory.setOptions.length == 2) ...[
+                // 통합 단계 컨트롤
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: _sharedStageIndex > 0
+                          ? () => setState(() => _sharedStageIndex--)
+                          : null,
+                      icon: const Icon(Icons.arrow_left),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Column(
                       children: [
-                        const SizedBox(height: 8),
-                        // 필요한 악세사리 이미지들 (가로 스크롤, 화면 전체 가운데 정렬)
-                        if (setOption.requiredAccessoryImages.isNotEmpty)
-                          Container(
-                            width: double.infinity,
-                            height: 100,
-                            alignment: Alignment.center,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: setOption.requiredAccessoryImages
-                                    .map((imageUrl) => Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 12.0),
-                                          child: SizedBox(
-                                            width: 80,
-                                            height: 80,
-                                            child: Center(
+                        Text('${_sharedStageIndex}단계',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.grey)),
+                        const SizedBox(height: 4),
+                        Text('단계값 표시',
+                            style: const TextStyle(
+                                fontSize: 12, color: Colors.transparent)),
+                      ],
+                    ),
+                    IconButton(
+                      onPressed: _sharedStageIndex < 18
+                          ? () => setState(() => _sharedStageIndex++)
+                          : null,
+                      icon: const Icon(Icons.arrow_right),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+
+                // 두 세트를 위아래로 각각 컨테이너에 렌더
+                ...widget.accessory.setOptions.map((setOption) {
+                  // 공유 인덱스 사용
+                  int currentStageIndex = _sharedStageIndex;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.orange[50],
+                        border: Border.all(color: Colors.orange[300]!),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 세트 이름(각 컨테이너 상단)
+                          Text(setOption.setName,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 8),
+
+                          // 이미지
+                          if (setOption.requiredAccessoryImages.isNotEmpty)
+                            Container(
+                              width: double.infinity,
+                              height: 100,
+                              alignment: Alignment.center,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: setOption.requiredAccessoryImages
+                                      .map((imageUrl) => Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: SizedBox(
+                                              width: 80,
+                                              height: 80,
                                               child: CachedNetworkImage(
                                                 imageUrl: imageUrl,
                                                 width: 64,
@@ -262,112 +305,143 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ))
-                                    .toList(),
+                                          ))
+                                      .toList(),
+                                ),
                               ),
                             ),
-                          )
-                        else
-                          const SizedBox.shrink(),
-                        const SizedBox(height: 10),
-                        // 세트 효과들
-                        ...setOption.effects.map((effect) {
-                          String currentValue =
-                              effect.stageValues[currentStageIndex.toString()] ??
-                                  '-';
 
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  effect.optionName,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                // 좌우 화살표 네비게이션
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // 좌측 화살표 (이전 단계)
-                                    IconButton(
-                                      onPressed: currentStageIndex > 0
-                                          ? () {
-                                              setState(() {
-                                                _stageIndexMap[
-                                                        setOption.setId] =
-                                                    currentStageIndex - 1;
-                                              });
-                                            }
-                                          : null,
-                                      icon: const Icon(Icons.arrow_left),
-                                      iconSize: 20,
-                                      splashRadius: 16,
-                                      constraints: const BoxConstraints(
-                                        minWidth: 32,
-                                        minHeight: 32,
-                                      ),
-                                    ),
-                                    // 중앙: 현재 단계와 수치
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '$currentStageIndex단계',
-                                          style: const TextStyle(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Text(
-                                          currentValue,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.deepOrange,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    // 우측 화살표 (다음 단계)
-                                    IconButton(
-                                      onPressed: currentStageIndex < 18
-                                          ? () {
-                                              setState(() {
-                                                _stageIndexMap[
-                                                        setOption.setId] =
-                                                    currentStageIndex + 1;
-                                              });
-                                            }
-                                          : null,
-                                      icon: const Icon(Icons.arrow_right),
-                                      iconSize: 20,
-                                      splashRadius: 16,
-                                      constraints: const BoxConstraints(
-                                        minWidth: 32,
-                                        minHeight: 32,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ],
+                          const SizedBox(height: 10),
+
+                          // 효과들을 '효과 : 수치' 형식으로 나열
+                          ...setOption.effects.map((effect) {
+                            String currentValue =
+                                effect.stageValues[currentStageIndex.toString()] ??
+                                    '-';
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2.0),
+                              child: Text('${effect.optionName} : $currentValue'),
+                            );
+                          }),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              }),
+                  );
+                }),
+              ] else ...[
+                // 세트 옵션이 1개 혹은 3개 이상일 때 기존 방식(각 세트별 개별 단계 컨트롤 유지)
+                ...widget.accessory.setOptions.map((setOption) {
+                  int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.orange[50],
+                        border: Border.all(color: Colors.orange[300]!),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          // 필요한 악세사리 이미지들 (가로 스크롤, 화면 전체 가운데 정렬)
+                          if (setOption.requiredAccessoryImages.isNotEmpty)
+                            Container(
+                              width: double.infinity,
+                              height: 100,
+                              alignment: Alignment.center,
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: setOption.requiredAccessoryImages
+                                      .map((imageUrl) => Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12.0),
+                                            child: SizedBox(
+                                              width: 80,
+                                              height: 80,
+                                              child: Center(
+                                                child: CachedNetworkImage(
+                                                  imageUrl: imageUrl,
+                                                  width: 64,
+                                                  height: 64,
+                                                  fit: BoxFit.contain,
+                                                  placeholder: (context, url) =>
+                                                      const Center(
+                                                          child:
+                                                              CircularProgressIndicator()),
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          const Center(
+                                                    child: Icon(
+                                                      Icons.broken_image,
+                                                      size: 28,
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ))
+                                      .toList(),
+                                ),
+                              ),
+                            )
+                          else
+                            const SizedBox.shrink(),
+                          const SizedBox(height: 10),
+                          // 세트 효과들 (효과:수치 형식)
+                          ...setOption.effects.map((effect) {
+                            String currentValue =
+                                effect.stageValues[currentStageIndex.toString()] ??
+                                    '-';
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2.0),
+                              child: Text('${effect.optionName} : $currentValue'),
+                            );
+                          }),
+
+                          const SizedBox(height: 8),
+                          // 개별 단계 컨트롤
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              IconButton(
+                                onPressed: currentStageIndex > 0
+                                    ? () {
+                                        setState(() {
+                                          _stageIndexMap[setOption.setId] =
+                                              currentStageIndex - 1;
+                                        });
+                                      }
+                                    : null,
+                                icon: const Icon(Icons.arrow_left),
+                              ),
+                              Text('$currentStageIndex단계',
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.grey)),
+                              IconButton(
+                                onPressed: currentStageIndex < 18
+                                    ? () {
+                                        setState(() {
+                                          _stageIndexMap[setOption.setId] =
+                                              currentStageIndex + 1;
+                                        });
+                                      }
+                                    : null,
+                                icon: const Icon(Icons.arrow_right),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }),
+              ],
             ],
           ],
         ),
