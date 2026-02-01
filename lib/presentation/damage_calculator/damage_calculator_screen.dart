@@ -2362,6 +2362,7 @@ class CrestSelectionDialogState extends State<CrestSelectionDialog> {
                 fillColor: Theme.of(context)
                     .colorScheme
                     .surfaceContainerHighest
+                    // ignore: deprecated_member_use
                     .withOpacity(0.3),
                 contentPadding: const EdgeInsets.symmetric(
                     vertical: 12.0, horizontal: 12.0),
