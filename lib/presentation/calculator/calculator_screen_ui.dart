@@ -925,6 +925,7 @@ class CalculatorScreenUI extends StatelessWidget {
                                   color: theme.cardColor,
                                   boxShadow: [
                                     BoxShadow(
+                                        // ignore: deprecated_member_use
                                         color: Colors.black.withOpacity(0.1),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2))
@@ -973,6 +974,7 @@ class CalculatorScreenUI extends StatelessWidget {
                                                 Icon(Icons.swap_horiz,
                                                     size: 24.0,
                                                     color: colorScheme.secondary
+                                                        // ignore: deprecated_member_use
                                                         .withOpacity(0.8))
                                               ])))))),
                       // ignore: deprecated_member_use
