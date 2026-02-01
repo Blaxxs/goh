@@ -93,7 +93,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
     required BuildContext context,
     required IconData icon,
     required VoidCallback onPressed,
-    String? tooltip,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     return SizedBox(
@@ -120,9 +119,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
   @override
   Widget build(BuildContext context) {
-    final Color iconColor =
-        // ignore: deprecated_member_use
-        Theme.of(context).colorScheme.onSurface.withOpacity(0.8);
+    // final Color iconColor unused removed; top buttons use unified style
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
     final double topPadding = MediaQuery.of(context).padding.top;
     final double screenHeight = MediaQuery.of(context).size.height;
