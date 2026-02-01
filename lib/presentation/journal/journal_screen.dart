@@ -301,10 +301,12 @@ class _JournalScreenState extends State<JournalScreen> {
                 // 토요일은 holidayPredicate와 holidayTextStyle로 처리, 일요일만 weekendTextStyle로 처리
                 // ignore: deprecated_member_use
                 weekendTextStyle: TextStyle(
+                    // ignore: deprecated_member_use
                     color: theme.colorScheme.error.withOpacity(0.9),
                     fontSize: 15.0), // 일요일 스타일
                 // ignore: deprecated_member_use
                 outsideTextStyle: TextStyle(
+                    // ignore: deprecated_member_use
                     color: theme.textTheme.bodySmall?.color?.withOpacity(0.4),
                     fontSize: 14.0),
                 defaultTextStyle: TextStyle(
@@ -341,6 +343,7 @@ class _JournalScreenState extends State<JournalScreen> {
                     // ignore: deprecated_member_use
                     style = TextStyle(
                         color:
+                            // ignore: deprecated_member_use
                             theme.textTheme.bodySmall?.color?.withOpacity(0.8),
                         fontSize: 13);
                   }
