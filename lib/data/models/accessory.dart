@@ -27,15 +27,26 @@ class SetOptionEffect {
     required this.stageValues,
   });
 
-  factory SetOptionEffect.fromJson(Map<String, dynamic> json) {
-    final stageValuesJson = json['stageValues'] as Map<String, dynamic>? ?? {};
+  factory SetOptionEffect.fromJson(dynamic json) {
+    if (json == null) {
+      return SetOptionEffect(
+        optionName: '',
+        stageValues: {},
+      );
+    }
+
+    final jsonMap = json is Map ? Map<String, dynamic>.from(json) : {};
+    final stageValuesJson = jsonMap['stageValues'];
     final stageValues = <String, String>{};
-    stageValuesJson.forEach((key, value) {
-      stageValues[key] = value?.toString() ?? '';
-    });
+
+    if (stageValuesJson is Map) {
+      stageValuesJson.forEach((key, value) {
+        stageValues[key.toString()] = value?.toString() ?? '';
+      });
+    }
 
     return SetOptionEffect(
-      optionName: json['optionName']?.toString() ?? '',
+      optionName: jsonMap['optionName']?.toString() ?? '',
       stageValues: stageValues,
     );
   }
@@ -57,18 +68,30 @@ class AccessorySetOption {
     required this.effects,
   });
 
-  factory AccessorySetOption.fromJson(Map<String, dynamic> json) {
-    final requiredAccList = json['requiredAccessories'] as List? ?? [];
-    final requiredImgList = json['requiredAccessoryImages'] as List? ?? [];
-    final effectsList = json['effects'] as List? ?? [];
+  factory AccessorySetOption.fromJson(dynamic json) {
+    if (json == null) {
+      return AccessorySetOption(
+        setId: '',
+        setName: '',
+        requiredAccessories: [],
+        requiredAccessoryImages: [],
+        effects: [],
+      );
+    }
+
+    final jsonMap = json is Map ? Map<String, dynamic>.from(json) : {};
+
+    final requiredAccList = jsonMap['requiredAccessories'] as List? ?? [];
+    final requiredImgList = jsonMap['requiredAccessoryImages'] as List? ?? [];
+    final effectsList = jsonMap['effects'] as List? ?? [];
 
     return AccessorySetOption(
-      setId: json['setId']?.toString() ?? '',
-      setName: json['setName']?.toString() ?? '',
+      setId: jsonMap['setId']?.toString() ?? '',
+      setName: jsonMap['setName']?.toString() ?? '',
       requiredAccessories: requiredAccList.map((e) => e.toString()).toList(),
       requiredAccessoryImages: requiredImgList.map((e) => e.toString()).toList(),
       effects: effectsList
-          .map((e) => SetOptionEffect.fromJson(Map<String, dynamic>.from(e)))
+          .map((e) => SetOptionEffect.fromJson(e))
           .toList(),
     );
   }
