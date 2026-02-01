@@ -16,14 +16,14 @@
 ### 1. Firebase Integration
 The app loads **essential data at startup** from Firebase:
 
-**File**: [lib/main.dart](../lib/main.dart) (lines 14-26)
+**File**: [lib/main.dart](lib/main.dart#L14-L26)
 - `Firebase.initializeApp()` initializes Firebase
 - `AccessoryDataManager().loadAccessories()` fetches accessory data from `/accessories` path
 - **Critical Pattern**: Accessories include Firebase Storage URLs in format `https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F{id}.png?alt=media`
   - Note: Storage bucket is `gohcalculator.firebasestorage.app` (NOT `goh-calculator.appspot.com`)
   - IDs are case-sensitive and must be URI-encoded
 
-**File**: [lib/core/constants/accessory_constants.dart](../lib/core/constants/accessory_constants.dart) (lines 6-72)
+**File**: [lib/core/constants/accessory_constants.dart](lib/core/constants/accessory_constants.dart#L6-L72)
 - `AccessoryDataManager` is a **singleton** managing all accessory data
 - Automatically generates Firebase Storage URLs on load
 - Must be initialized before UI renders
