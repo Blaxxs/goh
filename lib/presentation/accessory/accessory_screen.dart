@@ -222,9 +222,6 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
               const SizedBox(height: 12),
               ...widget.accessory.setOptions.map((setOption) {
                 int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
-                // stageValues는 '0', '1', ... '18'의 키를 가집니다.
-                List<String> stageKeys =
-                    List.generate(19, (i) => i.toString());
 
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
@@ -345,7 +342,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                           CrossAxisAlignment.center,
                                       children: [
                                         Text(
-                                          '${currentStageIndex}단계',
+                                          '$currentStageIndex단계',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
