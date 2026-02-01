@@ -400,7 +400,7 @@ class AppDrawer extends StatelessWidget {
                   _buildDrawerListTile(
                     context,
                     icon: Icons.flash_on_rounded, // 데미지 계산기 아이콘
-                    text: '데미지 계산기',
+                    text: '데미지 계산기_ Beta',
                     selected: currentScreen == AppScreen.damageCalculator,
                     onTap: () {
                       Navigator.of(context).pop();
