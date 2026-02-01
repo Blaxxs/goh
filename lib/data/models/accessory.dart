@@ -92,17 +92,40 @@ class AccessorySetOption {
     final requiredImgList = jsonMap['requiredAccessoryImages'] as List? ?? [];
     final effectsList = jsonMap['effects'] as List? ?? [];
 
+    if (kDebugMode) {
+      debugPrint('=== AccessorySetOption Debug ===');
+      debugPrint('[SetOpt] setId: ${jsonMap['setId']}');
+      debugPrint('[SetOpt] setName: ${jsonMap['setName']}');
+      debugPrint('[SetOpt] requiredImgList raw data: $requiredImgList');
+      debugPrint('[SetOpt] requiredImgList type: ${requiredImgList.runtimeType}');
+      requiredImgList.asMap().forEach((idx, item) {
+        debugPrint('[SetOpt] [$idx] type: ${item.runtimeType}, value: $item');
+      });
+    }
+
     // 악세사리 이미지 URL이 Firebase 경로인 경우 완전한 URL로 변환
     final processedImages = requiredImgList.map((e) {
       final imageId = e.toString();
       // 이미 완전한 URL이면 그대로 사용
       if (imageId.startsWith('http')) {
+        if (kDebugMode) {
+          debugPrint('[SetOpt] Image already URL: $imageId');
+        }
         return imageId;
       }
       // Firebase Storage URL로 변환 (accessories 폴더에 있다고 가정)
       final encodedId = Uri.encodeComponent(imageId);
-      return 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
+      final generatedUrl = 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
+      if (kDebugMode) {
+        debugPrint('[SetOpt] Generated URL for "$imageId": $generatedUrl');
+      }
+      return generatedUrl;
     }).toList();
+
+    if (kDebugMode) {
+      debugPrint('[SetOpt] Final processedImages: $processedImages');
+      debugPrint('================================');
+    }
 
     return AccessorySetOption(
       setId: jsonMap['setId']?.toString() ?? '',
