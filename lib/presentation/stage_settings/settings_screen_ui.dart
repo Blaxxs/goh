@@ -2,6 +2,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math'; // 난수 생성을 위해 추가
 import 'package:flutter/services.dart';
+import '../../core/widgets/app_drawer.dart';
+import '../../core/constants/box_constants.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../core/constants/vip_constants.dart';
 import '../../core/constants/stage_constants.dart';
@@ -117,19 +119,20 @@ class SettingsScreenUI extends StatelessWidget {
     sortedStageNames.sort((a, b) => a.compareTo(b));
 
     return Scaffold(
+      drawer: const AppDrawer(currentScreen: AppScreen.stageSettings),
       appBar: AppBar(
-        leading: isSetupMode // isSetupMode에 따라 뒤로가기 버튼 표시 여부 결정
-            ? null // 최초 설정 모드에서는 뒤로가기 버튼 숨김
+        leading: isSetupMode
+            ? null
             : IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(Icons.menu),
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Scaffold.of(context).openDrawer();
                 },
               ),
         title: Text(
           '스테이지 설정',
           style: titleStyle?.copyWith(
-            fontSize: (titleStyle.fontSize ?? 20) + 2.0, // 기존 폰트 크기에서 2.0 증가
+            fontSize: (titleStyle.fontSize ?? 20) + 2.0,
           ),
         ),
       ),
