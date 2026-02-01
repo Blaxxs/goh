@@ -210,12 +210,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   // 통일된 스타일의 작은 아이콘 버튼 사용
                   _buildTopIconButton(
                     context: context,
-                    icon: Icons.settings_suggest,
-                    onPressed: widget.onStageSettingsPressed,
-                  ),
-                  const SizedBox(width: 8),
-                  _buildTopIconButton(
-                    context: context,
                     icon: Icons.settings_applications_outlined,
                     onPressed: widget.onAppSettingsPressed,
                   ),
