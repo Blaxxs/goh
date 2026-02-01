@@ -32,9 +32,9 @@ The app loads **essential data at startup** from Firebase:
 Uses **StatefulWidget + setState()** pattern (no external provider libraries):
 - Local widget state only; no global state manager
 - Each screen manages its own form state via `GlobalKey<FormState>`
-- Example: [lib/presentation/stage_settings/settings_screen.dart](../lib/presentation/stage_settings/settings_screen.dart) uses `_formKey.currentState?.validate()`
+- Example: [lib/presentation/stage_settings/settings_screen.dart](lib/presentation/stage_settings/settings_screen.dart) uses `_formKey.currentState?.validate()`
 
-**Persistence**: [lib/core/services/settings_service.dart](../lib/core/services/settings_service.dart)
+**Persistence**: [lib/core/services/settings_service.dart](lib/core/services/settings_service.dart)
 - `AppSettings` class serialized to/from `SharedPreferences`
 - Contains dark mode, font multiplier, stage visibility filters, calendar start day
 - Must call `copyWith()` for immutable updates
@@ -46,7 +46,7 @@ Uses **StatefulWidget + setState()** pattern (no external provider libraries):
 - Event stages dynamically added via `EventManager.isEventPeriodActive()`
 - **Pattern**: Use getter, not cached values, for stage list
 
-**File**: [lib/core/constants/accessory_constants.dart](../lib/core/constants/accessory_constants.dart) (lines 105-160)
+**File**: [lib/core/constants/accessory_constants.dart](lib/core/constants/accessory_constants.dart#L105-L160)
 - `AccessoryOptionNames` manages all option names as constants
 - Options categorized: percentage increases, percentage decreases, flat increases
 - `getConstantName()` validates Korean option names exist in `_allOptionNames` set
@@ -61,12 +61,12 @@ Uses **StatefulWidget + setState()** pattern (no external provider libraries):
   3. VIP bonus accumulation
   4. Leader multiplier application
 
-**File**: [lib/domain/logic/accessory_enhancement_logic.dart](../lib/domain/logic/accessory_enhancement_logic.dart)
+**File**: [lib/domain/logic/accessory_enhancement_logic.dart](lib/domain/logic/accessory_enhancement_logic.dart)
 - Accessory enhancement calculations
 - Integrates `AccessoryOptionNames` for option validation
 
 ### 5. Data Models
-**File**: [lib/data/models/accessory.dart](../lib/data/models/accessory.dart)
+**File**: [lib/data/models/accessory.dart](lib/data/models/accessory.dart)
 - `Accessory` class with `fromJson()` factory deserializes Firebase data
 - `imageUrl` auto-generated if not provided in JSON
 - Options parsed as list of `AccessoryOption` objects
@@ -105,7 +105,7 @@ Workspace has auto-commit tasks:
 
 **Adding a New Stage**: 
 1. Create datasource in `lib/data/datasources/stage_data/{name}.dart`
-2. Import in [stage_constants.dart](../lib/core/constants/stage_constants.dart)
+2. Import in [stage_constants.dart](lib/core/constants/stage_constants.dart)
 3. Stage appears in `stageNameList` automatically
 
 **Adding Accessory Options**:
@@ -120,7 +120,7 @@ Workspace has auto-commit tasks:
 4. UI automatically displays set bonuses in accessory detail dialog
 
 **Modifying Settings**:
-1. Update `AppSettings` class in [settings_service.dart](../lib/core/services/settings_service.dart)
+1. Update `AppSettings` class in [settings_service.dart](lib/core/services/settings_service.dart)
 2. Add to `fromJson()`, `toJson()`, `copyWith()`
 3. Update UI form in settings screen
 
@@ -134,13 +134,13 @@ Workspace has auto-commit tasks:
 ### Error Handling
 - Firebase errors logged via `debugPrint()` in try-catch blocks
 - App continues with empty data if Firebase fails (graceful degradation)
-- Example: [main.dart](../lib/main.dart) lines 14-24
+- Example: [main.dart](lib/main.dart#L14-L24)
 - **Accessory parsing**: Null-safe with fallback for missing `setOptions`
 
 ### Form Validation
 - `FormState` keys used: `_formKey.currentState?.validate()`
 - Custom validators check numeric ranges and business rules
-- Example: [settings_screen.dart](../lib/presentation/stage_settings/settings_screen.dart) line 100
+- Example: [settings_screen.dart](lib/presentation/stage_settings/settings_screen.dart#L100)
 
 ### Async Operations
 - Firebase calls wrapped in try-catch
@@ -160,14 +160,14 @@ Workspace has auto-commit tasks:
 
 | File | Purpose | Key Pattern |
 |------|---------|------------|
-| [lib/main.dart](../lib/main.dart) | App entry, Firebase init, Accessory load | Startup sequencing |
-| [lib/core/services/settings_service.dart](../lib/core/services/settings_service.dart) | User preferences | Singleton + SharedPreferences |
-| [lib/core/constants/accessory_constants.dart](../lib/core/constants/accessory_constants.dart) | Accessory metadata, option names | Firebase data manager |
-| [lib/core/constants/stage_constants.dart](../lib/core/constants/stage_constants.dart) | Stage data, dynamic events | Getter-based stage list |
-| [lib/domain/logic/calculator_logic.dart](../lib/domain/logic/calculator_logic.dart) | Calculation engine | Pure functions + constants |
-| [lib/data/models/accessory.dart](../lib/data/models/accessory.dart) | Accessory structure | fromJson() factory pattern |
-| [lib/presentation/stage_settings/](../lib/presentation/stage_settings/) | Settings UI | StatefulWidget + FormState |
-| [lib/presentation/accessory/](../lib/presentation/accessory/) | Accessory compendium | Grid + set bonus display |
+| [lib/main.dart](lib/main.dart) | App entry, Firebase init, Accessory load | Startup sequencing |
+| [lib/core/services/settings_service.dart](lib/core/services/settings_service.dart) | User preferences | Singleton + SharedPreferences |
+| [lib/core/constants/accessory_constants.dart](lib/core/constants/accessory_constants.dart) | Accessory metadata, option names | Firebase data manager |
+| [lib/core/constants/stage_constants.dart](lib/core/constants/stage_constants.dart) | Stage data, dynamic events | Getter-based stage list |
+| [lib/domain/logic/calculator_logic.dart](lib/domain/logic/calculator_logic.dart) | Calculation engine | Pure functions + constants |
+| [lib/data/models/accessory.dart](lib/data/models/accessory.dart) | Accessory structure | fromJson() factory pattern |
+| [lib/presentation/stage_settings/](lib/presentation/stage_settings/) | Settings UI | StatefulWidget + FormState |
+| [lib/presentation/accessory/](lib/presentation/accessory/) | Accessory compendium | Grid + set bonus display |
 
 ## Questions to Ask When Adding Features
 
