@@ -52,7 +52,7 @@ Uses **StatefulWidget + setState()** pattern (no external provider libraries):
 - `getConstantName()` validates Korean option names exist in `_allOptionNames` set
 
 ### 4. Calculation Logic
-**File**: [lib/domain/logic/calculator_logic.dart](../lib/domain/logic/calculator_logic.dart)
+**File**: [lib/domain/logic/calculator_logic.dart](lib/domain/logic/calculator_logic.dart)
 - Pure calculation functions for stamina, gold, damage
 - Depends on constants from `lib/core/constants/` (team levels, VIP levels, leaders)
 - Example calculation chain:
