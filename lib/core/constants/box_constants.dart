@@ -15,6 +15,7 @@ enum AppScreen {
   journal,
   encyclopedia,
   simulator,
+  stageSettings,
   settings,
   appSettings,
 }
