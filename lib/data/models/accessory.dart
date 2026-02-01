@@ -39,13 +39,19 @@ class SetOptionEffect {
     final stageValuesJson = jsonMap['stageValues'];
     final stageValues = <String, String>{};
 
+    // stageValues may be provided as a Map or as a List in Firebase data.
     if (stageValuesJson is Map) {
       stageValuesJson.forEach((key, value) {
-        // 키를 문자열로 변환하되, 숫자 키는 그대로 유지
         final keyStr = key is int ? key.toString() : key.toString();
         final valueStr = value?.toString() ?? '';
         stageValues[keyStr] = valueStr;
       });
+    } else if (stageValuesJson is List) {
+      // Convert list entries to map with string keys '0'..'n'
+      for (var i = 0; i < stageValuesJson.length; i++) {
+        final val = stageValuesJson[i];
+        stageValues[i.toString()] = val?.toString() ?? '';
+      }
     }
 
     if (kDebugMode && stageValues.isEmpty && stageValuesJson != null) {
