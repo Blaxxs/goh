@@ -3,6 +3,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
 import 'accessory_screen_ui.dart';
+import '../../core/widgets/app_drawer.dart';
+import '../../core/constants/box_constants.dart';
 
 class AccessoryScreen extends StatefulWidget {
   final bool isPickerMode;
@@ -113,7 +115,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     }
 
     return Scaffold(
+      drawer: const AppDrawer(currentScreen: AppScreen.accessory),
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () => Scaffold.of(context).openDrawer(),
+        ),
         title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
       ),
       body: AccessoryScreenUI(
