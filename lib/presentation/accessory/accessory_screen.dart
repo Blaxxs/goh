@@ -252,8 +252,10 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                         if (setOption.requiredAccessoryImages.isNotEmpty)
                           SizedBox(
                             height: 60,
+                            width: double.maxFinite,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
+                              physics: const AlwaysScrollableScrollPhysics(),
                               itemCount:
                                   setOption.requiredAccessoryImages.length,
                               itemBuilder: (context, index) {
