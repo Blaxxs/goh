@@ -266,15 +266,13 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                             CircularProgressIndicator(),
                                       ),
                                       errorWidget:
-                                          (context, url, error) {
-                                        debugPrint('[SetOption] Image load failed for URL: $url, Error: $error');
-                                        return const Center(
-                                          child: Icon(
-                                              Icons.broken_image,
-                                              size: 20,
-                                              color: Colors.grey),
-                                        );
-                                      },
+                                          (context, url, error) =>
+                                              const Center(
+                                        child: Icon(
+                                            Icons.broken_image,
+                                            size: 20,
+                                            color: Colors.grey),
+                                      ),
                                     ),
                                   ),
                                 );
