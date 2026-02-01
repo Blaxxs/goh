@@ -726,6 +726,7 @@ class CalculatorScreenUI extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     // ignore: deprecated_member_use
                                     color: theme.scaffoldBackgroundColor
+                                        // ignore: deprecated_member_use
                                         .withOpacity(0.85),
                                     borderRadius: BorderRadius.circular(4),
                                   ),
