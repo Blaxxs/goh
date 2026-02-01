@@ -128,7 +128,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
       {'text': '루프 계산기', 'onPressed': widget.onCalculatorPressed},
       {'text': '스테이지 설정', 'onPressed': widget.onStageSettingsPressed},
       {'text': '골드 효율 계산기', 'onPressed': widget.onGoldCalculatorPressed},
-      {'text': '데미지 계산기', 'onPressed': widget.onDamageCalculatorPressed},
+      {'text': '데미지 계산기_ Beta', 'onPressed': widget.onDamageCalculatorPressed},
       {'text': '악세사리 도감', 'onPressed': widget.onAccessoryPressed},
       {'text': '일지', 'onPressed': widget.onJournalPressed},
       if (EventManager.isEventPeriodActive())
