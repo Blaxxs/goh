@@ -225,7 +225,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                     ),
                     Column(
                       children: [
-                        Text('${_sharedStageIndex}단계',
+                        Text('$_sharedStageIndex단계',
                             style: const TextStyle(
                                 fontSize: 12, color: Colors.grey)),
                         const SizedBox(height: 4),
