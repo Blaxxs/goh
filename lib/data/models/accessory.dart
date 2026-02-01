@@ -17,6 +17,63 @@ class AccessoryOption {
   }
 }
 
+// 세트 옵션의 개별 효과
+class SetOptionEffect {
+  final String optionName;
+  final Map<String, String> stageValues; // 단계별 수치 (0~18)
+
+  const SetOptionEffect({
+    required this.optionName,
+    required this.stageValues,
+  });
+
+  factory SetOptionEffect.fromJson(Map<String, dynamic> json) {
+    final stageValuesJson = json['stageValues'] as Map<String, dynamic>? ?? {};
+    final stageValues = <String, String>{};
+    stageValuesJson.forEach((key, value) {
+      stageValues[key] = value?.toString() ?? '';
+    });
+
+    return SetOptionEffect(
+      optionName: json['optionName']?.toString() ?? '',
+      stageValues: stageValues,
+    );
+  }
+}
+
+// 악세사리 세트 옵션
+class AccessorySetOption {
+  final String setId;
+  final String setName;
+  final List<String> requiredAccessories;
+  final List<String> requiredAccessoryImages;
+  final List<SetOptionEffect> effects;
+
+  const AccessorySetOption({
+    required this.setId,
+    required this.setName,
+    required this.requiredAccessories,
+    required this.requiredAccessoryImages,
+    required this.effects,
+  });
+
+  factory AccessorySetOption.fromJson(Map<String, dynamic> json) {
+    final requiredAccList = json['requiredAccessories'] as List? ?? [];
+    final requiredImgList = json['requiredAccessoryImages'] as List? ?? [];
+    final effectsList = json['effects'] as List? ?? [];
+
+    return AccessorySetOption(
+      setId: json['setId']?.toString() ?? '',
+      setName: json['setName']?.toString() ?? '',
+      requiredAccessories: requiredAccList.map((e) => e.toString()).toList(),
+      requiredAccessoryImages: requiredImgList.map((e) => e.toString()).toList(),
+      effects: effectsList
+          .map((e) => SetOptionEffect.fromJson(Map<String, dynamic>.from(e)))
+          .toList(),
+    );
+  }
+}
+
 class Accessory {
   final String id;
   final String name;
