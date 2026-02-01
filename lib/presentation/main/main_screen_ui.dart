@@ -88,6 +88,36 @@ class _MainScreenUIState extends State<MainScreenUI> {
     );
   }
 
+  // 상단 우측에 사용하는 아이콘 전용 버튼 (메뉴 버튼과 시각적 통일성 유지)
+  Widget _buildTopIconButton({
+    required BuildContext context,
+    required IconData icon,
+    required VoidCallback onPressed,
+    String? tooltip,
+  }) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return SizedBox(
+      width: 44,
+      height: 44,
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          // ignore: deprecated_member_use
+          backgroundColor: colorScheme.surface.withOpacity(0.85),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          side: BorderSide(
+            // ignore: deprecated_member_use
+            color: colorScheme.secondary.withOpacity(0.7),
+          ),
+          padding: EdgeInsets.zero,
+        ),
+        child: Icon(icon, color: colorScheme.secondary, size: 20),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Color iconColor =
@@ -179,14 +209,16 @@ class _MainScreenUIState extends State<MainScreenUI> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IconButton(
-                    icon: Icon(Icons.settings_suggest,
-                        color: iconColor, size: 30),
+                  // 통일된 스타일의 작은 아이콘 버튼 사용
+                  _buildTopIconButton(
+                    context: context,
+                    icon: Icons.settings_suggest,
                     onPressed: widget.onStageSettingsPressed,
                   ),
-                  IconButton(
-                    icon: Icon(Icons.settings_applications_outlined,
-                        color: iconColor, size: 30),
+                  const SizedBox(width: 8),
+                  _buildTopIconButton(
+                    context: context,
+                    icon: Icons.settings_applications_outlined,
                     onPressed: widget.onAppSettingsPressed,
                   ),
                 ],
