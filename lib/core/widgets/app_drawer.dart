@@ -210,11 +210,11 @@ class AppDrawer extends StatelessWidget {
                   _buildDrawerListTile(
                     context,
                     icon: Icons.person_outline,
-                    text: '유저 설정',
-                    selected: currentScreen == AppScreen.settings,
+                    text: '스테이지 설정',
+                    selected: currentScreen == AppScreen.stageSettings,
                     onTap: () {
                       Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.settings) {
+                      if (currentScreen != AppScreen.stageSettings) {
                         Navigator.push(
                             context,
                             MaterialPageRoute(

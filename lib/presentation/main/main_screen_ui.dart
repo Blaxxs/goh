@@ -126,6 +126,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     final List<Map<String, dynamic>> menuButtonConfigs = [
       {'text': '루프 계산기', 'onPressed': widget.onCalculatorPressed},
+      {'text': '스테이지 설정', 'onPressed': widget.onStageSettingsPressed},
       {'text': '골드 효율 계산기', 'onPressed': widget.onGoldCalculatorPressed},
       {'text': '데미지 계산기', 'onPressed': widget.onDamageCalculatorPressed},
       {'text': '악세사리 도감', 'onPressed': widget.onAccessoryPressed},
