@@ -278,36 +278,13 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                 );
                               },
                             ),
-                          )
-                        else
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              '설정된 세트 악세사리 이미지 없음',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[500],
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
                           ),
                         const SizedBox(height: 10),
                         // 세트 효과들
                         ...setOption.effects.map((effect) {
-                          String currentValue = '';
-                          
-                          // 0부터 18까지 단계별로 값을 찾기
-                          if (effect.stageValues.isNotEmpty) {
-                            // 현재 선택된 단계의 값 가져오기
-                            currentValue = effect.stageValues[currentStageIndex.toString()] ?? '-';
-                            
-                            // 값이 없으면 빈 문자열이므로 '-' 표시
-                            if (currentValue.isEmpty) {
-                              currentValue = '-';
-                            }
-                          } else {
-                            currentValue = '-';
-                          }
+                          String currentValue =
+                              effect.stageValues[currentStageIndex.toString()] ??
+                                  '-';
 
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),
