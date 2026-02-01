@@ -222,9 +222,9 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 세트 옵션 이름
+                        // 세트 옵션 제목 (요청: '세트 옵션 : {이름}')
                         Text(
-                          setOption.setName,
+                          '세트 옵션 : ${setOption.setName}',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.deepOrange,
@@ -232,10 +232,10 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        // 필요한 악세사리 이미지들
+                        // 필요한 악세사리 이미지들 (테두리 제거, 가운데 정렬, 크기 확대)
                         if (setOption.requiredAccessoryImages.isNotEmpty)
                           SizedBox(
-                            height: 60,
+                            height: 80,
                             width: double.maxFinite,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
@@ -247,33 +247,24 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     setOption.requiredAccessoryImages[index];
                                 return Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(horizontal: 4),
-                                  child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.orange[300]!,
-                                          width: 1),
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                    child: Tooltip(
-                                      message: imageUrl,
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  child: SizedBox(
+                                    width: 72,
+                                    height: 72,
+                                    child: Center(
                                       child: CachedNetworkImage(
                                         imageUrl: imageUrl,
+                                        width: 56,
+                                        height: 56,
                                         fit: BoxFit.contain,
                                         placeholder: (context, url) =>
                                             const Center(
-                                          child:
-                                              CircularProgressIndicator(),
+                                          child: CircularProgressIndicator(),
                                         ),
-                                        errorWidget:
-                                            (context, url, error) =>
-                                                const Center(
-                                          child: Icon(
-                                              Icons.broken_image,
-                                              size: 20,
-                                              color: Colors.grey),
+                                        errorWidget: (context, url, error) =>
+                                            const Center(
+                                          child: Icon(Icons.broken_image,
+                                              size: 28, color: Colors.grey),
                                         ),
                                       ),
                                     ),
@@ -283,17 +274,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                             ),
                           )
                         else
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Text(
-                              '세트 악세사리 이미지: 미설정',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey[600],
-                                fontStyle: FontStyle.italic,
-                              ),
-                            ),
-                          ),
+                          const SizedBox.shrink(),
                         const SizedBox(height: 10),
                         // 세트 효과들
                         ...setOption.effects.map((effect) {
