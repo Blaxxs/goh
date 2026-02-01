@@ -74,19 +74,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('$label: ', style: const TextStyle(fontWeight: FontWeight.bold)),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     // AccessoryDataManager에서 미리 로드된 데이터를 가져옵니다.
