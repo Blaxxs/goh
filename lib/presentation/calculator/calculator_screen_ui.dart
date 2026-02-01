@@ -897,6 +897,7 @@ class CalculatorScreenUI extends StatelessWidget {
                                         Icon(Icons.arrow_drop_down,
                                             size: 24.0,
                                             color: colorScheme.secondary
+                                                // ignore: deprecated_member_use
                                                 .withOpacity(
                                                     0.8)), // 아이콘 변경 및 크기 조정
                                       ],
@@ -1013,6 +1014,7 @@ class CalculatorScreenUI extends StatelessWidget {
                                                 Icon(Icons.swap_horiz,
                                                     size: 24.0,
                                                     color: colorScheme.secondary
+                                                        // ignore: deprecated_member_use
                                                         .withOpacity(0.8))
                                               ])))))),
                       Expanded(
