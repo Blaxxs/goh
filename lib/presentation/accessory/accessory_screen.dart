@@ -266,17 +266,31 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                             CircularProgressIndicator(),
                                       ),
                                       errorWidget:
-                                          (context, url, error) =>
-                                              const Center(
-                                        child: Icon(
-                                            Icons.broken_image,
-                                            size: 20,
-                                            color: Colors.grey),
-                                      ),
+                                          (context, url, error) {
+                                        debugPrint('[SetOption] Image load failed for URL: $url, Error: $error');
+                                        return const Center(
+                                          child: Icon(
+                                              Icons.broken_image,
+                                              size: 20,
+                                              color: Colors.grey),
+                                        );
+                                      },
                                     ),
                                   ),
                                 );
                               },
+                            ),
+                          )
+                        else
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Text(
+                              '설정된 세트 악세사리 이미지 없음',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[500],
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
                           ),
                         const SizedBox(height: 10),
