@@ -113,11 +113,17 @@ class AccessorySetOption {
         }
         return imageId;
       }
+
+      // 이미 확장자가 포함되어 있는 경우(예: christmas_bell.png), 중복 확장자 추가를 피합니다.
+      // 확장자 판단은 간단히 마지막에 "."이 있고 1-5글자 알파벳이 따라오는 형태로 처리합니다.
+      final bool hasExtension = RegExp(r"\.[a-zA-Z0-9]{1,5}(\?|$)").hasMatch(imageId);
+
       // Firebase Storage URL로 변환 (accessories 폴더에 있다고 가정)
       final encodedId = Uri.encodeComponent(imageId);
-      final generatedUrl = 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
+      final filename = hasExtension ? encodedId : '$encodedId.png';
+      final generatedUrl = 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$filename?alt=media';
       if (kDebugMode) {
-        debugPrint('[SetOpt] Generated URL for "$imageId": $generatedUrl');
+        debugPrint('[SetOpt] Generated URL for "$imageId": $generatedUrl (hasExtension=$hasExtension)');
       }
       return generatedUrl;
     }).toList();
