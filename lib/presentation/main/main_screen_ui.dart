@@ -165,8 +165,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
               ),
             ),
           ),
-
-          // 상단 설정 버튼 영역
+flutter build webflutter build web
           Align(
             alignment: Alignment.topRight,
             child: Padding(
