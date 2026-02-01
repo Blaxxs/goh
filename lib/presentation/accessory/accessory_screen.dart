@@ -102,6 +102,67 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                       child:
                           Text('${option.optionName}: ${option.optionValue}'),
                     )),
+                // 세트 옵션 표시
+                if (accessory.setOptions.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const Text('세트 옵션',
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.deepOrange)),
+                  const SizedBox(height: 12),
+                  ...accessory.setOptions.map((setOption) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: Colors.orange[50],
+                        border: Border.all(color: Colors.orange[300]!),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            setOption.setName,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepOrange,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          // 필요한 악세사리 목록
+                          Text(
+                            '필요 악세사리: ${setOption.requiredAccessories.join(', ')}',
+                            style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 8),
+                          // 세트 효과
+                          ...setOption.effects.map((effect) => Padding(
+                            padding: const EdgeInsets.only(top: 6.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  effect.optionName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                // 단계별 수치를 간단히 표시 (0단계와 18단계만, 또는 모두)
+                                Text(
+                                  '0단계: ${effect.stageValues['0'] ?? '-'} → 18단계: ${effect.stageValues['18'] ?? '-'}',
+                                  style: const TextStyle(fontSize: 11, color: Colors.grey),
+                                ),
+                              ],
+                            ),
+                          )),
+                        ],
+                      ),
+                    ),
+                  )),
+                ],
               ],
             ),
           ),
