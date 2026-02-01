@@ -282,9 +282,20 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                         const SizedBox(height: 10),
                         // 세트 효과들
                         ...setOption.effects.map((effect) {
-                          String currentValue =
-                              effect.stageValues[currentStageIndex.toString()] ??
-                                  '-';
+                          String currentValue = '';
+                          
+                          // 0부터 18까지 단계별로 값을 찾기
+                          if (effect.stageValues.isNotEmpty) {
+                            // 현재 선택된 단계의 값 가져오기
+                            currentValue = effect.stageValues[currentStageIndex.toString()] ?? '-';
+                            
+                            // 값이 없으면 빈 문자열이므로 '-' 표시
+                            if (currentValue.isEmpty) {
+                              currentValue = '-';
+                            }
+                          } else {
+                            currentValue = '-';
+                          }
 
                           return Padding(
                             padding: const EdgeInsets.only(top: 8.0),

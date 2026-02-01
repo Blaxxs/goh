@@ -1,4 +1,4 @@
-// lib/data/models/accessory.dart
+import 'package:flutter/foundation.dart';
 
 class AccessoryOption {
   final String optionName;
