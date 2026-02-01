@@ -201,12 +201,13 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
             // 세트 옵션 표시
             if (widget.accessory.setOptions.isNotEmpty) ...[
               const SizedBox(height: 16),
-              const Divider(),
-              const Text('세트 옵션',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.deepOrange)),
-              const SizedBox(height: 12),
+                const Divider(),
+                Text(
+                '세트 옵션 : ${widget.accessory.setOptions.map((s) => s.setName).join(' / ')}',
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold, color: Colors.deepOrange),
+                ),
+                const SizedBox(height: 12),
               ...widget.accessory.setOptions.map((setOption) {
                 int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
 
@@ -222,55 +223,49 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // 세트 옵션 제목 (요청: '세트 옵션 : {이름}')
-                        Text(
-                          '세트 옵션 : ${setOption.setName}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.deepOrange,
-                            fontSize: 14,
-                          ),
-                        ),
                         const SizedBox(height: 8),
-                        // 필요한 악세사리 이미지들 (테두리 제거, 가운데 정렬, 크기 확대)
+                        // 필요한 악세사리 이미지들 (가로 스크롤, 화면 전체 가운데 정렬)
                         if (setOption.requiredAccessoryImages.isNotEmpty)
-                          SizedBox(
-                            height: 80,
-                            width: double.maxFinite,
-                            child: ListView.builder(
+                          Container(
+                            width: double.infinity,
+                            height: 100,
+                            alignment: Alignment.center,
+                            child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount:
-                                  setOption.requiredAccessoryImages.length,
-                              itemBuilder: (context, index) {
-                                final imageUrl =
-                                    setOption.requiredAccessoryImages[index];
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 8),
-                                  child: SizedBox(
-                                    width: 72,
-                                    height: 72,
-                                    child: Center(
-                                      child: CachedNetworkImage(
-                                        imageUrl: imageUrl,
-                                        width: 56,
-                                        height: 56,
-                                        fit: BoxFit.contain,
-                                        placeholder: (context, url) =>
-                                            const Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                        errorWidget: (context, url, error) =>
-                                            const Center(
-                                          child: Icon(Icons.broken_image,
-                                              size: 28, color: Colors.grey),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: setOption.requiredAccessoryImages
+                                    .map((imageUrl) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12.0),
+                                          child: SizedBox(
+                                            width: 80,
+                                            height: 80,
+                                            child: Center(
+                                              child: CachedNetworkImage(
+                                                imageUrl: imageUrl,
+                                                width: 64,
+                                                height: 64,
+                                                fit: BoxFit.contain,
+                                                placeholder: (context, url) =>
+                                                    const Center(
+                                                        child:
+                                                            CircularProgressIndicator()),
+                                                errorWidget:
+                                                    (context, url, error) =>
+                                                        const Center(
+                                                  child: Icon(
+                                                    Icons.broken_image,
+                                                    size: 28,
+                                                    color: Colors.grey,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ),
                             ),
                           )
                         else
