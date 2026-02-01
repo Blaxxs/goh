@@ -1,4 +1,7 @@
 @echo OFF
+echo Building Flutter web app...
+flutter build web --release --base-href "/goh/"
+
 echo Deploying to GitHub Pages...
 
 REM Change directory to the build output
