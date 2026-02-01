@@ -356,8 +356,9 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
           return '$demonName: ${entry.value.toStringAsFixed(2)}개 (예상 ${_integerFormatter.format(expectedGoldFromThisDemonType.round())}골드)';
         }).join('\n');
 
-        if (result.expectedDemonCounts.isEmpty)
+        if (result.expectedDemonCounts.isEmpty) {
           demonDetails = '해당 스테이지 돈악마 드랍 정보 없음';
+        }
 
         String clearTimeDisplay;
         if (result.clearTimeSeconds != null && result.clearTimeSeconds! > 0) {
