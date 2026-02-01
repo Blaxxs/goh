@@ -53,26 +53,6 @@ class AccessoryDataManager {
           final String encodedId = Uri.encodeComponent(key);
           final String imageUrl = 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
           accessoryData['imageUrl'] = imageUrl;
-          
-          if (kDebugMode) {
-            debugPrint('[AccessoryDataManager] Loading accessory: $key');
-            debugPrint('  - Image URL: $imageUrl');
-            if (accessoryData.containsKey('setOptions')) {
-              final setOptionsList = accessoryData['setOptions'] as List?;
-              debugPrint('  - Set Options count: ${setOptionsList?.length ?? 0}');
-              setOptionsList?.asMap().forEach((idx, setOpt) {
-                debugPrint('    [SetOpt $idx] setId: ${(setOpt as Map?)?['setId']}, setName: ${(setOpt as Map?)?['setName']}');
-                final reqImages = (setOpt as Map?)?['requiredAccessoryImages'] as List?;
-                debugPrint('    [SetOpt $idx] Required Images: ${reqImages?.length ?? 0} - $reqImages');
-                final effects = (setOpt as Map?)?['effects'] as List?;
-                debugPrint('    [SetOpt $idx] Effects count: ${effects?.length ?? 0}');
-                effects?.asMap().forEach((effIdx, eff) {
-                  final stageVals = (eff as Map?)?['stageValues'] as Map?;
-                  debugPrint('      [Effect $effIdx] ${(eff as Map?)?['optionName']} -> stage values keys: ${stageVals?.keys.toList()}');
-                });
-              });
-            }
-          }
 
           final accessory = Accessory.fromJson(accessoryData);
           loadedAccessories.add(accessory);
