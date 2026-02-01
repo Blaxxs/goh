@@ -41,7 +41,10 @@ class SetOptionEffect {
 
     if (stageValuesJson is Map) {
       stageValuesJson.forEach((key, value) {
-        stageValues[key.toString()] = value?.toString() ?? '';
+        // 키를 문자열로 변환하되, 숫자 키는 그대로 유지
+        final keyStr = key is int ? key.toString() : key.toString();
+        final valueStr = value?.toString() ?? '';
+        stageValues[keyStr] = valueStr;
       });
     }
 
@@ -85,11 +88,23 @@ class AccessorySetOption {
     final requiredImgList = jsonMap['requiredAccessoryImages'] as List? ?? [];
     final effectsList = jsonMap['effects'] as List? ?? [];
 
+    // 악세사리 이미지 URL이 Firebase 경로인 경우 완전한 URL로 변환
+    final processedImages = requiredImgList.map((e) {
+      final imageId = e.toString();
+      // 이미 완전한 URL이면 그대로 사용
+      if (imageId.startsWith('http')) {
+        return imageId;
+      }
+      // Firebase Storage URL로 변환 (accessories 폴더에 있다고 가정)
+      final encodedId = Uri.encodeComponent(imageId);
+      return 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
+    }).toList();
+
     return AccessorySetOption(
       setId: jsonMap['setId']?.toString() ?? '',
       setName: jsonMap['setName']?.toString() ?? '',
       requiredAccessories: requiredAccList.map((e) => e.toString()).toList(),
-      requiredAccessoryImages: requiredImgList.map((e) => e.toString()).toList(),
+      requiredAccessoryImages: processedImages,
       effects: effectsList
           .map((e) => SetOptionEffect.fromJson(e))
           .toList(),
