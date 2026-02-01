@@ -55,7 +55,23 @@ class AccessoryDataManager {
           accessoryData['imageUrl'] = imageUrl;
           
           if (kDebugMode) {
-            print('Generated Image URL for $key: $imageUrl');
+            debugPrint('[AccessoryDataManager] Loading accessory: $key');
+            debugPrint('  - Image URL: $imageUrl');
+            if (accessoryData.containsKey('setOptions')) {
+              final setOptionsList = accessoryData['setOptions'] as List?;
+              debugPrint('  - Set Options count: ${setOptionsList?.length ?? 0}');
+              setOptionsList?.asMap().forEach((idx, setOpt) {
+                debugPrint('    [SetOpt $idx] setId: ${(setOpt as Map?)?['setId']}, setName: ${(setOpt as Map?)?['setName']}');
+                final reqImages = (setOpt as Map?)?['requiredAccessoryImages'] as List?;
+                debugPrint('    [SetOpt $idx] Required Images: ${reqImages?.length ?? 0} - $reqImages');
+                final effects = (setOpt as Map?)?['effects'] as List?;
+                debugPrint('    [SetOpt $idx] Effects count: ${effects?.length ?? 0}');
+                effects?.asMap().forEach((effIdx, eff) {
+                  final stageVals = (eff as Map?)?['stageValues'] as Map?;
+                  debugPrint('      [Effect $effIdx] ${(eff as Map?)?['optionName']} -> stage values keys: ${stageVals?.keys.toList()}');
+                });
+              });
+            }
           }
 
           final accessory = Accessory.fromJson(accessoryData);
