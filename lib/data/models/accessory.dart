@@ -48,6 +48,10 @@ class SetOptionEffect {
       });
     }
 
+    if (kDebugMode && stageValues.isEmpty && stageValuesJson != null) {
+      debugPrint('[SetOptionEffect] WARNING: stageValues is empty after parsing. Raw data: $stageValuesJson');
+    }
+
     return SetOptionEffect(
       optionName: jsonMap['optionName']?.toString() ?? '',
       stageValues: stageValues,
