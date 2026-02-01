@@ -94,6 +94,7 @@ class AppSettingsScreenUI extends StatelessWidget {
               color: theme.brightness == Brightness.dark
                   ? theme.colorScheme.error
                   : theme.colorScheme.primary
+                      // ignore: deprecated_member_use
                       .withOpacity(0.7), // 다크 모드에서 테마의 오류 색상(어두운 빨간색) 사용
             )
           : null, // 이메일 또는 링크인 경우에만 아이콘 표시

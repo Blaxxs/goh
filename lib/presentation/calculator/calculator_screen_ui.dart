@@ -1229,6 +1229,7 @@ class CalculatorScreenUI extends StatelessWidget {
                                     Icons.info_outline_rounded,
                                     // ignore: deprecated_member_use
                                     color:
+                                        // ignore: deprecated_member_use
                                         colorScheme.onSurface.withOpacity(0.7),
                                     size: 20,
                                   ),
