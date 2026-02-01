@@ -64,11 +64,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
+        // ignore: deprecated_member_use
         backgroundColor: colorScheme.surface.withOpacity(0.8),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
         side: BorderSide(
+          // ignore: deprecated_member_use
           color: colorScheme.secondary.withOpacity(0.7),
         ),
         padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
@@ -89,6 +91,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
   @override
   Widget build(BuildContext context) {
     final Color iconColor =
+        // ignore: deprecated_member_use
         Theme.of(context).colorScheme.onSurface.withOpacity(0.8);
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
     final double topPadding = MediaQuery.of(context).padding.top;
@@ -128,6 +131,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    // ignore: deprecated_member_use
                     color: Colors.black.withOpacity(0.3),
                     child: Text(
                       _noticeMessage,
