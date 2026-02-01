@@ -352,6 +352,7 @@ class MyApp extends StatelessWidget {
                 // ON 상태
                 // ignore: deprecated_member_use
                 return toggleGreenDark
+                    // ignore: deprecated_member_use
                     .withOpacity(0.5); // 다크 모드 ON 상태 트랙 색상 (기존 로직 유지 또는 필요시 변경)
               }
               return null; // 다크 모드 OFF 상태 트랙 기본값
