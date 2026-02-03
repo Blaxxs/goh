@@ -29,6 +29,11 @@ class _LoadingScreenState extends State<LoadingScreen> {
         SettingsService.instance.loadAllSettings(),
         Future.delayed(const Duration(milliseconds: 3000)) // 로고 최소 표시 시간 (예시)
       ]);
+      
+        // 악세사리 이미지 미리 로드 (LoadingScreen의 BuildContext 사용)
+        if (mounted) {
+          await AccessoryDataManager().precacheAllImages(context);
+        }
     } catch (e) {
       // 에러 처리 (예: 로그 출력)
       debugPrint('설정 로딩 중 오류 발생: $e');
