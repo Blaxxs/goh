@@ -1,12 +1,15 @@
 // lib/core/constants/accessory_constants.dart
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '../../data/models/accessory.dart';
 
 /// A singleton class to manage accessory data fetched from Firebase.
 ///
 /// This manager fetches accessory data from the Realtime Database,
 /// processes it, and makes it available throughout the app.
+/// It also caches data locally for faster subsequent loads.
 ///
 /// Usage:
 /// 1. Initialize by calling `await AccessoryDataManager().loadAccessories()` at app startup (e.g., in your main() function).
@@ -23,6 +26,10 @@ class AccessoryDataManager {
   // --- Data Storage ---
   List<Accessory> allAccessories = [];
   List<String> accessoryParts = [];
+  
+  // --- Cache Keys ---
+  static const String _cacheKeyAccessories = 'cached_accessories';
+  static const String _cacheKeyParts = 'cached_accessory_parts';
 
   /// Fetches accessory data from Firebase Realtime Database and populates the data lists.
   ///
