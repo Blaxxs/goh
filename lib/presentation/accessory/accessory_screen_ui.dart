@@ -101,12 +101,18 @@ class AccessoryScreenUI extends StatelessWidget {
                         flex: 3,
                         child: TextField(
                           controller: searchController,
+                          style: TextStyle(
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
                           decoration: InputDecoration(
                             hintText: '검색어를 입력하세요...',
+                            hintStyle: TextStyle(
+                              color: isDark ? Colors.white54 : Colors.black54,
+                            ),
                             filled: true,
-                            fillColor: Colors.blueGrey[50],
-                            prefixIcon:
-                                const Icon(Icons.search, color: Colors.black54),
+                            fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                            prefixIcon: Icon(Icons.search, 
+                                color: isDark ? Colors.white54 : Colors.black54),
                             suffixIcon: currentSearchQuery.isNotEmpty
                                 ? IconButton(
                                     icon: const Icon(Icons.clear, size: 20),
@@ -115,11 +121,13 @@ class AccessoryScreenUI extends StatelessWidget {
                                 : null,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(color: Colors.grey.shade300),
+                              borderSide: BorderSide(
+                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(color: Colors.grey.shade300),
+                              borderSide: BorderSide(
+                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
