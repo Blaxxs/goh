@@ -39,6 +39,7 @@ class AccessoryScreenUI extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Padding(
@@ -60,9 +61,9 @@ class AccessoryScreenUI extends StatelessWidget {
                         flex: 2,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Colors.blueGrey[50],
+                            color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
                             borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: Colors.grey.shade300),
+                            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
                           ),
                           child: DropdownButton2<String>(
                             isExpanded: true,
@@ -71,14 +72,16 @@ class AccessoryScreenUI extends StatelessWidget {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w500)),
+                                        fontWeight: FontWeight.w500,
+                                        color: isDark ? Colors.white : Colors.black87)),
                               );
                             }).toList(),
                             onChanged: onSearchOptionChanged,
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+                            iconStyleData: IconStyleData(
+                              icon: Icon(Icons.keyboard_arrow_down, 
+                                  color: isDark ? Colors.white70 : Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
