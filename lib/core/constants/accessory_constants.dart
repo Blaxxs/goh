@@ -39,12 +39,19 @@ class AccessoryDataManager {
   /// 3. If fresh data is found, updates cache and in-memory lists
   ///
   /// This ensures the app loads instantly with cached data while keeping it up-to-date.
-  Future<void> loadAccessories() async {
+  /// Loads accessories from local cache first. If [waitForRemote] is true,
+  /// this method will also wait for the remote Firebase fetch to complete
+  /// before returning. Otherwise the Firebase fetch runs in background.
+  Future<void> loadAccessories({bool waitForRemote = false}) async {
     // Step 1: Try to load from local cache first (instant)
     await _loadFromCache();
-    
-    // Step 2: Fetch from Firebase in background (non-blocking)
-    _updateFromFirebaseInBackground();
+
+    // Step 2: Either fetch remote data synchronously (await) or start background fetch
+    if (waitForRemote) {
+      await _fetchFromFirebase();
+    } else {
+      _updateFromFirebaseInBackground();
+    }
   }
   
   /// Loads cached accessories from SharedPreferences.
