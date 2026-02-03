@@ -233,7 +233,12 @@ class AccessoryScreenUI extends StatelessWidget {
         // --- 악세사리 리스트 (그리드 뷰) ---
         Expanded(
           child: filteredAccessories.isEmpty
-              ? const Center(child: Text("검색 결과가 없습니다."))
+              ? Center(
+                  child: Text("검색 결과가 없습니다.",
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: isDark ? Colors.white70 : Colors.black54,
+                      )))
               : GridView.builder(
                   padding: const EdgeInsets.all(8.0),
                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -260,7 +265,7 @@ class AccessoryScreenUI extends StatelessWidget {
                             // 1. 이미지 영역
                             Expanded(
                               child: Container(
-                                color: Colors.grey[200],
+                                color: isDark ? Colors.grey[800] : Colors.grey[200],
                                 padding: const EdgeInsets.all(8.0),
                                 child: CachedNetworkImage(
                                   imageUrl: accessory.imageUrl,
@@ -290,10 +295,10 @@ class AccessoryScreenUI extends StatelessWidget {
                                   Text(
                                     accessory.name,
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
+                                      color: isDark ? Colors.white : Colors.black87,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -303,7 +308,7 @@ class AccessoryScreenUI extends StatelessWidget {
                                     accessory.part,
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: Colors.grey[700],
+                                      color: isDark ? Colors.white70 : Colors.grey[700],
                                     ),
                                   ),
                                 ],
