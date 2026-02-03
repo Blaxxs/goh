@@ -44,6 +44,9 @@ extension AccessoryPrecache on AccessoryDataManager {
         }
       }
       
+      if (kDebugMode) {
+        debugPrint('[AccessoryDataManager] Precaching ${cacheFutures.length} images...');
+      }
       await Future.wait(cacheFutures);
       
       if (kDebugMode) {
