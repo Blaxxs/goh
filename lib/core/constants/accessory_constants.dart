@@ -31,11 +31,67 @@ class AccessoryDataManager {
   static const String _cacheKeyAccessories = 'cached_accessories';
   static const String _cacheKeyParts = 'cached_accessory_parts';
 
-  /// Fetches accessory data from Firebase Realtime Database and populates the data lists.
+  /// Loads accessories from local cache first, then updates from Firebase in the background.
+  /// 
+  /// This method:
+  /// 1. Loads cached data from SharedPreferences (instant, from previous session)
+  /// 2. Starts async Firebase fetch to check for updates (happens in background)
+  /// 3. If fresh data is found, updates cache and in-memory lists
+  ///
+  /// This ensures the app loads instantly with cached data while keeping it up-to-date.
+  Future<void> loadAccessories() async {
+    // Step 1: Try to load from local cache first (instant)
+    await _loadFromCache();
+    
+    // Step 2: Fetch from Firebase in background (non-blocking)
+    _updateFromFirebaseInBackground();
+  }
+  
+  /// Loads cached accessories from SharedPreferences.
+  Future<void> _loadFromCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final cachedAccessoriesJson = prefs.getString(_cacheKeyAccessories);
+      final cachedPartsJson = prefs.getString(_cacheKeyParts);
+      
+      if (cachedAccessoriesJson != null && cachedPartsJson != null) {
+        final List<dynamic> accessoriesJson = jsonDecode(cachedAccessoriesJson);
+        allAccessories = accessoriesJson
+            .map((json) => Accessory.fromJson(json as Map<String, dynamic>))
+            .toList();
+        
+        final List<dynamic> partsJson = jsonDecode(cachedPartsJson);
+        accessoryParts = List<String>.from(partsJson);
+        
+        if (kDebugMode) {
+          print(
+              '[AccessoryDataManager] Loaded ${allAccessories.length} accessories from cache');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('[AccessoryDataManager] Error loading cache: $e');
+      }
+    }
+  }
+  
+  /// Fetches fresh data from Firebase and updates cache if new data is found.
+  /// This runs in the background and does not block the UI.
+  void _updateFromFirebaseInBackground() {
+    _fetchFromFirebase().then((_) {
+      // Firebase fetch completed; cache has been updated if necessary
+    }).catchError((e) {
+      if (kDebugMode) {
+        print('[AccessoryDataManager] Background Firebase update failed: $e');
+      }
+    });
+  }
+  
+  /// Fetches accessory data from Firebase Realtime Database and updates the cache.
   ///
   /// It reads from the '/accessories' path, parses each entry into an [Accessory] object,
   /// and automatically generates the corresponding Firebase Storage URL for the image.
-  Future<void> loadAccessories() async {
+  Future<void> _fetchFromFirebase() async {
     try {
       final DatabaseReference ref =
           FirebaseDatabase.instance.ref('accessories');
@@ -74,23 +130,67 @@ class AccessoryDataManager {
         // Sort data alphabetically for consistent display
         allAccessories.sort((a, b) => a.name.compareTo(b.name));
         accessoryParts.sort();
+        
+        // Save to cache for next session
+        await _saveToCache();
 
         if (kDebugMode) {
           print(
-              'Successfully loaded ${allAccessories.length} accessories and ${accessoryParts.length} parts.');
+              '[AccessoryDataManager] Successfully loaded ${allAccessories.length} accessories from Firebase');
         }
       } else {
         if (kDebugMode) {
-          print('No accessory data found at /accessories in Firebase.');
+          print('[AccessoryDataManager] No accessory data found at /accessories in Firebase.');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('Error loading accessory data: $e');
+        print('[AccessoryDataManager] Error fetching from Firebase: $e');
       }
-      // In case of error, ensure lists are empty
-      allAccessories = [];
-      accessoryParts = [];
+    }
+  }
+  
+  /// Saves current accessory data to local cache (SharedPreferences).
+  Future<void> _saveToCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      final accessoriesJson = jsonEncode(
+        allAccessories.map((a) => {
+          'id': a.id,
+          'name': a.name,
+          'imageUrl': a.imageUrl,
+          'part': a.part,
+          'restrictions': a.restrictions,
+          'options': a.options.map((o) => {
+            'optionName': o.optionName,
+            'optionValue': o.optionValue,
+          }).toList(),
+          'setOptions': a.setOptions.map((s) => {
+            'setId': s.setId,
+            'setName': s.setName,
+            'requiredAccessories': s.requiredAccessories,
+            'requiredAccessoryImages': s.requiredAccessoryImages,
+            'effects': s.effects.map((e) => {
+              'optionName': e.optionName,
+              'stageValues': e.stageValues,
+            }).toList(),
+          }).toList(),
+        }).toList()
+      );
+      
+      final partsJson = jsonEncode(accessoryParts);
+      
+      await prefs.setString(_cacheKeyAccessories, accessoriesJson);
+      await prefs.setString(_cacheKeyParts, partsJson);
+      
+      if (kDebugMode) {
+        print('[AccessoryDataManager] Cached ${allAccessories.length} accessories');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('[AccessoryDataManager] Error saving cache: $e');
+      }
     }
   }
 }
