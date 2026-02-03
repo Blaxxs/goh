@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../main/main_screen.dart'; // MainScreen으로 이동하기 위함
 import '../../core/services/settings_service.dart'; // 설정 로딩을 위함
+import '../../core/constants/accessory_constants.dart';
+import '../../core/constants/accessory_precache_extension.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
