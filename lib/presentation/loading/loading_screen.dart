@@ -30,7 +30,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
         Future.delayed(const Duration(milliseconds: 3000)) // 로고 최소 표시 시간 (예시)
       ]);
       
-        // 악세사리 이미지 미리 로드 (LoadingScreen의 BuildContext 사용)
+        // 악세사리 메타/이미지를 미리 로드: 캐시가 없을 경우 원격에서 받아와야 하므로
+        // 여기서는 원격 fetch를 대기하여 모든 메타데이터가 준비된 뒤 이미지를 precache 합니다.
+        await AccessoryDataManager().loadAccessories(waitForRemote: true);
         if (mounted) {
           await AccessoryDataManager().precacheAllImages(context);
         }
