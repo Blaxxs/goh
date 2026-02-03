@@ -123,11 +123,11 @@ class SettingsScreenUI extends StatelessWidget {
       appBar: AppBar(
         leading: isSetupMode
             ? null
-            : IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  Scaffold.of(context).openDrawer();
-                },
+            : Builder(
+                builder: (ctx) => IconButton(
+                      icon: const Icon(Icons.menu),
+                      onPressed: () => Scaffold.of(ctx).openDrawer(),
+                    ),
               ),
         title: Text(
           '스테이지 설정',

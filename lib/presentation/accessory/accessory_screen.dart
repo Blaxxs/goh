@@ -117,9 +117,11 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     return Scaffold(
       drawer: const AppDrawer(currentScreen: AppScreen.accessory),
       appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.menu),
-          onPressed: () => Scaffold.of(context).openDrawer(),
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
         ),
         title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
       ),
