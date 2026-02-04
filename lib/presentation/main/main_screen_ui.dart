@@ -14,6 +14,7 @@ class MainScreenUI extends StatefulWidget {
   final VoidCallback onBoxCalculatorPressed;
   final VoidCallback onAccessoryEnhancementPressed;
   final VoidCallback onAccessoryOptionChangePressed;
+  final VoidCallback onExplorationOptionSimulationPressed;
   final VoidCallback onStageSettingsPressed;
   final VoidCallback onAppSettingsPressed;
 
