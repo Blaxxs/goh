@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 /// Extension to precache all accessory images
 extension AccessoryPrecache on AccessoryDataManager {
   /// Precaches all accessory images for faster display.
+  /// Uses CachedNetworkImage's cache manager for proper disk caching.
   /// This should be called during app startup (LoadingScreen) for optimal UX.
   Future<void> precacheAllImages(BuildContext context) async {
     if (allAccessories.isEmpty) {
@@ -17,15 +18,19 @@ extension AccessoryPrecache on AccessoryDataManager {
     }
     
     try {
+      final cacheManager = DefaultCacheManager();
       List<Future<void>> cacheFutures = [];
+      int totalImagesToCache = 0;
       
       for (var accessory in allAccessories) {
         // Precache main accessory image
+        totalImagesToCache++;
         cacheFutures.add(
-          precacheImage(NetworkImage(accessory.imageUrl), context)
+          cacheManager.getSingleFile(accessory.imageUrl)
+              .then((_) => null)
               .catchError((e) {
             if (kDebugMode) {
-              debugPrint('[AccessoryDataManager] Failed to precache ${accessory.name}: $e');
+              debugPrint('[AccessoryDataManager] Failed to cache ${accessory.name}: $e');
             }
           }),
         );
@@ -33,11 +38,13 @@ extension AccessoryPrecache on AccessoryDataManager {
         // Precache set option accessory images
         for (var setOption in accessory.setOptions) {
           for (var imageUrl in setOption.requiredAccessoryImages) {
+            totalImagesToCache++;
             cacheFutures.add(
-              precacheImage(NetworkImage(imageUrl), context)
+              cacheManager.getSingleFile(imageUrl)
+                  .then((_) => null)
                   .catchError((e) {
                 if (kDebugMode) {
-                  debugPrint('[AccessoryDataManager] Failed to precache set image: $e');
+                  debugPrint('[AccessoryDataManager] Failed to cache set image: $e');
                 }
               }),
             );
@@ -46,16 +53,17 @@ extension AccessoryPrecache on AccessoryDataManager {
       }
       
       if (kDebugMode) {
-        debugPrint('[AccessoryDataManager] Precaching ${cacheFutures.length} images...');
+        debugPrint('[AccessoryDataManager] Caching $totalImagesToCache images to disk...');
       }
+      
       await Future.wait(cacheFutures);
       
       if (kDebugMode) {
-        debugPrint('[AccessoryDataManager] Successfully precached all accessory images');
+        debugPrint('[AccessoryDataManager] Successfully cached all accessory images to disk');
       }
     } catch (e) {
       if (kDebugMode) {
-        debugPrint('[AccessoryDataManager] Error precaching images: $e');
+        debugPrint('[AccessoryDataManager] Error caching images: $e');
       }
     }
   }
