@@ -258,30 +258,37 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                   // 공유 인덱스 사용
                   int currentStageIndex = _sharedStageIndex;
 
+                  final theme = Theme.of(context);
+                  final bool isDark = theme.brightness == Brightness.dark;
+                  final cardColor = isDark ? Colors.grey[850] : Colors.orange[50];
+                  final borderColor = isDark ? Colors.grey[700] : Colors.orange[300];
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
-                        color: Colors.orange[50],
-                        border: Border.all(color: Colors.orange[300]!),
-                        borderRadius: BorderRadius.circular(6),
+                        color: cardColor,
+                        border: Border.all(color: borderColor!),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // 세트 이름(각 컨테이너 상단)
                           Text(setOption.setName,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600)),
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: theme.colorScheme.onSurface)),
                           const SizedBox(height: 8),
 
                           // 이미지
                           if (setOption.requiredAccessoryImages.isNotEmpty)
                             Container(
                               width: double.infinity,
-                              height: 100,
+                              height: 92,
                               alignment: Alignment.center,
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
@@ -290,10 +297,10 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                   children: setOption.requiredAccessoryImages
                                       .map((imageUrl) => Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
+                                                horizontal: 8.0),
                                             child: SizedBox(
-                                              width: 80,
-                                              height: 80,
+                                              width: 72,
+                                              height: 72,
                                               child: CachedNetworkImage(
                                                 imageUrl: imageUrl,
                                                 width: 64,
@@ -322,14 +329,45 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
                           const SizedBox(height: 10),
 
-                          // 효과들을 '효과 : 수치' 형식으로 나열
+                          // 효과들을 '효과 : 수치' 형식으로 나열 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
                             String currentValue =
                                 effect.stageValues[currentStageIndex.toString()] ??
                                     '-';
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2.0),
-                              child: Text('${effect.optionName} : $currentValue'),
+                              padding: const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      effect.optionName,
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface.withOpacity(0.9),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0, horizontal: 8.0),
+                                    decoration: BoxDecoration(
+                                      color: isDark
+                                          ? Colors.white12
+                                          : theme.colorScheme.primary.withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      currentValue,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: theme.colorScheme.primary,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           }),
                         ],
@@ -342,24 +380,35 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                 ...widget.accessory.setOptions.map((setOption) {
                   int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
 
+                  final theme = Theme.of(context);
+                  final bool isDark = theme.brightness == Brightness.dark;
+                  final cardColor = isDark ? Colors.grey[850] : Colors.orange[50];
+                  final borderColor = isDark ? Colors.grey[700] : Colors.orange[300];
+
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
                     child: Container(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(12.0),
                       decoration: BoxDecoration(
-                        color: Colors.orange[50],
-                        border: Border.all(color: Colors.orange[300]!),
-                        borderRadius: BorderRadius.circular(6),
+                        color: cardColor,
+                        border: Border.all(color: borderColor!),
+                        borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // 세트 이름
+                          Text(setOption.setName,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: theme.colorScheme.onSurface)),
                           const SizedBox(height: 8),
                           // 필요한 악세사리 이미지들 (가로 스크롤, 화면 전체 가운데 정렬)
                           if (setOption.requiredAccessoryImages.isNotEmpty)
                             Container(
                               width: double.infinity,
-                              height: 100,
+                              height: 92,
                               alignment: Alignment.center,
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
@@ -368,10 +417,10 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                   children: setOption.requiredAccessoryImages
                                       .map((imageUrl) => Padding(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 12.0),
+                                                horizontal: 8.0),
                                             child: SizedBox(
-                                              width: 80,
-                                              height: 80,
+                                              width: 72,
+                                              height: 72,
                                               child: Center(
                                                 child: CachedNetworkImage(
                                                   imageUrl: imageUrl,
@@ -402,14 +451,45 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           else
                             const SizedBox.shrink(),
                           const SizedBox(height: 10),
-                          // 세트 효과들 (효과:수치 형식)
+                          // 세트 효과들 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
                             String currentValue =
                                 effect.stageValues[currentStageIndex.toString()] ??
                                     '-';
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2.0),
-                              child: Text('${effect.optionName} : $currentValue'),
+                              padding: const EdgeInsets.symmetric(vertical: 4.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      effect.optionName,
+                                      style: TextStyle(
+                                        color: theme.colorScheme.onSurface.withOpacity(0.9),
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4.0, horizontal: 8.0),
+                                    decoration: BoxDecoration(
+                                      color: isDark
+                                          ? Colors.white12
+                                          : theme.colorScheme.primary.withOpacity(0.12),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      currentValue,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: theme.colorScheme.primary,
+                                        fontSize: 13,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             );
                           }),
 
