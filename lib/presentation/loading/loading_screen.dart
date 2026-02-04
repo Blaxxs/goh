@@ -31,10 +31,16 @@ class _LoadingScreenState extends State<LoadingScreen> {
       ]);
       
         // 악세사리 메타/이미지를 미리 로드: 캐시가 없을 경우 원격에서 받아와야 하므로
-        // 여기서는 원격 fetch를 대기하여 모든 메타데이터가 준비된 뒤 이미지를 precache 합니다.
+        // 여기서는 원격 fetch를 대기하여 모든 메타데이터가 준비된 뒤 이미지를 disk cache 합니다.
         await AccessoryDataManager().loadAccessories(waitForRemote: true);
         if (mounted) {
+          if (kDebugMode) {
+            debugPrint('[LoadingScreen] Starting image caching...');
+          }
           await AccessoryDataManager().precacheAllImages(context);
+          if (kDebugMode) {
+            debugPrint('[LoadingScreen] Image caching completed. Ready to navigate to MainScreen.');
+          }
         }
     } catch (e) {
       // 에러 처리 (예: 로그 출력)
