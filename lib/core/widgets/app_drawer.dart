@@ -373,6 +373,23 @@ class AppDrawer extends StatelessWidget {
                                         const AccessoryOptionChangeScreen()));
                           },
                         ),
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.only(
+                              left:
+                                  showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
+                              right: 16.0),
+                          title:
+                              Text('탐 옵션 시뮬레이션', style: subDrawerItemTextStyle),
+                          onTap: () {
+                            Navigator.of(context).pop(); // 서랍 닫기
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ExplorationOptionSimulationScreen()));
+                          },
+                        ),
                       ],
                       // ExpansionTile 자체는 선택된 상태를 가지지 않으므로 selected 관련 스타일 제거
                     ),
