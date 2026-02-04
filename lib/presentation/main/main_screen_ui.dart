@@ -28,6 +28,7 @@ class MainScreenUI extends StatefulWidget {
     required this.onBoxCalculatorPressed,
     required this.onAccessoryEnhancementPressed,
     required this.onAccessoryOptionChangePressed,
+    required this.onExplorationOptionSimulationPressed,
     required this.onStageSettingsPressed,
     required this.onAppSettingsPressed,
     required SettingsService settingsService,
