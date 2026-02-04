@@ -102,6 +102,9 @@ class MainScreen extends StatelessWidget {
       onAccessoryOptionChangePressed: () {
         _navigateToScreen(context, const AccessoryOptionChangeScreen());
       },
+      onExplorationOptionSimulationPressed: () {
+        _navigateToScreen(context, const ExplorationOptionSimulationScreen());
+      },
       onStageSettingsPressed: () {
         _navigateToScreen(context, const SettingsScreen());
       },
