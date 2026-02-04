@@ -137,6 +137,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
         {'text': '상자 기대값 계산기', 'onPressed': widget.onBoxCalculatorPressed},
       {'text': '악세 강화 시뮬', 'onPressed': widget.onAccessoryEnhancementPressed},
       {'text': '악세 옵변 시뮬', 'onPressed': widget.onAccessoryOptionChangePressed},
+      {'text': '탐 옵션 시뮬', 'onPressed': widget.onExplorationOptionSimulationPressed},
     ];
 
     return Scaffold(
