@@ -587,7 +587,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 Text(
                   '$cost 탐의 편린',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: isDark ? Colors.white70 : theme.colorScheme.primary,
+                    color: _darkGreenColor(),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -637,6 +637,10 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                     onPressed: isSimulating ? null : onResetSimulation,
                     icon: const Icon(Icons.refresh),
                     label: const Text('초기화'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: _darkGreenColor(),
+                      side: BorderSide(color: _darkGreenColor()),
+                    ),
                   ),
                 ),
               ],
@@ -675,13 +679,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withAlpha(30),
+                    color: _darkGreenColor().withAlpha(40),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '총 $totalCount회',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.primary,
+                      color: _darkGreenColor(),
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -765,7 +769,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               '누적 재화 소모',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.primary,
+                color: _darkGreenColor(),
               ),
             ),
             const SizedBox(height: 12),
@@ -780,7 +784,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                   '$totalResourceConsumed',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary,
+                    color: _darkGreenColor(),
                   ),
                 ),
               ],
