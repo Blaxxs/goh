@@ -23,6 +23,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     required this.totalResourceConsumed,
     required this.simulationLog,
     required this.isSimulating,
+    required this.gradeCount,
     required this.onSelectExploration,
     required this.onRunSimulation,
     required this.onResetSimulation,
