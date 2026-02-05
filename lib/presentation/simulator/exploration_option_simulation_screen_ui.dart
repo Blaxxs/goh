@@ -184,6 +184,58 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     );
   }
 
+  Widget _buildProtectionGradeCard(
+      BuildContext context, ThemeData theme, bool isDark) {
+    final grades = ExplorationOptionGrade.values;
+    final currentIndex = grades.indexOf(protectionGrade);
+    final prevGrade =
+        grades[(currentIndex - 1 + grades.length) % grades.length];
+    final nextGrade = grades[(currentIndex + 1) % grades.length];
+
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                '보호 등급',
+                style: theme.textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () => onSetProtectionGrade(prevGrade),
+              icon: const Icon(Icons.chevron_left),
+              visualDensity: VisualDensity.compact,
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                color: _gradeColor(theme, protectionGrade),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                protectionGrade.label,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () => onSetProtectionGrade(nextGrade),
+              icon: const Icon(Icons.chevron_right),
+              visualDensity: VisualDensity.compact,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// 등급별 확률 카드 (하단 배치)
   Widget _buildGradeProbabilityCard(
       BuildContext context, ThemeData theme, bool isDark) {
@@ -482,7 +534,10 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: (isSimulating || allLocked)
                         ? null
-                        : onRunAllSlotsSimulation,
+                        : () => _handleOptionChangePressed(
+                              context,
+                              theme,
+                            ),
                     icon: isSimulating
                         ? const SizedBox(
                             width: 16,
