@@ -93,13 +93,16 @@ class ExplorationOptionSimulationScreen extends StatefulWidget {
 
 class _ExplorationOptionSimulationScreenState
     extends State<ExplorationOptionSimulationScreen> {
-  // 현재 선택된 탐 (추후 모델 정의 필요)
-  String? _selectedExploration;
+  // 현재 선택된 탐 레벨 (1~10)
+  int _explorationLevel = 1;
 
-  // 현재 선택된 옵션
-  ExplorationOption? _selectedOption;
+  // 각 슬롯별 옵션 결과
+  List<ExplorationOption?> _slotOptions = [];
 
-  // 누적 소모 재화 (추후 재화 종류 및 이름 확정 필요)
+  // 각 슬롯별 등급 결과
+  List<ExplorationOptionGrade?> _slotGrades = [];
+
+  // 누적 소모 재화
   int _totalResourceConsumed = 0;
 
   // 시뮬레이션 상태
@@ -108,7 +111,7 @@ class _ExplorationOptionSimulationScreenState
   // 시뮬레이션 결과 로그
   List<String> _simulationLog = [];
 
-  // 등급별 결과 카운트
+  // 등급별 결과 카운트 (전체)
   Map<ExplorationOptionGrade, int> _gradeCount = {
     ExplorationOptionGrade.c: 0,
     ExplorationOptionGrade.b: 0,
@@ -117,44 +120,33 @@ class _ExplorationOptionSimulationScreenState
     ExplorationOptionGrade.ss: 0,
   };
 
-  // 옵션별 결과 카운트
-  Map<String, Map<ExplorationOptionGrade, int>> _optionGradeCount = {};
-
   @override
   void initState() {
     super.initState();
-    // 옵션별 카운트 초기화
-    for (var option in ExplorationOptionData.options) {
-      _optionGradeCount[option.name] = {
-        ExplorationOptionGrade.c: 0,
-        ExplorationOptionGrade.b: 0,
-        ExplorationOptionGrade.a: 0,
-        ExplorationOptionGrade.s: 0,
-        ExplorationOptionGrade.ss: 0,
-      };
-    }
+    _initializeSlots();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  /// 슬롯 초기화
+  void _initializeSlots() {
+    _slotOptions = List<ExplorationOption?>.filled(_explorationLevel, null);
+    _slotGrades = List<ExplorationOptionGrade?>.filled(_explorationLevel, null);
   }
 
-  /// 탐 선택 (추후 구현)
-  Future<void> _selectExploration() async {
-    // TODO: 탐 선택 로직
-    if (mounted) {
-      setState(() {
-        _selectedExploration = "샘플 탐"; // 임시
-      });
-    }
-  }
-
-  /// 옵션 선택
-  void _selectOption(ExplorationOption option) {
+  /// 탐 레벨 변경
+  void _setExplorationLevel(int level) {
+    if (level < 1 || level > 10) return;
+    
     setState(() {
-      _selectedOption = option;
+      _explorationLevel = level;
+      _initializeSlots();
     });
+  }
+
+  /// 랜덤 옵션 선택
+  ExplorationOption _selectRandomOption() {
+    final random = Random();
+    final index = random.nextInt(ExplorationOptionData.options.length);
+    return ExplorationOptionData.options[index];
   }
 
   /// 확률에 기반하여 등급 선택
@@ -171,36 +163,81 @@ class _ExplorationOptionSimulationScreenState
     return ExplorationOptionGrade.c; // 폴백
   }
 
-  /// 시뮬레이션 실행
-  void _runSimulation() {
-    if (_selectedOption == null) return;
+  /// 특정 슬롯 시뮬레이션
+  void _runSlotSimulation(int slotIndex) {
+    if (slotIndex < 0 || slotIndex >= _explorationLevel) return;
 
     setState(() {
       _isSimulating = true;
     });
 
-    // 확률 기반 등급 선택
-    final selectedGrade = _selectGradeByProbability();
-    
-    setState(() {
-      _gradeCount[selectedGrade] = (_gradeCount[selectedGrade] ?? 0) + 1;
-      _optionGradeCount[_selectedOption!.name]![selectedGrade] =
-          (_optionGradeCount[_selectedOption!.name]![selectedGrade] ?? 0) + 1;
-      _totalResourceConsumed += 10; // 임시
-      
-      final now = DateTime.now();
-      final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-      _simulationLog.add('$timeStr - ${_selectedOption!.name} ${selectedGrade.label}');
-      
-      _isSimulating = false;
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (mounted) {
+        setState(() {
+          // 랜덤 옵션 선택
+          final option = _selectRandomOption();
+          final grade = _selectGradeByProbability();
+
+          _slotOptions[slotIndex] = option;
+          _slotGrades[slotIndex] = grade;
+
+          // 통계 업데이트
+          _gradeCount[grade] = (_gradeCount[grade] ?? 0) + 1;
+          _totalResourceConsumed += 10;
+
+          // 로그 추가
+          final now = DateTime.now();
+          final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+          _simulationLog.add('$timeStr - 슬롯 ${slotIndex + 1}: ${option.name} ${grade.label}');
+
+          _isSimulating = false;
+        });
+      }
     });
+  }
+
+  /// 전체 슬롯 시뮬레이션
+  void _runAllSlotsSimulation() {
+    setState(() {
+      _isSimulating = true;
+    });
+
+    int delay = 0;
+    for (int i = 0; i < _explorationLevel; i++) {
+      Future.delayed(Duration(milliseconds: 300 + (delay * 150)), () {
+        if (mounted) {
+          setState(() {
+            // 랜덤 옵션 선택
+            final option = _selectRandomOption();
+            final grade = _selectGradeByProbability();
+
+            _slotOptions[i] = option;
+            _slotGrades[i] = grade;
+
+            // 통계 업데이트
+            _gradeCount[grade] = (_gradeCount[grade] ?? 0) + 1;
+            _totalResourceConsumed += 10;
+
+            // 로그 추가
+            final now = DateTime.now();
+            final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+            _simulationLog.add('$timeStr - 슬롯 ${i + 1}: ${option.name} ${grade.label}');
+
+            if (i == _explorationLevel - 1) {
+              _isSimulating = false;
+            }
+          });
+        }
+      });
+      delay++;
+    }
   }
 
   /// 시뮬레이션 초기화
   void _resetSimulation() {
     setState(() {
-      _selectedExploration = null;
-      _selectedOption = null;
+      _slotOptions = List<ExplorationOption?>.filled(_explorationLevel, null);
+      _slotGrades = List<ExplorationOptionGrade?>.filled(_explorationLevel, null);
       _totalResourceConsumed = 0;
       _simulationLog = [];
       _isSimulating = false;
@@ -211,33 +248,27 @@ class _ExplorationOptionSimulationScreenState
         ExplorationOptionGrade.s: 0,
         ExplorationOptionGrade.ss: 0,
       };
-      
-      // 옵션별 카운트 초기화
-      for (var option in ExplorationOptionData.options) {
-        _optionGradeCount[option.name] = {
-          ExplorationOptionGrade.c: 0,
-          ExplorationOptionGrade.b: 0,
-          ExplorationOptionGrade.a: 0,
-          ExplorationOptionGrade.s: 0,
-          ExplorationOptionGrade.ss: 0,
-        };
-      }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ExplorationOptionSimulationScreenUI(
-      selectedExploration: _selectedExploration,
-      selectedOption: _selectedOption,
+      explorationLevel: _explorationLevel,
+      slotOptions: _slotOptions,
+      slotGrades: _slotGrades,
       totalResourceConsumed: _totalResourceConsumed,
       simulationLog: _simulationLog,
       isSimulating: _isSimulating,
       gradeCount: _gradeCount,
-      optionGradeCount: _optionGradeCount,
-      onSelectExploration: _selectExploration,
-      onSelectOption: _selectOption,
-      onRunSimulation: _runSimulation,
+      onSetExplorationLevel: _setExplorationLevel,
+      onRunSlotSimulation: _runSlotSimulation,
+      onRunAllSlotsSimulation: _runAllSlotsSimulation,
       onResetSimulation: _resetSimulation,
     );
   }
