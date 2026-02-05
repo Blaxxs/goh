@@ -5,16 +5,80 @@ import 'exploration_option_simulation_screen_ui.dart';
 
 /// 탐 옵션 등급
 enum ExplorationOptionGrade {
-  c('C등급', 0.50),
-  b('B등급', 0.30),
-  a('A등급', 0.15),
-  s('S등급', 0.04),
-  ss('SS등급', 0.01);
+  c('C등급', 1.5625),
+  b('B등급', 0.9375),
+  a('A등급', 0.46875),
+  s('S등급', 0.125),
+  ss('SS등급', 0.03125);
 
   final String label;
-  final double probability;
+  final double probability; // 각 옵션당 개별 확률 (%)
 
   const ExplorationOptionGrade(this.label, this.probability);
+}
+
+/// 탐 옵션 데이터 모델
+class ExplorationOption {
+  final String name;
+  final String description;
+
+  const ExplorationOption({
+    required this.name,
+    required this.description,
+  });
+}
+
+/// 탐 옵션 목록 및 확률 관리
+class ExplorationOptionData {
+  static const List<ExplorationOption> options = [
+    ExplorationOption(name: '공격력', description: '공격력'),
+    ExplorationOption(name: '체력', description: '체력'),
+    ExplorationOption(name: '크리티컬 데미지', description: '크리티컬 데미지'),
+    ExplorationOption(name: '크리티컬', description: '크리티컬'),
+    ExplorationOption(name: '크리티컬 저항', description: '크리티컬 저항'),
+    ExplorationOption(name: '명중', description: '명중'),
+    ExplorationOption(name: '회피', description: '회피'),
+    ExplorationOption(name: '공격 스킬 피해 증가', description: '공격 스킬 피해 증가'),
+    ExplorationOption(name: '받는 공격 스킬 피해 감소', description: '받는 공격 스킬 피해 감소'),
+    ExplorationOption(name: '일반 공격 피해 증가', description: '일반 공격 피해 증가'),
+    ExplorationOption(name: '받는 일반 공격 피해 감소', description: '받는 일반 공격 피해 감소'),
+    ExplorationOption(name: '지속 피해 증가', description: '지속 피해 증가'),
+    ExplorationOption(name: '받는 지속 피해 감소', description: '받는 지속 피해 감소'),
+    ExplorationOption(name: '모든 나쁜 효과 저항', description: '모든 나쁜 효과 저항'),
+    ExplorationOption(name: '소환수 공격력', description: '소환수 공격력'),
+    ExplorationOption(name: '반격 확률', description: '반격 확률'),
+    ExplorationOption(name: '우주여행 돌아올 확률', description: '우주여행 돌아올 확률'),
+    ExplorationOption(name: '매턴 체력 회복', description: '매턴 체력 회복'),
+    ExplorationOption(name: '모든 피해 감소', description: '모든 피해 감소'),
+    ExplorationOption(name: '미니게임 스킬 피해 증가', description: '미니게임 스킬 피해 증가'),
+    ExplorationOption(name: '회복 효과 증가', description: '회복 효과 증가'),
+    ExplorationOption(name: '공격력 %', description: '공격력 %'),
+    ExplorationOption(name: '체력 %', description: '체력 %'),
+    ExplorationOption(name: '관통 저항', description: '관통 저항'),
+    ExplorationOption(name: '관통 확률', description: '관통 확률'),
+    ExplorationOption(name: '불속성 캐릭터에게 주는 피해 증가', description: '불속성 피해'),
+    ExplorationOption(name: '물속성 캐릭터에게 주는 피해 증가', description: '물속성 피해'),
+    ExplorationOption(name: '나무속성 캐릭터에게 주는 피해 증가', description: '나무속성 피해'),
+    ExplorationOption(name: '빛속성 캐릭터에게 주는 피해 증가', description: '빛속성 피해'),
+    ExplorationOption(name: '어둠속성 캐릭터에게 주는 피해 증가', description: '어둠속성 피해'),
+    ExplorationOption(name: '최종 피해 증가', description: '최종 피해 증가'),
+    ExplorationOption(name: '최종 피해 감소', description: '최종 피해 감소'),
+  ];
+
+  /// 각 옵션당 정확히 1개가 나올 때의 확률
+  /// 모든 옵션의 확률을 합치면 약 62.5%
+  static double getTotalOptionProbability() {
+    return ExplorationOptionGrade.values
+        .fold<double>(0, (sum, grade) => sum + grade.probability) *
+        options.length;
+  }
+
+  static ExplorationOption? getOptionByIndex(int index) {
+    if (index >= 0 && index < options.length) {
+      return options[index];
+    }
+    return null;
+  }
 }
 
 /// 탐 옵션 시뮬레이션 화면
