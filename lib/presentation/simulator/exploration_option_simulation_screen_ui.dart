@@ -139,90 +139,109 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Row(
               children: [
                 Expanded(
-                  child: Text(
-                    '보호 등급',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '보호',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => onSetProtectionGrade(protectionPrev),
+                        icon: const Icon(Icons.chevron_left, size: 16),
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 24),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _gradeColor(theme, protectionGrade),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          protectionGrade.label,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => onSetProtectionGrade(protectionNext),
+                        icon: const Icon(Icons.chevron_right, size: 16),
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 24),
+                      ),
+                    ],
                   ),
-                ),
-                IconButton(
-                  onPressed: () => onSetProtectionGrade(protectionPrev),
-                  icon: const Icon(Icons.chevron_left, size: 18),
-                  visualDensity: VisualDensity.compact,
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: _gradeColor(theme, protectionGrade),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    protectionGrade.label,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => onSetProtectionGrade(protectionNext),
-                  icon: const Icon(Icons.chevron_right, size: 18),
-                  visualDensity: VisualDensity.compact,
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '자동 목표',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => onSetAutoTargetGrade(autoPrev),
-                  icon: const Icon(Icons.chevron_left, size: 18),
-                  visualDensity: VisualDensity.compact,
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: _gradeColor(theme, autoTargetGrade),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    autoTargetGrade.label,
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => onSetAutoTargetGrade(autoNext),
-                  icon: const Icon(Icons.chevron_right, size: 18),
-                  visualDensity: VisualDensity.compact,
                 ),
                 const SizedBox(width: 4),
-                ElevatedButton(
-                  onPressed:
-                      isAutoRunning ? onStopAutoChange : onStartAutoChange,
-                  style: ElevatedButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-                    textStyle: theme.textTheme.labelSmall,
+                Expanded(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '목표',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => onSetAutoTargetGrade(autoPrev),
+                        icon: const Icon(Icons.chevron_left, size: 16),
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 24),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: _gradeColor(theme, autoTargetGrade),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          autoTargetGrade.label,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => onSetAutoTargetGrade(autoNext),
+                        icon: const Icon(Icons.chevron_right, size: 16),
+                        visualDensity: VisualDensity.compact,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(minWidth: 24),
+                      ),
+                      const SizedBox(width: 2),
+                      ElevatedButton(
+                        onPressed: isAutoRunning
+                            ? onStopAutoChange
+                            : onStartAutoChange,
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 4),
+                          textStyle: theme.textTheme.labelSmall
+                              ?.copyWith(fontSize: 11),
+                          minimumSize: const Size(50, 28),
+                        ),
+                        child: Text(isAutoRunning ? '멈춤' : '자동'),
+                      ),
+                    ],
                   ),
-                  child: Text(isAutoRunning ? '멈춤' : '자동 변경'),
                 ),
               ],
             ),
