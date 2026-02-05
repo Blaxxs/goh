@@ -98,7 +98,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    '탐 레벨',
+                    '탐 단계',
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
