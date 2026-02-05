@@ -77,10 +77,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       ),
     );
   }
-
-  /// 탐 레벨 선택 카드
-  Widget _buildExplorationLevelCard(
-      BuildContext context, ThemeData theme, bool isDark) {
+}
     return Card(
       elevation: 2,
       child: Padding(
