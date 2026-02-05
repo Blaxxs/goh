@@ -42,6 +42,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
   // [추가] Firebase 데이터베이스 참조 및 데이터 변수
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
   String _noticeMessage = "";
+  bool _logoPrecached = false;
 
   @override
   void initState() {
@@ -54,6 +55,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
         });
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_logoPrecached) {
+      _logoPrecached = true;
+      precacheImage(const AssetImage('assets/images/main_logo.png'), context);
+    }
   }
 
   // [수정] 가시성을 높이고 반응형 디자인을 적용한 버튼 빌더
@@ -141,12 +151,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
     ];
 
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
+          ColoredBox(color: Theme.of(context).scaffoldBackgroundColor),
           Image.asset(
             'assets/images/main_logo.png',
             fit: BoxFit.contain,
+            gaplessPlayback: true,
           ),
 
           // [추가] 실시간 공지사항 영역 (화면 상단)
