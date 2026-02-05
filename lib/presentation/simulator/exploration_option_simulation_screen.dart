@@ -523,7 +523,7 @@ class _ExplorationOptionSimulationScreenState
       return;
     }
 
-    Future.delayed(const Duration(milliseconds: 40), () {
+    Future.delayed(const Duration(milliseconds: 2), () {
       _autoTick();
     });
   }
