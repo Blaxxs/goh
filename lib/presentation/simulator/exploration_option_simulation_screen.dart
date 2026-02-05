@@ -229,12 +229,14 @@ class _ExplorationOptionSimulationScreenState
   Widget build(BuildContext context) {
     return ExplorationOptionSimulationScreenUI(
       selectedExploration: _selectedExploration,
-      currentOptions: _currentOptions,
+      selectedOption: _selectedOption,
       totalResourceConsumed: _totalResourceConsumed,
       simulationLog: _simulationLog,
       isSimulating: _isSimulating,
       gradeCount: _gradeCount,
+      optionGradeCount: _optionGradeCount,
       onSelectExploration: _selectExploration,
+      onSelectOption: _selectOption,
       onRunSimulation: _runSimulation,
       onResetSimulation: _resetSimulation,
     );
