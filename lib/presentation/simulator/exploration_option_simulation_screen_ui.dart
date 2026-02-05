@@ -9,12 +9,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   final int explorationLevel;
   final List<ExplorationOption?> slotOptions;
   final List<ExplorationOptionGrade?> slotGrades;
+  final List<bool> slotLocked;
   final int totalResourceConsumed;
   final List<String> simulationLog;
   final bool isSimulating;
   final Map<ExplorationOptionGrade, int> gradeCount;
   final Function(int) onSetExplorationLevel;
-  final Function(int) onRunSlotSimulation;
+  final Function(int) onToggleSlotLock;
   final VoidCallback onRunAllSlotsSimulation;
   final VoidCallback onResetSimulation;
 
@@ -23,12 +24,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     required this.explorationLevel,
     required this.slotOptions,
     required this.slotGrades,
+    required this.slotLocked,
     required this.totalResourceConsumed,
     required this.simulationLog,
     required this.isSimulating,
     required this.gradeCount,
     required this.onSetExplorationLevel,
-    required this.onRunSlotSimulation,
+    required this.onToggleSlotLock,
     required this.onRunAllSlotsSimulation,
     required this.onResetSimulation,
   });
