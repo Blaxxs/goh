@@ -608,7 +608,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '총 재화 소모:',
+                  '총 탐의 편린 소모:',
                   style: theme.textTheme.bodyLarge,
                 ),
                 Text(
