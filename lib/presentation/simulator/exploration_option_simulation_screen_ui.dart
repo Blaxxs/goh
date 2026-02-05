@@ -393,6 +393,23 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     }
   }
 
+  Color _gradeColor(ThemeData theme, ExplorationOptionGrade? grade) {
+    switch (grade) {
+      case ExplorationOptionGrade.c:
+        return Colors.grey;
+      case ExplorationOptionGrade.b:
+        return Colors.purple;
+      case ExplorationOptionGrade.a:
+        return Colors.blue;
+      case ExplorationOptionGrade.s:
+        return Colors.amber;
+      case ExplorationOptionGrade.ss:
+        return Colors.red;
+      default:
+        return theme.colorScheme.primary;
+    }
+  }
+
   String? _optionValueText(
       ExplorationOption? option, ExplorationOptionGrade? grade) {
     if (option == null || grade == null) return null;
