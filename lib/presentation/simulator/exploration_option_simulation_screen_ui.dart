@@ -11,12 +11,17 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   final List<ExplorationOptionGrade?> slotGrades;
   final List<bool> slotLocked;
   final ExplorationOptionGrade protectionGrade;
+  final ExplorationOptionGrade autoTargetGrade;
   final int totalResourceConsumed;
   final List<String> simulationLog;
   final bool isSimulating;
+  final bool isAutoRunning;
   final Map<ExplorationOptionGrade, int> gradeCount;
   final Function(int) onSetExplorationLevel;
   final Function(ExplorationOptionGrade) onSetProtectionGrade;
+  final Function(ExplorationOptionGrade) onSetAutoTargetGrade;
+  final VoidCallback onStartAutoChange;
+  final VoidCallback onStopAutoChange;
   final Function(int) onToggleSlotLock;
   final VoidCallback onRunAllSlotsSimulation;
   final VoidCallback onResetSimulation;
@@ -28,12 +33,17 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     required this.slotGrades,
     required this.slotLocked,
     required this.protectionGrade,
+    required this.autoTargetGrade,
     required this.totalResourceConsumed,
     required this.simulationLog,
     required this.isSimulating,
+    required this.isAutoRunning,
     required this.gradeCount,
     required this.onSetExplorationLevel,
     required this.onSetProtectionGrade,
+    required this.onSetAutoTargetGrade,
+    required this.onStartAutoChange,
+    required this.onStopAutoChange,
     required this.onToggleSlotLock,
     required this.onRunAllSlotsSimulation,
     required this.onResetSimulation,
@@ -66,6 +76,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
             _buildExplorationLevelCard(context, theme, isDark),
             const SizedBox(height: 16),
             _buildProtectionGradeCard(context, theme, isDark),
+            const SizedBox(height: 16),
+            _buildAutoChangeCard(context, theme, isDark),
             const SizedBox(height: 16),
             _buildOptionSlotsCard(context, theme, isDark),
             const SizedBox(height: 16),
