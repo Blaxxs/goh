@@ -54,33 +54,25 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 탐 선택 섹션
-            _buildExplorationSelectionCard(context, theme, isDark),
-            const SizedBox(height: 16),
-
-            // 옵션 선택 섹션
-            _buildOptionSelectionCard(context, theme, isDark),
+            // 탐 레벨 선택 카드
+            _buildExplorationLevelCard(context, theme, isDark),
             const SizedBox(height: 16),
 
             // 등급별 확률 표시
             _buildGradeProbabilityCard(context, theme, isDark),
             const SizedBox(height: 16),
 
-            // 시뮬레이션 컨트롤 섹션
-            if (selectedOption != null) ...[
-              _buildSimulationControlCard(context, theme, isDark),
-              const SizedBox(height: 16),
-            ],
+            // 옵션 슬롯 카드
+            _buildOptionSlotsCard(context, theme, isDark),
+            const SizedBox(height: 16),
+
+            // 시뮬레이션 제어 카드
+            _buildSimulationControlCard(context, theme, isDark),
+            const SizedBox(height: 16),
 
             // 등급별 결과 표시
             if (gradeCount.values.any((count) => count > 0)) ...[
               _buildGradeResultCard(context, theme, isDark),
-              const SizedBox(height: 16),
-            ],
-
-            // 옵션별 결과 표시
-            if (gradeCount.values.any((count) => count > 0) && selectedOption != null) ...[
-              _buildOptionResultCard(context, theme, isDark),
               const SizedBox(height: 16),
             ],
 
