@@ -159,12 +159,6 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
               ],
             ),
-            Text(
-              '옵션 ${explorationLevel}칸',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.grey,
-              ),
-            ),
           ],
         ),
       ),
@@ -253,105 +247,72 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '옵션 슬롯 (${explorationLevel}칸)',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
             ...List.generate(explorationLevel, (index) {
               final option = slotOptions[index];
               final grade = slotGrades[index];
               final isLocked = slotLocked[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
+              return Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isDark ? Colors.grey[800]! : Colors.grey[300]!,
+                      width: 1,
+                    ),
+                  ),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Row(
                   children: [
                     Container(
-                      width: 40,
-                      height: 40,
+                      width: 36,
+                      height: 36,
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary,
-                        borderRadius: BorderRadius.circular(8),
+                        color: grade != null
+                            ? theme.colorScheme.primary
+                            : (isDark ? Colors.grey[700] : Colors.grey[400]),
+                        shape: BoxShape.circle,
                       ),
-                      child: Center(
-                        child: Text(
-                          '${index + 1}',
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        _gradeLetter(grade),
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 10),
                     Expanded(
-                      child: option != null
-                          ? Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.grey[800]
-                                    : Colors.grey[100],
-                                borderRadius: BorderRadius.circular(8),
-                                border: isLocked
-                                    ? Border.all(
-                                        color: theme.colorScheme.primary,
-                                        width: 1.2,
-                                      )
-                                    : null,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    option.name,
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  if (grade != null)
-                                    Text(
-                                      grade.label,
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  if (isLocked)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 4),
-                                      child: Text(
-                                        '잠금 유지',
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                          color: theme.colorScheme.primary,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                ],
-                              ),
-                            )
-                          : Container(
-                              padding: const EdgeInsets.all(10),
-                              decoration: BoxDecoration(
-                                color: isDark
-                                    ? Colors.grey[900]
-                                    : Colors.grey[200],
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              child: Text(
-                                '미설정',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: Colors.grey,
-                                  fontStyle: FontStyle.italic,
-                                ),
-                              ),
-                            ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isDark ? Colors.grey[850] : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isLocked
+                                ? theme.colorScheme.primary
+                                : (isDark
+                                    ? Colors.grey[700]!
+                                    : Colors.grey[300]!),
+                            width: isLocked ? 1.4 : 1,
+                          ),
+                        ),
+                        child: Text(
+                          option?.name ?? '미설정',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: option != null
+                                ? null
+                                : Colors.grey,
+                            fontStyle: option != null
+                                ? FontStyle.normal
+                                : FontStyle.italic,
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Column(
@@ -388,6 +349,22 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _gradeLetter(ExplorationOptionGrade? grade) {
+    if (grade == null) return '?';
+    switch (grade) {
+      case ExplorationOptionGrade.c:
+        return 'C';
+      case ExplorationOptionGrade.b:
+        return 'B';
+      case ExplorationOptionGrade.a:
+        return 'A';
+      case ExplorationOptionGrade.s:
+        return 'S';
+      case ExplorationOptionGrade.ss:
+        return 'SS';
+    }
   }
 
   /// 시뮬레이션 제어 카드
