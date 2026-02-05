@@ -40,7 +40,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
     final int lockedCount = slotLocked.where((locked) => locked).length;
-    final bool allLocked = slotLocked.isNotEmpty && lockedCount == slotLocked.length;
+    final bool allLocked =
+        slotLocked.isNotEmpty && lockedCount == slotLocked.length;
 
     return Scaffold(
       drawer:
@@ -84,7 +85,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     );
   }
 
-  /// 탐 레벨 선택 카드
+  /// 탐 레벨 선택 카드 (축소)
   Widget _buildExplorationLevelCard(
       BuildContext context, ThemeData theme, bool isDark) {
     return Card(
@@ -106,14 +107,14 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: isDark ? Colors.grey[800] : Colors.blue[50],
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '${explorationLevel}탐',
-                    style: theme.textTheme.bodyMedium?.copyWith(
+                    style: theme.textTheme.bodySmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary,
                     ),
@@ -121,31 +122,22 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Icon(
-                  Icons.explore,
-                  size: 18,
-                  color: theme.colorScheme.primary,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '탐 아이콘(추후 추가 예정)',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 6),
+            Text(
+              '탐 아이콘(추후 추가 예정)',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey,
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Row(
               children: [
                 IconButton(
                   onPressed: explorationLevel > 1
                       ? () => onSetExplorationLevel(explorationLevel - 1)
                       : null,
-                  icon: const Icon(Icons.remove_circle_outline),
+                  icon: const Icon(Icons.remove_circle_outline, size: 20),
+                  visualDensity: VisualDensity.compact,
                 ),
                 Expanded(
                   child: Slider(
@@ -162,13 +154,14 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                   onPressed: explorationLevel < 10
                       ? () => onSetExplorationLevel(explorationLevel + 1)
                       : null,
-                  icon: const Icon(Icons.add_circle_outline),
+                  icon: const Icon(Icons.add_circle_outline, size: 20),
+                  visualDensity: VisualDensity.compact,
                 ),
               ],
             ),
             Text(
               '옵션 ${explorationLevel}칸',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.labelSmall?.copyWith(
                 color: Colors.grey,
               ),
             ),
@@ -178,7 +171,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     );
   }
 
-  /// 등급별 확률 카드
+  /// 등급별 확률 카드 (하단 배치)
   Widget _buildGradeProbabilityCard(
       BuildContext context, ThemeData theme, bool isDark) {
     return Card(
@@ -321,8 +314,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                                   if (grade != null)
                                     Text(
                                       grade.label,
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
+                                      style: theme.textTheme.bodySmall?.copyWith(
                                         color: Colors.grey,
                                       ),
                                     ),
@@ -367,29 +359,38 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                         IconButton(
                           onPressed: isSimulating
                               ? null
-                            style: theme.textTheme.bodySmall?.copyWith(
+                              : () => onToggleSlotLock(index),
                           icon: Icon(
                             isLocked
                                 ? Icons.lock
                                 : Icons.lock_open_outlined,
                             color: isLocked
                                 ? theme.colorScheme.primary
-                      const SizedBox(height: 6),
-                      Text(
-                        '탐 아이콘(추후 추가 예정)',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: Colors.grey,
+                                : Colors.grey,
+                          ),
+                          tooltip: isLocked ? '잠금 해제' : '잠금',
                         ),
-                      ),
-                      const SizedBox(height: 8),
+                        Text(
+                          isLocked ? '잠금' : '해제',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isLocked
+                                ? theme.colorScheme.primary
+                                : Colors.grey,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            }),
           ],
         ),
       ),
     );
   }
 
-                            icon: const Icon(Icons.remove_circle_outline, size: 20),
-                            visualDensity: VisualDensity.compact,
+  /// 시뮬레이션 제어 카드
   Widget _buildSimulationControlCard(
       BuildContext context, ThemeData theme, bool isDark,
       {required int lockedCount, required bool allLocked}) {
@@ -406,14 +407,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-                            icon: const Icon(Icons.add_circle_outline, size: 20),
-                            visualDensity: VisualDensity.compact,
+            ),
             const SizedBox(height: 12),
             Row(
               children: [
                 Text(
                   '옵션 변경 비용: ',
-                        style: theme.textTheme.labelSmall?.copyWith(
+                  style: theme.textTheme.bodyMedium,
                 ),
                 Text(
                   '$cost 탐의 편린',
@@ -446,8 +446,9 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed:
-                        (isSimulating || allLocked) ? null : onRunAllSlotsSimulation,
+                    onPressed: (isSimulating || allLocked)
+                        ? null
+                        : onRunAllSlotsSimulation,
                     icon: isSimulating
                         ? const SizedBox(
                             width: 16,
