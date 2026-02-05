@@ -476,6 +476,52 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     return '$value';
   }
 
+  void _handleOptionChangePressed(BuildContext context, ThemeData theme) {
+    final grades = ExplorationOptionGrade.values;
+    final protectIndex = grades.indexOf(protectionGrade);
+
+    final hasUnprotectedProtectedGrade = slotGrades.asMap().entries.any((entry) {
+      final index = entry.key;
+      final grade = entry.value;
+      if (grade == null) return false;
+      if (slotLocked[index]) return false;
+      return grades.indexOf(grade) >= protectIndex;
+    });
+
+    if (!hasUnprotectedProtectedGrade) {
+      onRunAllSlotsSimulation();
+      return;
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(
+            '잠겨 있지 않은 보호 등급 옵션이 존재합니다. 옵션 변경 시 해당 옵션의 등급이 하락 할 수 있습니다.\n\n옵션 변경을 시도하시겠습니까?',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.error,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('취소'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                onRunAllSlotsSimulation();
+              },
+              child: const Text('옵션 변경'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   /// 시뮬레이션 제어 카드
   Widget _buildSimulationControlCard(
       BuildContext context, ThemeData theme, bool isDark,
