@@ -126,7 +126,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                     '${explorationLevel}탐',
                     style: theme.textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: theme.colorScheme.primary,
+                      color: isDark ? Colors.white70 : theme.colorScheme.primary,
                     ),
                   ),
                 ),
@@ -586,7 +586,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 Text(
                   '$cost 탐의 편린',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.primary,
+                    color: isDark ? Colors.white70 : theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
