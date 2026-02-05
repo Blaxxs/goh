@@ -537,8 +537,14 @@ class _ExplorationOptionSimulationScreenState
       final now = DateTime.now();
       final timeStr =
           '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+        final totalValuesText = unlockedIndices.map((slotIndex) {
+        final option = _slotOptions[slotIndex];
+        final grade = _slotGrades[slotIndex];
+        final value = option?.valueForGrade(grade);
+        return value != null ? '${slotIndex + 1}칸:${option?.name} $value' : '${slotIndex + 1}칸:${option?.name}';
+        }).join(', ');
       _simulationLog.add(
-          '$timeStr - 옵션 변경 완료 (잠금 ${lockedCount}칸, 소모 ${cost} 탐의 편린)');
+          '$timeStr - 옵션 변경 완료 (잠금 ${lockedCount}칸, 소모 ${cost} 탐의 편린) | $totalValuesText');
 
       _isSimulating = false;
     });
