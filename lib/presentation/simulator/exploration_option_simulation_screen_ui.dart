@@ -285,8 +285,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 child: Row(
                   children: [
                     Container(
-                      width: 28,
-                      height: 28,
+                      width: 22,
+                      height: 22,
                       decoration: BoxDecoration(
                         color: grade != null
                             ? theme.colorScheme.primary
@@ -296,7 +296,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         _gradeLetter(grade),
-                        style: theme.textTheme.titleSmall?.copyWith(
+                        style: theme.textTheme.labelSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -326,7 +326,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                           children: [
                             Text(
                               option?.name ?? '미설정',
-                              style: theme.textTheme.bodyMedium?.copyWith(
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: option != null
                                     ? null
@@ -359,19 +359,12 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                             isLocked
                                 ? Icons.lock
                                 : Icons.lock_open_outlined,
+                            size: 18,
                             color: isLocked
                                 ? theme.colorScheme.primary
                                 : Colors.grey,
                           ),
                           tooltip: isLocked ? '잠금 해제' : '잠금',
-                        ),
-                        Text(
-                          isLocked ? '잠금' : '해제',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: isLocked
-                                ? theme.colorScheme.primary
-                                : Colors.grey,
-                          ),
                         ),
                       ],
                     ),
