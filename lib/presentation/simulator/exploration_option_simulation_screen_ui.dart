@@ -211,24 +211,28 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('등급별 확률 (각 옵션당)'),
+          title: const Text('등급별 확률 (전체/옵션별)'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: ExplorationOptionGrade.values.map((grade) {
-              final percentage = (grade.probability).toStringAsFixed(4);
+              final overall = grade.probability;
+              final perOption =
+                  overall / ExplorationOptionData.options.length.toDouble();
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      grade.label,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Text(
+                        grade.label,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                     Text(
-                      '$percentage%',
+                      '${overall.toStringAsFixed(1)}% / ${perOption.toStringAsFixed(4)}%',
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
