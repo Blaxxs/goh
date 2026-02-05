@@ -75,10 +75,6 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
           children: [
             _buildExplorationLevelCard(context, theme, isDark),
             const SizedBox(height: 16),
-            _buildProtectionGradeCard(context, theme, isDark),
-            const SizedBox(height: 16),
-            _buildAutoChangeCard(context, theme, isDark),
-            const SizedBox(height: 16),
             _buildOptionSlotsCard(context, theme, isDark),
             const SizedBox(height: 16),
             _buildSimulationControlCard(context, theme, isDark,
@@ -90,10 +86,6 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
             if (totalResourceConsumed > 0) ...[
               const SizedBox(height: 16),
               _buildResourceConsumptionCard(context, theme, isDark),
-            ],
-            if (simulationLog.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              _buildSimulationLogCard(context, theme, isDark),
             ],
             const SizedBox(height: 16),
             _buildGradeProbabilityCard(context, theme, isDark),
@@ -141,13 +133,6 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 2),
-            Text(
-              '탐 아이콘(추후 추가 예정)',
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: Colors.grey,
-              ),
-            ),
-            const SizedBox(height: 4),
             Row(
               children: [
                 IconButton(
