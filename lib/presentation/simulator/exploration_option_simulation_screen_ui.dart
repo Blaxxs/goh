@@ -94,66 +94,83 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '탐 레벨 선택 (1탐 ~ 10탐)',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '탐 레벨',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.grey[800] : Colors.blue[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${explorationLevel}탐',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: isDark ? Colors.grey[800] : Colors.blue[50],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                '현재 탐 레벨: ${explorationLevel}탐 (옵션 ${explorationLevel}칸)',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  Icons.explore,
+                  size: 18,
                   color: theme.colorScheme.primary,
                 ),
-              ),
+                const SizedBox(width: 6),
+                Text(
+                  '탐 아이콘(추후 추가 예정)',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
+            Row(
+              children: [
+                IconButton(
+                  onPressed: explorationLevel > 1
+                      ? () => onSetExplorationLevel(explorationLevel - 1)
+                      : null,
+                  icon: const Icon(Icons.remove_circle_outline),
+                ),
+                Expanded(
+                  child: Slider(
+                    min: 1,
+                    max: 10,
+                    divisions: 9,
+                    value: explorationLevel.toDouble(),
+                    label: '${explorationLevel}탐',
+                    onChanged: (value) =>
+                        onSetExplorationLevel(value.round()),
+                  ),
+                ),
+                IconButton(
+                  onPressed: explorationLevel < 10
+                      ? () => onSetExplorationLevel(explorationLevel + 1)
+                      : null,
+                  icon: const Icon(Icons.add_circle_outline),
+                ),
+              ],
+            ),
+            Text(
+              '옵션 ${explorationLevel}칸',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey,
               ),
-              itemCount: 10,
-              itemBuilder: (context, index) {
-                final level = index + 1;
-                final isSelected = explorationLevel == level;
-                return ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: isSelected
-                        ? theme.colorScheme.primary
-                        : (isDark ? Colors.grey[800] : Colors.grey[200]),
-                    foregroundColor: isSelected ? Colors.white : Colors.grey[700],
-                    elevation: isSelected ? 4 : 1,
-                  ),
-                  onPressed: () => onSetExplorationLevel(level),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        '$level',
-                        style: theme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        '탐',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                );
-              },
             ),
           ],
         ),
