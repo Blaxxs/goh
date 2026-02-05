@@ -4,92 +4,6 @@ import '../../core/widgets/app_drawer.dart';
 import '../../core/constants/box_constants.dart';
 import 'exploration_option_simulation_screen.dart';
 
-/// 탐 옵션 시뮬레이션 화면 UI - 1탐~10탐 멀티슬롯 시뮬레이션
-class ExplorationOptionSimulationScreenUI extends StatelessWidget {
-  final int explorationLevel;
-  final List<ExplorationOption?> slotOptions;
-  final List<ExplorationOptionGrade?> slotGrades;
-  final List<bool> slotLocked;
-  final ExplorationOptionGrade protectionGrade;
-  final ExplorationOptionGrade autoTargetGrade;
-  final int totalResourceConsumed;
-  final List<String> simulationLog;
-  final bool isSimulating;
-  final bool isAutoRunning;
-  final Map<ExplorationOptionGrade, int> gradeCount;
-  final Function(int) onSetExplorationLevel;
-  final Function(ExplorationOptionGrade) onSetProtectionGrade;
-  final Function(ExplorationOptionGrade) onSetAutoTargetGrade;
-  final VoidCallback onStartAutoChange;
-  final VoidCallback onStopAutoChange;
-  final Function(int) onToggleSlotLock;
-  final VoidCallback onRunAllSlotsSimulation;
-  final VoidCallback onResetSimulation;
-
-  const ExplorationOptionSimulationScreenUI({
-    super.key,
-    required this.explorationLevel,
-    required this.slotOptions,
-    required this.slotGrades,
-    required this.slotLocked,
-    required this.protectionGrade,
-    required this.autoTargetGrade,
-    required this.totalResourceConsumed,
-    required this.simulationLog,
-    required this.isSimulating,
-    required this.isAutoRunning,
-    required this.gradeCount,
-    required this.onSetExplorationLevel,
-    required this.onSetProtectionGrade,
-    required this.onSetAutoTargetGrade,
-    required this.onStartAutoChange,
-    required this.onStopAutoChange,
-    required this.onToggleSlotLock,
-    required this.onRunAllSlotsSimulation,
-    required this.onResetSimulation,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
-    final int lockedCount = slotLocked.where((locked) => locked).length;
-    final bool allLocked =
-        slotLocked.isNotEmpty && lockedCount == slotLocked.length;
-
-    return Scaffold(
-      drawer:
-          const AppDrawer(currentScreen: AppScreen.explorationOptionSimulation),
-      appBar: AppBar(
-        leading: Builder(
-          builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
-          ),
-        ),
-        title: const Text('탐 옵션 시뮬레이션'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildSimulationControlCard(context, theme, isDark,
-                lockedCount: lockedCount, allLocked: allLocked),
-            const SizedBox(height: 12),
-            _buildOptionSlotsCard(context, theme, isDark),
-            const SizedBox(height: 16),
-            if (gradeCount.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              _buildGradeResultCard(context, theme, isDark),
-            ],
-            if (totalResourceConsumed > 0) ...[
-              const SizedBox(height: 16),
-              _buildResourceConsumptionCard(context, theme, isDark),
-            ],
-            const SizedBox(height: 16),
-            _buildGradeProbabilityCard(context, theme, isDark),
-          ],
-        ),
       ),
     );
   }
@@ -487,35 +401,92 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     return Card(
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              '시뮬레이션 제어',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              children: [
+                Text(
+                  '시뮬레이션 제어',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${explorationLevel}탐',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white70 : theme.colorScheme.primary,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                IconButton(
+                  onPressed: explorationLevel > 1
+                      ? () => onSetExplorationLevel(explorationLevel - 1)
+                      : null,
+                  icon: const Icon(Icons.remove_circle_outline, size: 18),
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints:
+                      const BoxConstraints.tightFor(width: 28, height: 28),
+                ),
+                Expanded(
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 2,
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 7),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 12),
+                    ),
+                    child: Slider(
+                      min: 1,
+                      max: 10,
+                      divisions: 9,
+                      value: explorationLevel.toDouble(),
+                      label: '${explorationLevel}탐',
+                      onChanged: (value) =>
+                          onSetExplorationLevel(value.round()),
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: explorationLevel < 10
+                      ? () => onSetExplorationLevel(explorationLevel + 1)
+                      : null,
+                  icon: const Icon(Icons.add_circle_outline, size: 18),
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints:
+                      const BoxConstraints.tightFor(width: 28, height: 28),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
             Row(
               children: [
                 Expanded(
                   child: Text(
                     '보호 등급',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 IconButton(
                   onPressed: () => onSetProtectionGrade(protectionPrev),
-                  icon: const Icon(Icons.chevron_left),
+                  icon: const Icon(Icons.chevron_left, size: 18),
                   visualDensity: VisualDensity.compact,
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: _gradeColor(theme, protectionGrade),
                     borderRadius: BorderRadius.circular(8),
@@ -530,30 +501,30 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => onSetProtectionGrade(protectionNext),
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(Icons.chevron_right, size: 18),
                   visualDensity: VisualDensity.compact,
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Row(
               children: [
                 Expanded(
                   child: Text(
-                    '자동 변경 목표',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    '자동 목표',
+                    style: theme.textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 IconButton(
                   onPressed: () => onSetAutoTargetGrade(autoPrev),
-                  icon: const Icon(Icons.chevron_left),
+                  icon: const Icon(Icons.chevron_left, size: 18),
                   visualDensity: VisualDensity.compact,
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: _gradeColor(theme, autoTargetGrade),
                     borderRadius: BorderRadius.circular(8),
@@ -568,18 +539,23 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () => onSetAutoTargetGrade(autoNext),
-                  icon: const Icon(Icons.chevron_right),
+                  icon: const Icon(Icons.chevron_right, size: 18),
                   visualDensity: VisualDensity.compact,
                 ),
-                const SizedBox(width: 6),
+                const SizedBox(width: 4),
                 ElevatedButton(
                   onPressed:
                       isAutoRunning ? onStopAutoChange : onStartAutoChange,
+                  style: ElevatedButton.styleFrom(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                    textStyle: theme.textTheme.labelSmall,
+                  ),
                   child: Text(isAutoRunning ? '멈춤' : '자동 변경'),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Text(
@@ -612,7 +588,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
               ),
             ],
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             Row(
               children: [
                 Expanded(
