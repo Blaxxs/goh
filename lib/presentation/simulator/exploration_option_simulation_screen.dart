@@ -423,6 +423,9 @@ class _ExplorationOptionSimulationScreenState
   // 현재 선택된 탐 레벨 (1~10)
   int _explorationLevel = 1;
 
+  // 옵션 보호 등급
+  ExplorationOptionGrade _protectionGrade = ExplorationOptionGrade.a;
+
   // 각 슬롯별 옵션 결과
   List<ExplorationOption?> _slotOptions = [];
 
@@ -470,6 +473,12 @@ class _ExplorationOptionSimulationScreenState
     setState(() {
       _explorationLevel = level;
       _initializeSlots();
+    });
+  }
+
+  void _setProtectionGrade(ExplorationOptionGrade grade) {
+    setState(() {
+      _protectionGrade = grade;
     });
   }
 
@@ -581,11 +590,13 @@ class _ExplorationOptionSimulationScreenState
       slotOptions: _slotOptions,
       slotGrades: _slotGrades,
       slotLocked: _slotLocked,
+      protectionGrade: _protectionGrade,
       totalResourceConsumed: _totalResourceConsumed,
       simulationLog: _simulationLog,
       isSimulating: _isSimulating,
       gradeCount: _gradeCount,
       onSetExplorationLevel: _setExplorationLevel,
+      onSetProtectionGrade: _setProtectionGrade,
       onToggleSlotLock: _toggleSlotLock,
       onRunAllSlotsSimulation: _runAllSlotsSimulation,
       onResetSimulation: _resetSimulation,
