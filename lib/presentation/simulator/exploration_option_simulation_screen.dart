@@ -102,6 +102,9 @@ class _ExplorationOptionSimulationScreenState
   // 각 슬롯별 등급 결과
   List<ExplorationOptionGrade?> _slotGrades = [];
 
+  // 각 슬롯별 잠금 상태
+  List<bool> _slotLocked = [];
+
   // 누적 소모 재화
   int _totalResourceConsumed = 0;
 
@@ -130,17 +133,28 @@ class _ExplorationOptionSimulationScreenState
   void _initializeSlots() {
     _slotOptions = List<ExplorationOption?>.filled(_explorationLevel, null);
     _slotGrades = List<ExplorationOptionGrade?>.filled(_explorationLevel, null);
+    _slotLocked = List<bool>.filled(_explorationLevel, false);
   }
 
   /// 탐 레벨 변경
   void _setExplorationLevel(int level) {
     if (level < 1 || level > 10) return;
-    
+
     setState(() {
       _explorationLevel = level;
       _initializeSlots();
     });
   }
+
+  void _toggleSlotLock(int slotIndex) {
+    if (slotIndex < 0 || slotIndex >= _explorationLevel) return;
+    setState(() {
+      _slotLocked[slotIndex] = !_slotLocked[slotIndex];
+    });
+  }
+
+  bool get _allSlotsLocked =>
+      _slotLocked.isNotEmpty && _slotLocked.every((locked) => locked);
 
   /// 랜덤 옵션 선택
   ExplorationOption _selectRandomOption() {
@@ -163,71 +177,55 @@ class _ExplorationOptionSimulationScreenState
     return ExplorationOptionGrade.c; // 폴백
   }
 
-  /// 특정 슬롯 시뮬레이션
-  void _runSlotSimulation(int slotIndex) {
-    if (slotIndex < 0 || slotIndex >= _explorationLevel) return;
+  /// 전체 슬롯 옵션 변경
+  void _runAllSlotsSimulation() {
+    if (_allSlotsLocked) return;
+
+    final unlockedIndices = <int>[];
+    for (int i = 0; i < _explorationLevel; i++) {
+      if (!_slotLocked[i]) {
+        unlockedIndices.add(i);
+      }
+    }
+
+    if (unlockedIndices.isEmpty) return;
+
+    final lockedCount = _slotLocked.where((locked) => locked).length;
+    final cost = 50 + (lockedCount * 50);
 
     setState(() {
       _isSimulating = true;
+      _totalResourceConsumed += cost;
+      final now = DateTime.now();
+      final timeStr =
+          '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+      _simulationLog
+          .add('$timeStr - 옵션 변경 시작 (잠금 ${lockedCount}칸, 소모 ${cost} 탐의 편린)');
     });
 
-    Future.delayed(const Duration(milliseconds: 300), () {
-      if (mounted) {
+    int delay = 0;
+    for (final slotIndex in unlockedIndices) {
+      Future.delayed(Duration(milliseconds: 300 + (delay * 150)), () {
+        if (!mounted) return;
         setState(() {
-          // 랜덤 옵션 선택
           final option = _selectRandomOption();
           final grade = _selectGradeByProbability();
 
           _slotOptions[slotIndex] = option;
           _slotGrades[slotIndex] = grade;
 
-          // 통계 업데이트
           _gradeCount[grade] = (_gradeCount[grade] ?? 0) + 1;
-          _totalResourceConsumed += 10;
 
-          // 로그 추가
           final now = DateTime.now();
-          final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-          _simulationLog.add('$timeStr - 슬롯 ${slotIndex + 1}: ${option.name} ${grade.label}');
+          final timeStr =
+              '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+          _simulationLog.add(
+              '$timeStr - 슬롯 ${slotIndex + 1}: ${option.name} ${grade.label}');
 
-          _isSimulating = false;
+          if (slotIndex == unlockedIndices.last) {
+            _isSimulating = false;
+          }
         });
-      }
-    });
-  }
-
-  /// 전체 슬롯 시뮬레이션
-  void _runAllSlotsSimulation() {
-    setState(() {
-      _isSimulating = true;
-    });
-
-    int delay = 0;
-    for (int i = 0; i < _explorationLevel; i++) {
-      Future.delayed(Duration(milliseconds: 300 + (delay * 150)), () {
-        if (mounted) {
-          setState(() {
-            // 랜덤 옵션 선택
-            final option = _selectRandomOption();
-            final grade = _selectGradeByProbability();
-
-            _slotOptions[i] = option;
-            _slotGrades[i] = grade;
-
-            // 통계 업데이트
-            _gradeCount[grade] = (_gradeCount[grade] ?? 0) + 1;
-            _totalResourceConsumed += 10;
-
-            // 로그 추가
-            final now = DateTime.now();
-            final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-            _simulationLog.add('$timeStr - 슬롯 ${i + 1}: ${option.name} ${grade.label}');
-
-            if (i == _explorationLevel - 1) {
-              _isSimulating = false;
-            }
-          });
-        }
       });
       delay++;
     }
@@ -238,6 +236,7 @@ class _ExplorationOptionSimulationScreenState
     setState(() {
       _slotOptions = List<ExplorationOption?>.filled(_explorationLevel, null);
       _slotGrades = List<ExplorationOptionGrade?>.filled(_explorationLevel, null);
+      _slotLocked = List<bool>.filled(_explorationLevel, false);
       _totalResourceConsumed = 0;
       _simulationLog = [];
       _isSimulating = false;
@@ -262,12 +261,13 @@ class _ExplorationOptionSimulationScreenState
       explorationLevel: _explorationLevel,
       slotOptions: _slotOptions,
       slotGrades: _slotGrades,
+      slotLocked: _slotLocked,
       totalResourceConsumed: _totalResourceConsumed,
       simulationLog: _simulationLog,
       isSimulating: _isSimulating,
       gradeCount: _gradeCount,
       onSetExplorationLevel: _setExplorationLevel,
-      onRunSlotSimulation: _runSlotSimulation,
+      onToggleSlotLock: _toggleSlotLock,
       onRunAllSlotsSimulation: _runAllSlotsSimulation,
       onResetSimulation: _resetSimulation,
     );
