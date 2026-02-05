@@ -400,7 +400,9 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
 
   /// 시뮬레이션 제어 카드
   Widget _buildSimulationControlCard(
-      BuildContext context, ThemeData theme, bool isDark) {
+      BuildContext context, ThemeData theme, bool isDark,
+      {required int lockedCount, required bool allLocked}) {
+    final int cost = 50 + (lockedCount * 50);
     return Card(
       elevation: 2,
       child: Padding(
@@ -417,9 +419,43 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
+                Text(
+                  '옵션 변경 비용: ',
+                  style: theme.textTheme.bodyMedium,
+                ),
+                Text(
+                  '$cost 탐의 편린',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '잠금 ${lockedCount}칸 (잠금 1칸당 +50)',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: Colors.grey,
+              ),
+            ),
+            if (allLocked) ...[
+              const SizedBox(height: 6),
+              Text(
+                '모든 옵션이 잠겨 있어 옵션 변경이 불가합니다.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+            const SizedBox(height: 12),
+            Row(
+              children: [
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: isSimulating ? null : onRunAllSlotsSimulation,
+                    onPressed:
+                        (isSimulating || allLocked) ? null : onRunAllSlotsSimulation,
                     icon: isSimulating
                         ? const SizedBox(
                             width: 16,
@@ -427,7 +463,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.play_arrow),
-                    label: Text(isSimulating ? '실행 중...' : '전체 설정'),
+                    label: Text(isSimulating ? '실행 중...' : '옵션 변경'),
                   ),
                 ),
                 const SizedBox(width: 8),
