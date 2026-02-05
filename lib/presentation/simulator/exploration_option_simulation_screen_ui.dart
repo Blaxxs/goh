@@ -4,7 +4,7 @@ import '../../core/widgets/app_drawer.dart';
 import '../../core/constants/box_constants.dart';
 import 'exploration_option_simulation_screen.dart';
 
-/// 탐 옵션 시뮬레이션 화면 UI
+/// 탐 옵션 시뮬레이션 화면 UI - 1탐~10탐 멀티슬롯 시뮬레이션
 class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   final int explorationLevel;
   final List<ExplorationOption?> slotOptions;
