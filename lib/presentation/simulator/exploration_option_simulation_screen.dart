@@ -96,8 +96,8 @@ class _ExplorationOptionSimulationScreenState
   // 현재 선택된 탐 (추후 모델 정의 필요)
   String? _selectedExploration;
 
-  // 현재 옵션 목록 (추후 구체화)
-  List<String> _currentOptions = [];
+  // 현재 선택된 옵션
+  ExplorationOption? _selectedOption;
 
   // 누적 소모 재화 (추후 재화 종류 및 이름 확정 필요)
   int _totalResourceConsumed = 0;
@@ -117,10 +117,22 @@ class _ExplorationOptionSimulationScreenState
     ExplorationOptionGrade.ss: 0,
   };
 
+  // 옵션별 결과 카운트
+  Map<String, Map<ExplorationOptionGrade, int>> _optionGradeCount = {};
+
   @override
   void initState() {
     super.initState();
-    // 초기화 로직 (추후 구현)
+    // 옵션별 카운트 초기화
+    for (var option in ExplorationOptionData.options) {
+      _optionGradeCount[option.name] = {
+        ExplorationOptionGrade.c: 0,
+        ExplorationOptionGrade.b: 0,
+        ExplorationOptionGrade.a: 0,
+        ExplorationOptionGrade.s: 0,
+        ExplorationOptionGrade.ss: 0,
+      };
+    }
   }
 
   @override
@@ -134,14 +146,20 @@ class _ExplorationOptionSimulationScreenState
     if (mounted) {
       setState(() {
         _selectedExploration = "샘플 탐"; // 임시
-        _currentOptions = ["옵션1", "옵션2"]; // 임시
       });
     }
   }
 
+  /// 옵션 선택
+  void _selectOption(ExplorationOption option) {
+    setState(() {
+      _selectedOption = option;
+    });
+  }
+
   /// 확률에 기반하여 등급 선택
   ExplorationOptionGrade _selectGradeByProbability() {
-    final random = Random().nextDouble();
+    final random = Random().nextDouble() * 100; // 0~100 사이의 난수
     double cumulativeProbability = 0.0;
 
     for (final grade in ExplorationOptionGrade.values) {
@@ -153,9 +171,9 @@ class _ExplorationOptionSimulationScreenState
     return ExplorationOptionGrade.c; // 폴백
   }
 
-  /// 시뮬레이션 실행 (추후 구현)
+  /// 시뮬레이션 실행
   void _runSimulation() {
-    if (_selectedExploration == null) return;
+    if (_selectedOption == null) return;
 
     setState(() {
       _isSimulating = true;
@@ -163,16 +181,18 @@ class _ExplorationOptionSimulationScreenState
 
     // 확률 기반 등급 선택
     final selectedGrade = _selectGradeByProbability();
-    _gradeCount[selectedGrade] = (_gradeCount[selectedGrade] ?? 0) + 1;
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        setState(() {
-          _isSimulating = false;
-          _totalResourceConsumed += 10; // 임시
-          _simulationLog.add("${DateTime.now().toString().split('.').first} - ${selectedGrade.label} 획득");
-        });
-      }
+    
+    setState(() {
+      _gradeCount[selectedGrade] = (_gradeCount[selectedGrade] ?? 0) + 1;
+      _optionGradeCount[_selectedOption!.name]![selectedGrade] =
+          (_optionGradeCount[_selectedOption!.name]![selectedGrade] ?? 0) + 1;
+      _totalResourceConsumed += 10; // 임시
+      
+      final now = DateTime.now();
+      final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+      _simulationLog.add('$timeStr - ${_selectedOption!.name} ${selectedGrade.label}');
+      
+      _isSimulating = false;
     });
   }
 
@@ -180,7 +200,7 @@ class _ExplorationOptionSimulationScreenState
   void _resetSimulation() {
     setState(() {
       _selectedExploration = null;
-      _currentOptions = [];
+      _selectedOption = null;
       _totalResourceConsumed = 0;
       _simulationLog = [];
       _isSimulating = false;
@@ -191,6 +211,17 @@ class _ExplorationOptionSimulationScreenState
         ExplorationOptionGrade.s: 0,
         ExplorationOptionGrade.ss: 0,
       };
+      
+      // 옵션별 카운트 초기화
+      for (var option in ExplorationOptionData.options) {
+        _optionGradeCount[option.name] = {
+          ExplorationOptionGrade.c: 0,
+          ExplorationOptionGrade.b: 0,
+          ExplorationOptionGrade.a: 0,
+          ExplorationOptionGrade.s: 0,
+          ExplorationOptionGrade.ss: 0,
+        };
+      }
     });
   }
 
