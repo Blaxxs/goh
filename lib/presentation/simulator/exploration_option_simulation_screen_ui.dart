@@ -54,6 +54,51 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            _buildExplorationLevelCard(context, theme, isDark),
+            const SizedBox(height: 16),
+            _buildGradeProbabilityCard(context, theme, isDark),
+            const SizedBox(height: 16),
+            _buildOptionSlotsCard(context, theme, isDark),
+            const SizedBox(height: 16),
+            _buildSimulationControlCard(context, theme, isDark),
+            const SizedBox(height: 16),
+            if (gradeCount.values.any((count) => count > 0))
+              _buildGradeResultCard(context, theme, isDark),
+            if (totalResourceConsumed > 0) ...[
+              const SizedBox(height: 16),
+              _buildResourceConsumptionCard(context, theme, isDark),
+            ],
+            if (simulationLog.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              _buildSimulationLogCard(context, theme, isDark),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
+
+    return Scaffold(
+      drawer: const AppDrawer(currentScreen: AppScreen.explorationOptionSimulation),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
+        ),
+        title: const Text('탐 옵션 시뮬레이션'),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
             // 탐 레벨 선택 카드
             _buildExplorationLevelCard(context, theme, isDark),
             const SizedBox(height: 16),
