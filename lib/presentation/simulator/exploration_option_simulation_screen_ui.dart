@@ -268,6 +268,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               final option = slotOptions[index];
               final grade = slotGrades[index];
               final isLocked = slotLocked[index];
+              final Color gradeColor = _gradeColor(theme, grade);
               return Container(
                 decoration: BoxDecoration(
                   border: Border(
@@ -285,7 +286,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                       height: 22,
                       decoration: BoxDecoration(
                         color: grade != null
-                            ? theme.colorScheme.primary
+                            ? gradeColor
                             : (isDark ? Colors.grey[700] : Colors.grey[400]),
                         shape: BoxShape.circle,
                       ),
@@ -325,7 +326,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: option != null
-                                      ? null
+                                      ? gradeColor
                                       : Colors.grey,
                                   fontStyle: option != null
                                       ? FontStyle.normal
@@ -338,7 +339,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                               Text(
                                 _optionValueText(option, grade)!,
                                 style: theme.textTheme.labelSmall?.copyWith(
-                                  color: theme.colorScheme.primary,
+                                  color: gradeColor,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
