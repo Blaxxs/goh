@@ -257,6 +257,10 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   /// 옵션 슬롯 카드
   Widget _buildOptionSlotsCard(
       BuildContext context, ThemeData theme, bool isDark) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double? forcedItemHeight = explorationLevel == 10
+        ? (screenHeight * (2 / 3)) / explorationLevel
+        : null;
     return Card(
       elevation: 2,
       child: Padding(
@@ -268,7 +272,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               final option = slotOptions[index];
               final grade = slotGrades[index];
               final isLocked = slotLocked[index];
-              return Container(
+              final row = Container(
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(
@@ -373,6 +377,15 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                     ),
                   ],
                 ),
+              );
+
+              if (forcedItemHeight == null) {
+                return row;
+              }
+
+              return SizedBox(
+                height: forcedItemHeight,
+                child: row,
               );
             }),
           ],
