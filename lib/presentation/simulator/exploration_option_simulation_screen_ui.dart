@@ -405,7 +405,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       case ExplorationOptionGrade.b:
         return isDark ? Colors.deepPurpleAccent : Colors.purple;
       case ExplorationOptionGrade.a:
-        return isDark ? Colors.lightBlueAccent : Colors.blue;
+        return _darkGreenColor();
       case ExplorationOptionGrade.s:
         return isDark ? Colors.amberAccent : Colors.amber;
       case ExplorationOptionGrade.ss:
@@ -413,6 +413,10 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       default:
         return theme.colorScheme.primary;
     }
+  }
+
+  Color _darkGreenColor() {
+    return const Color(0xFF2E7D32);
   }
 
   String? _optionValueText(
