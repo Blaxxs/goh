@@ -52,14 +52,23 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          spacing: 16,
           children: [
             _buildExplorationLevelCard(context, theme, isDark),
+            const SizedBox(height: 16),
             _buildGradeProbabilityCard(context, theme, isDark),
+            const SizedBox(height: 16),
             _buildOptionSlotsCard(context, theme, isDark),
+            const SizedBox(height: 16),
             _buildSimulationControlCard(context, theme, isDark),
-            if (gradeCount.isNotEmpty) _buildGradeResultCard(context, theme, isDark),
-            if (totalResourceConsumed > 0) _buildResourceConsumptionCard(context, theme, isDark),
+            const SizedBox(height: 16),
+            if (gradeCount.isNotEmpty) ...[
+              _buildGradeResultCard(context, theme, isDark),
+              const SizedBox(height: 16),
+            ],
+            if (totalResourceConsumed > 0) ...[
+              _buildResourceConsumptionCard(context, theme, isDark),
+              const SizedBox(height: 16),
+            ],
             if (simulationLog.isNotEmpty) _buildSimulationLogCard(context, theme, isDark),
           ],
         ),
