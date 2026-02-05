@@ -242,13 +242,6 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            Text(
-              '잠금 ${lockedCount}칸 (잠금 1칸당 +50)',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.grey,
-              ),
-            ),
             if (allLocked) ...[
               const SizedBox(height: 6),
               Text(
