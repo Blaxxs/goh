@@ -60,8 +60,6 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
           children: [
             _buildExplorationLevelCard(context, theme, isDark),
             const SizedBox(height: 16),
-            _buildGradeProbabilityCard(context, theme, isDark),
-            const SizedBox(height: 16),
             _buildOptionSlotsCard(context, theme, isDark),
             const SizedBox(height: 16),
             _buildSimulationControlCard(context, theme, isDark,
@@ -78,6 +76,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               const SizedBox(height: 16),
               _buildSimulationLogCard(context, theme, isDark),
             ],
+            const SizedBox(height: 16),
+            _buildGradeProbabilityCard(context, theme, isDark),
           ],
         ),
       ),
@@ -90,7 +90,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     return Card(
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -99,7 +99,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 Expanded(
                   child: Text(
                     '탐 단계',
-                    style: theme.textTheme.titleMedium?.copyWith(
+                    style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -367,38 +367,29 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                         IconButton(
                           onPressed: isSimulating
                               ? null
-                              : () => onToggleSlotLock(index),
+                            style: theme.textTheme.bodySmall?.copyWith(
                           icon: Icon(
                             isLocked
                                 ? Icons.lock
                                 : Icons.lock_open_outlined,
                             color: isLocked
                                 ? theme.colorScheme.primary
-                                : Colors.grey,
-                          ),
-                          tooltip: isLocked ? '잠금 해제' : '잠금',
+                      const SizedBox(height: 6),
+                      Text(
+                        '탐 아이콘(추후 추가 예정)',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.grey,
                         ),
-                        Text(
-                          isLocked ? '잠금' : '해제',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: isLocked
-                                ? theme.colorScheme.primary
-                                : Colors.grey,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              );
-            }),
+                      ),
+                      const SizedBox(height: 8),
           ],
         ),
       ),
     );
   }
 
-  /// 시뮬레이션 제어 카드
+                            icon: const Icon(Icons.remove_circle_outline, size: 20),
+                            visualDensity: VisualDensity.compact,
   Widget _buildSimulationControlCard(
       BuildContext context, ThemeData theme, bool isDark,
       {required int lockedCount, required bool allLocked}) {
@@ -415,13 +406,14 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
-            ),
+                            icon: const Icon(Icons.add_circle_outline, size: 20),
+                            visualDensity: VisualDensity.compact,
             const SizedBox(height: 12),
             Row(
               children: [
                 Text(
                   '옵션 변경 비용: ',
-                  style: theme.textTheme.bodyMedium,
+                        style: theme.textTheme.labelSmall?.copyWith(
                 ),
                 Text(
                   '$cost 탐의 편린',
