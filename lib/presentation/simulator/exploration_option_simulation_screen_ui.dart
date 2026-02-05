@@ -39,6 +39,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
+    final int lockedCount = slotLocked.where((locked) => locked).length;
+    final bool allLocked = slotLocked.isNotEmpty && lockedCount == slotLocked.length;
 
     return Scaffold(
       drawer:
@@ -62,7 +64,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
             const SizedBox(height: 16),
             _buildOptionSlotsCard(context, theme, isDark),
             const SizedBox(height: 16),
-            _buildSimulationControlCard(context, theme, isDark),
+            _buildSimulationControlCard(context, theme, isDark,
+                lockedCount: lockedCount, allLocked: allLocked),
             if (gradeCount.isNotEmpty) ...[
               const SizedBox(height: 16),
               _buildGradeResultCard(context, theme, isDark),
