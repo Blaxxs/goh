@@ -73,12 +73,11 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            _buildExplorationLevelCard(context, theme, isDark),
-            const SizedBox(height: 16),
-            _buildOptionSlotsCard(context, theme, isDark),
-            const SizedBox(height: 16),
             _buildSimulationControlCard(context, theme, isDark,
                 lockedCount: lockedCount, allLocked: allLocked),
+            const SizedBox(height: 12),
+            _buildOptionSlotsCard(context, theme, isDark),
+            const SizedBox(height: 16),
             if (gradeCount.isNotEmpty) ...[
               const SizedBox(height: 16),
               _buildGradeResultCard(context, theme, isDark),
