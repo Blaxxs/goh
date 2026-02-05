@@ -6,30 +6,30 @@ import 'exploration_option_simulation_screen.dart';
 
 /// 탐 옵션 시뮬레이션 화면 UI
 class ExplorationOptionSimulationScreenUI extends StatelessWidget {
-  final String? selectedExploration;
-  final ExplorationOption? selectedOption;
+  final int explorationLevel;
+  final List<ExplorationOption?> slotOptions;
+  final List<ExplorationOptionGrade?> slotGrades;
   final int totalResourceConsumed;
   final List<String> simulationLog;
   final bool isSimulating;
   final Map<ExplorationOptionGrade, int> gradeCount;
-  final Map<String, Map<ExplorationOptionGrade, int>> optionGradeCount;
-  final VoidCallback onSelectExploration;
-  final Function(ExplorationOption) onSelectOption;
-  final VoidCallback onRunSimulation;
+  final Function(int) onSetExplorationLevel;
+  final Function(int) onRunSlotSimulation;
+  final VoidCallback onRunAllSlotsSimulation;
   final VoidCallback onResetSimulation;
 
   const ExplorationOptionSimulationScreenUI({
     super.key,
-    this.selectedExploration,
-    this.selectedOption,
+    required this.explorationLevel,
+    required this.slotOptions,
+    required this.slotGrades,
     required this.totalResourceConsumed,
     required this.simulationLog,
     required this.isSimulating,
     required this.gradeCount,
-    required this.optionGradeCount,
-    required this.onSelectExploration,
-    required this.onSelectOption,
-    required this.onRunSimulation,
+    required this.onSetExplorationLevel,
+    required this.onRunSlotSimulation,
+    required this.onRunAllSlotsSimulation,
     required this.onResetSimulation,
   });
 
