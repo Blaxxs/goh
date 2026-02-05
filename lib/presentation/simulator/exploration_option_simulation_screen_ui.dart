@@ -161,39 +161,98 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '현재 옵션',
+              '옵션 선택',
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
-            if (currentOptions.isEmpty)
+            if (selectedOption == null)
               Text(
-                '옵션이 없습니다.',
+                '아래에서 옵션을 선택하세요.',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: Colors.grey,
                 ),
               )
             else
-              ...currentOptions.map((option) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4.0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.check_circle,
-                          size: 16,
-                          color: theme.colorScheme.primary,
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            option,
-                            style: theme.textTheme.bodyMedium,
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark ? Colors.grey[800] : Colors.grey[100],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '선택됨:',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.grey,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          Text(
+                            selectedOption!.name,
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  )),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: onResetSimulation,
+                      tooltip: '선택 해제',
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionSelectionCard(
+      BuildContext context, ThemeData theme, bool isDark) {
+    return Card(
+      elevation: 2,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '옵션 선택',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: ExplorationOptionData.options.map((option) {
+                final isSelected = selectedOption?.name == option.name;
+                return FilterChip(
+                  label: Text(option.name),
+                  selected: isSelected,
+                  onSelected: (selected) {
+                    if (selected) {
+                      onSelectOption(option);
+                    } else {
+                      onSelectOption(option); // 토글
+                    }
+                  },
+                  backgroundColor: isDark ? Colors.grey[800] : Colors.grey[100],
+                  selectedColor: theme.colorScheme.primary.withAlpha(100),
+                );
+              }).toList(),
+            ),
           ],
         ),
       ),
