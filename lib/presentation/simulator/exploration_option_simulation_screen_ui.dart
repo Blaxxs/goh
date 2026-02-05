@@ -317,19 +317,21 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                             width: isLocked ? 1.4 : 1,
                           ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Text(
-                              option?.name ?? '미설정',
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: option != null
-                                    ? null
-                                    : Colors.grey,
-                                fontStyle: option != null
-                                    ? FontStyle.normal
-                                    : FontStyle.italic,
+                            Expanded(
+                              child: Text(
+                                option?.name ?? '미설정',
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: option != null
+                                      ? null
+                                      : Colors.grey,
+                                  fontStyle: option != null
+                                      ? FontStyle.normal
+                                      : FontStyle.italic,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             if (_optionValueText(option, grade) != null)
