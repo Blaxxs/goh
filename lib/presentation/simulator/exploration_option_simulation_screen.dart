@@ -196,39 +196,25 @@ class _ExplorationOptionSimulationScreenState
     setState(() {
       _isSimulating = true;
       _totalResourceConsumed += cost;
+
+      for (final slotIndex in unlockedIndices) {
+        final option = _selectRandomOption();
+        final grade = _selectGradeByProbability();
+
+        _slotOptions[slotIndex] = option;
+        _slotGrades[slotIndex] = grade;
+
+        _gradeCount[grade] = (_gradeCount[grade] ?? 0) + 1;
+      }
+
       final now = DateTime.now();
       final timeStr =
           '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-      _simulationLog
-          .add('$timeStr - 옵션 변경 시작 (잠금 ${lockedCount}칸, 소모 ${cost} 탐의 편린)');
+      _simulationLog.add(
+          '$timeStr - 옵션 변경 완료 (잠금 ${lockedCount}칸, 소모 ${cost} 탐의 편린)');
+
+      _isSimulating = false;
     });
-
-    int delay = 0;
-    for (final slotIndex in unlockedIndices) {
-      Future.delayed(Duration(milliseconds: 300 + (delay * 150)), () {
-        if (!mounted) return;
-        setState(() {
-          final option = _selectRandomOption();
-          final grade = _selectGradeByProbability();
-
-          _slotOptions[slotIndex] = option;
-          _slotGrades[slotIndex] = grade;
-
-          _gradeCount[grade] = (_gradeCount[grade] ?? 0) + 1;
-
-          final now = DateTime.now();
-          final timeStr =
-              '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-          _simulationLog.add(
-              '$timeStr - 슬롯 ${slotIndex + 1}: ${option.name} ${grade.label}');
-
-          if (slotIndex == unlockedIndices.last) {
-            _isSimulating = false;
-          }
-        });
-      });
-      delay++;
-    }
   }
 
   /// 시뮬레이션 초기화
