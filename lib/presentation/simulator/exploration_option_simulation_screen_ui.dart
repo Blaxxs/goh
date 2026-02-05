@@ -183,20 +183,38 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       BuildContext context, ThemeData theme, bool isDark) {
     return Card(
       elevation: 2,
-      color: isDark ? Colors.grey[850] : Colors.blue[50],
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
           children: [
-            Text(
-              '등급별 확률 (각 옵션당)',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+            Expanded(
+              child: Text(
+                '등급별 확률',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-            const SizedBox(height: 12),
-            ...ExplorationOptionGrade.values.map((grade) {
+            IconButton(
+              tooltip: '확률 보기',
+              icon: const Icon(Icons.info_outline),
+              onPressed: () => _showGradeProbabilityDialog(context, theme),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showGradeProbabilityDialog(BuildContext context, ThemeData theme) {
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('등급별 확률 (각 옵션당)'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: ExplorationOptionGrade.values.map((grade) {
               final percentage = (grade.probability).toStringAsFixed(4);
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6.0),
@@ -209,30 +227,26 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withAlpha(30),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '$percentage%',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
+                    Text(
+                      '$percentage%',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],
                 ),
               );
             }).toList(),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('닫기'),
+            ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 
