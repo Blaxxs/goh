@@ -404,7 +404,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       case ExplorationOptionGrade.b:
         return Colors.purple;
       case ExplorationOptionGrade.a:
-        return _darkGreenColor();
+        return Colors.blue;
       case ExplorationOptionGrade.s:
         return Colors.amber;
       case ExplorationOptionGrade.ss:
