@@ -5,11 +5,11 @@ import 'exploration_option_simulation_screen_ui.dart';
 
 /// 탐 옵션 등급
 enum ExplorationOptionGrade {
-  c('C등급', 50.0),
-  b('B등급', 30.0),
-  a('A등급', 15.0),
-  s('S등급', 4.0),
-  ss('SS등급', 1.0);
+  c('C등급', 1.5625),
+  b('B등급', 0.9375),
+  a('A등급', 0.46875),
+  s('S등급', 0.125),
+  ss('SS등급', 0.03125);
 
   final String label;
   final double probability; // 각 옵션당 개별 확률 (%)
