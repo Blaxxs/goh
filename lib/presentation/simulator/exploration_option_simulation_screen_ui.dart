@@ -398,18 +398,17 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   }
 
   Color _gradeColor(ThemeData theme, ExplorationOptionGrade? grade) {
-    final bool isDark = theme.brightness == Brightness.dark;
     switch (grade) {
       case ExplorationOptionGrade.c:
-        return isDark ? Colors.grey[400]! : Colors.grey;
+        return Colors.grey;
       case ExplorationOptionGrade.b:
-        return isDark ? Colors.deepPurpleAccent : Colors.purple;
+        return Colors.purple;
       case ExplorationOptionGrade.a:
         return _darkGreenColor();
       case ExplorationOptionGrade.s:
-        return isDark ? Colors.amberAccent : Colors.amber;
+        return Colors.amber;
       case ExplorationOptionGrade.ss:
-        return isDark ? Colors.redAccent : Colors.red;
+        return Colors.red;
       default:
         return theme.colorScheme.primary;
     }
