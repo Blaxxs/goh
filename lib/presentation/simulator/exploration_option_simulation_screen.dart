@@ -21,48 +21,375 @@ enum ExplorationOptionGrade {
 class ExplorationOption {
   final String name;
   final String description;
+  final Map<ExplorationOptionGrade, int> gradeValues;
 
   const ExplorationOption({
     required this.name,
     required this.description,
+    required this.gradeValues,
   });
+
+  int? valueForGrade(ExplorationOptionGrade? grade) {
+    if (grade == null) return null;
+    return gradeValues[grade];
+  }
 }
 
 /// 탐 옵션 목록 및 확률 관리
 class ExplorationOptionData {
   static const List<ExplorationOption> options = [
-    ExplorationOption(name: '공격력', description: '공격력'),
-    ExplorationOption(name: '체력', description: '체력'),
-    ExplorationOption(name: '크리티컬 데미지', description: '크리티컬 데미지'),
-    ExplorationOption(name: '크리티컬', description: '크리티컬'),
-    ExplorationOption(name: '크리티컬 저항', description: '크리티컬 저항'),
-    ExplorationOption(name: '명중', description: '명중'),
-    ExplorationOption(name: '회피', description: '회피'),
-    ExplorationOption(name: '공격 스킬 피해 증가', description: '공격 스킬 피해 증가'),
-    ExplorationOption(name: '받는 공격 스킬 피해 감소', description: '받는 공격 스킬 피해 감소'),
-    ExplorationOption(name: '일반 공격 피해 증가', description: '일반 공격 피해 증가'),
-    ExplorationOption(name: '받는 일반 공격 피해 감소', description: '받는 일반 공격 피해 감소'),
-    ExplorationOption(name: '지속 피해 증가', description: '지속 피해 증가'),
-    ExplorationOption(name: '받는 지속 피해 감소', description: '받는 지속 피해 감소'),
-    ExplorationOption(name: '모든 나쁜 효과 저항', description: '모든 나쁜 효과 저항'),
-    ExplorationOption(name: '소환수 공격력', description: '소환수 공격력'),
-    ExplorationOption(name: '반격 확률', description: '반격 확률'),
-    ExplorationOption(name: '우주여행 돌아올 확률', description: '우주여행 돌아올 확률'),
-    ExplorationOption(name: '매턴 체력 회복', description: '매턴 체력 회복'),
-    ExplorationOption(name: '모든 피해 감소', description: '모든 피해 감소'),
-    ExplorationOption(name: '미니게임 스킬 피해 증가', description: '미니게임 스킬 피해 증가'),
-    ExplorationOption(name: '회복 효과 증가', description: '회복 효과 증가'),
-    ExplorationOption(name: '공격력 %', description: '공격력 %'),
-    ExplorationOption(name: '체력 %', description: '체력 %'),
-    ExplorationOption(name: '관통 저항', description: '관통 저항'),
-    ExplorationOption(name: '관통 확률', description: '관통 확률'),
-    ExplorationOption(name: '불속성 캐릭터에게 주는 피해 증가', description: '불속성 피해'),
-    ExplorationOption(name: '물속성 캐릭터에게 주는 피해 증가', description: '물속성 피해'),
-    ExplorationOption(name: '나무속성 캐릭터에게 주는 피해 증가', description: '나무속성 피해'),
-    ExplorationOption(name: '빛속성 캐릭터에게 주는 피해 증가', description: '빛속성 피해'),
-    ExplorationOption(name: '어둠속성 캐릭터에게 주는 피해 증가', description: '어둠속성 피해'),
-    ExplorationOption(name: '최종 피해 증가', description: '최종 피해 증가'),
-    ExplorationOption(name: '최종 피해 감소', description: '최종 피해 감소'),
+    ExplorationOption(
+      name: '공격력',
+      description: '공격력',
+      gradeValues: {
+        ExplorationOptionGrade.c: 150,
+        ExplorationOptionGrade.b: 300,
+        ExplorationOptionGrade.a: 600,
+        ExplorationOptionGrade.s: 1200,
+        ExplorationOptionGrade.ss: 2500,
+      },
+    ),
+    ExplorationOption(
+      name: '체력',
+      description: '체력',
+      gradeValues: {
+        ExplorationOptionGrade.c: 300,
+        ExplorationOptionGrade.b: 600,
+        ExplorationOptionGrade.a: 1200,
+        ExplorationOptionGrade.s: 2400,
+        ExplorationOptionGrade.ss: 5000,
+      },
+    ),
+    ExplorationOption(
+      name: '크리티컬 데미지',
+      description: '크리티컬 데미지',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 16,
+        ExplorationOptionGrade.ss: 35,
+      },
+    ),
+    ExplorationOption(
+      name: '크리티컬',
+      description: '크리티컬',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 16,
+        ExplorationOptionGrade.ss: 35,
+      },
+    ),
+    ExplorationOption(
+      name: '크리티컬 저항',
+      description: '크리티컬 저항',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 15,
+        ExplorationOptionGrade.ss: 30,
+      },
+    ),
+    ExplorationOption(
+      name: '명중',
+      description: '명중',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 16,
+        ExplorationOptionGrade.ss: 35,
+      },
+    ),
+    ExplorationOption(
+      name: '회피',
+      description: '회피',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 15,
+        ExplorationOptionGrade.ss: 30,
+      },
+    ),
+    ExplorationOption(
+      name: '공격 스킬 피해 증가',
+      description: '공격 스킬 피해 증가',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 25,
+      },
+    ),
+    ExplorationOption(
+      name: '받는 공격 스킬 피해 감소',
+      description: '받는 공격 스킬 피해 감소',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 10,
+        ExplorationOptionGrade.ss: 15,
+      },
+    ),
+    ExplorationOption(
+      name: '일반 공격 피해 증가',
+      description: '일반 공격 피해 증가',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 25,
+      },
+    ),
+    ExplorationOption(
+      name: '받는 일반 공격 피해 감소',
+      description: '받는 일반 공격 피해 감소',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 10,
+        ExplorationOptionGrade.ss: 15,
+      },
+    ),
+    ExplorationOption(
+      name: '지속 피해 증가',
+      description: '지속 피해 증가',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 25,
+      },
+    ),
+    ExplorationOption(
+      name: '받는 지속 피해 감소',
+      description: '받는 지속 피해 감소',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 10,
+        ExplorationOptionGrade.ss: 15,
+      },
+    ),
+    ExplorationOption(
+      name: '모든 나쁜 효과 저항',
+      description: '모든 나쁜 효과 저항',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 20,
+      },
+    ),
+    ExplorationOption(
+      name: '소환수 공격력',
+      description: '소환수 공격력',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2000,
+        ExplorationOptionGrade.b: 4000,
+        ExplorationOptionGrade.a: 8000,
+        ExplorationOptionGrade.s: 15000,
+        ExplorationOptionGrade.ss: 30000,
+      },
+    ),
+    ExplorationOption(
+      name: '반격 확률',
+      description: '반격 확률',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 10,
+        ExplorationOptionGrade.ss: 15,
+      },
+    ),
+    ExplorationOption(
+      name: '우주여행 돌아올 확률',
+      description: '우주여행 돌아올 확률',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 10,
+        ExplorationOptionGrade.ss: 15,
+      },
+    ),
+    ExplorationOption(
+      name: '매턴 체력 회복',
+      description: '매턴 체력 회복',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2000,
+        ExplorationOptionGrade.b: 4000,
+        ExplorationOptionGrade.a: 6000,
+        ExplorationOptionGrade.s: 8000,
+        ExplorationOptionGrade.ss: 12000,
+      },
+    ),
+    ExplorationOption(
+      name: '모든 피해 감소',
+      description: '모든 피해 감소',
+      gradeValues: {
+        ExplorationOptionGrade.c: 1,
+        ExplorationOptionGrade.b: 2,
+        ExplorationOptionGrade.a: 4,
+        ExplorationOptionGrade.s: 6,
+        ExplorationOptionGrade.ss: 10,
+      },
+    ),
+    ExplorationOption(
+      name: '미니게임 스킬 피해 증가',
+      description: '미니게임 스킬 피해 증가',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 25,
+      },
+    ),
+    ExplorationOption(
+      name: '회복 효과 증가',
+      description: '회복 효과 증가',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 4,
+        ExplorationOptionGrade.s: 10,
+        ExplorationOptionGrade.ss: 15,
+      },
+    ),
+    ExplorationOption(
+      name: '공격력 %',
+      description: '공격력 %',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 25,
+      },
+    ),
+    ExplorationOption(
+      name: '체력 %',
+      description: '체력 %',
+      gradeValues: {
+        ExplorationOptionGrade.c: 5,
+        ExplorationOptionGrade.b: 10,
+        ExplorationOptionGrade.a: 15,
+        ExplorationOptionGrade.s: 25,
+        ExplorationOptionGrade.ss: 40,
+      },
+    ),
+    ExplorationOption(
+      name: '관통 저항',
+      description: '관통 저항',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 25,
+      },
+    ),
+    ExplorationOption(
+      name: '관통 확률',
+      description: '관통 확률',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 12,
+        ExplorationOptionGrade.ss: 25,
+      },
+    ),
+    ExplorationOption(
+      name: '불속성 캐릭터에게 주는 피해 증가',
+      description: '불속성 피해',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 15,
+        ExplorationOptionGrade.ss: 30,
+      },
+    ),
+    ExplorationOption(
+      name: '물속성 캐릭터에게 주는 피해 증가',
+      description: '물속성 피해',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 15,
+        ExplorationOptionGrade.ss: 30,
+      },
+    ),
+    ExplorationOption(
+      name: '나무속성 캐릭터에게 주는 피해 증가',
+      description: '나무속성 피해',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 15,
+        ExplorationOptionGrade.ss: 30,
+      },
+    ),
+    ExplorationOption(
+      name: '빛속성 캐릭터에게 주는 피해 증가',
+      description: '빛속성 피해',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 15,
+        ExplorationOptionGrade.ss: 30,
+      },
+    ),
+    ExplorationOption(
+      name: '어둠속성 캐릭터에게 주는 피해 증가',
+      description: '어둠속성 피해',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 4,
+        ExplorationOptionGrade.a: 8,
+        ExplorationOptionGrade.s: 15,
+        ExplorationOptionGrade.ss: 30,
+      },
+    ),
+    ExplorationOption(
+      name: '최종 피해 증가',
+      description: '최종 피해 증가',
+      gradeValues: {
+        ExplorationOptionGrade.c: 2,
+        ExplorationOptionGrade.b: 3,
+        ExplorationOptionGrade.a: 6,
+        ExplorationOptionGrade.s: 10,
+        ExplorationOptionGrade.ss: 15,
+      },
+    ),
+    ExplorationOption(
+      name: '최종 피해 감소',
+      description: '최종 피해 감소',
+      gradeValues: {
+        ExplorationOptionGrade.c: 1,
+        ExplorationOptionGrade.b: 2,
+        ExplorationOptionGrade.a: 4,
+        ExplorationOptionGrade.s: 6,
+        ExplorationOptionGrade.ss: 9,
+      },
+    ),
   ];
 
   /// 각 옵션당 정확히 1개가 나올 때의 확률
