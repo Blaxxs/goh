@@ -91,7 +91,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     return Card(
       elevation: 2,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -100,21 +100,21 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 Expanded(
                   child: Text(
                     '탐 단계',
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
                   decoration: BoxDecoration(
                     color: isDark ? Colors.grey[800] : Colors.blue[50],
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '${explorationLevel}탐',
-                    style: theme.textTheme.bodySmall?.copyWith(
+                    style: theme.textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary,
                     ),
@@ -122,40 +122,53 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 2),
             Text(
               '탐 아이콘(추후 추가 예정)',
-              style: theme.textTheme.bodySmall?.copyWith(
+              style: theme.textTheme.labelSmall?.copyWith(
                 color: Colors.grey,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 4),
             Row(
               children: [
                 IconButton(
                   onPressed: explorationLevel > 1
                       ? () => onSetExplorationLevel(explorationLevel - 1)
                       : null,
-                  icon: const Icon(Icons.remove_circle_outline, size: 20),
+                  icon: const Icon(Icons.remove_circle_outline, size: 18),
                   visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints.tightFor(width: 28, height: 28),
                 ),
                 Expanded(
-                  child: Slider(
-                    min: 1,
-                    max: 10,
-                    divisions: 9,
-                    value: explorationLevel.toDouble(),
-                    label: '${explorationLevel}탐',
-                    onChanged: (value) =>
-                        onSetExplorationLevel(value.round()),
+                  child: SliderTheme(
+                    data: SliderTheme.of(context).copyWith(
+                      trackHeight: 2,
+                      thumbShape:
+                          const RoundSliderThumbShape(enabledThumbRadius: 7),
+                      overlayShape:
+                          const RoundSliderOverlayShape(overlayRadius: 12),
+                    ),
+                    child: Slider(
+                      min: 1,
+                      max: 10,
+                      divisions: 9,
+                      value: explorationLevel.toDouble(),
+                      label: '${explorationLevel}탐',
+                      onChanged: (value) =>
+                          onSetExplorationLevel(value.round()),
+                    ),
                   ),
                 ),
                 IconButton(
                   onPressed: explorationLevel < 10
                       ? () => onSetExplorationLevel(explorationLevel + 1)
                       : null,
-                  icon: const Icon(Icons.add_circle_outline, size: 20),
+                  icon: const Icon(Icons.add_circle_outline, size: 18),
                   visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints.tightFor(width: 28, height: 28),
                 ),
               ],
             ),
