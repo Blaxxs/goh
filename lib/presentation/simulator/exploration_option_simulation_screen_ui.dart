@@ -313,17 +313,30 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                             width: isLocked ? 1.4 : 1,
                           ),
                         ),
-                        child: Text(
-                          option?.name ?? '미설정',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: option != null
-                                ? null
-                                : Colors.grey,
-                            fontStyle: option != null
-                                ? FontStyle.normal
-                                : FontStyle.italic,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              option?.name ?? '미설정',
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: option != null
+                                    ? null
+                                    : Colors.grey,
+                                fontStyle: option != null
+                                    ? FontStyle.normal
+                                    : FontStyle.italic,
+                              ),
+                            ),
+                            if (_optionValueText(option, grade) != null)
+                              Text(
+                                _optionValueText(option, grade)!,
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                          ],
                         ),
                       ),
                     ),
@@ -378,6 +391,14 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       case ExplorationOptionGrade.ss:
         return 'SS';
     }
+  }
+
+  String? _optionValueText(
+      ExplorationOption? option, ExplorationOptionGrade? grade) {
+    if (option == null || grade == null) return null;
+    final value = option.valueForGrade(grade);
+    if (value == null) return null;
+    return '$value';
   }
 
   /// 시뮬레이션 제어 카드
