@@ -10,11 +10,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   final List<ExplorationOption?> slotOptions;
   final List<ExplorationOptionGrade?> slotGrades;
   final List<bool> slotLocked;
+  final ExplorationOptionGrade protectionGrade;
   final int totalResourceConsumed;
   final List<String> simulationLog;
   final bool isSimulating;
   final Map<ExplorationOptionGrade, int> gradeCount;
   final Function(int) onSetExplorationLevel;
+  final Function(ExplorationOptionGrade) onSetProtectionGrade;
   final Function(int) onToggleSlotLock;
   final VoidCallback onRunAllSlotsSimulation;
   final VoidCallback onResetSimulation;
@@ -25,11 +27,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     required this.slotOptions,
     required this.slotGrades,
     required this.slotLocked,
+    required this.protectionGrade,
     required this.totalResourceConsumed,
     required this.simulationLog,
     required this.isSimulating,
     required this.gradeCount,
     required this.onSetExplorationLevel,
+    required this.onSetProtectionGrade,
     required this.onToggleSlotLock,
     required this.onRunAllSlotsSimulation,
     required this.onResetSimulation,
@@ -60,6 +64,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
         child: Column(
           children: [
             _buildExplorationLevelCard(context, theme, isDark),
+            const SizedBox(height: 16),
+            _buildProtectionGradeCard(context, theme, isDark),
             const SizedBox(height: 16),
             _buildOptionSlotsCard(context, theme, isDark),
             const SizedBox(height: 16),
