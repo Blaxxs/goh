@@ -581,6 +581,14 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
       BuildContext context, ThemeData theme, bool isDark,
       {required int lockedCount, required bool allLocked}) {
     final int cost = 50 + (lockedCount * 50);
+    final grades = ExplorationOptionGrade.values;
+    final protectionIndex = grades.indexOf(protectionGrade);
+    final protectionPrev =
+        grades[(protectionIndex - 1 + grades.length) % grades.length];
+    final protectionNext = grades[(protectionIndex + 1) % grades.length];
+    final autoIndex = grades.indexOf(autoTargetGrade);
+    final autoPrev = grades[(autoIndex - 1 + grades.length) % grades.length];
+    final autoNext = grades[(autoIndex + 1) % grades.length];
     return Card(
       elevation: 2,
       child: Padding(
@@ -593,6 +601,88 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '보호 등급',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => onSetProtectionGrade(protectionPrev),
+                  icon: const Icon(Icons.chevron_left),
+                  visualDensity: VisualDensity.compact,
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _gradeColor(theme, protectionGrade),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    protectionGrade.label,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => onSetProtectionGrade(protectionNext),
+                  icon: const Icon(Icons.chevron_right),
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '자동 변경 목표',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => onSetAutoTargetGrade(autoPrev),
+                  icon: const Icon(Icons.chevron_left),
+                  visualDensity: VisualDensity.compact,
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: _gradeColor(theme, autoTargetGrade),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    autoTargetGrade.label,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => onSetAutoTargetGrade(autoNext),
+                  icon: const Icon(Icons.chevron_right),
+                  visualDensity: VisualDensity.compact,
+                ),
+                const SizedBox(width: 6),
+                ElevatedButton(
+                  onPressed:
+                      isAutoRunning ? onStopAutoChange : onStartAutoChange,
+                  child: Text(isAutoRunning ? '멈춤' : '자동 변경'),
+                ),
+              ],
             ),
             const SizedBox(height: 12),
             Row(
