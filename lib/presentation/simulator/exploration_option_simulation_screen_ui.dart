@@ -378,7 +378,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '시뮬레이션 결과',
+                  '전체 결과',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
@@ -407,6 +407,111 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
               final count = gradeCount[grade] ?? 0;
               final percentage =
                   totalCount > 0 ? (count / totalCount * 100).toStringAsFixed(1) : '0.0';
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        grade.label,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.secondary.withAlpha(30),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '$count회',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.secondary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        '$percentage%',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: Colors.grey,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionResultCard(
+      BuildContext context, ThemeData theme, bool isDark) {
+    if (selectedOption == null) {
+      return const SizedBox.shrink();
+    }
+
+    final optionResults = optionGradeCount[selectedOption!.name] ?? {};
+    final optionTotal = optionResults.values.fold<int>(0, (a, b) => a + b);
+
+    return Card(
+      elevation: 2,
+      color: isDark ? Colors.grey[850] : Colors.amber[50],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${selectedOption!.name} 결과',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withAlpha(30),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '총 $optionTotal회',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            ...ExplorationOptionGrade.values.map((grade) {
+              final count = optionResults[grade] ?? 0;
+              final percentage =
+                  optionTotal > 0 ? (count / optionTotal * 100).toStringAsFixed(1) : '0.0';
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6.0),
                 child: Row(
