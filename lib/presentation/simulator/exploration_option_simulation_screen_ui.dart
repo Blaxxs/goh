@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/constants/box_constants.dart';
+import 'exploration_option_simulation_screen.dart';
 
 /// 탐 옵션 시뮬레이션 화면 UI
 class ExplorationOptionSimulationScreenUI extends StatelessWidget {
@@ -10,6 +11,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
   final int totalResourceConsumed;
   final List<String> simulationLog;
   final bool isSimulating;
+  final Map<ExplorationOptionGrade, int> gradeCount;
   final VoidCallback onSelectExploration;
   final VoidCallback onRunSimulation;
   final VoidCallback onResetSimulation;
