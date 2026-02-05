@@ -270,6 +270,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
             ...List.generate(explorationLevel, (index) {
               final option = slotOptions[index];
               final grade = slotGrades[index];
+              final isLocked = slotLocked[index];
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 child: Row(
@@ -301,6 +302,12 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                                     ? Colors.grey[800]
                                     : Colors.grey[100],
                                 borderRadius: BorderRadius.circular(8),
+                                border: isLocked
+                                    ? Border.all(
+                                        color: theme.colorScheme.primary,
+                                        width: 1.2,
+                                      )
+                                    : null,
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,6 +324,18 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                                       style: theme.textTheme.bodySmall
                                           ?.copyWith(
                                         color: Colors.grey,
+                                      ),
+                                    ),
+                                  if (isLocked)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 4),
+                                      child: Text(
+                                        '잠금 유지',
+                                        style: theme.textTheme.bodySmall
+                                            ?.copyWith(
+                                          color: theme.colorScheme.primary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
                                     ),
                                 ],
@@ -343,17 +362,31 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                             ),
                     ),
                     const SizedBox(width: 8),
-                    ElevatedButton(
-                      onPressed: isSimulating
-                          ? null
-                          : () => onRunSlotSimulation(index),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 12,
+                    Column(
+                      children: [
+                        IconButton(
+                          onPressed: isSimulating
+                              ? null
+                              : () => onToggleSlotLock(index),
+                          icon: Icon(
+                            isLocked
+                                ? Icons.lock
+                                : Icons.lock_open_outlined,
+                            color: isLocked
+                                ? theme.colorScheme.primary
+                                : Colors.grey,
+                          ),
+                          tooltip: isLocked ? '잠금 해제' : '잠금',
                         ),
-                      ),
-                      child: const Text('설정'),
+                        Text(
+                          isLocked ? '잠금' : '해제',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: isLocked
+                                ? theme.colorScheme.primary
+                                : Colors.grey,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
