@@ -192,6 +192,62 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
     );
   }
 
+  Widget _buildGradeProbabilityCard(
+      BuildContext context, ThemeData theme, bool isDark) {
+    return Card(
+      elevation: 2,
+      color: isDark ? Colors.grey[850] : Colors.blue[50],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '등급별 확률',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            ...ExplorationOptionGrade.values.map((grade) {
+              final percentage = (grade.probability * 100).toStringAsFixed(1);
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      grade.label,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primary.withAlpha(30),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '$percentage%',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildSimulationControlCard(
       BuildContext context, ThemeData theme, bool isDark) {
     return Card(
