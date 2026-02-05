@@ -260,12 +260,12 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                     ),
                   ),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 8),
+                padding: const EdgeInsets.symmetric(vertical: 4),
                 child: Row(
                   children: [
                     Container(
-                      width: 36,
-                      height: 36,
+                      width: 28,
+                      height: 28,
                       decoration: BoxDecoration(
                         color: grade != null
                             ? theme.colorScheme.primary
@@ -285,8 +285,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                     Expanded(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 8,
+                          horizontal: 8,
+                          vertical: 4,
                         ),
                         decoration: BoxDecoration(
                           color: isDark ? Colors.grey[850] : Colors.grey[100],
