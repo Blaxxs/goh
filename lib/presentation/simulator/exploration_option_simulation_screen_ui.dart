@@ -114,69 +114,32 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Row(
-              children: [
-                Text(
-                  '시뮬레이션 제어',
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Spacer(),
-                Text(
-                  '${explorationLevel}탐',
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white70 : theme.colorScheme.primary,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   onPressed: explorationLevel > 1
                       ? () => onSetExplorationLevel(explorationLevel - 1)
                       : null,
-                  icon: const Icon(Icons.remove_circle_outline, size: 18),
+                  icon: const Icon(Icons.chevron_left, size: 20),
                   visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints.tightFor(width: 28, height: 28),
                 ),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 2,
-                      thumbShape:
-                          const RoundSliderThumbShape(enabledThumbRadius: 7),
-                      overlayShape:
-                          const RoundSliderOverlayShape(overlayRadius: 12),
-                    ),
-                    child: Slider(
-                      min: 1,
-                      max: 10,
-                      divisions: 9,
-                      value: explorationLevel.toDouble(),
-                      label: '${explorationLevel}탐',
-                      onChanged: (value) =>
-                          onSetExplorationLevel(value.round()),
-                    ),
+                Text(
+                  '${explorationLevel}탐',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : theme.colorScheme.primary,
                   ),
                 ),
                 IconButton(
                   onPressed: explorationLevel < 10
                       ? () => onSetExplorationLevel(explorationLevel + 1)
                       : null,
-                  icon: const Icon(Icons.add_circle_outline, size: 18),
+                  icon: const Icon(Icons.chevron_right, size: 20),
                   visualDensity: VisualDensity.compact,
-                  padding: EdgeInsets.zero,
-                  constraints:
-                      const BoxConstraints.tightFor(width: 28, height: 28),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Row(
               children: [
                 Expanded(
