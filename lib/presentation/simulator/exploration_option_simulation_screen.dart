@@ -424,7 +424,13 @@ class _ExplorationOptionSimulationScreenState
   int _explorationLevel = 1;
 
   // 옵션 보호 등급
-  ExplorationOptionGrade _protectionGrade = ExplorationOptionGrade.a;
+  ExplorationOptionGrade _protectionGrade = ExplorationOptionGrade.ss;
+
+  // 자동 옵션 변경 목표 등급
+  ExplorationOptionGrade _autoTargetGrade = ExplorationOptionGrade.a;
+
+  // 자동 옵션 변경 실행 여부
+  bool _isAutoRunning = false;
 
   // 각 슬롯별 옵션 결과
   List<ExplorationOption?> _slotOptions = [];
@@ -482,6 +488,60 @@ class _ExplorationOptionSimulationScreenState
     });
   }
 
+  void _setAutoTargetGrade(ExplorationOptionGrade grade) {
+    setState(() {
+      _autoTargetGrade = grade;
+    });
+  }
+
+  void _startAutoChange() {
+    if (_isAutoRunning) return;
+    setState(() {
+      _isAutoRunning = true;
+    });
+    _autoTick();
+  }
+
+  void _stopAutoChange() {
+    if (!_isAutoRunning) return;
+    setState(() {
+      _isAutoRunning = false;
+    });
+  }
+
+  void _autoTick() {
+    if (!_isAutoRunning || !mounted) return;
+    if (_allSlotsLocked) {
+      _stopAutoChange();
+      return;
+    }
+
+    _runAllSlotsSimulation();
+
+    if (_hasUnlockedAtOrAbove(_autoTargetGrade)) {
+      _stopAutoChange();
+      return;
+    }
+
+    Future.delayed(const Duration(milliseconds: 200), () {
+      _autoTick();
+    });
+  }
+
+  bool _hasUnlockedAtOrAbove(ExplorationOptionGrade target) {
+    final grades = ExplorationOptionGrade.values;
+    final targetIndex = grades.indexOf(target);
+    for (int i = 0; i < _slotGrades.length; i++) {
+      if (_slotLocked[i]) continue;
+      final grade = _slotGrades[i];
+      if (grade == null) continue;
+      if (grades.indexOf(grade) >= targetIndex) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   void _toggleSlotLock(int slotIndex) {
     if (slotIndex < 0 || slotIndex >= _explorationLevel) return;
     setState(() {
@@ -515,6 +575,7 @@ class _ExplorationOptionSimulationScreenState
 
   /// 전체 슬롯 옵션 변경
   void _runAllSlotsSimulation() {
+    if (_isSimulating) return;
     if (_allSlotsLocked) return;
 
     final unlockedIndices = <int>[];
@@ -562,6 +623,7 @@ class _ExplorationOptionSimulationScreenState
   /// 시뮬레이션 초기화
   void _resetSimulation() {
     setState(() {
+      _isAutoRunning = false;
       _slotOptions = List<ExplorationOption?>.filled(_explorationLevel, null);
       _slotGrades = List<ExplorationOptionGrade?>.filled(_explorationLevel, null);
       _slotLocked = List<bool>.filled(_explorationLevel, false);
@@ -591,12 +653,17 @@ class _ExplorationOptionSimulationScreenState
       slotGrades: _slotGrades,
       slotLocked: _slotLocked,
       protectionGrade: _protectionGrade,
+      autoTargetGrade: _autoTargetGrade,
       totalResourceConsumed: _totalResourceConsumed,
       simulationLog: _simulationLog,
       isSimulating: _isSimulating,
+      isAutoRunning: _isAutoRunning,
       gradeCount: _gradeCount,
       onSetExplorationLevel: _setExplorationLevel,
       onSetProtectionGrade: _setProtectionGrade,
+      onSetAutoTargetGrade: _setAutoTargetGrade,
+      onStartAutoChange: _startAutoChange,
+      onStopAutoChange: _stopAutoChange,
       onToggleSlotLock: _toggleSlotLock,
       onRunAllSlotsSimulation: _runAllSlotsSimulation,
       onResetSimulation: _resetSimulation,
