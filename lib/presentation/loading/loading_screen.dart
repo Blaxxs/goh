@@ -1,11 +1,9 @@
 // lib/loading_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import '../main/main_screen.dart'; // MainScreen으로 이동하기 위함
 import '../../core/services/settings_service.dart'; // 설정 로딩을 위함
 import '../../core/constants/accessory_constants.dart';
-import '../../core/constants/accessory_precache_extension.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
@@ -21,34 +19,26 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void initState() {
     super.initState();
     _initializationFuture = _initializeAppFuture();
+    _startBackgroundTasks();
   }
 
   Future<void> _initializeAppFuture() async {
     try {
-      // 설정 로딩과 최소 시간 보장을 동시에 기다림
-      await Future.wait([
-        SettingsService.instance.loadAllSettings(),
-        Future.delayed(const Duration(milliseconds: 3000)) // 로고 최소 표시 시간 (예시)
-      ]);
-      
-        // 악세사리 메타/이미지를 미리 로드: 캐시가 없을 경우 원격에서 받아와야 하므로
-        // 여기서는 원격 fetch를 대기하여 모든 메타데이터가 준비된 뒤 이미지를 disk cache 합니다.
-        await AccessoryDataManager().loadAccessories(waitForRemote: true);
-        if (mounted) {
-          if (kDebugMode) {
-            debugPrint('[LoadingScreen] Starting image caching...');
-          }
-          await AccessoryDataManager().precacheAllImages(context);
-          if (kDebugMode) {
-            debugPrint('[LoadingScreen] Image caching completed. Ready to navigate to MainScreen.');
-          }
-        }
+      await SettingsService.instance.loadAllSettings();
     } catch (e) {
-      // 에러 처리 (예: 로그 출력)
       debugPrint('설정 로딩 중 오류 발생: $e');
-      // 에러를 다시 던져서 FutureBuilder가 error 상태를 처리하도록 함
       rethrow;
     }
+  }
+
+  void _startBackgroundTasks() {
+    Future(() async {
+      try {
+        await AccessoryDataManager().loadAccessories();
+      } catch (e) {
+        debugPrint('[LoadingScreen] Accessory data load error: $e');
+      }
+    });
   }
 
   @override
