@@ -270,7 +270,7 @@ class PouchResultDialog extends StatelessWidget {
                           right: 0,
                           bottom: 0,
                           child: Text(
-                            numberFormat.format(amount),
+                            'x${numberFormat.format(amount)}',
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodySmall?.copyWith(
                               color: Colors.white,
