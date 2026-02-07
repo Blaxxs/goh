@@ -985,7 +985,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                           height: itemHeight,
                           alignment: Alignment.centerLeft,
                           padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: item.child ?? Text('$value단계'),
+                          child: item.child,
                         ),
                       );
                     },
