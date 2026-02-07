@@ -101,9 +101,10 @@ class SettingsScreenUI extends StatelessWidget {
         theme.textTheme.titleMedium?.fontSize ?? (16.0 * (2.0 / 3.0));
 
     // TextFormField와 Dropdown의 contentPadding 계산
+    const double fieldHeight = 40.0;
     const double textFormFieldVerticalPadding = 12.0;
     const EdgeInsets textFormFieldContentPadding = EdgeInsets.symmetric(
-        horizontal: 10.0, vertical: textFormFieldVerticalPadding);
+      horizontal: 10.0, vertical: textFormFieldVerticalPadding);
 
     // 드롭다운 아이콘이 텍스트보다 클 경우를 고려하여 드롭다운의 수직 패딩을 동적으로 조정
     final double dropdownCalculatedVerticalPadding =
@@ -158,6 +159,7 @@ class SettingsScreenUI extends StatelessWidget {
                           border: OutlineInputBorder(),
                           isDense: true,
                           contentPadding: textFormFieldContentPadding,
+                          constraints: BoxConstraints.tightFor(height: fieldHeight),
                         ),
                         validator: (value) {
                           if (isSetupMode && (value == null || value.isEmpty)) {
@@ -183,6 +185,7 @@ class SettingsScreenUI extends StatelessWidget {
                           border: OutlineInputBorder(),
                           isDense: true,
                           contentPadding: textFormFieldContentPadding,
+                          constraints: BoxConstraints.tightFor(height: fieldHeight),
                         ),
                         validator: (value) {
                           if (isSetupMode && (value == null || value.isEmpty)) {
@@ -205,13 +208,15 @@ class SettingsScreenUI extends StatelessWidget {
                           isDense: true,
                           contentPadding:
                               dropdownInputDecorationContentPadding, // 드롭다운용 패딩 사용
+                          constraints:
+                              const BoxConstraints.tightFor(height: fieldHeight),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                         ),
                         isExpanded: true,
                         buttonStyleData: ButtonStyleData(
-                          // height: 50, // 고정 높이 제거
+                          height: fieldHeight,
                           padding: const EdgeInsets.only(
                               left: 0, right: 10), // VIP 드롭다운 오른쪽 패딩 조정
                           decoration: BoxDecoration(
@@ -337,6 +342,8 @@ class SettingsScreenUI extends StatelessWidget {
                                 border: const OutlineInputBorder(),
                                 isDense: true,
                                 contentPadding: textFormFieldContentPadding,
+                                constraints:
+                                    const BoxConstraints.tightFor(height: fieldHeight),
                               ),
                               validator: (value) {
                                 if (value != null && value.isNotEmpty) {
@@ -361,6 +368,8 @@ class SettingsScreenUI extends StatelessWidget {
                                 isDense: true,
                                 contentPadding:
                                     dropdownInputDecorationContentPadding,
+                                constraints:
+                                    const BoxConstraints.tightFor(height: fieldHeight),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
@@ -378,6 +387,7 @@ class SettingsScreenUI extends StatelessWidget {
                                 onJjolCountChanged(stageName, value);
                               },
                               buttonStyleData: ButtonStyleData(
+                                height: fieldHeight,
                                 padding:
                                     const EdgeInsets.only(left: 0, right: 10),
                                 decoration: BoxDecoration(
