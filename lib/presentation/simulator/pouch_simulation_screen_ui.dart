@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -310,12 +311,13 @@ class PouchResultDialog extends StatelessWidget {
               max(24, min(52, min(tileByWidth, tileByHeight)));
           final double gridHeight =
               rows * tileSize + (rows - 1) * spacing;
+          final double dialogHeight = min(maxHeight, gridHeight);
           return SizedBox(
             width: double.maxFinite,
             child: SizedBox(
-              height: gridHeight,
+              height: dialogHeight,
               child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
+                physics: const ClampingScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: columns,
                   mainAxisSpacing: spacing,
@@ -336,27 +338,31 @@ class PouchResultDialog extends StatelessWidget {
                           height: tileSize,
                           fit: BoxFit.contain,
                         ),
-                        Positioned(
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Text(
-                            'x${numberFormat.format(amount)}',
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              shadows: const [
-                                Shadow(
-                                  color: Colors.black87,
-                                  offset: Offset(0, 1),
-                                  blurRadius: 2,
-                                ),
-                              ],
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: SizedBox(
+                            width: tileSize,
+                            child: Text(
+                              'x${numberFormat.format(amount)}',
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontFeatures: const [
+                                  FontFeature.tabularFigures(),
+                                ],
+                                shadows: const [
+                                  Shadow(
+                                    color: Colors.black87,
+                                    offset: Offset(0, 1),
+                                    blurRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.clip,
+                              softWrap: false,
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.visible,
-                            softWrap: false,
                           ),
                         ),
                       ],
