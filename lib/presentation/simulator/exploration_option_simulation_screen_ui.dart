@@ -348,7 +348,8 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
           title: const Text('등급별 확률 (전체/옵션별)'),
           content: Column(
             mainAxisSize: MainAxisSize.min,
-            children: ExplorationOptionGrade.values.map((grade) {
+            children: [
+              ...ExplorationOptionGrade.values.map((grade) {
               final overall = grade.probability;
               final perOption =
                   overall / ExplorationOptionData.options.length.toDouble();
@@ -376,6 +377,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 ),
               );
             }),
+            ],
           ),
           actions: [
             TextButton(
@@ -690,7 +692,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
