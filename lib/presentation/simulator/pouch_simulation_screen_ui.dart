@@ -65,13 +65,44 @@ class PouchSimulationScreenUI extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        title: const Text('주머니 시뮬레이션'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: '결과 초기화',
+            onPressed: onResetSimulation,
+          ),
+        ],
+      ),
+      drawer: const AppDrawer(currentScreen: AppScreen.pouchSimulation),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              '시뮬레이션 설정',
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Image.asset(
+                _getPouchImagePath(selectedType),
+                width: 72,
+                height: 72,
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(height: 12),
             DropdownButtonFormField<PouchType>(
               value: selectedType,
               decoration: InputDecoration(
                 labelText: '주머니 선택',
                 isDense: true,
                 filled: true,
-                fillColor: theme.colorScheme.surfaceVariant.withOpacity(0.4),
+                fillColor: theme.colorScheme.surfaceContainerHighest
+                    .withValues(alpha: 0.4),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -86,22 +117,22 @@ class PouchSimulationScreenUI extends StatelessWidget {
               onChanged: onTypeChanged,
               icon: const Icon(Icons.keyboard_arrow_down_rounded),
             ),
+            const SizedBox(height: 12),
             Text(
-              '시뮬레이션 설정',
               '개봉 개수',
-                  ?.copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleMedium,
             ),
-            const SizedBox(height: 12),
-            Center(
-              child: Image.asset(
-                _getPouchImagePath(selectedType),
-                width: 72,
-                height: 72,
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              children: drawCountOptions.map((count) {
+                final isSelected = count == selectedDrawCount && !useCustomDrawCount;
+                return ChoiceChip(
                   label: Text('${_numberFormat.format(count)}개'),
-              ),
-            ),
-            const SizedBox(height: 12),
-            DropdownButtonFormField<PouchType>(
+                  selected: isSelected,
+                  onSelected: (_) => onDrawCountChanged(count),
+                );
+              }).toList()
                 ..add(
                   ChoiceChip(
                     label: const Text('직접 입력'),
@@ -124,29 +155,29 @@ class PouchSimulationScreenUI extends StatelessWidget {
                 ),
               ),
             ],
-              decoration: const InputDecoration(
-                labelText: '주머니 선택',
-                border: OutlineInputBorder(),
-                isDense: true,
-              ),
-              items: PouchType.values
-                  .map((type) => DropdownMenuItem(
-                        value: type,
-                        child: Text(type.label),
-                      ))
-                  .toList(),
-              onChanged: onTypeChanged,
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: isSimulating ? null : onRunSimulation,
+                    icon: isSimulating
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : const Icon(Icons.inventory_2_outlined),
                     label: const Text('개봉'),
-            Text(
-              '1회당 개봉 개수',
-              style: theme.textTheme.titleMedium,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                OutlinedButton(
+                  onPressed: onResetSimulation,
+                  child: const Text('초기화'),
+                ),
+              ],
             ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: drawCountOptions.map((count) {
-                final isSelected = count == selectedDrawCount;
             const SizedBox(height: 20),
             Text(
               '개봉 결과',
@@ -199,39 +230,9 @@ class PouchSimulationScreenUI extends StatelessWidget {
                   ),
                 ),
               ),
-                return ChoiceChip(
-                  label: Text('${_numberFormat.format(count)}회'),
-                  selected: isSelected,
-                  onSelected: (_) => onDrawCountChanged(count),
-                );
-              }).toList(),
-                          child: Text(
-                            numberFormat.format(amount),
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
-          ),
+          ],
         ),
       ),
-      actionsAlignment: MainAxisAlignment.center,
-      actions: <Widget>[
-        TextButton(
-          child: const Text('닫기'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-      ],
     );
   }
 }
