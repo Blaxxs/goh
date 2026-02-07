@@ -37,14 +37,14 @@ class AccessoryScreenUI extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(6.0),
           child: Card(
             elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
                   // --- 검색 영역 ---
@@ -84,13 +84,13 @@ class AccessoryScreenUI extends StatelessWidget {
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                              padding: EdgeInsets.symmetric(horizontal: 10.0),
                             ),
                             underline: const SizedBox(),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Expanded(
                         flex: 3,
                         child: TextField(
@@ -129,13 +129,13 @@ class AccessoryScreenUI extends StatelessWidget {
                                   color: Theme.of(context).primaryColor),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 10),
+                                vertical: 8, horizontal: 10),
                           ),
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 8),
                   // --- 필터 영역 ---
                   Row(
                     children: [
@@ -211,7 +211,7 @@ class AccessoryScreenUI extends StatelessWidget {
                       onTap: () => onAccessoryTap(context, accessory),
                       child: Card(
                         clipBehavior: Clip.antiAlias, // 이미지가 카드의 경계를 넘지 않도록
-                        elevation: 3,
+                        elevation: 2,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -222,7 +222,7 @@ class AccessoryScreenUI extends StatelessWidget {
                             Expanded(
                               child: Container(
                                 color: isDark ? Colors.grey[800] : Colors.grey[200],
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(6.0),
                                 child: CachedNetworkImage(
                                   imageUrl: accessory.imageUrl,
                                   fit: BoxFit.contain,
@@ -245,25 +245,25 @@ class AccessoryScreenUI extends StatelessWidget {
                             // 2. 텍스트 정보 영역
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0, vertical: 6.0),
+                                  horizontal: 6.0, vertical: 4.0),
                               child: Column(
                                 children: [
                                   Text(
                                     accessory.name,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 13,
+                                      fontSize: 12,
                                       fontWeight: FontWeight.bold,
                                       color: isDark ? Colors.white : Colors.black87,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
-                                  const SizedBox(height: 2),
+                                  const SizedBox(height: 1),
                                   Text(
                                     accessory.part,
                                     style: TextStyle(
-                                      fontSize: 11,
+                                      fontSize: 10,
                                       color: isDark ? Colors.white70 : Colors.grey[700],
                                     ),
                                   ),
