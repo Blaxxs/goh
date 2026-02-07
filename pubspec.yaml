@@ -78,6 +78,7 @@ flutter:
     - assets/images/auras/
     - assets/images/charyeok/
     - assets/images/crest/
+    - assets/images/pouch/ # 주머니 이미지 폴더 추가
     - assets/images/leader/
     - assets/images/spirit/
     - assets/images/characters/
