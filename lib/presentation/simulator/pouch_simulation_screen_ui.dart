@@ -301,14 +301,10 @@ class PouchResultDialog extends StatelessWidget {
           final double maxWidth = screenSize.width * 0.9;
           final double maxHeight = screenSize.height * 0.6;
           final double spacing = 8;
-          final int columns = (maxWidth / 52).floor().clamp(5, 12);
+            const double tileSize = 52;
+            final int columns =
+              (maxWidth / (tileSize + spacing)).floor().clamp(5, 12);
           final int rows = (count / columns).ceil().clamp(1, 20);
-          final double tileByWidth =
-              (maxWidth - (columns - 1) * spacing) / columns;
-          final double tileByHeight =
-              (maxHeight - (rows - 1) * spacing) / rows;
-          final double tileSize =
-              max(24, min(52, min(tileByWidth, tileByHeight)));
           final double gridHeight =
               rows * tileSize + (rows - 1) * spacing;
           final double dialogHeight = min(maxHeight, gridHeight);
@@ -360,7 +356,7 @@ class PouchResultDialog extends StatelessWidget {
                                 ],
                               ),
                               maxLines: 1,
-                              overflow: TextOverflow.clip,
+                              overflow: TextOverflow.visible,
                               softWrap: false,
                             ),
                           ),
