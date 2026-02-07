@@ -613,8 +613,8 @@ class _ExplorationOptionSimulationScreenState
         final value = option?.valueForGrade(grade);
         return value != null ? '${slotIndex + 1}칸:${option?.name} $value' : '${slotIndex + 1}칸:${option?.name}';
         }).join(', ');
-      _simulationLog.add(
-          '$timeStr - 옵션 변경 완료 (잠금 ${lockedCount}칸, 소모 ${cost} 탐의 편린) | $totalValuesText');
+        _simulationLog.add(
+          '$timeStr - 옵션 변경 완료 (잠금 $lockedCount칸, 소모 $cost 탐의 편린) | $totalValuesText');
 
       _isSimulating = false;
     });
