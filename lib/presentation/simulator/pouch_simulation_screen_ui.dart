@@ -75,50 +75,72 @@ class PouchSimulationScreenUI extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            DropdownButtonFormField<PouchType>(
-              value: selectedType,
-              decoration: InputDecoration(
-                labelText: '주머니 선택',
-                isDense: false,
-                filled: true,
-                fillColor: theme.colorScheme.surfaceContainerHighest
-                    .withValues(alpha: 0.4),
-                border: OutlineInputBorder(
+            Builder(
+              builder: (context) {
+                return InkWell(
                   borderRadius: BorderRadius.circular(12),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
-                prefixIcon: const Icon(Icons.shopping_bag_outlined),
-              ),
-              style: theme.textTheme.bodyMedium?.copyWith(height: 1.2),
-              itemHeight: 64,
-              isExpanded: true,
-              selectedItemBuilder: (context) {
-                return PouchType.values.map((type) {
-                  return Align(
-                    alignment: Alignment.centerLeft,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 2),
-                      child: Text(
-                        type.label,
-                        overflow: TextOverflow.ellipsis,
-                        style: theme.textTheme.bodyMedium?.copyWith(height: 1.2),
+                  onTap: () async {
+                    final RenderBox button =
+                        context.findRenderObject() as RenderBox;
+                    final RenderBox overlay =
+                        Overlay.of(context).context.findRenderObject()
+                            as RenderBox;
+                    final Offset offset =
+                        button.localToGlobal(Offset.zero, ancestor: overlay);
+                    final RelativeRect position = RelativeRect.fromLTRB(
+                      offset.dx,
+                      offset.dy + button.size.height,
+                      overlay.size.width - offset.dx - button.size.width,
+                      overlay.size.height - offset.dy - button.size.height,
+                    );
+
+                    final PouchType? selected = await showMenu<PouchType>(
+                      context: context,
+                      position: position,
+                      items: PouchType.values
+                          .map(
+                            (type) => PopupMenuItem<PouchType>(
+                              value: type,
+                              child: Text(type.label),
+                            ),
+                          )
+                          .toList(),
+                    );
+
+                    if (selected != null) {
+                      onTypeChanged(selected);
+                    }
+                  },
+                  child: InputDecorator(
+                    decoration: InputDecoration(
+                      labelText: '주머니 선택',
+                      isDense: false,
+                      filled: true,
+                      fillColor: theme.colorScheme.surfaceContainerHighest
+                          .withValues(alpha: 0.4),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 20),
+                      prefixIcon: const Icon(Icons.shopping_bag_outlined),
                     ),
-                  );
-                }).toList();
-              },
-              items: PouchType.values
-                  .map((type) => DropdownMenuItem(
-                        value: type,
-                        child: Text(
-                          type.label,
-                          overflow: TextOverflow.ellipsis,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            selectedType.label,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodyMedium
+                                ?.copyWith(height: 1.2),
+                          ),
                         ),
-                      ))
-                  .toList(),
-              onChanged: onTypeChanged,
-              icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                        const Icon(Icons.keyboard_arrow_down_rounded),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 12),
             Center(
