@@ -12,7 +12,6 @@ class PouchSimulationScreenUI extends StatelessWidget {
   final bool useCustomDrawCount;
   final TextEditingController customDrawCountController;
   final bool isSimulating;
-  final List<int> lastResults;
   final ValueChanged<PouchType?> onTypeChanged;
   final ValueChanged<int> onDrawCountChanged;
   final VoidCallback onSelectCustomDrawCount;
@@ -27,7 +26,6 @@ class PouchSimulationScreenUI extends StatelessWidget {
     required this.useCustomDrawCount,
     required this.customDrawCountController,
     required this.isSimulating,
-    required this.lastResults,
     required this.onTypeChanged,
     required this.onDrawCountChanged,
     required this.onSelectCustomDrawCount,
@@ -99,19 +97,25 @@ class PouchSimulationScreenUI extends StatelessWidget {
               value: selectedType,
               decoration: InputDecoration(
                 labelText: '주머니 선택',
-                isDense: true,
+                isDense: false,
                 filled: true,
                 fillColor: theme.colorScheme.surfaceContainerHighest
                     .withValues(alpha: 0.4),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 prefixIcon: const Icon(Icons.shopping_bag_outlined),
               ),
+              isExpanded: true,
               items: PouchType.values
                   .map((type) => DropdownMenuItem(
                         value: type,
-                        child: Text(type.label),
+                        child: Text(
+                          type.label,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ))
                   .toList(),
               onChanged: onTypeChanged,
@@ -178,61 +182,104 @@ class PouchSimulationScreenUI extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            Text(
-              '개봉 결과',
-              style: theme.textTheme.titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            if (lastResults.isEmpty)
-              Text(
-                '아직 개봉 결과가 없습니다.',
-                style: theme.textTheme.bodyMedium,
-              )
-            else
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    alignment: WrapAlignment.center,
-                    children: lastResults.map((amount) {
-                      return SizedBox(
-                        width: 60,
-                        height: 60,
-                        child: Stack(
-                          children: [
-                            Image.asset(
-                              _getResultPouchImagePath(selectedType),
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.contain,
-                            ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 0,
-                              child: Text(
-                                _numberFormat.format(amount),
-                                textAlign: TextAlign.center,
-                                style: theme.textTheme.bodySmall?.copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class PouchResultDialog extends StatelessWidget {
+  final PouchType pouchType;
+  final List<int> results;
+
+  const PouchResultDialog({
+    super.key,
+    required this.pouchType,
+    required this.results,
+  });
+
+  String _getResultPouchImagePath(PouchType type) {
+    switch (type) {
+      case PouchType.soulStone:
+        return 'assets/images/inpouch/soulStone.png';
+      case PouchType.gold:
+        return 'assets/images/inpouch/gold.png';
+      case PouchType.stamina:
+        return 'assets/images/inpouch/stamina.png';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final NumberFormat numberFormat = NumberFormat('#,##0');
+    final imagePath = _getResultPouchImagePath(pouchType);
+
+    return AlertDialog(
+      title: const Text('주머니 개봉 결과', textAlign: TextAlign.center),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      content: LayoutBuilder(
+        builder: (context, constraints) {
+          final double tileSize = 52;
+          final int columns =
+              (constraints.maxWidth / tileSize).floor().clamp(4, 10);
+          return SizedBox(
+            width: double.maxFinite,
+            child: GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: columns,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                childAspectRatio: 1.0,
+              ),
+              itemCount: results.length,
+              itemBuilder: (context, index) {
+                final amount = results[index];
+                return SizedBox(
+                  width: tileSize,
+                  height: tileSize,
+                  child: Stack(
+                    children: [
+                      Image.asset(
+                        imagePath,
+                        width: tileSize,
+                        height: tileSize,
+                        fit: BoxFit.contain,
+                      ),
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        child: Text(
+                          numberFormat.format(amount),
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: <Widget>[
+        TextButton(
+          child: const Text('닫기'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
     );
   }
 }
