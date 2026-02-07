@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -222,51 +224,65 @@ class PouchResultDialog extends StatelessWidget {
       contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       content: LayoutBuilder(
         builder: (context, constraints) {
-          final double tileSize = 52;
-          final int columns =
-              (constraints.maxWidth / tileSize).floor().clamp(4, 10);
+          final int count = results.length;
+          final double maxWidth = constraints.maxWidth.isFinite
+              ? constraints.maxWidth
+              : MediaQuery.of(context).size.width * 0.9;
+          final double maxHeight = MediaQuery.of(context).size.height * 0.6;
+          final double spacing = 8;
+          final int columns = (maxWidth / 52).floor().clamp(4, 10);
+          final int rows = (count / columns).ceil().clamp(1, 20);
+          final double tileByWidth =
+              (maxWidth - (columns - 1) * spacing) / columns;
+          final double tileByHeight =
+              (maxHeight - (rows - 1) * spacing) / rows;
+          final double tileSize = min(52, min(tileByWidth, tileByHeight));
+          final double gridHeight =
+              rows * tileSize + (rows - 1) * spacing;
           return SizedBox(
             width: double.maxFinite,
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: columns,
-                mainAxisSpacing: 8,
-                crossAxisSpacing: 8,
-                childAspectRatio: 1.0,
-              ),
-              itemCount: results.length,
-              itemBuilder: (context, index) {
-                final amount = results[index];
-                return SizedBox(
-                  width: tileSize,
-                  height: tileSize,
-                  child: Stack(
-                    children: [
-                      Image.asset(
-                        imagePath,
-                        width: tileSize,
-                        height: tileSize,
-                        fit: BoxFit.contain,
-                      ),
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Text(
-                          numberFormat.format(amount),
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
+            child: SizedBox(
+              height: gridHeight,
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: spacing,
+                  crossAxisSpacing: spacing,
+                  childAspectRatio: 1.0,
+                ),
+                itemCount: results.length,
+                itemBuilder: (context, index) {
+                  final amount = results[index];
+                  return SizedBox(
+                    width: tileSize,
+                    height: tileSize,
+                    child: Stack(
+                      children: [
+                        Image.asset(
+                          imagePath,
+                          width: tileSize,
+                          height: tileSize,
+                          fit: BoxFit.contain,
+                        ),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Text(
+                            numberFormat.format(amount),
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           );
         },
