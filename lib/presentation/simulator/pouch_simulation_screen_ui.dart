@@ -302,8 +302,9 @@ class PouchResultDialog extends StatelessWidget {
           final double maxHeight = screenSize.height * 0.6;
           final double spacing = 8;
             const double tileSize = 52;
+            final double maxCrossAxisExtent = tileSize + spacing;
             final int columns =
-              (maxWidth / (tileSize + spacing)).floor().clamp(5, 12);
+              (maxWidth / maxCrossAxisExtent).floor().clamp(5, 100);
           final int rows = (count / columns).ceil().clamp(1, 20);
           final double gridHeight =
               rows * tileSize + (rows - 1) * spacing;
@@ -314,8 +315,8 @@ class PouchResultDialog extends StatelessWidget {
               height: dialogHeight,
               child: GridView.builder(
                 physics: const ClampingScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: columns,
+                gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                  maxCrossAxisExtent: maxCrossAxisExtent,
                   mainAxisSpacing: spacing,
                   crossAxisSpacing: spacing,
                   childAspectRatio: 1.0,
