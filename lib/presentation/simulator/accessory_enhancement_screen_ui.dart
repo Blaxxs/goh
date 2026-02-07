@@ -2,7 +2,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import intl package
-import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../data/models/accessory.dart'; // Accessory model
 import '../../core/widgets/app_drawer.dart'; // AppDrawer
 import '../../core/constants/box_constants.dart'; // AppScreen enum을 위해 추가
@@ -589,10 +588,10 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                                         builder: (context) {
                                           final bool hasItems =
                                               targetLevelItems.isNotEmpty;
-                                          final String displayText =
+                                            final String displayText =
                                               targetEnhancementLevel != null
-                                                  ? '${targetEnhancementLevel}단계'
-                                                  : '선택';
+                                                ? '$targetEnhancementLevel단계'
+                                                : '선택';
                                           final Color borderColor = isDark
                                               ? Colors.grey[700]!
                                               : Colors.grey.shade300;
