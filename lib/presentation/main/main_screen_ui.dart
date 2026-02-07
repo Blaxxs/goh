@@ -15,6 +15,7 @@ class MainScreenUI extends StatefulWidget {
   final VoidCallback onAccessoryEnhancementPressed;
   final VoidCallback onAccessoryOptionChangePressed;
   final VoidCallback onExplorationOptionSimulationPressed;
+  final VoidCallback onPouchSimulationPressed;
   final VoidCallback onStageSettingsPressed;
   final VoidCallback onAppSettingsPressed;
 
@@ -29,6 +30,7 @@ class MainScreenUI extends StatefulWidget {
     required this.onAccessoryEnhancementPressed,
     required this.onAccessoryOptionChangePressed,
     required this.onExplorationOptionSimulationPressed,
+    required this.onPouchSimulationPressed,
     required this.onStageSettingsPressed,
     required this.onAppSettingsPressed,
     required SettingsService settingsService,
@@ -148,6 +150,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
       {'text': '악세 강화 시뮬', 'onPressed': widget.onAccessoryEnhancementPressed},
       {'text': '악세 옵변 시뮬', 'onPressed': widget.onAccessoryOptionChangePressed},
       {'text': '탐 옵션 시뮬', 'onPressed': widget.onExplorationOptionSimulationPressed},
+      {'text': '주머니 시뮬', 'onPressed': widget.onPouchSimulationPressed},
     ];
 
     return Scaffold(
