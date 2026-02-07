@@ -16,6 +16,7 @@ enum AppScreen {
   encyclopedia,
   simulator,
   explorationOptionSimulation,
+  pouchSimulation,
   stageSettings,
   settings,
   appSettings,

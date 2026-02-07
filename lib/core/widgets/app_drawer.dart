@@ -13,6 +13,7 @@ import '../../presentation/simulator/accessory_enhancement_screen.dart'; // Corr
 import '../constants/box_constants.dart'; // AppScreen enum을 box_constants.dart에서 가져옵니다.
 import '../../presentation/simulator/accessory_option_change_screen.dart'; // 악세사리 옵션 변경 시뮬레이터 import
 import '../../presentation/simulator/exploration_option_simulation_screen.dart'; // 탐 옵션 시뮬레이션 import
+import '../../presentation/simulator/pouch_simulation_screen.dart'; // 주머니 시뮬레이션 import
 import '../../presentation/gold_calculator/gold_calculator_screen.dart'; // 골드 계산기 화면 import
 import '../../presentation/damage_calculator/damage_calculator_screen.dart'; // 데미지 계산기 import
 import '../../presentation/stage_settings/settings_screen.dart'; // SettingsScreen import
@@ -388,6 +389,23 @@ class AppDrawer extends StatelessWidget {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         const ExplorationOptionSimulationScreen()));
+                          },
+                        ),
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.only(
+                            left:
+                              showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
+                            right: 16.0),
+                          title: Text('주머니 시뮬레이션',
+                            style: subDrawerItemTextStyle),
+                          onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                const PouchSimulationScreen()));
                           },
                         ),
                       ],

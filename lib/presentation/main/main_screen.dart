@@ -14,6 +14,7 @@ import '../box_calculator/box_calculator_screen.dart';
 import '../simulator/accessory_enhancement_screen.dart';
 import '../simulator/accessory_option_change_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
+import '../simulator/pouch_simulation_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -104,6 +105,9 @@ class MainScreen extends StatelessWidget {
       },
       onExplorationOptionSimulationPressed: () {
         _navigateToScreen(context, const ExplorationOptionSimulationScreen());
+      },
+      onPouchSimulationPressed: () {
+        _navigateToScreen(context, const PouchSimulationScreen());
       },
       onStageSettingsPressed: () {
         _navigateToScreen(context, const SettingsScreen());
