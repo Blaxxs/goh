@@ -104,7 +104,23 @@ class PouchSimulationScreenUI extends StatelessWidget {
                           .map(
                             (type) => PopupMenuItem<PouchType>(
                               value: type,
-                              child: Text(type.label),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    _getPouchImagePath(type),
+                                    width: 24,
+                                    height: 24,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      type.label,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                           .toList(),
