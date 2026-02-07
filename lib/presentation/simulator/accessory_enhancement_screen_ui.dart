@@ -599,10 +599,9 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                                             ? null
                                             : onTargetEnhancementLevelChanged,
                                         isExpanded: true,
-                                        dropdownStyleData:
-                                            const DropdownStyleData(
-                                          offset: Offset(0, -4),
-                                          direction: DropdownDirection.up,
+                                        dropdownStyleData: DropdownStyleData(
+                                          offset: const Offset(0, -4),
+                                          direction: DropdownDirection.upward,
                                         ),
                                       ),
                                     ],
