@@ -51,8 +51,8 @@ class AccessoryScreenUI extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 2,
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 86, maxWidth: 110),
                         child: Container(
                           decoration: BoxDecoration(
                             color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
@@ -67,14 +67,14 @@ class AccessoryScreenUI extends StatelessWidget {
                                 value: value,
                                 child: Text(value,
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: isDark ? Colors.white : Colors.black87)),
                               );
                             }).toList(),
                             onChanged: onSearchOptionChanged,
                             iconStyleData: IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down, 
+                              icon: Icon(Icons.keyboard_arrow_down,
                                   color: isDark ? Colors.white70 : Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
@@ -84,7 +84,8 @@ class AccessoryScreenUI extends StatelessWidget {
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0),
+                              padding: EdgeInsets.symmetric(horizontal: 8.0),
+                              height: 40,
                             ),
                             underline: const SizedBox(),
                           ),
@@ -92,7 +93,6 @@ class AccessoryScreenUI extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Expanded(
-                        flex: 3,
                         child: TextField(
                           controller: searchController,
                           style: TextStyle(
@@ -105,7 +105,7 @@ class AccessoryScreenUI extends StatelessWidget {
                             ),
                             filled: true,
                             fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                            prefixIcon: Icon(Icons.search, 
+                            prefixIcon: Icon(Icons.search,
                                 color: isDark ? Colors.white54 : Colors.black54),
                             suffixIcon: currentSearchQuery.isNotEmpty
                                 ? IconButton(
