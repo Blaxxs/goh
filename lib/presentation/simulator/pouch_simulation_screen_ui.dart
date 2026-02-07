@@ -222,19 +222,12 @@ class PouchResultDialog extends StatelessWidget {
       title: const Text('주머니 개봉 결과', textAlign: TextAlign.center),
       insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-      content: LayoutBuilder(
-        builder: (context, constraints) {
+      content: Builder(
+        builder: (context) {
           final int count = results.length;
-          final double fallbackWidth = MediaQuery.of(context).size.width * 0.9;
-          final double fallbackHeight = MediaQuery.of(context).size.height * 0.6;
-          final double maxWidth = (constraints.maxWidth.isFinite &&
-              constraints.maxWidth > 0)
-            ? constraints.maxWidth
-            : fallbackWidth;
-          final double maxHeight = (constraints.maxHeight.isFinite &&
-              constraints.maxHeight > 0)
-            ? constraints.maxHeight
-            : fallbackHeight;
+          final Size screenSize = MediaQuery.of(context).size;
+          final double maxWidth = screenSize.width * 0.9;
+          final double maxHeight = screenSize.height * 0.6;
           final double spacing = 8;
           final int columns = (maxWidth / 52).floor().clamp(4, 10);
           final int rows = (count / columns).ceil().clamp(1, 20);
@@ -243,7 +236,7 @@ class PouchResultDialog extends StatelessWidget {
           final double tileByHeight =
               (maxHeight - (rows - 1) * spacing) / rows;
           final double tileSize =
-            max(24, min(52, min(tileByWidth, tileByHeight)));
+              max(24, min(52, min(tileByWidth, tileByHeight)));
           final double gridHeight =
               rows * tileSize + (rows - 1) * spacing;
           return SizedBox(
