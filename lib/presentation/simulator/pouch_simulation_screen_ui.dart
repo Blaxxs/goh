@@ -34,6 +34,17 @@ class PouchSimulationScreenUI extends StatelessWidget {
   final NumberFormat _numberFormat = NumberFormat('#,##0');
   final NumberFormat _decimalFormat = NumberFormat('#,##0.00');
 
+  String _getPouchImagePath(PouchType type) {
+    switch (type) {
+      case PouchType.soulStone:
+        return 'assets/images/pouch/soulStone.png';
+      case PouchType.gold:
+        return 'assets/images/pouch/gold.png';
+      case PouchType.stamina:
+        return 'assets/images/pouch/stamina.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -59,6 +70,15 @@ class PouchSimulationScreenUI extends StatelessWidget {
               '시뮬레이션 설정',
               style: theme.textTheme.titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Image.asset(
+                _getPouchImagePath(selectedType),
+                width: 72,
+                height: 72,
+                fit: BoxFit.contain,
+              ),
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<PouchType>(
