@@ -229,7 +229,7 @@ class PouchResultDialog extends StatelessWidget {
           final double maxWidth = screenSize.width * 0.9;
           final double maxHeight = screenSize.height * 0.6;
           final double spacing = 8;
-          final int columns = (maxWidth / 52).floor().clamp(4, 10);
+          final int columns = (maxWidth / 52).floor().clamp(5, 12);
           final int rows = (count / columns).ceil().clamp(1, 20);
           final double tileByWidth =
               (maxWidth - (columns - 1) * spacing) / columns;
@@ -273,9 +273,19 @@ class PouchResultDialog extends StatelessWidget {
                             numberFormat.format(amount),
                             textAlign: TextAlign.center,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.black,
+                              color: Colors.white,
                               fontWeight: FontWeight.bold,
+                              shadows: const [
+                                Shadow(
+                                  color: Colors.black87,
+                                  offset: Offset(0, 1),
+                                  blurRadius: 2,
+                                ),
+                              ],
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.visible,
+                            softWrap: false,
                           ),
                         ),
                       ],
