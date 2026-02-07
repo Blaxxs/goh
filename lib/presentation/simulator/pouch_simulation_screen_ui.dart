@@ -79,7 +79,7 @@ class PouchSimulationScreenUI extends StatelessWidget {
               value: selectedType,
               decoration: InputDecoration(
                 labelText: '주머니 선택',
-                isDense: true,
+                isDense: false,
                 filled: true,
                 fillColor: theme.colorScheme.surfaceContainerHighest
                     .withValues(alpha: 0.4),
@@ -87,11 +87,27 @@ class PouchSimulationScreenUI extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
                 prefixIcon: const Icon(Icons.shopping_bag_outlined),
               ),
-              itemHeight: 56,
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.2),
+              itemHeight: 64,
               isExpanded: true,
+              selectedItemBuilder: (context) {
+                return PouchType.values.map((type) {
+                  return Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 2),
+                      child: Text(
+                        type.label,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.bodyMedium?.copyWith(height: 1.2),
+                      ),
+                    ),
+                  );
+                }).toList();
+              },
               items: PouchType.values
                   .map((type) => DropdownMenuItem(
                         value: type,
