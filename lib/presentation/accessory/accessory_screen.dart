@@ -20,8 +20,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   String? _selectedPartFilter;
   String _searchQuery = "";
   late List<String> _partFilterOptions;
-  String _sortOption = '이름 (ABC순)';
-  final List<String> _sortOptions = ['이름 (ABC순)', '기본', '이름 (가나다순)'];
   String _searchOption = '이름';
   final List<String> _searchOptions = ['이름', '옵션'];
 
@@ -107,13 +105,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       return matchesSearch && matchesPart;
     }).toList();
 
-    // 정렬 로직을 적용합니다.
-    if (_sortOption == '이름 (가나다순)' || _sortOption == '기본') {
-      displayList.sort((a, b) => a.name.compareTo(b.name));
-    } else if (_sortOption == '이름 (ABC순)') {
-      displayList.sort((a, b) => a.id.compareTo(b.id));
-    }
-
     return Scaffold(
       drawer: const AppDrawer(currentScreen: AppScreen.accessory),
       appBar: AppBar(
@@ -140,9 +131,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         },
         currentSearchQuery: _searchQuery,
         onClearSearch: _clearSearch,
-        sortOption: _sortOption,
-        sortOptions: _sortOptions,
-        onSortChanged: (val) => setState(() => _sortOption = val!),
         searchOption: _searchOption,
         searchOptions: _searchOptions,
         onSearchOptionChanged: _handleSearchOptionChanged,

@@ -12,9 +12,6 @@ class AccessoryScreenUI extends StatelessWidget {
   final Function(BuildContext, Accessory) onAccessoryTap;
   final String currentSearchQuery;
   final VoidCallback onClearSearch;
-  final String sortOption;
-  final List<String> sortOptions;
-  final ValueChanged<String?> onSortChanged;
   final String searchOption;
   final List<String> searchOptions;
   final ValueChanged<String?> onSearchOptionChanged;
@@ -29,9 +26,6 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.onAccessoryTap,
     required this.currentSearchQuery,
     required this.onClearSearch,
-    required this.sortOption,
-    required this.sortOptions,
-    required this.onSortChanged,
     required this.searchOption,
     required this.searchOptions,
     required this.onSearchOptionChanged,
@@ -142,7 +136,7 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  // --- 필터 및 정렬 영역 ---
+                  // --- 필터 영역 ---
                   Row(
                     children: [
                       Expanded(
@@ -184,44 +178,6 @@ class AccessoryScreenUI extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
-                          ),
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            value: sortOption,
-                            items: sortOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: isDark ? Colors.white : Colors.black87)),
-                              );
-                            }).toList(),
-                            onChanged: onSortChanged,
-                            iconStyleData: IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down, 
-                                  color: isDark ? Colors.white70 : Colors.black54),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              offset: const Offset(0, 0),
-                            ),
-                            buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 12.0),
-                            ),
-                            underline: const SizedBox(),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ],
