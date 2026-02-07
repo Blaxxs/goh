@@ -45,6 +45,17 @@ class PouchSimulationScreenUI extends StatelessWidget {
     }
   }
 
+  String _getResultPouchImagePath(PouchType type) {
+    switch (type) {
+      case PouchType.soulStone:
+        return 'assets/images/inpouch/soulStone.png';
+      case PouchType.gold:
+        return 'assets/images/inpouch/gold.png';
+      case PouchType.stamina:
+        return 'assets/images/inpouch/stamina.png';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -160,6 +171,15 @@ class PouchSimulationScreenUI extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Center(
+                        child: Image.asset(
+                          _getResultPouchImagePath(selectedType),
+                          width: 72,
+                          height: 72,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       Text(
                         '총 ${_numberFormat.format(result!.trials)}회, '
                         '1회당 ${_numberFormat.format(result!.drawsPerTrial)}개',
