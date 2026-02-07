@@ -115,6 +115,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
   final TextEditingController _customDrawCountController =
       TextEditingController();
   bool _isSimulating = false;
+  final List<String> _openLogs = [];
 
   List<PouchItem> get _currentItems {
     switch (_selectedType) {
@@ -166,10 +167,20 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       results.add(_drawOnce(random, items));
     }
 
+    final int totalAmount = results.fold(0, (sum, value) => sum + value);
+    final DateTime now = DateTime.now();
+    final String timeText =
+        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
+    final String detailText = results.join(', ');
+
     if (!mounted) return;
 
     setState(() {
       _isSimulating = false;
+      _openLogs.insert(
+        0,
+        '$timeText | ${_selectedType.label} ${drawCount}개 | 합계 $totalAmount | $detailText',
+      );
     });
 
     _showResultDialog(results);
@@ -178,6 +189,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
   void _resetSimulation() {
     setState(() {
       _isSimulating = false;
+      _openLogs.clear();
     });
   }
 
@@ -208,6 +220,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       useCustomDrawCount: _useCustomDrawCount,
       customDrawCountController: _customDrawCountController,
       isSimulating: _isSimulating,
+      openLogs: _openLogs,
       onTypeChanged: (value) {
         if (value == null) return;
         setState(() {
