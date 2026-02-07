@@ -584,25 +584,138 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                                     children: [
                                       Text('목표 강화 단계:',
                                           style: theme.textTheme.titleSmall),
-                                      DropdownButton2<int>(
-                                        value: targetEnhancementLevel,
-                                        hint: const Text('선택'),
-                                        items: targetLevelItems.isEmpty &&
-                                                targetEnhancementLevel == null
-                                            ? [
-                                                const DropdownMenuItem(
-                                                    value: null,
-                                                    child: Text('선택'))
-                                              ]
-                                            : targetLevelItems,
-                                        onChanged: targetLevelItems.isEmpty
-                                            ? null
-                                            : onTargetEnhancementLevelChanged,
-                                        isExpanded: true,
-                                        dropdownStyleData: DropdownStyleData(
-                                          offset: Offset.zero,
-                                          isOverButton: true,
-                                        ),
+                                      Builder(
+                                        builder: (context) {
+                                          final bool hasItems =
+                                              targetLevelItems.isNotEmpty;
+                                          final String displayText =
+                                              targetEnhancementLevel != null
+                                                  ? '${targetEnhancementLevel}단계'
+                                                  : '선택';
+                                          final Color borderColor = isDark
+                                              ? Colors.grey[700]!
+                                              : Colors.grey.shade300;
+                                          final Color fillColor = isDark
+                                              ? Colors.grey[800]!
+                                              : Colors.blueGrey[50]!;
+                                          final TextStyle? textStyle = theme
+                                              .textTheme.bodyMedium
+                                              ?.copyWith(
+                                                color:
+                                                    targetEnhancementLevel ==
+                                                            null
+                                                        ? theme.hintColor
+                                                        : null,
+                                              );
+                                          return InkWell(
+                                            onTap: hasItems
+                                                ? () async {
+                                                    const double itemHeight =
+                                                        40;
+                                                    final RenderBox buttonBox =
+                                                        context
+                                                                .findRenderObject()
+                                                            as RenderBox;
+                                                    final RenderBox overlay =
+                                                        Overlay.of(context)
+                                                                .context
+                                                                .findRenderObject()
+                                                            as RenderBox;
+                                                    final Offset buttonTopLeft =
+                                                        buttonBox.localToGlobal(
+                                                      Offset.zero,
+                                                      ancestor: overlay,
+                                                    );
+                                                    final double menuHeight =
+                                                        itemHeight *
+                                                            targetLevelItems
+                                                                .length;
+                                                    final double menuTop =
+                                                        (buttonTopLeft.dy -
+                                                                menuHeight)
+                                                            .clamp(
+                                                                0.0,
+                                                                overlay
+                                                                    .size
+                                                                    .height);
+                                                    final Rect targetRect =
+                                                        Rect.fromLTWH(
+                                                      buttonTopLeft.dx,
+                                                      menuTop,
+                                                      buttonBox.size.width,
+                                                      menuHeight,
+                                                    );
+                                                    final RelativeRect
+                                                        position =
+                                                        RelativeRect.fromRect(
+                                                      targetRect,
+                                                      Offset.zero &
+                                                          overlay.size,
+                                                    );
+                                                    final int? selected =
+                                                        await showMenu<int>(
+                                                      context: context,
+                                                      position: position,
+                                                      items: targetLevelItems
+                                                          .map((item) {
+                                                        final int? value =
+                                                            item.value;
+                                                        if (value == null) {
+                                                          return null;
+                                                        }
+                                                        return PopupMenuItem<int>(
+                                                          value: value,
+                                                          height: itemHeight,
+                                                          child:
+                                                              Text('$value단계'),
+                                                        );
+                                                      }).whereType<
+                                                              PopupMenuItem<int>>()
+                                                          .toList(),
+                                                    );
+                                                    if (selected != null) {
+                                                      onTargetEnhancementLevelChanged(
+                                                          selected);
+                                                    }
+                                                  }
+                                                : null,
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            child: Container(
+                                              height: 40,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                              decoration: BoxDecoration(
+                                                color: fillColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                border: Border.all(
+                                                    color: borderColor),
+                                              ),
+                                              alignment:
+                                                  AlignmentDirectional.centerStart,
+                                              child: Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      displayText,
+                                                      style: textStyle,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  Icon(
+                                                    Icons.keyboard_arrow_down,
+                                                    color: isDark
+                                                        ? Colors.white70
+                                                        : Colors.black54,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   )
