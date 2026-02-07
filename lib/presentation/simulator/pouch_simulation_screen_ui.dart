@@ -225,10 +225,16 @@ class PouchResultDialog extends StatelessWidget {
       content: LayoutBuilder(
         builder: (context, constraints) {
           final int count = results.length;
-          final double maxWidth = constraints.maxWidth.isFinite
-              ? constraints.maxWidth
-              : MediaQuery.of(context).size.width * 0.9;
-          final double maxHeight = MediaQuery.of(context).size.height * 0.6;
+          final double fallbackWidth = MediaQuery.of(context).size.width * 0.9;
+          final double fallbackHeight = MediaQuery.of(context).size.height * 0.6;
+          final double maxWidth = (constraints.maxWidth.isFinite &&
+              constraints.maxWidth > 0)
+            ? constraints.maxWidth
+            : fallbackWidth;
+          final double maxHeight = (constraints.maxHeight.isFinite &&
+              constraints.maxHeight > 0)
+            ? constraints.maxHeight
+            : fallbackHeight;
           final double spacing = 8;
           final int columns = (maxWidth / 52).floor().clamp(4, 10);
           final int rows = (count / columns).ceil().clamp(1, 20);
@@ -236,7 +242,8 @@ class PouchResultDialog extends StatelessWidget {
               (maxWidth - (columns - 1) * spacing) / columns;
           final double tileByHeight =
               (maxHeight - (rows - 1) * spacing) / rows;
-          final double tileSize = min(52, min(tileByWidth, tileByHeight));
+          final double tileSize =
+            max(24, min(52, min(tileByWidth, tileByHeight)));
           final double gridHeight =
               rows * tileSize + (rows - 1) * spacing;
           return SizedBox(
