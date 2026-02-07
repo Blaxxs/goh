@@ -148,6 +148,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
         "[AccessoryEnhancementScreenUI] Building. Received selectedAccessory: ${selectedAccessory?.name ?? 'None'}");
 
     final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
     final AppBarTheme appBarTheme = Theme.of(context).appBarTheme;
     final TextStyle? titleStyle = appBarTheme.titleTextStyle;
     final bool isAccessorySelected = selectedAccessory != null;
