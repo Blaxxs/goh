@@ -61,6 +61,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
     PouchItem(amount: 420, probability: 0.75),
     PouchItem(amount: 460, probability: 0.5),
     PouchItem(amount: 500, probability: 0.25),
+    PouchItem(amount: 1000, probability: 0.05),
   ];
 
   static const List<PouchItem> _goldItems = [
