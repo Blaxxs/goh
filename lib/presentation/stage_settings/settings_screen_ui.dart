@@ -150,81 +150,93 @@ class SettingsScreenUI extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: 3, // 팀 레벨 입력창 가로 길이 25% 감소 (기존 4에서 3으로)
-                      child: TextFormField(
-                        controller: teamLevelController,
-                        keyboardType: TextInputType.number,
-                        style: theme.textTheme.titleMedium, // 입력 텍스트 스타일
-                        decoration: const InputDecoration(
-                          labelText: '팀 레벨',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          contentPadding: textFormFieldContentPadding,
-                          constraints: BoxConstraints.tightFor(height: fieldHeight),
+                      child: SizedBox(
+                        height: fieldHeight,
+                        child: TextFormField(
+                          controller: teamLevelController,
+                          keyboardType: TextInputType.number,
+                          style: theme.textTheme.titleMedium, // 입력 텍스트 스타일
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: const InputDecoration(
+                            labelText: '팀 레벨',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: textFormFieldContentPadding,
+                            constraints:
+                                BoxConstraints.tightFor(height: fieldHeight),
+                          ),
+                          validator: (value) {
+                            if (isSetupMode && (value == null || value.isEmpty)) {
+                              // 최초 설정 모드일 때 필수 검사
+                              return '팀 레벨 필수';
+                            }
+                            if (int.tryParse(value!) == null) {
+                              return '숫자만';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (isSetupMode && (value == null || value.isEmpty)) {
-                            // 최초 설정 모드일 때 필수 검사
-                            return '팀 레벨 필수';
-                          }
-                          if (int.tryParse(value!) == null) {
-                            return '숫자만';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       flex: 4,
-                      child: TextFormField(
-                        controller: dalgijiLevelController,
-                        keyboardType: TextInputType.number,
-                        style: theme.textTheme.titleMedium, // 입력 텍스트 스타일
-                        decoration: const InputDecoration(
-                          labelText: '달기지 레벨',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          contentPadding: textFormFieldContentPadding,
-                          constraints: BoxConstraints.tightFor(height: fieldHeight),
+                      child: SizedBox(
+                        height: fieldHeight,
+                        child: TextFormField(
+                          controller: dalgijiLevelController,
+                          keyboardType: TextInputType.number,
+                          style: theme.textTheme.titleMedium, // 입력 텍스트 스타일
+                          textAlignVertical: TextAlignVertical.center,
+                          decoration: const InputDecoration(
+                            labelText: '달기지 레벨',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            contentPadding: textFormFieldContentPadding,
+                            constraints:
+                                BoxConstraints.tightFor(height: fieldHeight),
+                          ),
+                          validator: (value) {
+                            if (isSetupMode && (value == null || value.isEmpty)) {
+                              // 최초 설정 모드일 때 필수 검사
+                              return '달기지 레벨 필수';
+                            }
+                            if (int.tryParse(value!) == null) {
+                              return '숫자만';
+                            }
+                            return null;
+                          },
                         ),
-                        validator: (value) {
-                          if (isSetupMode && (value == null || value.isEmpty)) {
-                            // 최초 설정 모드일 때 필수 검사
-                            return '달기지 레벨 필수';
-                          }
-                          if (int.tryParse(value!) == null) {
-                            return '숫자만';
-                          }
-                          return null;
-                        },
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       flex: 5,
-                      child: DropdownButtonFormField2<String>(
-                        decoration: InputDecoration(
-                          labelText: 'VIP 등급', // 레이블 추가
-                          isDense: true,
-                          contentPadding:
-                              dropdownInputDecorationContentPadding, // 드롭다운용 패딩 사용
-                          constraints:
-                              const BoxConstraints.tightFor(height: fieldHeight),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8.0),
+                      child: SizedBox(
+                        height: fieldHeight,
+                        child: DropdownButtonFormField2<String>(
+                          decoration: InputDecoration(
+                            labelText: 'VIP 등급', // 레이블 추가
+                            isDense: true,
+                            contentPadding:
+                                dropdownInputDecorationContentPadding, // 드롭다운용 패딩 사용
+                            constraints:
+                                const BoxConstraints.tightFor(height: fieldHeight),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
                           ),
-                        ),
-                        isExpanded: true,
-                        buttonStyleData: ButtonStyleData(
-                          height: fieldHeight,
-                          padding: const EdgeInsets.only(
-                              left: 0, right: 10), // VIP 드롭다운 오른쪽 패딩 조정
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            color: theme.inputDecorationTheme.fillColor ??
-                                theme.canvasColor,
+                          isExpanded: true,
+                          buttonStyleData: ButtonStyleData(
+                            height: fieldHeight,
+                            padding: const EdgeInsets.only(
+                                left: 0, right: 10), // VIP 드롭다운 오른쪽 패딩 조정
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8.0),
+                              color: theme.inputDecorationTheme.fillColor ??
+                                  theme.canvasColor,
+                            ),
                           ),
-                        ),
                         hint: Container(
                             alignment: Alignment.centerLeft,
                             child: Text('VIP 등급',
@@ -294,6 +306,7 @@ class SettingsScreenUI extends StatelessWidget {
                         // DropdownButtonFormField2의 파라미터 목록에서 iconStyleData는 한 번만 선언되어야 합니다.
                         // 기존 선언을 수정하거나, 이 위치로 옮깁니다. 여기서는 기존 선언을 수정하는 방식으로 접근합니다.
                         // (실제 diff에서는 기존 iconStyleData 선언 부분을 수정하는 형태로 나타납니다)
+                        ),
                       ),
                     ),
                   ],
