@@ -340,110 +340,117 @@ class SettingsScreenUI extends StatelessWidget {
                           const SizedBox(width: 8.0),
                           Expanded(
                             flex: 30,
-                            child: TextFormField(
-                              controller: clearTimeControllers[stageName],
-                              style: reducedListTextStyle,
-                              textAlign: TextAlign.center,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d*\.?\d{0,2}$')),
-                              ],
-                              decoration: InputDecoration(
-                                border: const OutlineInputBorder(),
-                                isDense: true,
-                                contentPadding: textFormFieldContentPadding,
-                                constraints:
-                                    const BoxConstraints.tightFor(height: fieldHeight),
+                            child: SizedBox(
+                              height: fieldHeight,
+                              child: TextFormField(
+                                controller: clearTimeControllers[stageName],
+                                style: reducedListTextStyle,
+                                textAlign: TextAlign.center,
+                                textAlignVertical: TextAlignVertical.center,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                        decimal: true),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^\d*\.?\d{0,2}$')),
+                                ],
+                                decoration: InputDecoration(
+                                  border: const OutlineInputBorder(),
+                                  isDense: true,
+                                  contentPadding: textFormFieldContentPadding,
+                                  constraints: const BoxConstraints.tightFor(
+                                      height: fieldHeight),
+                                ),
+                                validator: (value) {
+                                  if (value != null && value.isNotEmpty) {
+                                    final double? parsedValue =
+                                        double.tryParse(value);
+                                    if (parsedValue == null) {
+                                      return '숫자';
+                                    }
+                                    if (parsedValue <= 0) {
+                                      return '> 0';
+                                    }
+                                  }
+                                  return null;
+                                },
                               ),
-                              validator: (value) {
-                                if (value != null && value.isNotEmpty) {
-                                  final double? parsedValue =
-                                      double.tryParse(value);
-                                  if (parsedValue == null) {
-                                    return '숫자';
-                                  }
-                                  if (parsedValue <= 0) {
-                                    return '> 0';
-                                  }
-                                }
-                                return null;
-                              },
                             ),
                           ),
                           const SizedBox(width: 8.0),
                           Expanded(
                             flex: 20,
-                            child: DropdownButtonFormField2<String>(
-                              decoration: InputDecoration(
-                                isDense: true,
-                                contentPadding:
-                                    dropdownInputDecorationContentPadding,
-                                constraints:
-                                    const BoxConstraints.tightFor(height: fieldHeight),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
+                            child: SizedBox(
+                              height: fieldHeight,
+                              child: DropdownButtonFormField2<String>(
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding:
+                                      dropdownInputDecorationContentPadding,
+                                  constraints: const BoxConstraints.tightFor(
+                                      height: fieldHeight),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
                                 ),
-                              ),
-                              isExpanded: true,
-                              items: jjolCounts.map((String count) {
-                                return DropdownMenuItem<String>(
-                                    value: count,
-                                    child: Center(
-                                        child: Text(count,
-                                            style: reducedListTextStyle)));
-                              }).toList(),
-                              value: selectedJjolCounts[stageName],
-                              onChanged: (String? value) {
-                                onJjolCountChanged(stageName, value);
-                              },
-                              buttonStyleData: ButtonStyleData(
-                                height: fieldHeight,
-                                padding:
-                                    const EdgeInsets.only(left: 0, right: 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  color: theme.inputDecorationTheme.fillColor ??
-                                      theme.canvasColor,
+                                isExpanded: true,
+                                items: jjolCounts.map((String count) {
+                                  return DropdownMenuItem<String>(
+                                      value: count,
+                                      child: Center(
+                                          child: Text(count,
+                                              style: reducedListTextStyle)));
+                                }).toList(),
+                                value: selectedJjolCounts[stageName],
+                                onChanged: (String? value) {
+                                  onJjolCountChanged(stageName, value);
+                                },
+                                buttonStyleData: ButtonStyleData(
+                                  height: fieldHeight,
+                                  padding:
+                                      const EdgeInsets.only(left: 0, right: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    color: theme.inputDecorationTheme.fillColor ??
+                                        theme.canvasColor,
+                                  ),
                                 ),
-                              ),
-                              iconStyleData: IconStyleData(
-                                icon: const Icon(Icons.arrow_drop_down,
-                                    color: Colors.grey),
-                                iconSize: dynamicIconSize,
-                              ),
-                              dropdownStyleData: DropdownStyleData(
-                                maxHeight: 200,
-                                offset: const Offset(0, -4),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
+                                iconStyleData: IconStyleData(
+                                  icon: const Icon(Icons.arrow_drop_down,
+                                      color: Colors.grey),
+                                  iconSize: dynamicIconSize,
                                 ),
-                                scrollbarTheme: ScrollbarThemeData(
-                                  radius: const Radius.circular(40),
-                                  thickness: WidgetStateProperty.all(6),
-                                  thumbVisibility:
-                                      WidgetStateProperty.all(true),
+                                dropdownStyleData: DropdownStyleData(
+                                  maxHeight: 200,
+                                  offset: const Offset(0, -4),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  scrollbarTheme: ScrollbarThemeData(
+                                    radius: const Radius.circular(40),
+                                    thickness: WidgetStateProperty.all(6),
+                                    thumbVisibility:
+                                        WidgetStateProperty.all(true),
+                                  ),
                                 ),
+                                menuItemStyleData: const MenuItemStyleData(
+                                  height: 40,
+                                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                ),
+                                selectedItemBuilder: (context) {
+                                  return jjolCounts.map((item) {
+                                    return Container(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        item,
+                                        style: reducedListTextStyle,
+                                        softWrap: false,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    );
+                                  }).toList();
+                                },
                               ),
-                              menuItemStyleData: const MenuItemStyleData(
-                                height: 40,
-                                padding: EdgeInsets.symmetric(horizontal: 16.0),
-                              ),
-                              selectedItemBuilder: (context) {
-                                return jjolCounts.map((item) {
-                                  return Container(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      item,
-                                      style: reducedListTextStyle,
-                                      softWrap: false,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  );
-                                }).toList();
-                              },
                             ),
                           ),
                           const SizedBox(width: 8.0),
