@@ -316,7 +316,7 @@ class PouchResultDialog extends StatelessWidget {
     final NumberFormat numberFormat = NumberFormat('#,##0');
     final imagePath = _getResultPouchImagePath(pouchType);
     final double amountFontSize =
-      pouchType == PouchType.gold ? 10 : 11;
+      pouchType == PouchType.gold ? 12 : 15;
 
     return AlertDialog(
       title: const Text('주머니 개봉 결과', textAlign: TextAlign.center),
