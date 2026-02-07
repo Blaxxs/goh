@@ -47,7 +47,7 @@ class AccessoryScreenUI extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  // --- 검색 영역 ---
+                  // --- 검색 + 필터 (한 줄) ---
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -67,14 +67,14 @@ class AccessoryScreenUI extends StatelessWidget {
                                 value: value,
                                 child: Text(value,
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: isDark ? Colors.white : Colors.black87)),
                               );
                             }).toList(),
                             onChanged: onSearchOptionChanged,
                             iconStyleData: IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down, 
+                              icon: Icon(Icons.keyboard_arrow_down,
                                   color: isDark ? Colors.white70 : Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
@@ -92,7 +92,7 @@ class AccessoryScreenUI extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Expanded(
-                        flex: 3,
+                        flex: 4,
                         child: TextField(
                           controller: searchController,
                           style: TextStyle(
@@ -105,7 +105,7 @@ class AccessoryScreenUI extends StatelessWidget {
                             ),
                             filled: true,
                             fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                            prefixIcon: Icon(Icons.search, 
+                            prefixIcon: Icon(Icons.search,
                                 color: isDark ? Colors.white54 : Colors.black54),
                             suffixIcon: currentSearchQuery.isNotEmpty
                                 ? IconButton(
@@ -133,13 +133,9 @@ class AccessoryScreenUI extends StatelessWidget {
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  // --- 필터 영역 ---
-                  Row(
-                    children: [
+                      const SizedBox(width: 6),
                       Expanded(
+                        flex: 2,
                         child: Container(
                           decoration: BoxDecoration(
                             color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
@@ -154,14 +150,14 @@ class AccessoryScreenUI extends StatelessWidget {
                                 value: value,
                                 child: Text(value,
                                     style: TextStyle(
-                                        fontSize: 14,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w500,
                                         color: isDark ? Colors.white : Colors.black87)),
                               );
                             }).toList(),
                             onChanged: onPartFilterChanged,
                             iconStyleData: IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down, 
+                              icon: Icon(Icons.keyboard_arrow_down,
                                   color: isDark ? Colors.white70 : Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
@@ -171,13 +167,12 @@ class AccessoryScreenUI extends StatelessWidget {
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
-                              padding: EdgeInsets.symmetric(horizontal: 12.0),
+                              padding: EdgeInsets.symmetric(horizontal: 10.0),
                             ),
                             underline: const SizedBox(),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
                     ],
                   ),
                 ],
