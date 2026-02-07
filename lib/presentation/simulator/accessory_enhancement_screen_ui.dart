@@ -610,68 +610,11 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                                           return InkWell(
                                             onTap: hasItems
                                                 ? () async {
-                                                    const double itemHeight =
-                                                        40;
-                                                    final RenderBox buttonBox =
-                                                        context
-                                                                .findRenderObject()
-                                                            as RenderBox;
-                                                    final RenderBox overlay =
-                                                        Overlay.of(context)
-                                                                .context
-                                                                .findRenderObject()
-                                                            as RenderBox;
-                                                    final Offset buttonTopLeft =
-                                                        buttonBox.localToGlobal(
-                                                      Offset.zero,
-                                                      ancestor: overlay,
-                                                    );
-                                                    final double menuHeight =
-                                                        itemHeight *
-                                                            targetLevelItems
-                                                                .length;
-                                                    final double menuTop =
-                                                        (buttonTopLeft.dy -
-                                                                menuHeight)
-                                                            .clamp(
-                                                                0.0,
-                                                                overlay
-                                                                    .size
-                                                                    .height);
-                                                    final Rect targetRect =
-                                                        Rect.fromLTWH(
-                                                      buttonTopLeft.dx,
-                                                      menuTop,
-                                                      buttonBox.size.width,
-                                                      menuHeight,
-                                                    );
-                                                    final RelativeRect
-                                                        position =
-                                                        RelativeRect.fromRect(
-                                                      targetRect,
-                                                      Offset.zero &
-                                                          overlay.size,
-                                                    );
                                                     final int? selected =
-                                                        await showMenu<int>(
-                                                      context: context,
-                                                      position: position,
-                                                      items: targetLevelItems
-                                                          .map((item) {
-                                                        final int? value =
-                                                            item.value;
-                                                        if (value == null) {
-                                                          return null;
-                                                        }
-                                                        return PopupMenuItem<int>(
-                                                          value: value,
-                                                          height: itemHeight,
-                                                          child:
-                                                              Text('$value단계'),
-                                                        );
-                                                      }).whereType<
-                                                              PopupMenuItem<int>>()
-                                                          .toList(),
+                                                        await _showTargetLevelMenu(
+                                                      context,
+                                                      theme,
+                                                      targetLevelItems,
                                                     );
                                                     if (selected != null) {
                                                       onTargetEnhancementLevelChanged(
@@ -981,6 +924,90 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
               },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Future<int?> _showTargetLevelMenu(
+    BuildContext anchorContext,
+    ThemeData theme,
+    List<DropdownMenuItem<int>> items,
+  ) async {
+    if (items.isEmpty) return null;
+
+    const double itemHeight = 40;
+    final RenderBox buttonBox =
+        anchorContext.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(anchorContext).context.findRenderObject() as RenderBox;
+    final Offset buttonTopLeft =
+        buttonBox.localToGlobal(Offset.zero, ancestor: overlay);
+    final double menuHeight = itemHeight * items.length;
+    final double menuTop =
+        (buttonTopLeft.dy - menuHeight).clamp(0.0, overlay.size.height);
+
+    final double menuLeft = buttonTopLeft.dx;
+    final double menuWidth = buttonBox.size.width;
+
+    return showGeneralDialog<int>(
+      context: anchorContext,
+      barrierDismissible: true,
+      barrierLabel: '닫기',
+      barrierColor: Colors.transparent,
+      transitionDuration: const Duration(milliseconds: 150),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Stack(
+          children: [
+            Positioned(
+              left: menuLeft,
+              top: menuTop,
+              width: menuWidth,
+              height: menuHeight,
+              child: Material(
+                elevation: 8,
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(8),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: items.length,
+                    itemBuilder: (context, index) {
+                      final item = items[index];
+                      final int? value = item.value;
+                      if (value == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return InkWell(
+                        onTap: () => Navigator.of(context).pop(value),
+                        child: Container(
+                          height: itemHeight,
+                          alignment: Alignment.centerLeft,
+                          padding: const EdgeInsets.symmetric(horizontal: 12),
+                          child: item.child ?? Text('$value단계'),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+        );
+        return FadeTransition(
+          opacity: curved,
+          child: SizeTransition(
+            sizeFactor: curved,
+            axisAlignment: 1.0,
+            child: child,
+          ),
         );
       },
     );
