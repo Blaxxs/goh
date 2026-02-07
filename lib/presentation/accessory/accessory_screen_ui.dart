@@ -84,6 +84,7 @@ class AccessoryScreenUI extends StatelessWidget {
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
+                              height: 40,
                               padding: EdgeInsets.symmetric(horizontal: 10.0),
                             ),
                             underline: const SizedBox(),
@@ -93,43 +94,48 @@ class AccessoryScreenUI extends StatelessWidget {
                       const SizedBox(width: 6),
                       Expanded(
                         flex: 4,
-                        child: TextField(
-                          controller: searchController,
-                          style: TextStyle(
-                            color: isDark ? Colors.white : Colors.black87,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: '검색어를 입력하세요...',
-                            hintStyle: TextStyle(
-                              color: isDark ? Colors.white54 : Colors.black54,
+                        child: SizedBox(
+                          height: 40,
+                          child: TextField(
+                            controller: searchController,
+                            style: TextStyle(
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
-                            filled: true,
-                            fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                            prefixIcon: Icon(Icons.search,
-                                color: isDark ? Colors.white54 : Colors.black54),
-                            suffixIcon: currentSearchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear, size: 20),
-                                    onPressed: onClearSearch,
-                                  )
-                                : null,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                            textAlignVertical: TextAlignVertical.center,
+                            decoration: InputDecoration(
+                              hintText: '검색어를 입력하세요...',
+                              hintStyle: TextStyle(
+                                color: isDark ? Colors.white54 : Colors.black54,
+                              ),
+                              filled: true,
+                              fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                              prefixIcon: Icon(Icons.search,
+                                  color: isDark ? Colors.white54 : Colors.black54),
+                              suffixIcon: currentSearchQuery.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear, size: 20),
+                                      onPressed: onClearSearch,
+                                    )
+                                  : null,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                    color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                    color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                                borderSide: BorderSide(
+                                    color: Theme.of(context).primaryColor),
+                              ),
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 0, horizontal: 10),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                  color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                              borderSide: BorderSide(
-                                  color: Theme.of(context).primaryColor),
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 10),
                           ),
                         ),
                       ),
@@ -167,6 +173,7 @@ class AccessoryScreenUI extends StatelessWidget {
                               offset: const Offset(0, 0),
                             ),
                             buttonStyleData: const ButtonStyleData(
+                              height: 40,
                               padding: EdgeInsets.symmetric(horizontal: 10.0),
                             ),
                             underline: const SizedBox(),
