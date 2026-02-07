@@ -30,10 +30,6 @@ class PouchItem {
   const PouchItem({required this.amount, required this.probability});
 }
 
-class PouchSimulationResult {
-  const PouchSimulationResult();
-}
-
 class PouchSimulationScreen extends StatefulWidget {
   const PouchSimulationScreen({super.key});
 
@@ -115,7 +111,11 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
 
   PouchType _selectedType = PouchType.soulStone;
   int _selectedDrawCount = _drawCountOptions.first;
+  bool _useCustomDrawCount = false;
+  final TextEditingController _customDrawCountController =
+      TextEditingController();
   bool _isSimulating = false;
+  List<int> _lastResults = [];
 
   List<PouchItem> get _currentItems {
     switch (_selectedType) {
@@ -143,6 +143,18 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
   void _runSimulation() {
     if (_isSimulating) return;
 
+    int drawCount = _selectedDrawCount;
+    if (_useCustomDrawCount) {
+      final parsed = int.tryParse(_customDrawCountController.text.trim());
+      if (parsed == null || parsed <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('개봉 개수를 확인해주세요.')),
+        );
+        return;
+      }
+      drawCount = parsed;
+    }
+
     setState(() {
       _isSimulating = true;
     });
@@ -151,7 +163,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
     final items = _currentItems;
 
     final results = <int>[];
-    for (int j = 0; j < _selectedDrawCount; j++) {
+    for (int j = 0; j < drawCount; j++) {
       results.add(_drawOnce(random, items));
     }
 
@@ -159,31 +171,20 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
 
     setState(() {
       _isSimulating = false;
+      _lastResults = results;
     });
-
-    _showResultDialog(results);
   }
 
   void _resetSimulation() {
     setState(() {
       _isSimulating = false;
+      _lastResults = [];
     });
-  }
-
-  void _showResultDialog(List<int> results) {
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return PouchResultDialog(
-          pouchType: _selectedType,
-          results: results,
-        );
-      },
-    );
   }
 
   @override
   void dispose() {
+    _customDrawCountController.dispose();
     super.dispose();
   }
 
@@ -193,7 +194,10 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       selectedType: _selectedType,
       drawCountOptions: _drawCountOptions,
       selectedDrawCount: _selectedDrawCount,
+      useCustomDrawCount: _useCustomDrawCount,
+      customDrawCountController: _customDrawCountController,
       isSimulating: _isSimulating,
+      lastResults: _lastResults,
       onTypeChanged: (value) {
         if (value == null) return;
         setState(() {
@@ -202,7 +206,13 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       },
       onDrawCountChanged: (value) {
         setState(() {
+          _useCustomDrawCount = false;
           _selectedDrawCount = value;
+        });
+      },
+      onSelectCustomDrawCount: () {
+        setState(() {
+          _useCustomDrawCount = true;
         });
       },
       onRunSimulation: _runSimulation,
