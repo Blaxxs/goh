@@ -31,23 +31,7 @@ class PouchItem {
 }
 
 class PouchSimulationResult {
-  final int trials;
-  final int drawsPerTrial;
-  final double mean;
-  final double variance;
-  final int min;
-  final int max;
-  final List<MapEntry<int, int>> topHistogram;
-
-  const PouchSimulationResult({
-    required this.trials,
-    required this.drawsPerTrial,
-    required this.mean,
-    required this.variance,
-    required this.min,
-    required this.max,
-    required this.topHistogram,
-  });
+  const PouchSimulationResult();
 }
 
 class PouchSimulationScreen extends StatefulWidget {
@@ -131,10 +115,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
 
   PouchType _selectedType = PouchType.soulStone;
   int _selectedDrawCount = _drawCountOptions.first;
-  final TextEditingController _simulationCountController =
-      TextEditingController(text: '10000');
   bool _isSimulating = false;
-  PouchSimulationResult? _result;
 
   List<PouchItem> get _currentItems {
     switch (_selectedType) {
@@ -162,14 +143,6 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
   void _runSimulation() {
     if (_isSimulating) return;
 
-    final trials = int.tryParse(_simulationCountController.text.trim());
-    if (trials == null || trials <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('시뮬레이션 횟수를 확인해주세요.')),
-      );
-      return;
-    }
-
     setState(() {
       _isSimulating = true;
     });
@@ -177,62 +150,40 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
     final random = Random();
     final items = _currentItems;
 
-    double sum = 0.0;
-    double sumSquares = 0.0;
-    int? minTotal;
-    int? maxTotal;
-    final Map<int, int> histogram = {};
-
-    for (int i = 0; i < trials; i++) {
-      int total = 0;
-      for (int j = 0; j < _selectedDrawCount; j++) {
-        total += _drawOnce(random, items);
-      }
-
-      sum += total;
-      sumSquares += total * total;
-      minTotal = (minTotal == null) ? total : min(minTotal, total);
-      maxTotal = (maxTotal == null) ? total : max(maxTotal, total);
-      histogram[total] = (histogram[total] ?? 0) + 1;
+    final results = <int>[];
+    for (int j = 0; j < _selectedDrawCount; j++) {
+      results.add(_drawOnce(random, items));
     }
-
-    final mean = sum / trials;
-    final variance = (sumSquares / trials) - (mean * mean);
-
-    final entries = histogram.entries.toList()
-      ..sort((a, b) {
-        final byCount = b.value.compareTo(a.value);
-        return byCount != 0 ? byCount : a.key.compareTo(b.key);
-      });
-
-    final result = PouchSimulationResult(
-      trials: trials,
-      drawsPerTrial: _selectedDrawCount,
-      mean: mean,
-      variance: variance,
-      min: minTotal ?? 0,
-      max: maxTotal ?? 0,
-      topHistogram: entries.take(10).toList(),
-    );
 
     if (!mounted) return;
 
     setState(() {
-      _result = result;
       _isSimulating = false;
     });
+
+    _showResultDialog(results);
   }
 
   void _resetSimulation() {
     setState(() {
-      _result = null;
       _isSimulating = false;
     });
   }
 
+  void _showResultDialog(List<int> results) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return PouchResultDialog(
+          pouchType: _selectedType,
+          results: results,
+        );
+      },
+    );
+  }
+
   @override
   void dispose() {
-    _simulationCountController.dispose();
     super.dispose();
   }
 
@@ -242,9 +193,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       selectedType: _selectedType,
       drawCountOptions: _drawCountOptions,
       selectedDrawCount: _selectedDrawCount,
-      simulationCountController: _simulationCountController,
       isSimulating: _isSimulating,
-      result: _result,
       onTypeChanged: (value) {
         if (value == null) return;
         setState(() {
