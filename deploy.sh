@@ -12,6 +12,13 @@ REPOSITORY_NAME="goh_calculator"
 # 스크립트 실행 중 오류가 발생하면 즉시 중단합니다.
 set -e
 
+# 0. 웹 빌드 시점의 버전(빌드 번호)을 자동 업데이트합니다.
+echo "Updating app version for web build..."
+timestamp=$(date +"%Y%m%d%H%M")
+tmpfile="pubspec.yaml.tmp"
+sed -E "s/^version: ([0-9]+\.[0-9]+\.[0-9]+)(\+[0-9]+)?$/version: \1+${timestamp}/" pubspec.yaml > "$tmpfile"
+mv "$tmpfile" pubspec.yaml
+
 # 1. GitHub Pages 주소 형식에 맞게 웹 앱을 빌드합니다.
 echo "Building Flutter web app for release..."
 # index.html에 렌더러 설정이 포함되어 있으므로 별도 옵션 없이 빌드합니다.
