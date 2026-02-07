@@ -270,6 +270,16 @@ class PouchSimulationScreenUI extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: onResetSimulation,
               icon: const Icon(Icons.delete_outline),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: theme.brightness == Brightness.dark
+                    ? theme.colorScheme.onSurface
+                    : null,
+                side: BorderSide(
+                  color: theme.brightness == Brightness.dark
+                      ? theme.colorScheme.onSurface.withValues(alpha: 0.6)
+                      : theme.dividerColor,
+                ),
+              ),
               label: const Text('로그 초기화'),
             ),
           ],
@@ -305,6 +315,8 @@ class PouchResultDialog extends StatelessWidget {
     final theme = Theme.of(context);
     final NumberFormat numberFormat = NumberFormat('#,##0');
     final imagePath = _getResultPouchImagePath(pouchType);
+    final double amountFontSize =
+      pouchType == PouchType.gold ? 9 : 11;
 
     return AlertDialog(
       title: const Text('주머니 개봉 결과', textAlign: TextAlign.center),
@@ -369,6 +381,7 @@ class PouchResultDialog extends StatelessWidget {
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: Colors.white,
                                       fontWeight: FontWeight.bold,
+                                      fontSize: amountFontSize,
                                       fontFeatures: const [
                                         FontFeature.tabularFigures(),
                                       ],
