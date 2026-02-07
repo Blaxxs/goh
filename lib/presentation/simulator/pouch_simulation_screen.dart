@@ -115,7 +115,6 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
   final TextEditingController _customDrawCountController =
       TextEditingController();
   bool _isSimulating = false;
-  List<int> _lastResults = [];
 
   List<PouchItem> get _currentItems {
     switch (_selectedType) {
@@ -171,15 +170,27 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
 
     setState(() {
       _isSimulating = false;
-      _lastResults = results;
     });
+
+    _showResultDialog(results);
   }
 
   void _resetSimulation() {
     setState(() {
       _isSimulating = false;
-      _lastResults = [];
     });
+  }
+
+  void _showResultDialog(List<int> results) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return PouchResultDialog(
+          pouchType: _selectedType,
+          results: results,
+        );
+      },
+    );
   }
 
   @override
@@ -197,7 +208,6 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       useCustomDrawCount: _useCustomDrawCount,
       customDrawCountController: _customDrawCountController,
       isSimulating: _isSimulating,
-      lastResults: _lastResults,
       onTypeChanged: (value) {
         if (value == null) return;
         setState(() {
