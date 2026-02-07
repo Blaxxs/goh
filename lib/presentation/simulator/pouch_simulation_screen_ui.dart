@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -48,17 +47,6 @@ class PouchSimulationScreenUI extends StatelessWidget {
         return 'assets/images/pouch/gold.png';
       case PouchType.stamina:
         return 'assets/images/pouch/stamina.png';
-    }
-  }
-
-  String _getResultPouchImagePath(PouchType type) {
-    switch (type) {
-      case PouchType.soulStone:
-        return 'assets/images/inpouch/soulStone.png';
-      case PouchType.gold:
-        return 'assets/images/inpouch/gold.png';
-      case PouchType.stamina:
-        return 'assets/images/inpouch/stamina.png';
     }
   }
 

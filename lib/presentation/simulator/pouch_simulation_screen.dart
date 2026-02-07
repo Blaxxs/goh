@@ -173,7 +173,6 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
     final DateTime now = DateTime.now();
     final String timeText =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}:${now.second.toString().padLeft(2, '0')}';
-    final String detailText = results.join(', ');
 
     if (!mounted) return;
 
@@ -181,7 +180,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       _isSimulating = false;
       _openLogs.insert(
         0,
-        '$timeText | ${drawCount}개 | 합계 $totalAmount | 평균 ${averageAmount.toStringAsFixed(2)}',
+        '$timeText | $drawCount개 | 합계 $totalAmount | 평균 ${averageAmount.toStringAsFixed(2)}',
       );
     });
 
