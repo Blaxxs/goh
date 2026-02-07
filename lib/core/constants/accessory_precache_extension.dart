@@ -22,8 +22,7 @@ extension AccessoryPrecache on AccessoryDataManager {
       final cacheManager = DefaultCacheManager();
       List<Future<void>> cacheFutures = [];
       int totalImagesToCache = 0;
-.\deploy.bat
-      
+
       for (var accessory in allAccessories) {
         // Precache main accessory image
         totalImagesToCache++;
