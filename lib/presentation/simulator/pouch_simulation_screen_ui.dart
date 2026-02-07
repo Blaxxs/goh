@@ -87,16 +87,18 @@ class PouchSimulationScreenUI extends StatelessWidget {
                             as RenderBox;
                     final Offset offset =
                         button.localToGlobal(Offset.zero, ancestor: overlay);
+                    final double menuWidth = button.size.width;
                     final RelativeRect position = RelativeRect.fromLTRB(
                       offset.dx,
                       offset.dy + button.size.height,
-                      overlay.size.width - offset.dx - button.size.width,
+                      overlay.size.width - offset.dx - menuWidth,
                       overlay.size.height - offset.dy - button.size.height,
                     );
 
                     final PouchType? selected = await showMenu<PouchType>(
                       context: context,
                       position: position,
+                      constraints: BoxConstraints.tightFor(width: menuWidth),
                       items: PouchType.values
                           .map(
                             (type) => PopupMenuItem<PouchType>(
