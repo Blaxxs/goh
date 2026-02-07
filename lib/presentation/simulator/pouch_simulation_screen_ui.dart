@@ -68,13 +68,6 @@ class PouchSimulationScreenUI extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('주머니 시뮬레이션'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: '결과 초기화',
-            onPressed: onResetSimulation,
-          ),
-        ],
       ),
       drawer: const AppDrawer(currentScreen: AppScreen.pouchSimulation),
       body: SingleChildScrollView(
@@ -82,26 +75,11 @@ class PouchSimulationScreenUI extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              '시뮬레이션 설정',
-              style: theme.textTheme.titleLarge
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Image.asset(
-                _getPouchImagePath(selectedType),
-                width: 72,
-                height: 72,
-                fit: BoxFit.contain,
-              ),
-            ),
-            const SizedBox(height: 12),
             DropdownButtonFormField<PouchType>(
               value: selectedType,
               decoration: InputDecoration(
                 labelText: '주머니 선택',
-                isDense: false,
+                isDense: true,
                 filled: true,
                 fillColor: theme.colorScheme.surfaceContainerHighest
                     .withValues(alpha: 0.4),
@@ -109,9 +87,10 @@ class PouchSimulationScreenUI extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
                 prefixIcon: const Icon(Icons.shopping_bag_outlined),
               ),
+              itemHeight: 56,
               isExpanded: true,
               items: PouchType.values
                   .map((type) => DropdownMenuItem(
@@ -124,6 +103,15 @@ class PouchSimulationScreenUI extends StatelessWidget {
                   .toList(),
               onChanged: onTypeChanged,
               icon: const Icon(Icons.keyboard_arrow_down_rounded),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Image.asset(
+                _getPouchImagePath(selectedType),
+                width: 72,
+                height: 72,
+                fit: BoxFit.contain,
+              ),
             ),
             const SizedBox(height: 12),
             Text(
@@ -179,11 +167,6 @@ class PouchSimulationScreenUI extends StatelessWidget {
                     label: const Text('개봉'),
                   ),
                 ),
-                const SizedBox(width: 12),
-                OutlinedButton(
-                  onPressed: onResetSimulation,
-                  child: const Text('초기화'),
-                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -226,6 +209,12 @@ class PouchSimulationScreenUI extends StatelessWidget {
                   },
                 ),
               ),
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: onResetSimulation,
+              icon: const Icon(Icons.delete_outline),
+              label: const Text('로그 초기화'),
+            ),
           ],
         ),
       ),
