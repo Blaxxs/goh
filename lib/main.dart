@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:goh_calculator/core/constants/accessory_constants.dart';
 import 'presentation/loading/loading_screen.dart';
 import 'core/services/settings_service.dart';
 import 'package:firebase_core/firebase_core.dart';

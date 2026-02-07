@@ -361,7 +361,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     child: Text(
                                       effect.optionName,
                                       style: TextStyle(
-                                        color: theme.colorScheme.onSurface.withOpacity(0.9),
+                                        color: theme.colorScheme.onSurface
+                                          .withAlpha((0.9 * 255).round()),
                                         fontSize: 13,
                                       ),
                                     ),
@@ -373,7 +374,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     decoration: BoxDecoration(
                                       color: isDark
                                           ? Colors.white12
-                                          : theme.colorScheme.primary.withOpacity(0.12),
+                                            : theme.colorScheme.primary
+                                              .withAlpha((0.12 * 255).round()),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
@@ -483,7 +485,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     child: Text(
                                       effect.optionName,
                                       style: TextStyle(
-                                        color: theme.colorScheme.onSurface.withOpacity(0.9),
+                                        color: theme.colorScheme.onSurface
+                                          .withAlpha((0.9 * 255).round()),
                                         fontSize: 13,
                                       ),
                                     ),
@@ -495,7 +498,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     decoration: BoxDecoration(
                                       color: isDark
                                           ? Colors.white12
-                                          : theme.colorScheme.primary.withOpacity(0.12),
+                                            : theme.colorScheme.primary
+                                              .withAlpha((0.12 * 255).round()),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Text(
