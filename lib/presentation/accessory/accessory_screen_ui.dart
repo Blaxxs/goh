@@ -103,10 +103,6 @@ class AccessoryScreenUI extends StatelessWidget {
                             ),
                             textAlignVertical: TextAlignVertical.center,
                             decoration: InputDecoration(
-                              hintText: '검색어를 입력하세요...',
-                              hintStyle: TextStyle(
-                                color: isDark ? Colors.white54 : Colors.black54,
-                              ),
                               filled: true,
                               fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
                               prefixIcon: Icon(Icons.search,
