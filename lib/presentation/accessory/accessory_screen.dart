@@ -124,8 +124,10 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       return matchesSearch && matchesPart;
     }).toList();
 
-    // 기본 정렬: 한자 -> 영문 알파벳 -> 기타, 그룹 내 id 순
+    // 기본 정렬: tam 최우선 -> 한자 -> 영문 알파벳 -> 기타, 그룹 내 id 순
     displayList.sort((a, b) {
+      if (a.id.toLowerCase() == 'tam') return -1;
+      if (b.id.toLowerCase() == 'tam') return 1;
       final rankA = _scriptRank(a.id);
       final rankB = _scriptRank(b.id);
       if (rankA != rankB) {
