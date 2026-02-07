@@ -124,14 +124,14 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       return matchesSearch && matchesPart;
     }).toList();
 
-    // 기본 정렬: 한자 -> 영문 알파벳 -> 기타, 그룹 내 이름순
+    // 기본 정렬: 한자 -> 영문 알파벳 -> 기타, 그룹 내 id 순
     displayList.sort((a, b) {
-      final rankA = _scriptRank(a.name);
-      final rankB = _scriptRank(b.name);
+      final rankA = _scriptRank(a.id);
+      final rankB = _scriptRank(b.id);
       if (rankA != rankB) {
         return rankA.compareTo(rankB);
       }
-      return a.name.compareTo(b.name);
+      return a.id.compareTo(b.id);
     });
 
     return Scaffold(
