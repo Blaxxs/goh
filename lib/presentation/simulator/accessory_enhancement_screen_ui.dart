@@ -743,14 +743,14 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                 Navigator.of(context).pop(); // 다이얼로그 닫기
               },
               child: Padding(
-                padding: const EdgeInsets.all(4.0), // 이미지 간 간격
+                padding: const EdgeInsets.all(2.0), // 이미지 간 간격 축소
                 child: Image.asset(
                   imgMap['path']!,
-                  width: 120, // 보조제 선택창 이미지 크기 1.5배 (80*1.5 = 120)
-                  height: 120,
+                  width: 96,
+                  height: 96,
                   fit: BoxFit.contain,
                   errorBuilder: (ctx, err, st) =>
-                      const Icon(Icons.broken_image, size: 70),
+                      const Icon(Icons.broken_image, size: 56),
                 ),
               ),
             ),
@@ -770,7 +770,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
         imageRows.add(buildImageRow(sublist));
         if (end < _aidImageDetails.length) {
           // Add SizedBox if not the last row
-          imageRows.add(const SizedBox(height: 12));
+          imageRows.add(const SizedBox(height: 8));
         }
       }
     }
@@ -780,7 +780,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: const Text('강화 보조제 선택', textAlign: TextAlign.center),
-          contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 16), // 패딩 조정
+          contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
           content: SizedBox(
             // 다이얼로그 크기 제한
             width: double.maxFinite,
@@ -789,11 +789,14 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ...imageRows, // Use the generated list of rows
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
                   const Divider(),
                   ListTile(
                     // "선택 안함" 옵션 추가
                     title: const Text('선택 안함', textAlign: TextAlign.center),
+                    dense: true,
+                    visualDensity: VisualDensity.compact,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                     onTap: () {
                       onAidSelected('선택 안함');
                       Navigator.of(dialogContext).pop();
