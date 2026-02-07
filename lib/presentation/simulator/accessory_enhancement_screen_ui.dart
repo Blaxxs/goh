@@ -2,6 +2,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Import intl package
+import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../data/models/accessory.dart'; // Accessory model
 import '../../core/widgets/app_drawer.dart'; // AppDrawer
 import '../../core/constants/box_constants.dart'; // AppScreen enum을 위해 추가
@@ -583,7 +584,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                                     children: [
                                       Text('목표 강화 단계:',
                                           style: theme.textTheme.titleSmall),
-                                      DropdownButton<int>(
+                                      DropdownButton2<int>(
                                         value: targetEnhancementLevel,
                                         hint: const Text('선택'),
                                         items: targetLevelItems.isEmpty &&
@@ -598,6 +599,11 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                                             ? null
                                             : onTargetEnhancementLevelChanged,
                                         isExpanded: true,
+                                        dropdownStyleData:
+                                            const DropdownStyleData(
+                                          offset: Offset(0, -4),
+                                          direction: DropdownDirection.up,
+                                        ),
                                       ),
                                     ],
                                   )
