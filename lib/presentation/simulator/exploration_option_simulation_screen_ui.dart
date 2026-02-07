@@ -124,7 +124,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                   visualDensity: VisualDensity.compact,
                 ),
                 Text(
-                  '${explorationLevel}탐',
+                  '$explorationLevel탐',
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : theme.colorScheme.primary,
@@ -375,7 +375,7 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ),
           actions: [
             TextButton(
