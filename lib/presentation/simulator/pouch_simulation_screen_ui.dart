@@ -194,7 +194,6 @@ class PouchResultDialog extends StatelessWidget {
                     width: 60,
                     height: 60,
                     child: Stack(
-                      alignment: Alignment.center,
                       children: [
                         Image.asset(
                           imagePath,
@@ -202,17 +201,15 @@ class PouchResultDialog extends StatelessWidget {
                           height: 60,
                           fit: BoxFit.contain,
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.55),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
                           child: Text(
                             numberFormat.format(amount),
+                            textAlign: TextAlign.center,
                             style: theme.textTheme.bodySmall?.copyWith(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
