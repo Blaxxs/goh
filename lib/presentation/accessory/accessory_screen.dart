@@ -74,6 +74,25 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     );
   }
 
+  int _scriptRank(String value) {
+    final trimmed = value.trimLeft();
+    if (trimmed.isEmpty) return 2;
+
+    for (final codePoint in trimmed.runes) {
+      final ch = String.fromCharCode(codePoint);
+      if (RegExp(r'[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF]').hasMatch(ch)) {
+        return 0; // Han first
+      }
+      if (RegExp(r'[A-Za-z]').hasMatch(ch)) {
+        return 1; // Latin second
+      }
+      if (ch.trim().isNotEmpty) {
+        return 2; // Others
+      }
+    }
+    return 2;
+  }
+
   @override
   Widget build(BuildContext context) {
     // AccessoryDataManager에서 미리 로드된 데이터를 가져옵니다.
@@ -104,6 +123,16 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           acc.part == _selectedPartFilter;
       return matchesSearch && matchesPart;
     }).toList();
+
+    // 기본 정렬: 한자 -> 영문 알파벳 -> 기타, 그룹 내 이름순
+    displayList.sort((a, b) {
+      final rankA = _scriptRank(a.name);
+      final rankB = _scriptRank(b.name);
+      if (rankA != rankB) {
+        return rankA.compareTo(rankB);
+      }
+      return a.name.compareTo(b.name);
+    });
 
     return Scaffold(
       drawer: const AppDrawer(currentScreen: AppScreen.accessory),
