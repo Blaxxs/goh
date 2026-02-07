@@ -323,46 +323,57 @@ class PouchResultDialog extends StatelessWidget {
                 itemCount: results.length,
                 itemBuilder: (context, index) {
                   final amount = results[index];
-                  return SizedBox(
-                    width: tileSize,
-                    height: tileSize,
-                    child: Stack(
-                      children: [
-                        Image.asset(
-                          imagePath,
-                          width: tileSize,
-                          height: tileSize,
-                          fit: BoxFit.contain,
-                        ),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: SizedBox(
-                            width: tileSize,
-                            child: Text(
-                              'x${numberFormat.format(amount)}',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontFeatures: const [
-                                  FontFeature.tabularFigures(),
-                                ],
-                                shadows: const [
-                                  Shadow(
-                                    color: Colors.black87,
-                                    offset: Offset(0, 1),
-                                    blurRadius: 2,
-                                  ),
-                                ],
+                  return LayoutBuilder(
+                    builder: (context, cellConstraints) {
+                      final double cellSize =
+                          min(cellConstraints.maxWidth, cellConstraints.maxHeight);
+                      final double renderSize = min(tileSize, cellSize);
+                      return Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          width: renderSize,
+                          height: renderSize,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Image.asset(
+                                imagePath,
+                                width: renderSize,
+                                height: renderSize,
+                                fit: BoxFit.contain,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.visible,
-                              softWrap: false,
-                            ),
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: SizedBox(
+                                  width: renderSize,
+                                  child: Text(
+                                    'x${numberFormat.format(amount)}',
+                                    textAlign: TextAlign.center,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontFeatures: const [
+                                        FontFeature.tabularFigures(),
+                                      ],
+                                      shadows: const [
+                                        Shadow(
+                                          color: Colors.black87,
+                                          offset: Offset(0, 1),
+                                          blurRadius: 2,
+                                        ),
+                                      ],
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.visible,
+                                    softWrap: false,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   );
                 },
               ),
