@@ -601,7 +601,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                                         isExpanded: true,
                                         dropdownStyleData: DropdownStyleData(
                                           offset: const Offset(0, -4),
-                                          direction: DropdownDirection.up,
+                                          isOverButton: true,
                                         ),
                                       ),
                                     ],
