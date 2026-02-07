@@ -14,6 +14,7 @@ class PouchSimulationScreenUI extends StatelessWidget {
   final bool useCustomDrawCount;
   final TextEditingController customDrawCountController;
   final bool isSimulating;
+  final List<String> openLogs;
   final ValueChanged<PouchType?> onTypeChanged;
   final ValueChanged<int> onDrawCountChanged;
   final VoidCallback onSelectCustomDrawCount;
@@ -28,6 +29,7 @@ class PouchSimulationScreenUI extends StatelessWidget {
     required this.useCustomDrawCount,
     required this.customDrawCountController,
     required this.isSimulating,
+    required this.openLogs,
     required this.onTypeChanged,
     required this.onDrawCountChanged,
     required this.onSelectCustomDrawCount,
@@ -184,6 +186,46 @@ class PouchSimulationScreenUI extends StatelessWidget {
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            Text(
+              '개봉 로그',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            if (openLogs.isEmpty)
+              Text(
+                '아직 개봉 로그가 없습니다.',
+                style: theme.textTheme.bodyMedium,
+              )
+            else
+              Container(
+                constraints: const BoxConstraints(maxHeight: 220),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainerHighest
+                      .withValues(alpha: 0.3),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: openLogs.length,
+                  separatorBuilder: (_, __) => Divider(
+                    height: 1,
+                    color: theme.dividerColor,
+                  ),
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
+                      child: Text(
+                        openLogs[index],
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    );
+                  },
+                ),
+              ),
           ],
         ),
       ),
