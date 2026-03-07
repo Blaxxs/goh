@@ -1,7 +1,6 @@
 // lib/presentation/box_calculator/box_calculator_screen.dart
 import 'package:flutter/material.dart';
 import '../../domain/logic/box_calculator_logic.dart';
-import '../../core/widgets/back_to_main_scope.dart';
 import 'box_calculator_screen_ui.dart';
 
 class BoxCalculatorScreen extends StatefulWidget {
@@ -67,7 +66,6 @@ class _BoxCalculatorScreenState extends State<BoxCalculatorScreen> {
           _calculate(); // 계산 로직 호출
           FocusScope.of(context).unfocus(); // 계산 버튼을 눌렀을 때만 키보드 숨기기
         },
-      ),
-    );
+      );
   }
 }

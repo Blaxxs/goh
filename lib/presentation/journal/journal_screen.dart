@@ -10,7 +10,7 @@ import '../../core/services/settings_service.dart'; // SettingsService import
 import '../../core/constants/stage_constants.dart'; // stageBaseData 사용
 import '../../core/constants/drop_item_constants.dart'; // DropInfo, DropCategory, goldDemonSellPrices 사용
 import 'package:flutter_slidable/flutter_slidable.dart'; // flutter_slidable import 추가
-import '../../core/widgets/back_to_main_scope.dart';
+
 
 // 점유율 표시 타입을 위한 Enum
 enum JournalShareType { soulStone, gold }
@@ -663,7 +663,6 @@ class _JournalScreenState extends State<JournalScreen> {
                     ?.copyWith(fontWeight: FontWeight.w600),
                 softWrap: true),
           ],
-        ),
-      );
+);
   }
 }

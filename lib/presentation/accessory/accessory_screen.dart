@@ -4,7 +4,6 @@ import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
 import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
-import '../../core/widgets/back_to_main_scope.dart';
 import '../../core/constants/box_constants.dart';
 
 class AccessoryScreen extends StatefulWidget {
