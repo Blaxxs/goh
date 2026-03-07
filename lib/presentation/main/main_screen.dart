@@ -63,6 +63,66 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    final now = DateTime.now();
+    const backPressDuration = Duration(seconds: 2);
+
+    if (_lastBackPressed == null ||
+        now.difference(_lastBackPressed!) > backPressDuration) {
+      // 첫 번째 뒤로가기 또는 2초 이상 지남
+      setState(() {
+        _lastBackPressed = now;
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return false; // 앱 종료 안 함
+    }
+    
+    // 2초 이내 두 번째 뒤로가기
+    return true; // 앱 종료
+  }
+    final settings = SettingsService.instance.stageSettings;
+    return settings.teamLevel != null &&
+        settings.teamLevel!.isNotEmpty &&
+        settings.dalgijiLevel != null &&
+        settings.dalgijiLevel!.isNotEmpty &&
+        settings.vipLevel != null &&
+        settings.vipLevel!.isNotEmpty;
+  }
+
+  void _navigateToScreen(BuildContext context, Widget screen) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => screen),
+    );
+  }
+
+  void _showSettingsSnackbar(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) =>
+              const SettingsScreen(isSetupMode: true)), // isSetupMode 추가
+    ).then((_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('팀 레벨, 달기지 레벨, VIP 등급을 먼저 설정해주세요.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
