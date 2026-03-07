@@ -180,7 +180,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
         // onMenuPressed 콜백은 SettingsScreenUI 내부에서 Drawer를 열도록 수정되었으므로
         // 여기서는 전달할 필요가 없습니다.
         isSetupMode: widget.isSetupMode, // isSetupMode 전달
-      ),
-    );
+      );
   }
 }

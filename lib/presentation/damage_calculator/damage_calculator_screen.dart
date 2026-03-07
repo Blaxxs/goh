@@ -1250,11 +1250,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
       ),
-    ),
     );
   }
 

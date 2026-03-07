@@ -75,7 +75,6 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
         currentFontSizeMultiplier: _fontSizeMultiplier,
         onFontSizeMultiplierChanged: _handleFontSizeChange,
         appVersion: _appVersion, // 로드된 앱 버전 정보를 UI 위젯에 전달
-      ),
-    );
+      );
   }
 }
