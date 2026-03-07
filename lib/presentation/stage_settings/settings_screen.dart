@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 // 필요한 상수 파일 직접 import
-import '../../core/constants/stage_constants.dart'; // stageList 사용 (정확히는 stageNameList getter)
-import '../../core/widgets/back_to_main_scope.dart';
-
+import '../../core/constants/stage_constants.dart'; // stageList 사용
 import 'settings_screen_ui.dart';
 import '../../core/services/settings_service.dart';
 

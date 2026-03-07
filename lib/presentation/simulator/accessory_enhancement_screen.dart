@@ -4,7 +4,6 @@ import 'dart:math'; // Random 사용
 import '../../data/models/accessory.dart'; // Accessory model
 import '../accessory/accessory_screen.dart'; // To use as a picker
 import '../../core/constants/accessory_constants.dart'; // AccessoryDataManager().allAccessories 사용
-import '../../core/widgets/back_to_main_scope.dart';
 import 'accessory_enhancement_screen_ui.dart';
 
 class AccessoryEnhancementScreen extends StatefulWidget {

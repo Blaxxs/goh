@@ -1,8 +1,7 @@
 // lib/app_settings_screen.dart
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart'; // package_info_plus 임포트
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../core/services/settings_service.dart';
-import '../../core/widgets/back_to_main_scope.dart';
 import 'app_settings_screen_ui.dart'; // UI 파일 import
 
 class AppSettingsScreen extends StatefulWidget {

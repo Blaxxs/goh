@@ -8,7 +8,6 @@ import 'package:goh_calculator/core/constants/spirit_constants.dart';
 import 'package:intl/intl.dart';
 import 'package:goh_calculator/core/constants/fragment_constants.dart';
 import 'package:goh_calculator/presentation/damage_calculator/character_selection_dialog.dart';
-import 'package:goh_calculator/core/widgets/back_to_main_scope.dart';
 
 enum RebirthRealm { none, heavenly, demon }
 

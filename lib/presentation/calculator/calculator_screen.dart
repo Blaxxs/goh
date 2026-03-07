@@ -11,7 +11,6 @@ import '../../domain/services/stage_calculation_service.dart';
 import '../stage_settings/settings_screen.dart'; // SettingsScreen import
 import 'calculator_screen_ui.dart'; // StageDisplayData 클래스 정의 포함
 import '../../core/services/settings_service.dart';
-import '../../core/widgets/back_to_main_scope.dart';
 
 // 정렬 옵션 Enum 정의
 enum CalculatorSortOption { stageName, soulStone, gold }

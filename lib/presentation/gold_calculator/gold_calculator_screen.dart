@@ -7,7 +7,6 @@ import '../../core/services/settings_service.dart';
 import '../../core/constants/drop_item_constants.dart';
 import '../../core/constants/leader_constants.dart';
 import '../stage_settings/settings_screen.dart'; // SettingsScreen import
-import '../../core/widgets/back_to_main_scope.dart';
 
 // 정렬 옵션 Enum
 enum GoldSortOption { stageName, totalGold }
