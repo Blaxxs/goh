@@ -69,8 +69,7 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     // 여기서 UI 위젯인 AppSettingsScreenUI를 사용합니다.
-    return BackToMainScope(
-      child: AppSettingsScreenUI(
+    return AppSettingsScreenUI(
         isDarkModeEnabled: _isDarkModeEnabled,
         onDarkModeChanged: _handleDarkModeChange,
         currentFontSizeMultiplier: _fontSizeMultiplier,

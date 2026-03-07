@@ -57,8 +57,7 @@ class _BoxCalculatorScreenState extends State<BoxCalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     // BoxCalculatorScreenUI에 필요한 모든 데이터를 전달합니다.
-    return BackToMainScope(
-      child: BoxCalculatorScreenUI(
+    return BoxCalculatorScreenUI(
         normalBoxCountController: _normalBoxCountController,
         rareBoxCountController: _rareBoxCountController,
         legendaryBoxCountController: _legendaryBoxCountController,

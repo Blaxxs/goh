@@ -291,8 +291,7 @@ class _AccessoryEnhancementScreenState
     debugPrint(
         "[AccessoryEnhancementScreen] Building UI. Selected Accessory: ${_selectedAccessory?.name ?? 'None'}");
 
-    return BackToMainScope(
-      child: AccessoryEnhancementScreenUI(
+    return AccessoryEnhancementScreenUI(
         selectedAccessory: _selectedAccessory,
       onSelectAccessoryPressed: () => _selectAccessory(context),
       currentEnhancementLevel: _currentEnhancementLevel,
