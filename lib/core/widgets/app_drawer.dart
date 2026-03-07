@@ -238,7 +238,7 @@ class AppDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
                       if (currentScreen != AppScreen.calculator) {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
@@ -260,7 +260,7 @@ class AppDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
                       if (currentScreen != AppScreen.goldCalculator) {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
@@ -282,7 +282,7 @@ class AppDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
                       if (currentScreen != AppScreen.journal) {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const JournalScreen()));
@@ -304,7 +304,7 @@ class AppDrawer extends StatelessWidget {
                       onTap: () {
                         Navigator.of(context).pop(); // Close drawer
                         if (currentScreen != AppScreen.boxCalculator) {
-                          Navigator.pushReplacement(
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
@@ -420,7 +420,7 @@ class AppDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
                       if (currentScreen != AppScreen.accessory) {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => const AccessoryScreen()));
@@ -441,7 +441,7 @@ class AppDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
                       if (currentScreen != AppScreen.damageCalculator) {
-                        Navigator.pushReplacement(
+                        Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
