@@ -43,31 +43,35 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false, // 로딩 화면에서는 뒤로 가기 불가능
-      child: FutureBuilder<void>(
-        future: _initializationFuture,
-        builder: (context, snapshot) {
-          // Future 상태 확인
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-            case ConnectionState.waiting:
-            case ConnectionState.active:
-              // 로딩 중일 때: 로딩 UI 표시
-              return _buildLoadingUI();
+    return FutureBuilder<void>(
+      future: _initializationFuture,
+      builder: (context, snapshot) {
+        // Future 상태 확인
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+          case ConnectionState.active:
+            // 로딩 중일 때: 로딩 UI 표시
+            return _buildLoadingUI();
 
-            case ConnectionState.done:
-              // 작업 완료 시
-              if (snapshot.hasError) {
-                // 에러 발생 시: 에러 UI 표시
-                return _buildErrorUI(snapshot.error);
-              } else {
-                // 성공 시: MainScreen 반환
-                return const MainScreen();
-              }
-          }
-        },
-      ),
+          case ConnectionState.done:
+            // 작업 완료 시
+            if (snapshot.hasError) {
+              // 에러 발생 시: 에러 UI 표시
+              return _buildErrorUI(snapshot.error);
+            } else {
+              // 성공 시: MainScreen으로 이동
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (context.mounted) {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const MainScreen()),
+                  );
+                }
+              });
+              return _buildLoadingUI(); // 전환 중 로딩 UI 유지
+            }
+        }
+      },
     );
   }
 
