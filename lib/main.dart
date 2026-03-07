@@ -409,6 +409,7 @@ class MyApp extends StatelessWidget {
                 Locale('en', 'US'), // 기본 로케일로 영어도 포함하는 것이 좋습니다.
               ],
               debugShowCheckedModeBanner: false,
+              // 웹앱에서 뒤로 가기 처리를 위한 네비게이터 옵저버 추가
             );
           },
         );
