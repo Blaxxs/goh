@@ -438,8 +438,7 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackToMainScope(
-      child: GoldEfficiencyCalculatorScreenUI(
+    return GoldEfficiencyCalculatorScreenUI(
         timeOptions: _timeOptions,
         selectedTimeOption: _selectedTimeOption,
         onTimeOptionChanged: (TimeOption? newValue) {

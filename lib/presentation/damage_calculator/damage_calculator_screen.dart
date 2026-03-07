@@ -1150,9 +1150,8 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
       );
     }
 
-    return BackToMainScope(
-      child: Scaffold(
-        appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
         title: const Text('데미지 계산기_ Beta'),
       ),
       drawer: const AppDrawer(currentScreen: AppScreen.damageCalculator),

@@ -158,8 +158,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // SettingsScreenUI는 Scaffold를 포함하고 있으므로,
     // SettingsScreen이 별도의 Scaffold를 가질 필요는 없습니다.
     // SettingsScreenUI에 Drawer와 AppBar가 이미 구성되어 있습니다.
-    return BackToMainScope(
-      child: SettingsScreenUI(
+    return SettingsScreenUI(
         formKey: _formKey,
         teamLevelController: _teamLevelController,
         dalgijiLevelController: _dalgijiLevelController,
