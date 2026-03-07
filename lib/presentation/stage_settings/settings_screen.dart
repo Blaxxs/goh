@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // 필요한 상수 파일 직접 import
 import '../../core/constants/stage_constants.dart'; // stageList 사용 (정확히는 stageNameList getter)
+import '../../core/widgets/back_to_main_scope.dart';
 
 import 'settings_screen_ui.dart';
 import '../../core/services/settings_service.dart';
@@ -166,22 +167,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
         selectedVipLevel: _selectedVipLevel,
         selectedJjolCounts: _selectedJjolCounts,
         onVipLevelChanged: (value) {
-        setState(() {
-          _selectedVipLevel = value;
-        });
-      },
-      onJjolCountChanged: (stageName, value) {
-        setState(() {
-          _selectedJjolCounts[stageName] = value;
-        });
-      },
-      onSavePressed: _handleSavePressed,
-      onResetPressed: _handleResetPressed,
-      // onMenuPressed 콜백은 SettingsScreenUI 내부에서 Drawer를 열도록 수정되었으므로
-      // 여기서는 전달할 필요가 없습니다.
-      isSetupMode: widget.isSetupMode, // isSetupMode 전달
+          setState(() {
+            _selectedVipLevel = value;
+          });
+        },
+        onJjolCountChanged: (stageName, value) {
+          setState(() {
+            _selectedJjolCounts[stageName] = value;
+          });
+        },
+        onSavePressed: _handleSavePressed,
+        onResetPressed: _handleResetPressed,
+        // onMenuPressed 콜백은 SettingsScreenUI 내부에서 Drawer를 열도록 수정되었으므로
+        // 여기서는 전달할 필요가 없습니다.
+        isSetupMode: widget.isSetupMode, // isSetupMode 전달
       ),
-    );
     );
   }
 }
