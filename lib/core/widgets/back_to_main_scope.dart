@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../presentation/main/main_screen.dart';
 
@@ -13,7 +14,8 @@ class BackToMainScope extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!enabled) {
+    // 웹 환경에서는 브라우저 히스토리 관리를 위해 비활성화
+    if (!enabled || kIsWeb) {
       return child;
     }
 
