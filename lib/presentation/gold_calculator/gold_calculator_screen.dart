@@ -7,6 +7,7 @@ import '../../core/services/settings_service.dart';
 import '../../core/constants/drop_item_constants.dart';
 import '../../core/constants/leader_constants.dart';
 import '../stage_settings/settings_screen.dart'; // SettingsScreen import
+import '../../core/widgets/back_to_main_scope.dart';
 
 // 정렬 옵션 Enum
 enum GoldSortOption { stageName, totalGold }
@@ -437,10 +438,11 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GoldEfficiencyCalculatorScreenUI(
-      timeOptions: _timeOptions,
-      selectedTimeOption: _selectedTimeOption,
-      onTimeOptionChanged: (TimeOption? newValue) {
+    return BackToMainScope(
+      child: GoldEfficiencyCalculatorScreenUI(
+        timeOptions: _timeOptions,
+        selectedTimeOption: _selectedTimeOption,
+        onTimeOptionChanged: (TimeOption? newValue) {
         if (mounted) {
           bool needsRecalculate = false;
           setState(() {
@@ -517,7 +519,8 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
       selectedSortOption: _selectedSortOption,
       onSortOptionChanged: _handleSortOptionChanged,
       hideUnconfiguredStages: _hideUnconfiguredStages,
-      onHideUnconfiguredStagesChanged: _handleHideUnconfiguredStagesChanged,
+        onHideUnconfiguredStagesChanged: _handleHideUnconfiguredStagesChanged,
+      ),
     );
   }
 }
