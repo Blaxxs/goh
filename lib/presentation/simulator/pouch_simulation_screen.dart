@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import '../../core/widgets/back_to_main_scope.dart';
 
 import 'pouch_simulation_screen_ui.dart';
 
@@ -215,15 +216,16 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PouchSimulationScreenUI(
-      selectedType: _selectedType,
-      drawCountOptions: _drawCountOptions,
-      selectedDrawCount: _selectedDrawCount,
-      useCustomDrawCount: _useCustomDrawCount,
-      customDrawCountController: _customDrawCountController,
-      isSimulating: _isSimulating,
-      openLogs: _openLogs,
-      onTypeChanged: (value) {
+    return BackToMainScope(
+      child: PouchSimulationScreenUI(
+        selectedType: _selectedType,
+        drawCountOptions: _drawCountOptions,
+        selectedDrawCount: _selectedDrawCount,
+        useCustomDrawCount: _useCustomDrawCount,
+        customDrawCountController: _customDrawCountController,
+        isSimulating: _isSimulating,
+        openLogs: _openLogs,
+        onTypeChanged: (value) {
         if (value == null) return;
         setState(() {
           _selectedType = value;
@@ -242,6 +244,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       },
       onRunSimulation: _runSimulation,
       onResetSimulation: _resetSimulation,
+      ),
     );
   }
 }

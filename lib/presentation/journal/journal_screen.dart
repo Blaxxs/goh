@@ -10,6 +10,7 @@ import '../../core/services/settings_service.dart'; // SettingsService import
 import '../../core/constants/stage_constants.dart'; // stageBaseData 사용
 import '../../core/constants/drop_item_constants.dart'; // DropInfo, DropCategory, goldDemonSellPrices 사용
 import 'package:flutter_slidable/flutter_slidable.dart'; // flutter_slidable import 추가
+import '../../core/widgets/back_to_main_scope.dart';
 
 // 점유율 표시 타입을 위한 Enum
 enum JournalShareType { soulStone, gold }
@@ -180,8 +181,9 @@ class _JournalScreenState extends State<JournalScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context); // 테마 가져오기
-    return Scaffold(
-      appBar: AppBar(
+    return BackToMainScope(
+      child: Scaffold(
+        appBar: AppBar(
         title: const Text('일지'),
         actions: [
           IconButton(
@@ -429,6 +431,7 @@ class _JournalScreenState extends State<JournalScreen> {
             _buildJournalEntryList(),
           ],
         ),
+      ),
       ),
     );
   }
