@@ -181,8 +181,7 @@ class _JournalScreenState extends State<JournalScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context); // 테마 가져오기
-    return BackToMainScope(
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
         title: const Text('일지'),
         actions: [

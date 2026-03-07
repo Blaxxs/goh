@@ -677,8 +677,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackToMainScope(
-      child: Stack(
+    return Stack(
         children: [
           CalculatorScreenUI(
           expHotTime: _currentCalcSettings.expHotTime,

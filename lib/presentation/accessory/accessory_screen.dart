@@ -137,9 +137,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       return a.id.compareTo(b.id);
     });
 
-    return BackToMainScope(
-      enabled: !widget.isPickerMode,
-      child: Scaffold(
+    return Scaffold(
         drawer: const AppDrawer(currentScreen: AppScreen.accessory),
         appBar: AppBar(
           leading: Builder(
