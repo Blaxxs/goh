@@ -1245,10 +1245,13 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   const SizedBox(height: 10),
                   Text(
                     '최종 데미지: ${formatter.format(_calculatedDamage)}',
-                    style: Theme.of(context).textTheme.headlineMedium,
+                    Style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ],
               ),
+            ),
+          ),
+        ],
       );
   }
 
