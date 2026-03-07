@@ -8,7 +8,7 @@ class BackToMainScope extends StatelessWidget {
   const BackToMainScope({
     super.key,
     required this.child,
-    this.enabled = false,
+    this.enabled = true,
   });
 
   @override
