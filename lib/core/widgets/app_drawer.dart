@@ -120,6 +120,26 @@ class AppDrawer extends StatelessWidget {
         color: theme.textTheme.bodyMedium?.color?.withOpacity(0.8),
         fontSize: subDrawerItemFontSize);
 
+    void navigateFromMain(Widget screen, {required AppScreen target}) {
+      final navigator = Navigator.of(context);
+      navigator.pop(); // close drawer first
+
+      if (target == AppScreen.home) {
+        if (currentScreen != AppScreen.home) {
+          navigator.popUntil((route) => route.isFirst);
+        }
+        return;
+      }
+
+      if (currentScreen == target) {
+        return;
+      }
+
+      // Enforce hierarchy: Main -> Menu
+      navigator.popUntil((route) => route.isFirst);
+      navigator.push(MaterialPageRoute(builder: (_) => screen));
+    }
+
     return Container(
       width: drawerWidth,
       decoration: BoxDecoration(
@@ -196,11 +216,10 @@ class AppDrawer extends StatelessWidget {
                     text: '홈',
                     selected: currentScreen == AppScreen.home,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.home) {
-                        Navigator.of(context)
-                            .popUntil((route) => route.isFirst);
-                      }
+                      navigateFromMain(
+                        const SizedBox.shrink(),
+                        target: AppScreen.home,
+                      );
                     },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
@@ -215,13 +234,10 @@ class AppDrawer extends StatelessWidget {
                     text: '스테이지 설정',
                     selected: currentScreen == AppScreen.stageSettings,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.stageSettings) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const SettingsScreen()));
-                      }
+                      navigateFromMain(
+                        const SettingsScreen(),
+                        target: AppScreen.stageSettings,
+                      );
                     },
                     showDrawerText: showDrawerText,
                     theme: theme,
@@ -236,14 +252,10 @@ class AppDrawer extends StatelessWidget {
                     text: '루프 계산기',
                     selected: currentScreen == AppScreen.calculator,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.calculator) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const CalculatorScreen()));
-                      }
+                      navigateFromMain(
+                        const CalculatorScreen(),
+                        target: AppScreen.calculator,
+                      );
                     },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
@@ -258,14 +270,10 @@ class AppDrawer extends StatelessWidget {
                     text: '골드 효율 계산기',
                     selected: currentScreen == AppScreen.goldCalculator,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.goldCalculator) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const GoldCalculatorScreen()));
-                      }
+                      navigateFromMain(
+                        const GoldCalculatorScreen(),
+                        target: AppScreen.goldCalculator,
+                      );
                     },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
@@ -280,13 +288,10 @@ class AppDrawer extends StatelessWidget {
                     text: '일지',
                     selected: currentScreen == AppScreen.journal,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.journal) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const JournalScreen()));
-                      }
+                      navigateFromMain(
+                        const JournalScreen(),
+                        target: AppScreen.journal,
+                      );
                     },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
@@ -302,14 +307,10 @@ class AppDrawer extends StatelessWidget {
                       text: '상자 기대값 계산기',
                       selected: currentScreen == AppScreen.boxCalculator,
                       onTap: () {
-                        Navigator.of(context).pop(); // Close drawer
-                        if (currentScreen != AppScreen.boxCalculator) {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const BoxCalculatorScreen()));
-                        }
+                        navigateFromMain(
+                          const BoxCalculatorScreen(),
+                          target: AppScreen.boxCalculator,
+                        );
                       },
                       showDrawerText: showDrawerText, theme: theme,
                       listItemTextStyle: mainDrawerItemTextStyle,
@@ -346,14 +347,10 @@ class AppDrawer extends StatelessWidget {
                               right: 16.0), // 아이콘 공간(16+12) + 텍스트 시작 패딩(16)
                           title: Text('악세사리 강화', style: subDrawerItemTextStyle),
                           onTap: () {
-                            Navigator.of(context).pop(); // Close drawer
-                            // Navigate to the new AccessoryEnhancementScreen
-                            // Ensure currentScreen != AppScreen.simulator or similar check if replacing
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AccessoryEnhancementScreen()));
+                            navigateFromMain(
+                              const AccessoryEnhancementScreen(),
+                              target: AppScreen.simulator,
+                            );
                           },
                         ),
                         ListTile(
@@ -365,13 +362,10 @@ class AppDrawer extends StatelessWidget {
                           title:
                               Text('악세사리 옵션 변경', style: subDrawerItemTextStyle),
                           onTap: () {
-                            // Navigate to the new AccessoryOptionChangeScreen
-                            Navigator.of(context).pop(); // 서랍 닫기
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AccessoryOptionChangeScreen()));
+                            navigateFromMain(
+                              const AccessoryOptionChangeScreen(),
+                              target: AppScreen.simulator,
+                            );
                           },
                         ),
                         ListTile(
@@ -383,12 +377,10 @@ class AppDrawer extends StatelessWidget {
                           title:
                               Text('탐 옵션 시뮬레이션', style: subDrawerItemTextStyle),
                           onTap: () {
-                            Navigator.of(context).pop(); // 서랍 닫기
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ExplorationOptionSimulationScreen()));
+                            navigateFromMain(
+                              const ExplorationOptionSimulationScreen(),
+                              target: AppScreen.explorationOptionSimulation,
+                            );
                           },
                         ),
                         ListTile(
@@ -400,12 +392,10 @@ class AppDrawer extends StatelessWidget {
                           title: Text('주머니 시뮬레이션',
                             style: subDrawerItemTextStyle),
                           onTap: () {
-                          Navigator.of(context).pop();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                const PouchSimulationScreen()));
+                          navigateFromMain(
+                            const PouchSimulationScreen(),
+                            target: AppScreen.pouchSimulation,
+                          );
                           },
                         ),
                       ],
@@ -418,13 +408,10 @@ class AppDrawer extends StatelessWidget {
                     text: '악세사리 도감',
                     selected: currentScreen == AppScreen.accessory,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.accessory) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const AccessoryScreen()));
-                      }
+                      navigateFromMain(
+                        const AccessoryScreen(),
+                        target: AppScreen.accessory,
+                      );
                     },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
@@ -439,14 +426,10 @@ class AppDrawer extends StatelessWidget {
                     text: '데미지 계산기_ Beta',
                     selected: currentScreen == AppScreen.damageCalculator,
                     onTap: () {
-                      Navigator.of(context).pop();
-                      if (currentScreen != AppScreen.damageCalculator) {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const DamageCalculatorScreen()));
-                      }
+                      navigateFromMain(
+                        const DamageCalculatorScreen(),
+                        target: AppScreen.damageCalculator,
+                      );
                     },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
