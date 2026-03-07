@@ -751,7 +751,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                 child: CircularProgressIndicator(),
               ),
             ),
-    );
+        ],
+      );
   }
 }
 
