@@ -63,44 +63,33 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  Future<bool> _onWillPop() async {
+    final now = DateTime.now();
+    const backPressDuration = Duration(seconds: 2);
+
+    if (_lastBackPressed == null ||
+        now.difference(_lastBackPressed!) > backPressDuration) {
+      setState(() {
+        _lastBackPressed = now;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return false; // 뒤로가기 차단
+    }
+    return true; // 앱 종료 허용
+  }
+
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) {
-        if (didPop) {
-          return;
-        }
-
-        // MainScreen이 현재 활성 화면인지 확인
-        final route = ModalRoute.of(context);
-        if (route != null && !route.isCurrent) {
-          // MainScreen이 현재 화면이 아니면 (하위 화면이 있으면) 아무것도 안 함
-          // 하위 화면의 기본 뒤로가기가 처리됨
-          return;
-        }
-
-        // MainScreen이 최상위 화면일 때만 2회 뒤로가기 로직 실행
-        final now = DateTime.now();
-        const backPressDuration = Duration(seconds: 2);
-
-        if (_lastBackPressed == null ||
-            now.difference(_lastBackPressed!) > backPressDuration) {
-          setState(() {
-            _lastBackPressed = now;
-          });
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
-              duration: Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        } else {
-          SystemNavigator.pop();
-        }
-      },
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: _onWillPop,
       child: MainScreenUI(
         onCalculatorPressed: () {
           if (_areEssentialSettingsSet()) {
