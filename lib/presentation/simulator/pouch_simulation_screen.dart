@@ -216,8 +216,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackToMainScope(
-      child: PouchSimulationScreenUI(
+    return PouchSimulationScreenUI(
         selectedType: _selectedType,
         drawCountOptions: _drawCountOptions,
         selectedDrawCount: _selectedDrawCount,

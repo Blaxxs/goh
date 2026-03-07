@@ -317,8 +317,7 @@ class _AccessoryOptionChangeScreenState
 
   @override
   Widget build(BuildContext context) {
-    return BackToMainScope(
-      child: AccessoryOptionChangeScreenUI(
+    return AccessoryOptionChangeScreenUI(
         selectedAccessory: _selectedAccessory,
         currentOptions: _currentOptions,
         selectedAction: _selectedAction,

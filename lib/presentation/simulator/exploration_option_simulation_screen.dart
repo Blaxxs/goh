@@ -648,8 +648,7 @@ class _ExplorationOptionSimulationScreenState
 
   @override
   Widget build(BuildContext context) {
-    return BackToMainScope(
-      child: ExplorationOptionSimulationScreenUI(
+    return ExplorationOptionSimulationScreenUI(
         explorationLevel: _explorationLevel,
         slotOptions: _slotOptions,
         slotGrades: _slotGrades,
