@@ -63,30 +63,6 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Future<bool> _onWillPop() async {
-    final now = DateTime.now();
-    const backPressDuration = Duration(seconds: 2);
-
-    if (_lastBackPressed == null ||
-        now.difference(_lastBackPressed!) > backPressDuration) {
-      setState(() {
-        _lastBackPressed = now;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
-            duration: Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-      return false; // 뒤로가기 차단
-    }
-    return true; // 앱 종료 허용
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
