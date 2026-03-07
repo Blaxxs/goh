@@ -430,7 +430,8 @@ class _JournalScreenState extends State<JournalScreen> {
             _buildJournalEntryList(),
           ],
         ),
-      );
+      ),
+    );
   }
 
   // 선택된 날짜의 일지 목록을 표시하는 위젯 빌드 함수
@@ -661,6 +662,8 @@ class _JournalScreenState extends State<JournalScreen> {
                     ?.copyWith(fontWeight: FontWeight.w600),
                 softWrap: true),
           ],
-);
+        ),
+      ),
+    );
   }
 }
