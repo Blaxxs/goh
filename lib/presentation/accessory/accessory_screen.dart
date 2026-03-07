@@ -5,6 +5,7 @@ import '../../core/constants/accessory_constants.dart';
 import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/constants/box_constants.dart';
+import '../main/main_screen.dart';
 
 class AccessoryScreen extends StatefulWidget {
   final bool isPickerMode;
@@ -74,6 +75,20 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     );
   }
 
+  void _handleBackNavigation() {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+      return;
+    }
+
+    if (!widget.isPickerMode) {
+      navigator.pushReplacement(
+        MaterialPageRoute(builder: (_) => const MainScreen()),
+      );
+    }
+  }
+
   int _scriptRank(String value) {
     final trimmed = value.trimLeft();
     if (trimmed.isEmpty) return 2;
@@ -136,35 +151,43 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       return a.id.compareTo(b.id);
     });
 
-    return Scaffold(
-      drawer: const AppDrawer(currentScreen: AppScreen.accessory),
-      appBar: AppBar(
-        leading: Builder(
-          builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          _handleBackNavigation();
+        }
+      },
+      child: Scaffold(
+        drawer: const AppDrawer(currentScreen: AppScreen.accessory),
+        appBar: AppBar(
+          leading: Builder(
+            builder: (ctx) => IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(ctx).openDrawer(),
+            ),
           ),
+          title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
         ),
-        title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
-      ),
-      body: AccessoryScreenUI(
-        searchController: _searchController,
-        filteredAccessories: displayList,
-        selectedPartFilter: _selectedPartFilter,
-        partFilterOptions: _partFilterOptions,
-        onPartFilterChanged: _handlePartFilterChanged,
-        onAccessoryTap: (ctx, acc) {
-          if (widget.isPickerMode) {
-            Navigator.of(context).pop(acc);
-          } else {
-            _showAccessoryDetails(ctx, acc);
-          }
-        },
-        currentSearchQuery: _searchQuery,
-        onClearSearch: _clearSearch,
-        searchOption: _searchOption,
-        searchOptions: _searchOptions,
-        onSearchOptionChanged: _handleSearchOptionChanged,
+        body: AccessoryScreenUI(
+          searchController: _searchController,
+          filteredAccessories: displayList,
+          selectedPartFilter: _selectedPartFilter,
+          partFilterOptions: _partFilterOptions,
+          onPartFilterChanged: _handlePartFilterChanged,
+          onAccessoryTap: (ctx, acc) {
+            if (widget.isPickerMode) {
+              Navigator.of(context).pop(acc);
+            } else {
+              _showAccessoryDetails(ctx, acc);
+            }
+          },
+          currentSearchQuery: _searchQuery,
+          onClearSearch: _clearSearch,
+          searchOption: _searchOption,
+          searchOptions: _searchOptions,
+          onSearchOptionChanged: _handleSearchOptionChanged,
+        ),
       ),
     );
   }
