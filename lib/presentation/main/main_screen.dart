@@ -67,7 +67,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
         if (didPop) {
           return;
         }
