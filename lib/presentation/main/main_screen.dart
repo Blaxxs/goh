@@ -1,5 +1,6 @@
 // lib/main_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../calculator/calculator_screen.dart';
 import '../stage_settings/settings_screen.dart'; // 스테이지 설정 화면
 import 'main_screen_ui.dart';
@@ -16,8 +17,15 @@ import '../simulator/accessory_option_change_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
 import '../simulator/pouch_simulation_screen.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  DateTime? _lastBackPressed;
 
   // 필수 설정 확인 함수
   bool _areEssentialSettingsSet() {
