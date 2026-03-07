@@ -34,6 +34,23 @@
 
   <title>GOH_계산기</title>
   <link rel="manifest" href="manifest.json">
+  
+  <script>
+    // PWA 뒤로가기 버튼 히스토리 관리
+    // Flutter Navigator와 브라우저 히스토리 동기화
+    window.addEventListener('load', function() {
+      // 초기 히스토리 스택 생성 (빈 상태 추가)
+      if (window.history.state === null) {
+        window.history.pushState({}, '');
+      }
+      
+      // 뒤로가기 이벤트 리스너
+      window.addEventListener('popstate', function(event) {
+        // Flutter의 뒤로가기 처리를 위해 히스토리 복원
+        window.history.pushState({}, '');
+      });
+    });
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
