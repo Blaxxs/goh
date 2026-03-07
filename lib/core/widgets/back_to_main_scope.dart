@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../presentation/main/main_screen.dart';
 
@@ -14,11 +13,11 @@ class BackToMainScope extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 웹 환경에서는 브라우저 히스토리 관리를 위해 비활성화
-    if (!enabled || kIsWeb) {
+    if (!enabled) {
       return child;
     }
 
+    // Gemini 권장 패턴: canPop=false로 기본 동작 차단 후 Navigator 스택 체크
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) {
@@ -27,14 +26,15 @@ class BackToMainScope extends StatelessWidget {
         }
 
         final navigator = Navigator.of(context);
+        // 내부 스택에 페이지가 있으면 뒤로가기
         if (navigator.canPop()) {
           navigator.pop();
-          return;
+        } else {
+          // 스택이 비어있으면 메인 화면으로
+          navigator.pushReplacement(
+            MaterialPageRoute(builder: (_) => const MainScreen()),
+          );
         }
-
-        navigator.pushReplacement(
-          MaterialPageRoute(builder: (_) => const MainScreen()),
-        );
       },
       child: child,
     );
