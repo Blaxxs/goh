@@ -65,73 +65,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // 웹에서는 PopScope를 사용하지 않음 (브라우저 히스토리 처리 문제)
-    if (kIsWeb) {
-      return MainScreenUI(
-        onCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const CalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
-        },
-        onGoldCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const GoldCalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
-        },
-        onAccessoryPressed: () {
-          _navigateToScreen(context, const AccessoryScreen());
-        },
-        onDamageCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const DamageCalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
-        },
-        onJournalPressed: () {
-          _navigateToScreen(context, const JournalScreen());
-        },
-        onBoxCalculatorPressed: () {
-          if (EventManager.isEventPeriodActive()) {
-            _navigateToScreen(context, const BoxCalculatorScreen());
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('이벤트 기간이 아닙니다.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-        },
-        onAccessoryEnhancementPressed: () {
-          _navigateToScreen(context, const AccessoryEnhancementScreen());
-        },
-        onAccessoryOptionChangePressed: () {
-          _navigateToScreen(context, const AccessoryOptionChangeScreen());
-        },
-        onExplorationOptionSimulationPressed: () {
-          _navigateToScreen(context, const ExplorationOptionSimulationScreen());
-        },
-        onPouchSimulationPressed: () {
-          _navigateToScreen(context, const PouchSimulationScreen());
-        },
-        onStageSettingsPressed: () {
-          _navigateToScreen(context, const SettingsScreen());
-        },
-        onAppSettingsPressed: () {
-          _navigateToScreen(context, const AppSettingsScreen());
-        },
-        settingsService: SettingsService.instance,
-      );
-    }
-    
-    // 안드로이드/iOS - PopScope 사용
     return PopScope(
-      canPop: false, // 자동 pop 방지
+      canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) {
         if (didPop) {
           return;
@@ -142,22 +77,18 @@ class _MainScreenState extends State<MainScreen> {
 
         if (_lastBackPressed == null ||
             now.difference(_lastBackPressed!) > backPressDuration) {
-          // 첫 번째 뒤로가기 또는 2초 이상 지남
           setState(() {
             _lastBackPressed = now;
           });
 
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
-                duration: Duration(seconds: 2),
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
-          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
+              duration: Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         } else {
-          // 2초 이내 두 번째 뒤로가기 - 앱 종료
           SystemNavigator.pop();
         }
       },
