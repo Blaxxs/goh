@@ -371,7 +371,6 @@ class _AccessoryEnhancementScreenState
           });
         }
       },
-      ),
-    );
+      );
   }
 }

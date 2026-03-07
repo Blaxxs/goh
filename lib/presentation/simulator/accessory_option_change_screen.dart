@@ -327,7 +327,6 @@ class _AccessoryOptionChangeScreenState
         totalGrindstonesConsumed: _totalGrindstonesConsumed,
         totalRainbowAnvilsConsumed: _totalRainbowAnvilsConsumed,
         total9EnhanceAccessoriesConsumed: _total9EnhanceAccessoriesConsumed,
-      ),
-    );
+      );
   }
 }

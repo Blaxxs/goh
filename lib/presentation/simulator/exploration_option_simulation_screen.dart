@@ -667,7 +667,6 @@ class _ExplorationOptionSimulationScreenState
         onToggleSlotLock: _toggleSlotLock,
         onRunAllSlotsSimulation: _runAllSlotsSimulation,
         onResetSimulation: _resetSimulation,
-      ),
-    );
+      );
   }
 }

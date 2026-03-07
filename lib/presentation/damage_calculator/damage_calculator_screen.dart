@@ -1249,8 +1249,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
                   ),
                 ],
               ),
-      ),
-    );
+      );
   }
 
   Widget _buildInputFields() {

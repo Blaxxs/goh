@@ -242,7 +242,6 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
       },
       onRunSimulation: _runSimulation,
       onResetSimulation: _resetSimulation,
-      ),
-    );
+      );
   }
 }
