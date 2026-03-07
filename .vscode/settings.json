@@ -5,6 +5,7 @@
     ]
   },
   // Swift와 Java 확장 비활성화 (Flutter 프로젝트에는 불필요)
+  "swift.enabled": false,
   "swift.disableAutoResolve": true,
   "swift.autoGenerateLaunchConfigurations": false,
   "java.enabled": false,
