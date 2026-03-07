@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart'; // package_info_plus 임포트
 import '../../core/services/settings_service.dart';
+import '../../core/widgets/back_to_main_scope.dart';
 import 'app_settings_screen_ui.dart'; // UI 파일 import
 
 class AppSettingsScreen extends StatefulWidget {
@@ -68,12 +69,14 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     // 여기서 UI 위젯인 AppSettingsScreenUI를 사용합니다.
-    return AppSettingsScreenUI(
-      isDarkModeEnabled: _isDarkModeEnabled,
-      onDarkModeChanged: _handleDarkModeChange,
-      currentFontSizeMultiplier: _fontSizeMultiplier,
-      onFontSizeMultiplierChanged: _handleFontSizeChange,
-      appVersion: _appVersion, // 로드된 앱 버전 정보를 UI 위젯에 전달
+    return BackToMainScope(
+      child: AppSettingsScreenUI(
+        isDarkModeEnabled: _isDarkModeEnabled,
+        onDarkModeChanged: _handleDarkModeChange,
+        currentFontSizeMultiplier: _fontSizeMultiplier,
+        onFontSizeMultiplierChanged: _handleFontSizeChange,
+        appVersion: _appVersion, // 로드된 앱 버전 정보를 UI 위젯에 전달
+      ),
     );
   }
 }

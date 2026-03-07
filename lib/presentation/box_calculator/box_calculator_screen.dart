@@ -1,6 +1,7 @@
 // lib/presentation/box_calculator/box_calculator_screen.dart
 import 'package:flutter/material.dart';
 import '../../domain/logic/box_calculator_logic.dart';
+import '../../core/widgets/back_to_main_scope.dart';
 import 'box_calculator_screen_ui.dart';
 
 class BoxCalculatorScreen extends StatefulWidget {
@@ -56,16 +57,18 @@ class _BoxCalculatorScreenState extends State<BoxCalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     // BoxCalculatorScreenUI에 필요한 모든 데이터를 전달합니다.
-    return BoxCalculatorScreenUI(
-      normalBoxCountController: _normalBoxCountController,
-      rareBoxCountController: _rareBoxCountController,
-      legendaryBoxCountController: _legendaryBoxCountController,
-      results: _results,
-      totalGoldCost: _totalGoldCost,
-      onCalculatePressed: () {
-        _calculate(); // 계산 로직 호출
-        FocusScope.of(context).unfocus(); // 계산 버튼을 눌렀을 때만 키보드 숨기기
-      },
+    return BackToMainScope(
+      child: BoxCalculatorScreenUI(
+        normalBoxCountController: _normalBoxCountController,
+        rareBoxCountController: _rareBoxCountController,
+        legendaryBoxCountController: _legendaryBoxCountController,
+        results: _results,
+        totalGoldCost: _totalGoldCost,
+        onCalculatePressed: () {
+          _calculate(); // 계산 로직 호출
+          FocusScope.of(context).unfocus(); // 계산 버튼을 눌렀을 때만 키보드 숨기기
+        },
+      ),
     );
   }
 }
