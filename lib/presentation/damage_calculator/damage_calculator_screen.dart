@@ -1256,6 +1256,7 @@ class _DamageCalculatorScreenState extends State<DamageCalculatorScreen> {
         ],
       ),
     );
+    );
   }
 
   Widget _buildInputFields() {
@@ -1544,7 +1545,6 @@ class BuffSelectionDialog extends StatelessWidget {
             )
           ],
         ),
-      ),
       ),
     );
   }
