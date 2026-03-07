@@ -4,5 +4,13 @@
       "*"
     ]
   },
-  "java.configuration.updateBuildConfiguration": "interactive"
+  // Swift와 Java 확장 비활성화 (Flutter 프로젝트에는 불필요)
+  "swift.disableAutoResolve": true,
+  "swift.autoGenerateLaunchConfigurations": false,
+  "java.enabled": false,
+  "java.jdt.ls.java.home": null,
+  "redhat.telemetry.enabled": false,
+  // 자동 작업 실행 방지
+  "task.problemMatchers.neverMatch": ["*"],
+  "task.autoRunTaskName": ""
 }

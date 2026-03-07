@@ -6,7 +6,7 @@ import 'presentation/loading/loading_screen.dart';
 import 'core/services/settings_service.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
+//커밋 테스트ㄴㄴㄴㅇㄹsdfㄴㅇㄹㄴㅇㄹㄴㅇㄹㄴㅇ
 void main() async {
   // async로 변경
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 바인딩 초기화

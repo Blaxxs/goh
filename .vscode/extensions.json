@@ -1,3 +1,4 @@
 {
-    "recommendations": []
+    "recommendations": [],
+    "unwantedRecommendations": ["sswg.swift-lang"]
 }
