@@ -4,6 +4,7 @@ import 'dart:math';
 import '../../data/models/accessory.dart';
 import '../accessory/accessory_screen.dart';
 import '../../core/constants/accessory_constants.dart'; // AccessoryOptionNames 사용
+import '../../core/widgets/back_to_main_scope.dart';
 import 'accessory_option_change_screen_ui.dart';
 
 // Define the actions a user can take
@@ -316,17 +317,19 @@ class _AccessoryOptionChangeScreenState
 
   @override
   Widget build(BuildContext context) {
-    return AccessoryOptionChangeScreenUI(
-      selectedAccessory: _selectedAccessory,
-      currentOptions: _currentOptions,
-      selectedAction: _selectedAction,
-      onSelectAccessoryPressed: () => _selectAccessory(context),
-      onResetScreenPressed: _resetScreenState,
-      onActionSelected: _handleActionSelected,
-      totalSoulStonesConsumed: _totalSoulStonesConsumed,
-      totalGrindstonesConsumed: _totalGrindstonesConsumed,
-      totalRainbowAnvilsConsumed: _totalRainbowAnvilsConsumed,
-      total9EnhanceAccessoriesConsumed: _total9EnhanceAccessoriesConsumed,
+    return BackToMainScope(
+      child: AccessoryOptionChangeScreenUI(
+        selectedAccessory: _selectedAccessory,
+        currentOptions: _currentOptions,
+        selectedAction: _selectedAction,
+        onSelectAccessoryPressed: () => _selectAccessory(context),
+        onResetScreenPressed: _resetScreenState,
+        onActionSelected: _handleActionSelected,
+        totalSoulStonesConsumed: _totalSoulStonesConsumed,
+        totalGrindstonesConsumed: _totalGrindstonesConsumed,
+        totalRainbowAnvilsConsumed: _totalRainbowAnvilsConsumed,
+        total9EnhanceAccessoriesConsumed: _total9EnhanceAccessoriesConsumed,
+      ),
     );
   }
 }

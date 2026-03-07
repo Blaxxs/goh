@@ -1,6 +1,7 @@
 // lib/presentation/simulator/exploration_option_simulation_screen.dart
 import 'package:flutter/material.dart';
 import 'dart:math';
+import '../../core/widgets/back_to_main_scope.dart';
 import 'exploration_option_simulation_screen_ui.dart';
 
 /// 탐 옵션 등급
@@ -647,26 +648,28 @@ class _ExplorationOptionSimulationScreenState
 
   @override
   Widget build(BuildContext context) {
-    return ExplorationOptionSimulationScreenUI(
-      explorationLevel: _explorationLevel,
-      slotOptions: _slotOptions,
-      slotGrades: _slotGrades,
-      slotLocked: _slotLocked,
-      protectionGrade: _protectionGrade,
-      autoTargetGrade: _autoTargetGrade,
-      totalResourceConsumed: _totalResourceConsumed,
-      simulationLog: _simulationLog,
-      isSimulating: _isSimulating,
-      isAutoRunning: _isAutoRunning,
-      gradeCount: _gradeCount,
-      onSetExplorationLevel: _setExplorationLevel,
-      onSetProtectionGrade: _setProtectionGrade,
-      onSetAutoTargetGrade: _setAutoTargetGrade,
-      onStartAutoChange: _startAutoChange,
-      onStopAutoChange: _stopAutoChange,
-      onToggleSlotLock: _toggleSlotLock,
-      onRunAllSlotsSimulation: _runAllSlotsSimulation,
-      onResetSimulation: _resetSimulation,
+    return BackToMainScope(
+      child: ExplorationOptionSimulationScreenUI(
+        explorationLevel: _explorationLevel,
+        slotOptions: _slotOptions,
+        slotGrades: _slotGrades,
+        slotLocked: _slotLocked,
+        protectionGrade: _protectionGrade,
+        autoTargetGrade: _autoTargetGrade,
+        totalResourceConsumed: _totalResourceConsumed,
+        simulationLog: _simulationLog,
+        isSimulating: _isSimulating,
+        isAutoRunning: _isAutoRunning,
+        gradeCount: _gradeCount,
+        onSetExplorationLevel: _setExplorationLevel,
+        onSetProtectionGrade: _setProtectionGrade,
+        onSetAutoTargetGrade: _setAutoTargetGrade,
+        onStartAutoChange: _startAutoChange,
+        onStopAutoChange: _stopAutoChange,
+        onToggleSlotLock: _toggleSlotLock,
+        onRunAllSlotsSimulation: _runAllSlotsSimulation,
+        onResetSimulation: _resetSimulation,
+      ),
     );
   }
 }
