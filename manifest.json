@@ -1,7 +1,8 @@
 {
     "name": "GOH_계산기",
     "short_name": "GOH_계산기",
-    "start_url": ".",
+    "start_url": "/goh/",
+    "scope": "/goh/",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
