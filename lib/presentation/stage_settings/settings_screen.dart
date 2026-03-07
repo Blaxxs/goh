@@ -157,14 +157,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // SettingsScreenUI는 Scaffold를 포함하고 있으므로,
     // SettingsScreen이 별도의 Scaffold를 가질 필요는 없습니다.
     // SettingsScreenUI에 Drawer와 AppBar가 이미 구성되어 있습니다.
-    return SettingsScreenUI(
-      formKey: _formKey,
-      teamLevelController: _teamLevelController,
-      dalgijiLevelController: _dalgijiLevelController,
-      clearTimeControllers: _clearTimeControllers,
-      selectedVipLevel: _selectedVipLevel,
-      selectedJjolCounts: _selectedJjolCounts,
-      onVipLevelChanged: (value) {
+    return BackToMainScope(
+      child: SettingsScreenUI(
+        formKey: _formKey,
+        teamLevelController: _teamLevelController,
+        dalgijiLevelController: _dalgijiLevelController,
+        clearTimeControllers: _clearTimeControllers,
+        selectedVipLevel: _selectedVipLevel,
+        selectedJjolCounts: _selectedJjolCounts,
+        onVipLevelChanged: (value) {
         setState(() {
           _selectedVipLevel = value;
         });
@@ -179,6 +180,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       // onMenuPressed 콜백은 SettingsScreenUI 내부에서 Drawer를 열도록 수정되었으므로
       // 여기서는 전달할 필요가 없습니다.
       isSetupMode: widget.isSetupMode, // isSetupMode 전달
+      ),
+    );
     );
   }
 }
