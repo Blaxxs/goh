@@ -72,10 +72,11 @@ class _MainScreenState extends State<MainScreen> {
           return;
         }
 
-        // Navigator 스택을 확인 - 하위 화면이 있으면 정상 pop 허용
-        final navigator = Navigator.of(context);
-        if (navigator.canPop()) {
-          navigator.pop();
+        // MainScreen이 현재 활성 화면인지 확인
+        final route = ModalRoute.of(context);
+        if (route != null && !route.isCurrent) {
+          // MainScreen이 현재 화면이 아니면 (하위 화면이 있으면) 아무것도 안 함
+          // 하위 화면의 기본 뒤로가기가 처리됨
           return;
         }
 
