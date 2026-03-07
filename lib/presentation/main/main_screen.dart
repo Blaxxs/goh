@@ -63,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Future<bool> _onWillPop() async {
+  Future<bool> _handleBackPress() async {
     final now = DateTime.now();
     const backPressDuration = Duration(seconds: 2);
 
@@ -73,13 +73,15 @@ class _MainScreenState extends State<MainScreen> {
         _lastBackPressed = now;
       });
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
-          duration: Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
       return false; // 뒤로가기 차단
     }
     return true; // 앱 종료 허용
@@ -87,9 +89,18 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+        
+        final shouldPop = await _handleBackPress();
+        if (shouldPop && mounted) {
+          SystemNavigator.pop();
+        }
+      },
       child: MainScreenUI(
         onCalculatorPressed: () {
           if (_areEssentialSettingsSet()) {
