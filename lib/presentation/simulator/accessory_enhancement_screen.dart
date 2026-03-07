@@ -4,6 +4,7 @@ import 'dart:math'; // Random 사용
 import '../../data/models/accessory.dart'; // Accessory model
 import '../accessory/accessory_screen.dart'; // To use as a picker
 import '../../core/constants/accessory_constants.dart'; // AccessoryDataManager().allAccessories 사용
+import '../../core/widgets/back_to_main_scope.dart';
 import 'accessory_enhancement_screen_ui.dart';
 
 class AccessoryEnhancementScreen extends StatefulWidget {
@@ -290,8 +291,9 @@ class _AccessoryEnhancementScreenState
     debugPrint(
         "[AccessoryEnhancementScreen] Building UI. Selected Accessory: ${_selectedAccessory?.name ?? 'None'}");
 
-    return AccessoryEnhancementScreenUI(
-      selectedAccessory: _selectedAccessory,
+    return BackToMainScope(
+      child: AccessoryEnhancementScreenUI(
+        selectedAccessory: _selectedAccessory,
       onSelectAccessoryPressed: () => _selectAccessory(context),
       currentEnhancementLevel: _currentEnhancementLevel,
       onCurrentEnhancementLevelChanged: (int? newValue) {
@@ -364,13 +366,14 @@ class _AccessoryEnhancementScreenState
       totalConsumedGold: _totalConsumedGold,
       onResetScreenPressed: _resetScreenState, // 리셋 콜백 전달
       selectedOptionCount: _selectedOptionCount,
-      onOptionCountChanged: (int? newValue) {
+        onOptionCountChanged: (int? newValue) {
         if (newValue != null && mounted) {
           setState(() {
             _selectedOptionCount = newValue;
           });
         }
       },
+      ),
     );
   }
 }
