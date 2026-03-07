@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import '../../core/widgets/back_to_main_scope.dart';
 
 import 'pouch_simulation_screen_ui.dart';
 

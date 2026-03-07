@@ -1,7 +1,6 @@
 // lib/presentation/simulator/exploration_option_simulation_screen.dart
 import 'package:flutter/material.dart';
 import 'dart:math';
-import '../../core/widgets/back_to_main_scope.dart';
 import 'exploration_option_simulation_screen_ui.dart';
 
 /// 탐 옵션 등급

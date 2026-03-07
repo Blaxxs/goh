@@ -4,7 +4,6 @@ import 'dart:math';
 import '../../data/models/accessory.dart';
 import '../accessory/accessory_screen.dart';
 import '../../core/constants/accessory_constants.dart'; // AccessoryOptionNames 사용
-import '../../core/widgets/back_to_main_scope.dart';
 import 'accessory_option_change_screen_ui.dart';
 
 // Define the actions a user can take

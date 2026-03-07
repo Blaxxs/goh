@@ -165,9 +165,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           searchOption: _searchOption,
           searchOptions: _searchOptions,
           onSearchOptionChanged: _handleSearchOptionChanged,
-        ),
-      ),
-    );
+        );
   }
 }
 
