@@ -63,75 +63,37 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Future<bool> _onWillPop() async {
-    final now = DateTime.now();
-    const backPressDuration = Duration(seconds: 2);
-
-    if (_lastBackPressed == null ||
-        now.difference(_lastBackPressed!) > backPressDuration) {
-      // 첫 번째 뒤로가기 또는 2초 이상 지남
-      setState(() {
-        _lastBackPressed = now;
-      });
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
-            duration: Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
-      }
-      return false; // 앱 종료 안 함
-    }
-    
-    // 2초 이내 두 번째 뒤로가기
-    return true; // 앱 종료
-  }
-    final settings = SettingsService.instance.stageSettings;
-    return settings.teamLevel != null &&
-        settings.teamLevel!.isNotEmpty &&
-        settings.dalgijiLevel != null &&
-        settings.dalgijiLevel!.isNotEmpty &&
-        settings.vipLevel != null &&
-        settings.vipLevel!.isNotEmpty;
-  }
-
-  void _navigateToScreen(BuildContext context, Widget screen) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => screen),
-    );
-  }
-
-  void _showSettingsSnackbar(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              const SettingsScreen(isSetupMode: true)), // isSetupMode 추가
-    ).then((_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('팀 레벨, 달기지 레벨, VIP 등급을 먼저 설정해주세요.'),
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop, result) {
-        // 웹앱에서 뒤로 가기를 눌렀을 때 원하는 동작을 정의할 수 있습니다.
-        // 여기서는 기본적으로 앱이 종료되지 않도록 합니다.
-        if (!didPop) {
-          // 필요하면 다이얼로그를 표시하거나 다른 작업 수행 가능
+      canPop: false, // 자동 pop 방지
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) {
+          return;
+        }
+
+        final now = DateTime.now();
+        const backPressDuration = Duration(seconds: 2);
+
+        if (_lastBackPressed == null ||
+            now.difference(_lastBackPressed!) > backPressDuration) {
+          // 첫 번째 뒤로가기 또는 2초 이상 지남
+          setState(() {
+            _lastBackPressed = now;
+          });
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
+                duration: Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        } else {
+          // 2초 이내 두 번째 뒤로가기 - 앱 종료
+          SystemNavigator.pop();
         }
       },
       child: MainScreenUI(
