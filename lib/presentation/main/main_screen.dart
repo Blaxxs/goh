@@ -1,5 +1,6 @@
 // lib/main_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemNavigator;
 import '../calculator/calculator_screen.dart';
 import '../stage_settings/settings_screen.dart'; // 스테이지 설정 화면
 import 'main_screen_ui.dart';
@@ -88,9 +89,37 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ignore: deprecated_member_use
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          return;
+        }
+
+        // 2번 누르기 로직
+        final now = DateTime.now();
+        const backPressDuration = Duration(seconds: 2);
+
+        if (_lastBackPressed == null ||
+            now.difference(_lastBackPressed!) > backPressDuration) {
+          setState(() {
+            _lastBackPressed = now;
+          });
+
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('뒤로가기 버튼을 한 번 더 누르면 종료됩니다.'),
+                duration: Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        } else {
+          // 2초 이내 다시 누르면 앱 종료
+          SystemNavigator.pop();
+        }
+      },
       child: MainScreenUI(
         onCalculatorPressed: () {
           if (_areEssentialSettingsSet()) {
