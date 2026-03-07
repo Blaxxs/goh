@@ -90,19 +90,12 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackButtonListener(
-      onBackButtonPressed: () async {
-        final navigator = Navigator.of(context);
-        
-        // 하위 화면이 있으면 먼저 pop
-        if (navigator.canPop()) {
-          navigator.pop();
-          return true; // 이벤트 처리됨
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop) {
+          _handleBackPress();
         }
-        
-        // MainScreen이 최상위 화면일 때만 커스텀 로직
-        _handleBackPress();
-        return true; // 이벤트 처리됨 (기본 동작 차단)
       },
       child: MainScreenUI(
         onCalculatorPressed: () {
