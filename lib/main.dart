@@ -4,9 +4,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'presentation/loading/loading_screen.dart';
 import 'core/services/settings_service.dart';
+import 'core/widgets/global_go_back_scope.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 //커밋 테스트
+
+final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
 void main() async {
   // async로 변경
   WidgetsFlutterBinding.ensureInitialized(); // Flutter 엔진 바인딩 초기화
@@ -390,6 +393,7 @@ class MyApp extends StatelessWidget {
           valueListenable: SettingsService.instance.fontSizeNotifier,
           builder: (_, double currentFontSizeMultiplier, __) {
             return MaterialApp(
+              navigatorKey: appNavigatorKey,
               title: 'GOH Calculator',
               // _buildTheme에서 context를 제거했으므로, 여기서도 제거합니다.
               theme: _buildTheme(Brightness.light, currentFontSizeMultiplier),
@@ -409,7 +413,15 @@ class MyApp extends StatelessWidget {
                 Locale('en', 'US'), // 기본 로케일로 영어도 포함하는 것이 좋습니다.
               ],
               debugShowCheckedModeBanner: false,
-              // 웹앱에서 뒤로 가기 처리를 위한 네비게이터 옵저버 추가
+              builder: (context, child) {
+                if (child == null) {
+                  return const SizedBox.shrink();
+                }
+                return GlobalGoBackScope(
+                  navigatorKey: appNavigatorKey,
+                  child: child,
+                );
+              },
             );
           },
         );
