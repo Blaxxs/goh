@@ -67,11 +67,19 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (bool didPop, dynamic result) {
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
         if (didPop) {
           return;
         }
 
+        // Navigator 스택을 확인 - 하위 화면이 있으면 정상 pop 허용
+        final navigator = Navigator.of(context);
+        if (navigator.canPop()) {
+          navigator.pop();
+          return;
+        }
+
+        // MainScreen이 최상위 화면일 때만 2회 뒤로가기 로직 실행
         final now = DateTime.now();
         const backPressDuration = Duration(seconds: 2);
 
