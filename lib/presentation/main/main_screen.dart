@@ -63,7 +63,7 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
-  Future<bool> _handleBackPress() async {
+  void _handleBackPress() {
     final now = DateTime.now();
     const backPressDuration = Duration(seconds: 2);
 
@@ -82,23 +82,19 @@ class _MainScreenState extends State<MainScreen> {
           ),
         );
       }
-      return false; // 뒤로가기 차단
+    } else {
+      // 2초 이내 두 번째 뒤로가기 - 앱 종료
+      SystemNavigator.pop();
     }
-    return true; // 앱 종료 허용
   }
 
   @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvoked: (bool didPop) async {
-        if (didPop) {
-          return;
-        }
-        
-        final shouldPop = await _handleBackPress();
-        if (shouldPop && mounted) {
-          SystemNavigator.pop();
+      onPopInvokedWithResult: (bool didPop, dynamic result) {
+        if (!didPop) {
+          _handleBackPress();
         }
       },
       child: MainScreenUI(
