@@ -4,6 +4,7 @@ import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
 import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
+import '../../core/widgets/back_to_main_scope.dart';
 import '../../core/constants/box_constants.dart';
 
 class AccessoryScreen extends StatefulWidget {
@@ -136,35 +137,38 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       return a.id.compareTo(b.id);
     });
 
-    return Scaffold(
-      drawer: const AppDrawer(currentScreen: AppScreen.accessory),
-      appBar: AppBar(
-        leading: Builder(
-          builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(ctx).openDrawer(),
+    return BackToMainScope(
+      enabled: !widget.isPickerMode,
+      child: Scaffold(
+        drawer: const AppDrawer(currentScreen: AppScreen.accessory),
+        appBar: AppBar(
+          leading: Builder(
+            builder: (ctx) => IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(ctx).openDrawer(),
+            ),
           ),
+          title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
         ),
-        title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
-      ),
-      body: AccessoryScreenUI(
-        searchController: _searchController,
-        filteredAccessories: displayList,
-        selectedPartFilter: _selectedPartFilter,
-        partFilterOptions: _partFilterOptions,
-        onPartFilterChanged: _handlePartFilterChanged,
-        onAccessoryTap: (ctx, acc) {
-          if (widget.isPickerMode) {
-            Navigator.of(context).pop(acc);
-          } else {
-            _showAccessoryDetails(ctx, acc);
-          }
-        },
-        currentSearchQuery: _searchQuery,
-        onClearSearch: _clearSearch,
-        searchOption: _searchOption,
-        searchOptions: _searchOptions,
-        onSearchOptionChanged: _handleSearchOptionChanged,
+        body: AccessoryScreenUI(
+          searchController: _searchController,
+          filteredAccessories: displayList,
+          selectedPartFilter: _selectedPartFilter,
+          partFilterOptions: _partFilterOptions,
+          onPartFilterChanged: _handlePartFilterChanged,
+          onAccessoryTap: (ctx, acc) {
+            if (widget.isPickerMode) {
+              Navigator.of(context).pop(acc);
+            } else {
+              _showAccessoryDetails(ctx, acc);
+            }
+          },
+          currentSearchQuery: _searchQuery,
+          onClearSearch: _clearSearch,
+          searchOption: _searchOption,
+          searchOptions: _searchOptions,
+          onSearchOptionChanged: _handleSearchOptionChanged,
+        ),
       ),
     );
   }
