@@ -14,6 +14,7 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   late final Future<void> _initializationFuture;
+  bool _hasNavigated = false;
 
   @override
   void initState() {
@@ -41,6 +42,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
     });
   }
 
+  void _navigateToMain() {
+    if (!_hasNavigated && mounted) {
+      _hasNavigated = true;
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => const MainScreen()),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<void>(
@@ -62,11 +72,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
             } else {
               // 성공 시: MainScreen으로 이동
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (context.mounted) {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (_) => const MainScreen()),
-                  );
-                }
+                _navigateToMain();
               });
               return _buildLoadingUI(); // 전환 중 로딩 UI 유지
             }
