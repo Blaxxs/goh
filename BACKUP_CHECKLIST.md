@@ -77,6 +77,14 @@ code --list-extensions > extensions.txt
 
 robocopy "c:\goh\test\goh_calculator\flutter_application" "D:\backup\flutter_application" /MIR /XD build .dart_tool android\.gradle ios\Pods
 
+또는 프로젝트 루트의 자동 스크립트를 사용:
+
+powershell -ExecutionPolicy Bypass -File .\backup_project.ps1 -DestinationRoot "D:\backup"
+
+.git 포함 백업이 필요하면:
+
+powershell -ExecutionPolicy Bypass -File .\backup_project.ps1 -DestinationRoot "D:\backup" -IncludeGit
+
 주의:
 - /MIR 는 대상 폴더를 원본과 동일하게 맞추므로, 대상 기존 파일이 삭제될 수 있음
 - 처음 백업은 빈 폴더를 대상으로 실행 권장
