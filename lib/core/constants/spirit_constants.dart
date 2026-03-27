@@ -25,7 +25,7 @@ class Spirit {
   final List<SpiritEffect> effects;
 
   const Spirit({
-    required this.name,
+    required this.name,//dd테스트ㅇㅇ
     required this.englishName,
     required this.imagePath,
     required this.effects,

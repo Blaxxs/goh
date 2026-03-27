@@ -1,4 +1,6 @@
 {
-    "recommendations": [],
+    "recommendations": [
+        "emeraldwalk.runonsave"
+    ],
     "unwantedRecommendations": ["sswg.swift-lang"]
 }
