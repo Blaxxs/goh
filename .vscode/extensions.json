@@ -1,6 +1,7 @@
 {
     "recommendations": [
-        "emeraldwalk.runonsave"
+        "gruntfuggly.triggertaskonsave",
+        "ms-ceintl.vscode-language-pack-ko"
     ],
     "unwantedRecommendations": ["sswg.swift-lang"]
 }
