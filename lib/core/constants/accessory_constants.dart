@@ -234,7 +234,7 @@ class AccessoryOptionNames {
   static const String hpFlat = '체력 증가';
   static const String defenseFlat = '방어력 증가';
   static const String hpRegenPerTurn = '매턴 체력 회복';
-  static const String summonAtkFlat = '소환수공격 증가';
+  static const String summonAtkFlat = '소환수공격력 증가';
   static const String rabbitMaxHpChancePercent = '토끼 최대체력 +1 확률 %증가';
   static const String spaceTravelReturnChancePercent = '우주여행 돌아올 확률 %증가';
 
