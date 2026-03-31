@@ -1,0 +1,16 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "accessories": {
+      ".read": true,
+      ".write": false
+    },
+
+    "message": {
+      ".read": true,
+      ".write": false
+    }
+  }
+}
