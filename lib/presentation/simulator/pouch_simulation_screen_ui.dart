@@ -426,6 +426,7 @@ class PouchSimulationScreenUI extends StatelessWidget {
       ],
     );
   }
+}
 
 class PouchResultDialog extends StatelessWidget {
   final PouchType pouchType;
