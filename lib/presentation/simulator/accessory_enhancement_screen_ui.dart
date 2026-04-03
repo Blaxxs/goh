@@ -1169,3 +1169,17 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
     );
   }
 } // AccessoryEnhancementScreenUI class ends here
+
+class _AidCompareRow {
+  final String name;
+  final double successRate;
+  final double expectedTries;
+  final int expectedStones;
+
+  _AidCompareRow({
+    required this.name,
+    required this.successRate,
+    required this.expectedTries,
+    required this.expectedStones,
+  });
+}
