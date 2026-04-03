@@ -48,6 +48,44 @@ class _MainScreenUIState extends State<MainScreenUI> {
   String _noticeMessage = "";
   bool _logoPrecached = false;
 
+  _MenuTileMetrics _calculateMenuTileMetrics(
+    BuildContext context,
+    double itemWidth,
+    List<String> labels,
+  ) {
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+          fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 1.2,
+          height: 1.05,
+        ) ??
+        const TextStyle(fontSize: 9.8, height: 1.05, fontWeight: FontWeight.w700);
+
+    final textWidth = (itemWidth - 12).clamp(24.0, itemWidth);
+    int maxLinesNeeded = 1;
+    for (final label in labels) {
+      final tp = TextPainter(
+        text: TextSpan(text: label, style: textStyle),
+        textDirection: TextDirection.ltr,
+        maxLines: 3,
+      )..layout(maxWidth: textWidth);
+      final lines = tp.computeLineMetrics().length;
+      if (lines > maxLinesNeeded) maxLinesNeeded = lines;
+    }
+
+    final int lineCount = maxLinesNeeded.clamp(1, 3);
+    final lineHeight =
+        (textStyle.fontSize ?? 9.8) * (textStyle.height ?? 1.05);
+    final rawHeight = 4 + 15 + 2 + (lineCount * lineHeight) + 4;
+    final height = rawHeight.clamp(48.0, 66.0);
+
+    return _MenuTileMetrics(
+      height: height,
+      maxLines: lineCount,
+      textStyle: textStyle,
+    );
+  }
+
   static const Map<String, IconData> _menuIcons = {
     '루프 계산기': Icons.calculate_rounded,
     '골드 효율 계산기': Icons.paid_rounded,
@@ -101,6 +139,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     required String text,
     required VoidCallback? onPressed,
     required double itemWidth,
+    required _MenuTileMetrics metrics,
     String? tooltip,
   }) {
     final theme = Theme.of(context);
@@ -114,7 +153,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 60,
+      height: metrics.height,
       child: Opacity(
         opacity: isEnabled ? 1.0 : 0.45,
         child: GlassPanel(
@@ -132,16 +171,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
               const SizedBox(height: 2),
               Text(
                 text,
-                maxLines: 2,
+                maxLines: metrics.maxLines,
                 overflow: TextOverflow.visible,
                 softWrap: true,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: textColor,
-                  fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 1.2,
-                  height: 1.05,
-                ),
+                style: metrics.textStyle.copyWith(color: textColor),
               ),
             ],
           ),
@@ -255,6 +289,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
       {'text': '스테이지 설정', 'onPressed': widget.onStageSettingsPressed, 'needsSettings': false},
     ];
 
+    final allMenuLabels = [
+      ...calculatorButtons.map((e) => e['text'] as String),
+      ...toolButtons.map((e) => e['text'] as String),
+      ...simulatorButtons.map((e) => e['text'] as String),
+      ...settingButtons.map((e) => e['text'] as String),
+    ];
+    final menuTileMetrics =
+        _calculateMenuTileMetrics(context, menuItemWidth, allMenuLabels);
+
     Widget buildSection(String label, List<Map<String, dynamic>> buttons) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,6 +313,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 text: config['text'] as String,
                 onPressed: onPressed,
                 itemWidth: menuItemWidth,
+                metrics: menuTileMetrics,
                 tooltip: config['tooltip'] as String?,
               );
             }).toList(),
@@ -409,4 +453,16 @@ class _MainScreenUIState extends State<MainScreenUI> {
       ),
     );
   }
+}
+
+class _MenuTileMetrics {
+  final double height;
+  final int maxLines;
+  final TextStyle textStyle;
+
+  _MenuTileMetrics({
+    required this.height,
+    required this.maxLines,
+    required this.textStyle,
+  });
 }
