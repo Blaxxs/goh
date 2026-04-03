@@ -167,8 +167,8 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       if (r.settingsIncomplete) continue;
       buffer.writeln('▶ ${r.stageName}');
       buffer.writeln(
-          '  영혼석: ${r.showSoulStonesPerMinute ? r.soulStonesPerMinStr : r.soulStonesStr}');
-      buffer.writeln('  골드: ${r.loopGoldStr}');
+          '  영혼석: ${_showSoulStonesPerMinute ? r.soulStonesPerMinStr : r.soulStonesStr}');
+      buffer.writeln('  골드: ${_showGoldPerMinute ? r.goldPerMinStr : r.loopGoldStr}');
       buffer.writeln('');
     }
     buffer.writeln('— GOH Calculator 앱에서 공유됨');
