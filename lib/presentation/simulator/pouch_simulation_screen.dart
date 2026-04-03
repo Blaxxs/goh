@@ -223,6 +223,7 @@ class _PouchSimulationScreenState extends State<PouchSimulationScreen> {
         customDrawCountController: _customDrawCountController,
         isSimulating: _isSimulating,
         openLogs: _openLogs,
+        currentItems: _currentItems,
         onTypeChanged: (value) {
         if (value == null) return;
         setState(() {
