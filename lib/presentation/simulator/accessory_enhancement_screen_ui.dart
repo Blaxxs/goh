@@ -668,6 +668,10 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 24), // 강화 버튼 위 간격 조정 (32 -> 24)
+                    // 보조제별 기대 비용 비교 표
+                    if (currentEnhancementLevel < 9)
+                      _buildAidComparisonTable(context, theme, stoneCost, formatter),
+                    const SizedBox(height: 16),
                     // 9. 강화 버튼
                     isAutoEnhancing
                         ? ElevatedButton.icon(
