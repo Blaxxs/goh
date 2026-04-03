@@ -222,6 +222,16 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       ),
     );
   }
+
+  void _showSetBuilderDialog() {
+    final accessories = AccessoryDataManager().allAccessories;
+    if (accessories.isEmpty) return;
+
+    showDialog(
+      context: context,
+      builder: (_) => _AccessorySetBuilderDialog(allAccessories: accessories),
+    );
+  }
 }
 
 // 세트 옵션 단계 네비게이션을 지원하는 상세 다이얼로그
@@ -805,5 +815,277 @@ class _AccessoryCompareDialog extends StatelessWidget {
       ),
     );
   }
+}
+
+class _AccessorySetBuilderDialog extends StatefulWidget {
+  final List<Accessory> allAccessories;
+
+  const _AccessorySetBuilderDialog({required this.allAccessories});
+
+  @override
+  State<_AccessorySetBuilderDialog> createState() =>
+      _AccessorySetBuilderDialogState();
+}
+
+class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> {
+  late final List<String> _parts;
+  late Map<String, Accessory?> _selectedByPart;
+  int _setStage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _parts = widget.allAccessories.map((e) => e.part).toSet().toList()..sort();
+    _selectedByPart = {for (final part in _parts) part: null};
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final selected = _selectedByPart.values.whereType<Accessory>().toList();
+    final optionSummary = _buildOptionSummary(selected);
+    final setStatus = _buildSetStatus(selected);
+
+    return AlertDialog(
+      title: const Text('세트 빌더', style: TextStyle(fontWeight: FontWeight.bold)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('부위별 악세사리 선택', style: theme.textTheme.titleSmall),
+              const SizedBox(height: 8),
+              ..._parts.map((part) {
+                final partItems = widget.allAccessories
+                    .where((a) => a.part == part)
+                    .toList()
+                  ..sort((a, b) => a.name.compareTo(b.name));
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: DropdownButtonFormField<Accessory?>(
+                    value: _selectedByPart[part],
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: part,
+                      border: const OutlineInputBorder(),
+                      contentPadding:
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    ),
+                    items: [
+                      const DropdownMenuItem<Accessory?>(
+                        value: null,
+                        child: Text('선택 안함'),
+                      ),
+                      ...partItems.map(
+                        (acc) => DropdownMenuItem<Accessory?>(
+                          value: acc,
+                          child: Text(acc.name, overflow: TextOverflow.ellipsis),
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedByPart[part] = value;
+                      });
+                    },
+                  ),
+                );
+              }),
+              const SizedBox(height: 8),
+              Text('선택된 개수: ${selected.length}/${_parts.length}',
+                  style: theme.textTheme.bodySmall),
+              const Divider(height: 20),
+              Text('합산 옵션',
+                  style: theme.textTheme.titleSmall
+                      ?.copyWith(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
+              if (optionSummary.isEmpty)
+                Text('선택된 악세사리 옵션이 없습니다.', style: theme.textTheme.bodySmall)
+              else
+                ...optionSummary.take(12).map((row) => Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Row(
+                        children: [
+                          Expanded(child: Text(row.name, style: theme.textTheme.bodySmall)),
+                          Text(row.displayValue,
+                              style: theme.textTheme.bodySmall
+                                  ?.copyWith(fontWeight: FontWeight.w700)),
+                        ],
+                      ),
+                    )),
+              const Divider(height: 20),
+              Row(
+                children: [
+                  Text('세트 효과',
+                      style: theme.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.bold)),
+                  const Spacer(),
+                  Text('단계: $_setStage', style: theme.textTheme.bodySmall),
+                ],
+              ),
+              Slider(
+                value: _setStage.toDouble(),
+                min: 0,
+                max: 18,
+                divisions: 18,
+                label: '$_setStage',
+                onChanged: (v) => setState(() => _setStage = v.round()),
+              ),
+              if (setStatus.isEmpty)
+                Text('관련 세트 옵션이 없습니다.', style: theme.textTheme.bodySmall)
+              else
+                ...setStatus.map((set) {
+                  final color = set.active ? Colors.green[700] : theme.hintColor;
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: theme.dividerColor),
+                      borderRadius: BorderRadius.circular(8),
+                      color: set.active
+                          ? theme.colorScheme.primary.withAlpha(20)
+                          : null,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${set.setName} ${set.active ? '(발동)' : '(미발동)'}',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                        ),
+                        if (!set.active && set.missingRequired.isNotEmpty)
+                          Text(
+                            '부족: ${set.missingRequired.join(', ')}',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        const SizedBox(height: 4),
+                        ...set.effects.map(
+                          (e) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 1),
+                            child: Text(
+                              '${e.optionName}: ${_resolveStageValue(e, _setStage)}',
+                              style: theme.textTheme.bodySmall,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('닫기'),
+        ),
+      ],
+    );
+  }
+
+  List<_OptionSummary> _buildOptionSummary(List<Accessory> selected) {
+    final sums = <String, double>{};
+    final isPercent = <String, bool>{};
+
+    for (final acc in selected) {
+      for (final option in acc.options) {
+        final value = _parseFirstNumber(option.optionValue);
+        if (value == null) continue;
+        sums[option.optionName] = (sums[option.optionName] ?? 0) + value;
+        if (option.optionValue.contains('%')) {
+          isPercent[option.optionName] = true;
+        }
+      }
+    }
+
+    final rows = sums.entries
+        .map((e) => _OptionSummary(
+              name: e.key,
+              value: e.value,
+              percent: isPercent[e.key] ?? false,
+            ))
+        .toList();
+    rows.sort((a, b) => b.value.abs().compareTo(a.value.abs()));
+    return rows;
+  }
+
+  List<_SetStatus> _buildSetStatus(List<Accessory> selected) {
+    final selectedKeys = <String>{
+      ...selected.map((a) => a.id),
+      ...selected.map((a) => a.name),
+    };
+
+    final map = <String, AccessorySetOption>{};
+    for (final acc in selected) {
+      for (final set in acc.setOptions) {
+        map.putIfAbsent(set.setId, () => set);
+      }
+    }
+
+    final result = <_SetStatus>[];
+    for (final set in map.values) {
+      final missing = set.requiredAccessories
+          .where((req) => !selectedKeys.contains(req))
+          .toList();
+      result.add(_SetStatus(
+        setName: set.setName,
+        active: missing.isEmpty,
+        missingRequired: missing,
+        effects: set.effects,
+      ));
+    }
+    result.sort((a, b) => b.active.toString().compareTo(a.active.toString()));
+    return result;
+  }
+
+  String _resolveStageValue(SetOptionEffect effect, int stage) {
+    return effect.stageValues[stage.toString()] ??
+        effect.stageValues['0'] ??
+        '-';
+  }
+
+  double? _parseFirstNumber(String text) {
+    final match = RegExp(r'[-+]?\d+(?:\.\d+)?').firstMatch(text.replaceAll(',', ''));
+    if (match == null) return null;
+    return double.tryParse(match.group(0)!);
+  }
+}
+
+class _OptionSummary {
+  final String name;
+  final double value;
+  final bool percent;
+
+  _OptionSummary({
+    required this.name,
+    required this.value,
+    required this.percent,
+  });
+
+  String get displayValue {
+    final rounded = value % 1 == 0 ? value.toStringAsFixed(0) : value.toStringAsFixed(2);
+    return percent ? '$rounded%' : rounded;
+  }
+}
+
+class _SetStatus {
+  final String setName;
+  final bool active;
+  final List<String> missingRequired;
+  final List<SetOptionEffect> effects;
+
+  _SetStatus({
+    required this.setName,
+    required this.active,
+    required this.missingRequired,
+    required this.effects,
+  });
 }
 
