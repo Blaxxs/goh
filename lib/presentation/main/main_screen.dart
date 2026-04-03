@@ -122,6 +122,16 @@ class _MainScreenState extends State<MainScreen> {
         onAppSettingsPressed: () {
           _navigateToScreen(context, const AppSettingsScreen());
         },
+        onReverseCalculatorPressed: () {
+          if (_areEssentialSettingsSet()) {
+            _navigateToScreen(context, const ReverseCalculatorScreen());
+          } else {
+            _showSettingsSnackbar(context);
+          }
+        },
+        onStaminaTimerPressed: () {
+          _navigateToScreen(context, const StaminaTimerScreen());
+        },
         settingsService: SettingsService.instance,
       );
   }
