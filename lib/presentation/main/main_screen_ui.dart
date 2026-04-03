@@ -47,7 +47,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
   String _noticeMessage = "";
   bool _logoPrecached = false;
-  bool _showAdvancedMenus = false;
 
   static const Map<String, IconData> _menuIcons = {
     '루프 계산기': Icons.calculate_rounded,
@@ -115,6 +114,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     Widget button = SizedBox(
       width: itemWidth,
+      height: 72,
       child: Opacity(
         opacity: isEnabled ? 1.0 : 0.45,
         child: GlassPanel(
@@ -132,13 +132,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
               const SizedBox(height: 4),
               Text(
                 text,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                overflow: TextOverflow.visible,
+                softWrap: true,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: textColor,
-                  fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.7,
+                  fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 1.0,
+                  height: 1.05,
                 ),
               ),
             ],
@@ -211,12 +213,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double topPadding = mediaQuery.padding.top;
     final Size screenSize = MediaQuery.of(context).size;
     final int columns = screenSize.width >= 900
-      ? 7
+      ? 6
         : screenSize.width >= 650
-        ? 6
+        ? 5
             : screenSize.width >= 420
-          ? 5
-          : 4;
+          ? 4
+          : 3;
     const double horizontalInset = 20;
     const double menuGap = 6;
     final double availableWidth =
@@ -394,33 +396,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
                       children: [
                         buildSection('계산기', calculatorButtons),
                         buildSection('도구 / 기록', toolButtons),
-                        Row(
-                          children: [
-                            TextButton.icon(
-                              onPressed: () {
-                                setState(() {
-                                  _showAdvancedMenus = !_showAdvancedMenus;
-                                });
-                              },
-                              icon: Icon(
-                                _showAdvancedMenus
-                                    ? Icons.expand_less_rounded
-                                    : Icons.expand_more_rounded,
-                                size: 18,
-                              ),
-                              label: Text(
-                                _showAdvancedMenus
-                                    ? '시뮬레이터/설정 접기'
-                                    : '시뮬레이터/설정 펼치기',
-                                style: theme.textTheme.labelSmall,
-                              ),
-                            ),
-                          ],
-                        ),
-                        if (_showAdvancedMenus) ...[
-                          buildSection('시뮬레이터', simulatorButtons),
-                          buildSection('설정', settingButtons),
-                        ],
+                        buildSection('시뮬레이터', simulatorButtons),
+                        buildSection('설정', settingButtons),
                       ],
                     ),
                   ),
