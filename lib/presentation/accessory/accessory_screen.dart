@@ -150,6 +150,28 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
             ),
           ),
           title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
+          actions: [
+            if (!widget.isPickerMode) ...[
+              if (_compareMode && _compareList.length == 2)
+                TextButton.icon(
+                  onPressed: _showCompareDialog,
+                  icon: const Icon(Icons.compare_arrows_rounded),
+                  label: const Text('비교'),
+                ),
+              IconButton(
+                icon: Icon(
+                  _compareMode ? Icons.close_rounded : Icons.compare_rounded,
+                ),
+                tooltip: _compareMode ? '비교 모드 끄기' : '비교 모드 켜기',
+                onPressed: () {
+                  setState(() {
+                    _compareMode = !_compareMode;
+                    _compareList.clear();
+                  });
+                },
+              ),
+            ],
+          ],
         ),
         body: AccessoryScreenUI(
           searchController: _searchController,
@@ -160,6 +182,16 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           onAccessoryTap: (ctx, acc) {
             if (widget.isPickerMode) {
               Navigator.of(context).pop(acc);
+            } else if (_compareMode) {
+              setState(() {
+                if (_compareList.contains(acc)) {
+                  _compareList.remove(acc);
+                } else if (_compareList.length < 2) {
+                  _compareList.add(acc);
+                } else {
+                  _compareList[1] = acc;
+                }
+              });
             } else {
               _showAccessoryDetails(ctx, acc);
             }
@@ -169,8 +201,21 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           searchOption: _searchOption,
           searchOptions: _searchOptions,
           onSearchOptionChanged: _handleSearchOptionChanged,
+          compareMode: _compareMode,
+          compareList: _compareList,
         ),
       );
+  }
+
+  void _showCompareDialog() {
+    if (_compareList.length != 2) return;
+    showDialog(
+      context: context,
+      builder: (_) => _AccessoryCompareDialog(
+        a: _compareList[0],
+        b: _compareList[1],
+      ),
+    );
   }
 }
 
