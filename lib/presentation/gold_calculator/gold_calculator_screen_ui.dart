@@ -40,6 +40,7 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
   final bool hideUnconfiguredStages; // "간략히" 보기 상태 필드 추가
   final ValueChanged<bool> onHideUnconfiguredStagesChanged; // 콜백 필드 추가
   final VoidCallback? onSharePressed; // 공유 버튼 콜백
+  final bool settingsComplete;
 
   final NumberFormat _integerFormatter = NumberFormat('#,##0');
 
@@ -71,6 +72,7 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
     required this.onSortOptionChanged,
     this.onManualTimeSubmitted,
     this.onSharePressed,
+    required this.settingsComplete,
   });
 
   // 설정 토글 위젯 수정: 스위치를 텍스트 아래로 이동
@@ -190,6 +192,30 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
+                  if (!settingsComplete)
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: Card(
+                        color: theme.colorScheme.errorContainer,
+                        child: ListTile(
+                          dense: true,
+                          leading: Icon(Icons.warning_amber_rounded,
+                              color: theme.colorScheme.error),
+                          title: Text(
+                            '스테이지 설정 전에는 정확한 결과를 볼 수 없습니다.',
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onErrorContainer,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          trailing: TextButton(
+                            onPressed: onStageSettingsPressed,
+                            child: const Text('설정하기'),
+                          ),
+                        ),
+                      ),
+                    ),
                   SizedBox(
                     height: inputFieldHeight,
                     child: Row(

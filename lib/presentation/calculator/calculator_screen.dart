@@ -693,6 +693,16 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     }
   }
 
+  bool _areEssentialSettingsSet() {
+    final settings = SettingsService.instance.stageSettings;
+    return settings.teamLevel != null &&
+        settings.teamLevel!.isNotEmpty &&
+        settings.dalgijiLevel != null &&
+        settings.dalgijiLevel!.isNotEmpty &&
+        settings.vipLevel != null &&
+        settings.vipLevel!.isNotEmpty;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -762,6 +772,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           hideUnconfiguredStages: _hideUnconfiguredStages,
           onHideUnconfiguredStagesChanged: _handleHideUnconfiguredStagesChanged,
           onSharePressed: _shareResults,
+          settingsComplete: _areEssentialSettingsSet(),
         ),
           if (_isLoading)
             Container(
