@@ -15,7 +15,6 @@ import '../simulator/accessory_enhancement_screen.dart';
 import '../simulator/accessory_option_change_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
 import '../simulator/pouch_simulation_screen.dart';
-import '../stamina_timer/stamina_timer_screen.dart';
 import '../reverse_calculator/reverse_calculator_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -26,17 +25,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  // 필수 설정 확인 함수
-  bool _areEssentialSettingsSet() {
-    final settings = SettingsService.instance.stageSettings;
-    return settings.teamLevel != null &&
-        settings.teamLevel!.isNotEmpty &&
-        settings.dalgijiLevel != null &&
-        settings.dalgijiLevel!.isNotEmpty &&
-        settings.vipLevel != null &&
-        settings.vipLevel!.isNotEmpty;
-  }
-
   void _navigateToScreen(BuildContext context, Widget screen) {
     Navigator.push(
       context,
@@ -44,50 +32,20 @@ class _MainScreenState extends State<MainScreen> {
     );
   }
 
-  void _showSettingsSnackbar(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) =>
-              const SettingsScreen(isSetupMode: true)), // isSetupMode 추가
-    ).then((_) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('팀 레벨, 달기지 레벨, VIP 등급을 먼저 설정해주세요.'),
-            duration: Duration(seconds: 3),
-          ),
-        );
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MainScreenUI(
         onCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const CalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
+          _navigateToScreen(context, const CalculatorScreen());
         },
         onGoldCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const GoldCalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
+          _navigateToScreen(context, const GoldCalculatorScreen());
         },
         onAccessoryPressed: () {
           _navigateToScreen(context, const AccessoryScreen());
         },
         onDamageCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const DamageCalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
+          _navigateToScreen(context, const DamageCalculatorScreen());
         },
         onJournalPressed: () {
           _navigateToScreen(context, const JournalScreen());
@@ -123,14 +81,7 @@ class _MainScreenState extends State<MainScreen> {
           _navigateToScreen(context, const AppSettingsScreen());
         },
         onReverseCalculatorPressed: () {
-          if (_areEssentialSettingsSet()) {
-            _navigateToScreen(context, const ReverseCalculatorScreen());
-          } else {
-            _showSettingsSnackbar(context);
-          }
-        },
-        onStaminaTimerPressed: () {
-          _navigateToScreen(context, const StaminaTimerScreen());
+          _navigateToScreen(context, const ReverseCalculatorScreen());
         },
         settingsService: SettingsService.instance,
       );
