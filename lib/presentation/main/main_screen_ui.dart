@@ -119,7 +119,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
         opacity: isEnabled ? 1.0 : 0.45,
         child: GlassPanel(
           onTap: isEnabled ? onPressed : null,
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
           borderRadius: const BorderRadius.all(Radius.circular(18)),
           child: Column(
