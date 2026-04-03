@@ -20,6 +20,8 @@ class PouchSimulationScreenUI extends StatelessWidget {
   final VoidCallback onSelectCustomDrawCount;
   final VoidCallback onRunSimulation;
   final VoidCallback onResetSimulation;
+  // 누적 확률 분석용 아이템 목록
+  final List<PouchItem> currentItems;
 
   PouchSimulationScreenUI({
     super.key,
@@ -35,6 +37,7 @@ class PouchSimulationScreenUI extends StatelessWidget {
     required this.onSelectCustomDrawCount,
     required this.onRunSimulation,
     required this.onResetSimulation,
+    required this.currentItems,
   });
 
   final NumberFormat _numberFormat = NumberFormat('#,##0');
