@@ -363,7 +363,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  '팀 레벨, 달기지 레벨, VIP 등급 설정이 필요합니다. 탭하여 설정하기 →',
+                                  '계산기 진입은 가능하지만, 팀/달기지/VIP 미설정 시 결과값이 정확히 표시되지 않습니다. 탭하여 설정하기 →',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.labelSmall?.copyWith(

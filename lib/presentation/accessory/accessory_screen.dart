@@ -876,12 +876,46 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
                     items: [
                       const DropdownMenuItem<Accessory?>(
                         value: null,
-                        child: Text('선택 안함'),
+                        child: Row(
+                          children: [
+                            Icon(Icons.remove_circle_outline, size: 18),
+                            SizedBox(width: 8),
+                            Text('선택 안함'),
+                          ],
+                        ),
                       ),
                       ...partItems.map(
                         (acc) => DropdownMenuItem<Accessory?>(
                           value: acc,
-                          child: Text(acc.name, overflow: TextOverflow.ellipsis),
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: CachedNetworkImage(
+                                  imageUrl: acc.imageUrl,
+                                  width: 20,
+                                  height: 20,
+                                  fit: BoxFit.cover,
+                                  placeholder: (_, __) => const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 10,
+                                        height: 10,
+                                        child: CircularProgressIndicator(strokeWidth: 1.5),
+                                      ),
+                                    ),
+                                  ),
+                                  errorWidget: (_, __, ___) => const Icon(Icons.image_not_supported_outlined, size: 16),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(acc.name, overflow: TextOverflow.ellipsis),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -896,6 +930,41 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
               const SizedBox(height: 8),
               Text('선택된 개수: ${selected.length}/${_parts.length}',
                   style: theme.textTheme.bodySmall),
+              if (selected.isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: selected
+                      .map(
+                        (acc) => Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: theme.dividerColor),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: CachedNetworkImage(
+                                  imageUrl: acc.imageUrl,
+                                  width: 18,
+                                  height: 18,
+                                  fit: BoxFit.cover,
+                                  errorWidget: (_, __, ___) => const Icon(Icons.broken_image, size: 14),
+                                ),
+                              ),
+                              const SizedBox(width: 5),
+                              Text(acc.name, style: theme.textTheme.labelSmall),
+                            ],
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ],
               const Divider(height: 20),
               Text('합산 옵션',
                   style: theme.textTheme.titleSmall
