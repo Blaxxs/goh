@@ -150,13 +150,13 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
   // 골드 계산 결과 공유
   void _shareResults() {
     if (_results.isEmpty) return;
+    final fmt = NumberFormat('#,##0');
     final buffer = StringBuffer();
     buffer.writeln('💰 골드 효율 계산기 결과');
     buffer.writeln('');
     for (final r in _results.take(10)) {
       buffer.writeln('▶ ${r.stageName}');
-      buffer.writeln('  최종 골드: ${r.totalGoldStr}');
-      buffer.writeln('  골드/분: ${r.goldPerMinStr}');
+      buffer.writeln('  예상 골드: ${fmt.format(r.totalExpectedGold)}');
       buffer.writeln('');
     }
     buffer.writeln('— GOH Calculator 앱에서 공유됨');
