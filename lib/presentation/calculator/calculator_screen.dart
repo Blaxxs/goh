@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 // import 'dart:math'; // 사용되지 않으므로 제거
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../domain/logic/calculator_logic.dart';
 import '../../core/constants/stage_constants.dart'; // stageNameList 사용
