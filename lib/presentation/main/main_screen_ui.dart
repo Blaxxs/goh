@@ -114,22 +114,22 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 72,
+      height: 60,
       child: Opacity(
         opacity: isEnabled ? 1.0 : 0.45,
         child: GlassPanel(
           onTap: isEnabled ? onPressed : null,
-          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
-          borderRadius: const BorderRadius.all(Radius.circular(18)),
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+          borderRadius: const BorderRadius.all(Radius.circular(14)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 _menuIcons[text] ?? Icons.apps_rounded,
-                size: 16,
+                size: 15,
                 color: color,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 2),
               Text(
                 text,
                 maxLines: 2,
@@ -139,7 +139,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: textColor,
-                  fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 1.0,
+                  fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 1.2,
                   height: 1.05,
                 ),
               ),
@@ -159,12 +159,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
   Widget _buildSectionHeader(BuildContext context, String label) {
     final theme = Theme.of(context);
     return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 4, left: 2),
+      padding: const EdgeInsets.only(top: 4, bottom: 2, left: 2),
       child: Row(
         children: [
           Container(
             width: 3,
-            height: 12,
+            height: 10,
             decoration: BoxDecoration(
               color: theme.colorScheme.primary,
               borderRadius: BorderRadius.circular(2),
@@ -220,7 +220,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
           ? 4
           : 3;
     const double horizontalInset = 20;
-    const double menuGap = 6;
+    const double menuGap = 4;
     final double availableWidth =
         screenSize.width - (horizontalInset * 2) - (menuGap * (columns - 1));
     final double menuItemWidth = availableWidth / columns;
@@ -389,7 +389,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   padding: EdgeInsets.fromLTRB(
                       horizontalInset, 0, horizontalInset, 14 + bottomPadding),
                   child: GlassPanel(
-                    padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
+                    padding: const EdgeInsets.fromLTRB(9, 4, 9, 8),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
