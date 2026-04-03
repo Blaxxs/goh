@@ -227,6 +227,7 @@ class CalculatorScreenUI extends StatelessWidget {
 
   final bool hideUnconfiguredStages; // 새로운 파라미터
   final ValueChanged<bool> onHideUnconfiguredStagesChanged; // 새로운 파라미터
+  final VoidCallback? onSharePressed; // 공유 버튼 콜백
 
   const CalculatorScreenUI({
     super.key,
@@ -265,6 +266,7 @@ class CalculatorScreenUI extends StatelessWidget {
     required this.onSortOptionChanged,
     required this.hideUnconfiguredStages, // 생성자에 추가
     required this.onHideUnconfiguredStagesChanged, // 생성자에 추가
+    this.onSharePressed,
   });
 
   @override
