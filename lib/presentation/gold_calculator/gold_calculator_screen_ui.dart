@@ -39,6 +39,7 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
 
   final bool hideUnconfiguredStages; // "간략히" 보기 상태 필드 추가
   final ValueChanged<bool> onHideUnconfiguredStagesChanged; // 콜백 필드 추가
+  final VoidCallback? onSharePressed; // 공유 버튼 콜백
 
   final NumberFormat _integerFormatter = NumberFormat('#,##0');
 
@@ -69,6 +70,7 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
     required this.selectedSortOption,
     required this.onSortOptionChanged,
     this.onManualTimeSubmitted,
+    this.onSharePressed,
   });
 
   // 설정 토글 위젯 수정: 스위치를 텍스트 아래로 이동
