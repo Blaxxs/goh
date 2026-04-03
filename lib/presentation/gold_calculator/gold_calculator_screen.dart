@@ -1,6 +1,7 @@
 // lib/gold_calculator_screen.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
 import 'gold_calculator_screen_ui.dart';
 import '../../domain/logic/gold_calculator_logic.dart';
 import '../../core/services/settings_service.dart';

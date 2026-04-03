@@ -761,6 +761,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           onSortOptionChanged: _handleSortOptionChanged,
           hideUnconfiguredStages: _hideUnconfiguredStages,
           onHideUnconfiguredStagesChanged: _handleHideUnconfiguredStagesChanged,
+          onSharePressed: _shareResults,
         ),
           if (_isLoading)
             Container(
