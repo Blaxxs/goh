@@ -19,7 +19,6 @@ class MainScreenUI extends StatefulWidget {
   final VoidCallback onStageSettingsPressed;
   final VoidCallback onAppSettingsPressed;
   final VoidCallback onReverseCalculatorPressed;
-  final VoidCallback onStaminaTimerPressed;
 
   const MainScreenUI({
     super.key,
@@ -36,7 +35,6 @@ class MainScreenUI extends StatefulWidget {
     required this.onStageSettingsPressed,
     required this.onAppSettingsPressed,
     required this.onReverseCalculatorPressed,
-    required this.onStaminaTimerPressed,
     required SettingsService settingsService,
   });
 
@@ -55,7 +53,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
     '골드 효율 계산기': Icons.paid_rounded,
     '데미지 계산기_ Beta': Icons.flash_on_rounded,
     '역산 계산기': Icons.swap_vert_circle_rounded,
-    '스태미너 타이머': Icons.timer_rounded,
     '악세사리 도감': Icons.diamond_outlined,
     '일지': Icons.calendar_month_rounded,
     '상자 기대값 계산기': Icons.inventory_2_rounded,
@@ -233,7 +230,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
       {'text': '골드 효율 계산기', 'onPressed': widget.onGoldCalculatorPressed, 'needsSettings': true},
       {'text': '데미지 계산기_ Beta', 'onPressed': widget.onDamageCalculatorPressed, 'needsSettings': true},
       {'text': '역산 계산기', 'onPressed': widget.onReverseCalculatorPressed, 'needsSettings': true},
-      {'text': '스태미너 타이머', 'onPressed': widget.onStaminaTimerPressed, 'needsSettings': false},
     ];
     final List<Map<String, dynamic>> toolButtons = [
       {'text': '악세사리 도감', 'onPressed': widget.onAccessoryPressed, 'needsSettings': false},
@@ -264,11 +260,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
             spacing: menuGap,
             runSpacing: menuGap,
             children: buttons.map((config) {
-              final bool needsSettings = config['needsSettings'] as bool? ?? false;
-              final VoidCallback? onPressed =
-                  (needsSettings && !settingsComplete)
-                      ? widget.onStageSettingsPressed
-                      : config['onPressed'] as VoidCallback?;
+              final VoidCallback? onPressed = config['onPressed'] as VoidCallback?;
               return _buildMenuButton(
                 context: context,
                 text: config['text'] as String,
