@@ -830,6 +830,7 @@ class _AccessorySetBuilderDialog extends StatefulWidget {
 class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> {
   late final List<String> _parts;
   late Map<String, Accessory?> _selectedByPart;
+  late final List<_SetTemplate> _allSetTemplates;
   int _setStage = 0;
 
   @override
@@ -837,6 +838,7 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
     super.initState();
     _parts = widget.allAccessories.map((e) => e.part).toSet().toList()..sort();
     _selectedByPart = {for (final part in _parts) part: null};
+    _allSetTemplates = _collectAllSetTemplates();
   }
 
   @override
@@ -855,6 +857,115 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (_allSetTemplates.isNotEmpty) ...[
+                Text('세트 기준 빠른 장착',
+                    style: theme.textTheme.titleSmall
+                        ?.copyWith(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 120,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _allSetTemplates.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    itemBuilder: (context, index) {
+                      final set = _allSetTemplates[index];
+                      final selectedNames = _selectedByPart.values
+                          .whereType<Accessory>()
+                          .map((a) => a.name)
+                          .toSet();
+                      final selectedIds = _selectedByPart.values
+                          .whereType<Accessory>()
+                          .map((a) => a.id)
+                          .toSet();
+                      final matched = set.requiredAccessories
+                          .where((req) => selectedNames.contains(req) || selectedIds.contains(req))
+                          .length;
+                      final bool active = matched == set.requiredAccessories.length;
+
+                      return Container(
+                        width: 220,
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: theme.dividerColor),
+                          color: active
+                              ? theme.colorScheme.primary.withAlpha(24)
+                              : null,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              set.setName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: theme.textTheme.labelLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              '$matched/${set.requiredAccessories.length} 장착',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: active ? Colors.green[700] : theme.hintColor,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Expanded(
+                              child: Wrap(
+                                spacing: 6,
+                                runSpacing: 6,
+                                children: List.generate(set.requiredAccessories.length, (i) {
+                                  final reqName = set.requiredAccessories[i];
+                                  final imageUrl = i < set.requiredAccessoryImages.length
+                                      ? set.requiredAccessoryImages[i]
+                                      : null;
+                                  final matchedReq = selectedNames.contains(reqName) || selectedIds.contains(reqName);
+                                  return InkWell(
+                                    onTap: () {
+                                      final acc = _findAccessoryByRequirement(reqName);
+                                      if (acc == null) return;
+                                      setState(() {
+                                        _selectedByPart[acc.part] = acc;
+                                      });
+                                    },
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Tooltip(
+                                      message: '$reqName 탭해서 장착',
+                                      child: Container(
+                                        padding: const EdgeInsets.all(3),
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(8),
+                                          border: Border.all(
+                                            color: matchedReq
+                                                ? Colors.green
+                                                : theme.dividerColor,
+                                          ),
+                                        ),
+                                        child: imageUrl != null && imageUrl.isNotEmpty
+                                            ? CachedNetworkImage(
+                                                imageUrl: imageUrl,
+                                                width: 24,
+                                                height: 24,
+                                                fit: BoxFit.cover,
+                                                errorWidget: (_, __, ___) => const Icon(Icons.broken_image, size: 18),
+                                              )
+                                            : const Icon(Icons.image_not_supported_outlined, size: 18),
+                                      ),
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const Divider(height: 20),
+              ],
               Text('부위별 악세사리 선택', style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               ..._parts.map((part) {
@@ -1085,6 +1196,35 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
     return rows;
   }
 
+  List<_SetTemplate> _collectAllSetTemplates() {
+    final map = <String, _SetTemplate>{};
+    for (final acc in widget.allAccessories) {
+      for (final set in acc.setOptions) {
+        if (set.setId.isEmpty) continue;
+        map.putIfAbsent(
+          set.setId,
+          () => _SetTemplate(
+            setId: set.setId,
+            setName: set.setName,
+            requiredAccessories: set.requiredAccessories,
+            requiredAccessoryImages: set.requiredAccessoryImages,
+            effects: set.effects,
+          ),
+        );
+      }
+    }
+    final list = map.values.toList();
+    list.sort((a, b) => a.setName.compareTo(b.setName));
+    return list;
+  }
+
+  Accessory? _findAccessoryByRequirement(String req) {
+    for (final acc in widget.allAccessories) {
+      if (acc.id == req || acc.name == req) return acc;
+    }
+    return null;
+  }
+
   List<_SetStatus> _buildSetStatus(List<Accessory> selected) {
     final selectedKeys = <String>{
       ...selected.map((a) => a.id),
@@ -1154,6 +1294,22 @@ class _SetStatus {
     required this.setName,
     required this.active,
     required this.missingRequired,
+    required this.effects,
+  });
+}
+
+class _SetTemplate {
+  final String setId;
+  final String setName;
+  final List<String> requiredAccessories;
+  final List<String> requiredAccessoryImages;
+  final List<SetOptionEffect> effects;
+
+  _SetTemplate({
+    required this.setId,
+    required this.setName,
+    required this.requiredAccessories,
+    required this.requiredAccessoryImages,
     required this.effects,
   });
 }
