@@ -15,6 +15,8 @@ class AccessoryScreenUI extends StatelessWidget {
   final String searchOption;
   final List<String> searchOptions;
   final ValueChanged<String?> onSearchOptionChanged;
+  final bool compareMode;
+  final List<Accessory> compareList;
 
   const AccessoryScreenUI({
     super.key,
@@ -29,6 +31,8 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.searchOption,
     required this.searchOptions,
     required this.onSearchOptionChanged,
+    this.compareMode = false,
+    this.compareList = const [],
   });
 
   @override
