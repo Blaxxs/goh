@@ -630,3 +630,175 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
   }
 }
 
+// 악세사리 비교 다이얼로그
+class _AccessoryCompareDialog extends StatelessWidget {
+  final Accessory a;
+  final Accessory b;
+
+  const _AccessoryCompareDialog({required this.a, required this.b});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    // 두 악세사리의 모든 옵션 이름 합집합
+    final allOptionNames = <String>{
+      ...a.options.map((o) => o.optionName),
+      ...b.options.map((o) => o.optionName),
+    }.toList();
+
+    Map<String, String> aMap = {for (var o in a.options) o.optionName: o.optionValue};
+    Map<String, String> bMap = {for (var o in b.options) o.optionName: o.optionValue};
+
+    return AlertDialog(
+      title: const Text('악세사리 비교', style: TextStyle(fontWeight: FontWeight.bold)),
+      contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      content: SizedBox(
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // 헤더 이미지 + 이름
+              Row(
+                children: [
+                  _buildHeader(context, a),
+                  const SizedBox(width: 8),
+                  _buildHeader(context, b),
+                ],
+              ),
+              const Divider(height: 16),
+              // 기본 정보 비교
+              _buildCompareRow(context, '부위', a.part, b.part, isDark),
+              _buildCompareRow(context, '착용 제한', a.restrictions, b.restrictions, isDark),
+              if (allOptionNames.isNotEmpty) ...[
+                const Divider(height: 16),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text('옵션 비교',
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      )),
+                ),
+                ...allOptionNames.map((optName) {
+                  final av = aMap[optName];
+                  final bv = bMap[optName];
+                  return _buildCompareRow(
+                    context,
+                    optName,
+                    av ?? '없음',
+                    bv ?? '없음',
+                    isDark,
+                    missingA: av == null,
+                    missingB: bv == null,
+                  );
+                }),
+              ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('닫기'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, Accessory acc) {
+    return Expanded(
+      child: Column(
+        children: [
+          CachedNetworkImage(
+            imageUrl: acc.imageUrl,
+            height: 60,
+            fit: BoxFit.contain,
+            placeholder: (_, __) => const SizedBox(
+              height: 60,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            ),
+            errorWidget: (_, __, ___) =>
+                const Icon(Icons.broken_image, size: 40),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            acc.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCompareRow(
+    BuildContext context,
+    String label,
+    String valA,
+    String valB,
+    bool isDark, {
+    bool missingA = false,
+    bool missingB = false,
+  }) {
+    final theme = Theme.of(context);
+    final dimColor = theme.colorScheme.onSurface.withValues(alpha: 0.35);
+    final highlightColor = theme.colorScheme.primary;
+    // 수치 비교 (숫자 추출 후)
+    final numA = double.tryParse(valA.replaceAll(RegExp(r'[^0-9.]'), ''));
+    final numB = double.tryParse(valB.replaceAll(RegExp(r'[^0-9.]'), ''));
+    final bool aWins = numA != null && numB != null && numA > numB;
+    final bool bWins = numA != null && numB != null && numB > numA;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              valA,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: missingA
+                    ? dimColor
+                    : (aWins ? highlightColor : null),
+                fontWeight: aWins ? FontWeight.bold : FontWeight.normal,
+                fontSize: 12,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 80,
+            child: Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              valB,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: missingB
+                    ? dimColor
+                    : (bWins ? highlightColor : null),
+                fontWeight: bWins ? FontWeight.bold : FontWeight.normal,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
