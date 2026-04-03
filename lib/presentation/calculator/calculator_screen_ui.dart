@@ -228,6 +228,7 @@ class CalculatorScreenUI extends StatelessWidget {
   final bool hideUnconfiguredStages; // 새로운 파라미터
   final ValueChanged<bool> onHideUnconfiguredStagesChanged; // 새로운 파라미터
   final VoidCallback? onSharePressed; // 공유 버튼 콜백
+  final bool settingsComplete;
 
   const CalculatorScreenUI({
     super.key,
@@ -267,6 +268,7 @@ class CalculatorScreenUI extends StatelessWidget {
     required this.hideUnconfiguredStages, // 생성자에 추가
     required this.onHideUnconfiguredStagesChanged, // 생성자에 추가
     this.onSharePressed,
+    required this.settingsComplete,
   });
 
   @override
@@ -325,6 +327,30 @@ class CalculatorScreenUI extends StatelessWidget {
                   ),
               ],
             ),
+            if (!settingsComplete)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+                sliver: SliverToBoxAdapter(
+                  child: Card(
+                    color: theme.colorScheme.errorContainer,
+                    child: ListTile(
+                      leading: Icon(Icons.warning_amber_rounded,
+                          color: theme.colorScheme.error),
+                      title: Text(
+                        '스테이지 설정 전에는 정확한 결과를 볼 수 없습니다.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onErrorContainer,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      trailing: TextButton(
+                        onPressed: onStageSettingsPressed,
+                        child: const Text('설정하기'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 0),
               sliver: SliverToBoxAdapter(
