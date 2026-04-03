@@ -40,6 +40,36 @@ class AccessoryScreenUI extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
+        if (compareMode)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            color: Theme.of(context).colorScheme.primaryContainer,
+            child: Row(
+              children: [
+                Icon(Icons.compare_rounded,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    compareList.isEmpty
+                        ? '비교할 악세사리를 최대 2개 선택하세요'
+                        : compareList.length == 1
+                            ? '${compareList[0].name} 선택됨 · 하나 더 선택하세요'
+                            : '${compareList[0].name} vs ${compareList[1].name}',
+                    style:
+                        Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
+                              fontWeight: FontWeight.w600,
+                            ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
         Padding(
           padding: const EdgeInsets.all(6.0),
           child: Card(
