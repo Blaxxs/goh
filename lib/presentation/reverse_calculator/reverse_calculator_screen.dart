@@ -5,6 +5,7 @@ import '../../core/constants/stage_constants.dart';
 import '../../core/constants/leader_constants.dart';
 import '../../core/services/settings_service.dart';
 import '../../domain/logic/calculator_logic.dart';
+import '../stage_settings/settings_screen.dart';
 
 enum ReverseCalcTarget { gold, stamina }
 
@@ -32,6 +33,16 @@ class _ReverseCalculatorScreenState extends State<ReverseCalculatorScreen> {
   int? _loopsNeeded;
   double? _timeNeeded; // 분
   int? _staminaNeeded;
+
+  bool _areEssentialSettingsSet() {
+    final settings = SettingsService.instance.stageSettings;
+    return settings.teamLevel != null &&
+        settings.teamLevel!.isNotEmpty &&
+        settings.dalgijiLevel != null &&
+        settings.dalgijiLevel!.isNotEmpty &&
+        settings.vipLevel != null &&
+        settings.vipLevel!.isNotEmpty;
+  }
 
   @override
   void initState() {
@@ -143,6 +154,7 @@ class _ReverseCalculatorScreenState extends State<ReverseCalculatorScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final stageSettings = SettingsService.instance.stageSettings;
+    final settingsComplete = _areEssentialSettingsSet();
 
     return Scaffold(
       appBar: AppBar(title: const Text('역산 계산기')),
@@ -151,6 +163,33 @@ class _ReverseCalculatorScreenState extends State<ReverseCalculatorScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (!settingsComplete)
+              Card(
+                color: theme.colorScheme.errorContainer,
+                child: ListTile(
+                  leading: Icon(Icons.warning_amber_rounded,
+                      color: theme.colorScheme.error),
+                  title: Text(
+                    '스테이지 설정 전에는 정확한 결과를 볼 수 없습니다.',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onErrorContainer,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  trailing: TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SettingsScreen(),
+                        ),
+                      );
+                    },
+                    child: const Text('설정하기'),
+                  ),
+                ),
+              ),
+            if (!settingsComplete) const SizedBox(height: 12),
             // 목표 선택 탭
             SegmentedButton<ReverseCalcTarget>(
               segments: const [

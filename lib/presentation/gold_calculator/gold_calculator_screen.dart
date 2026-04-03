@@ -41,6 +41,16 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
   final NumberFormat _integerFormatter = NumberFormat('#,##0');
   late GoldSortOption _selectedSortOption;
 
+  bool _areEssentialSettingsSet() {
+    final settings = SettingsService.instance.stageSettings;
+    return settings.teamLevel != null &&
+        settings.teamLevel!.isNotEmpty &&
+        settings.dalgijiLevel != null &&
+        settings.dalgijiLevel!.isNotEmpty &&
+        settings.vipLevel != null &&
+        settings.vipLevel!.isNotEmpty;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -536,6 +546,7 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
       hideUnconfiguredStages: _hideUnconfiguredStages,
         onHideUnconfiguredStagesChanged: _handleHideUnconfiguredStagesChanged,
       onSharePressed: _shareResults,
+      settingsComplete: _areEssentialSettingsSet(),
       );
   }
 }
