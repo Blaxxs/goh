@@ -208,72 +208,105 @@ class AccessoryScreenUI extends StatelessWidget {
                   itemCount: filteredAccessories.length,
                   itemBuilder: (context, index) {
                     final accessory = filteredAccessories[index];
+                    final isSelected = compareMode && compareList.contains(accessory);
 
                     return GestureDetector(
                       onTap: () => onAccessoryTap(context, accessory),
-                      child: Card(
-                        clipBehavior: Clip.antiAlias, // 이미지가 카드의 경계를 넘지 않도록
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // 1. 이미지 영역
-                            Expanded(
-                              child: Container(
-                                color: isDark ? Colors.grey[800] : Colors.grey[200],
-                                padding: const EdgeInsets.all(6.0),
-                                child: CachedNetworkImage(
-                                  imageUrl: accessory.imageUrl,
-                                  fit: BoxFit.contain,
-                                  placeholder: (context, url) => const Center(
-                                    child: SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                          strokeWidth: 2.5),
+                      child: Stack(
+                        children: [
+                          Card(
+                            clipBehavior: Clip.antiAlias, // 이미지가 카드의 경계를 넘지 않도록
+                            elevation: isSelected ? 4 : 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              side: isSelected
+                                  ? BorderSide(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      width: 2.5,
+                                    )
+                                  : BorderSide.none,
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                // 1. 이미지 영역
+                                Expanded(
+                                  child: Container(
+                                    color: isDark ? Colors.grey[800] : Colors.grey[200],
+                                    padding: const EdgeInsets.all(6.0),
+                                    child: CachedNetworkImage(
+                                      imageUrl: accessory.imageUrl,
+                                      fit: BoxFit.contain,
+                                      placeholder: (context, url) => const Center(
+                                        child: SizedBox(
+                                          width: 24,
+                                          height: 24,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2.5),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(
+                                        Icons.image_not_supported_outlined,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(
-                                    Icons.image_not_supported_outlined,
-                                    color: Colors.grey,
                                   ),
                                 ),
+                                // 2. 텍스트 정보 영역
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 6.0, vertical: 4.0),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        accessory.name,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark ? Colors.white : Colors.black87,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 1),
+                                      Text(
+                                        accessory.part,
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: isDark ? Colors.white70 : Colors.grey[700],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (compareMode)
+                            Positioned(
+                              top: 4,
+                              right: 4,
+                              child: Container(
+                                width: 20,
+                                height: 20,
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Colors.black26,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: isSelected
+                                    ? Icon(
+                                        Icons.check_rounded,
+                                        size: 13,
+                                        color: Theme.of(context).colorScheme.onPrimary,
+                                      )
+                                    : null,
                               ),
                             ),
-                            // 2. 텍스트 정보 영역
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6.0, vertical: 4.0),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    accessory.name,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: isDark ? Colors.white : Colors.black87,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 1),
-                                  Text(
-                                    accessory.part,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                      color: isDark ? Colors.white70 : Colors.grey[700],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                        ],
                       ),
                     );
                   },
