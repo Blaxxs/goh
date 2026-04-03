@@ -535,6 +535,7 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
       onSortOptionChanged: _handleSortOptionChanged,
       hideUnconfiguredStages: _hideUnconfiguredStages,
         onHideUnconfiguredStagesChanged: _handleHideUnconfiguredStagesChanged,
+      onSharePressed: _shareResults,
       );
   }
 }
