@@ -225,6 +225,7 @@ class _JournalScreenState extends State<JournalScreen> {
             ),
             // 월별 스테이지 점유율 표시 위젯 (캘린더 위로 이동)
             _buildMonthlyShareDisplay(),
+            _buildWeeklyTrendDisplay(),
             TableCalendar(
               locale: 'ko_KR', // 한국어 로케일 설정
               firstDay: DateTime.utc(2020, 1, 1), // 달력 시작일
@@ -666,4 +667,145 @@ class _JournalScreenState extends State<JournalScreen> {
       ),
     );
   }
+
+  Widget _buildWeeklyTrendDisplay() {
+    final theme = Theme.of(context);
+    final formatter = NumberFormat('#,##0', 'ko_KR');
+    final selected = DateUtils.dateOnly(_selectedDay ?? _focusedDay);
+    final start = selected.subtract(Duration(days: selected.weekday - 1));
+    final labels = ['월', '화', '수', '목', '금', '토', '일'];
+    final allEntries = SettingsService.instance.getAllJournalEntries();
+
+    final List<_DailyTrendData> days = List.generate(7, (i) {
+      final day = DateUtils.dateOnly(start.add(Duration(days: i)));
+      final entries = allEntries
+          .where((e) => DateUtils.isSameDay(DateUtils.dateOnly(e.date), day))
+          .toList();
+      final soul =
+          entries.fold<double>(0, (sum, e) => sum + e.netSoulStones.toDouble());
+      final gold =
+          entries.fold<double>(0, (sum, e) => sum + _calculateFinalGoldForEntry(e));
+      return _DailyTrendData(label: labels[i], soul: soul, gold: gold);
+    });
+
+    final maxSoul = days
+        .map((d) => d.soul.abs())
+        .fold<double>(0, (m, v) => v > m ? v : m);
+    final maxGold =
+        days.map((d) => d.gold).fold<double>(0, (m, v) => v > m ? v : m);
+    final sumSoul = days.fold<double>(0, (s, d) => s + d.soul);
+    final sumGold = days.fold<double>(0, (s, d) => s + d.gold);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(12.0),
+        decoration: BoxDecoration(
+          color: theme.cardColor.withAlpha(180),
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(color: theme.dividerColor),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '주간 추이 (${DateFormat('M/d', 'ko_KR').format(start)} ~ ${DateFormat('M/d', 'ko_KR').format(start.add(const Duration(days: 6)))})',
+              style: theme.textTheme.titleSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            Text('영혼석', style: theme.textTheme.labelLarge),
+            const SizedBox(height: 4),
+            _buildWeeklyBars(
+              theme,
+              days,
+              maxValue: maxSoul,
+              valueGetter: (d) => d.soul,
+              positiveColor: Colors.blue,
+              negativeColor: Colors.red,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '합계: ${sumSoul >= 0 ? '+' : ''}${formatter.format(sumSoul.round())}',
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: 10),
+            Text('골드', style: theme.textTheme.labelLarge),
+            const SizedBox(height: 4),
+            _buildWeeklyBars(
+              theme,
+              days,
+              maxValue: maxGold,
+              valueGetter: (d) => d.gold,
+              positiveColor: Colors.green,
+              negativeColor: Colors.green,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '합계: ${formatter.format(sumGold.round())}',
+              style: theme.textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWeeklyBars(
+    ThemeData theme,
+    List<_DailyTrendData> days, {
+    required double maxValue,
+    required double Function(_DailyTrendData d) valueGetter,
+    required Color positiveColor,
+    required Color negativeColor,
+  }) {
+    final safeMax = maxValue <= 0 ? 1.0 : maxValue;
+    return SizedBox(
+      height: 86,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: days.map((d) {
+          final value = valueGetter(d);
+          final ratio = (value.abs() / safeMax).clamp(0.0, 1.0);
+          final barHeight = 14.0 + (48.0 * ratio);
+          final color = value >= 0 ? positiveColor : negativeColor;
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 3.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    height: barHeight,
+                    decoration: BoxDecoration(
+                      color: color.withAlpha(190),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    d.label,
+                    style: theme.textTheme.labelSmall,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _DailyTrendData {
+  final String label;
+  final double soul;
+  final double gold;
+
+  _DailyTrendData({
+    required this.label,
+    required this.soul,
+    required this.gold,
+  });
 }

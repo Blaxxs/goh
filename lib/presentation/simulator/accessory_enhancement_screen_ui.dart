@@ -824,8 +824,9 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
     }
 
     // 기댓값 영혼석이 가장 적은 항목 강조
-    final minStones =
-        rows.map((r) => r.expectedStones).reduce((a, b) => a < b ? a : b);
+    final minStones = rows.isEmpty
+      ? 0
+      : rows.map((r) => r.expectedStones).reduce((a, b) => a < b ? a : b);
 
     return Card(
       margin: EdgeInsets.zero,
