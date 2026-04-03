@@ -47,6 +47,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
   String _noticeMessage = "";
   bool _logoPrecached = false;
+  bool _showAdvancedMenus = false;
 
   static const Map<String, IconData> _menuIcons = {
     '루프 계산기': Icons.calculate_rounded,
@@ -119,16 +120,17 @@ class _MainScreenUIState extends State<MainScreenUI> {
         child: GlassPanel(
           onTap: isEnabled ? onPressed : null,
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 8),
           borderRadius: const BorderRadius.all(Radius.circular(18)),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
                 _menuIcons[text] ?? Icons.apps_rounded,
-                size: 18,
+                size: 16,
                 color: color,
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Text(
                 text,
                 maxLines: 1,
@@ -137,6 +139,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 style: theme.textTheme.labelSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: textColor,
+                  fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.7,
                 ),
               ),
             ],
@@ -209,14 +212,14 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double topPadding = mediaQuery.padding.top;
     final Size screenSize = MediaQuery.of(context).size;
     final int columns = screenSize.width >= 900
-        ? 6
+      ? 7
         : screenSize.width >= 650
-            ? 5
+        ? 6
             : screenSize.width >= 420
-                ? 4
-                : 3;
+          ? 5
+          : 4;
     const double horizontalInset = 20;
-    const double menuGap = 8;
+    const double menuGap = 6;
     final double availableWidth =
         screenSize.width - (horizontalInset * 2) - (menuGap * (columns - 1));
     final double menuItemWidth = availableWidth / columns;
@@ -385,15 +388,40 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   padding: EdgeInsets.fromLTRB(
                       horizontalInset, 0, horizontalInset, 14 + bottomPadding),
                   child: GlassPanel(
-                    padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+                    padding: const EdgeInsets.fromLTRB(10, 6, 10, 10),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         buildSection('계산기', calculatorButtons),
                         buildSection('도구 / 기록', toolButtons),
-                        buildSection('시뮬레이터', simulatorButtons),
-                        buildSection('설정', settingButtons),
+                        Row(
+                          children: [
+                            TextButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _showAdvancedMenus = !_showAdvancedMenus;
+                                });
+                              },
+                              icon: Icon(
+                                _showAdvancedMenus
+                                    ? Icons.expand_less_rounded
+                                    : Icons.expand_more_rounded,
+                                size: 18,
+                              ),
+                              label: Text(
+                                _showAdvancedMenus
+                                    ? '시뮬레이터/설정 접기'
+                                    : '시뮬레이터/설정 펼치기',
+                                style: theme.textTheme.labelSmall,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_showAdvancedMenus) ...[
+                          buildSection('시뮬레이터', simulatorButtons),
+                          buildSection('설정', settingButtons),
+                        ],
                       ],
                     ),
                   ),
