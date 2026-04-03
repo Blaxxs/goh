@@ -273,12 +273,159 @@ class PouchSimulationScreenUI extends StatelessWidget {
               ),
               label: const Text('로그 초기화'),
             ),
+            const SizedBox(height: 20),
+            // 누적 확률 분석 섹션
+            _buildProbabilitySection(context),
           ],
         ),
       ),
     );
   }
-}
+
+  // 기댓값 및 누적 확률 분석 섹션
+  Widget _buildProbabilitySection(BuildContext context) {
+    final theme = Theme.of(context);
+    if (currentItems.isEmpty) return const SizedBox.shrink();
+
+    // 기댓값 계산
+    double expected = 0;
+    for (final item in currentItems) {
+      expected += item.amount * (item.probability / 100);
+    }
+
+    // 누적 확률 계산 (낮은 → 높은 금액 순)
+    final sortedItems = List<PouchItem>.from(currentItems)
+      ..sort((a, b) => a.amount.compareTo(b.amount));
+
+    // 내림차순 누적 확률 (이 값 이상 나올 확률)
+    final reverseCumul = <int, double>{};
+    double cumFromTop = 0;
+    for (int i = sortedItems.length - 1; i >= 0; i--) {
+      cumFromTop += sortedItems[i].probability;
+      reverseCumul[sortedItems[i].amount] = cumFromTop.clamp(0, 100);
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '확률 분석',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        // 기댓값 카드
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('1회 기댓값', style: theme.textTheme.bodyMedium),
+                Text(
+                  _numberFormat.format(expected.round()),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        // 확률 테이블 (상위 항목만 표시)
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Column(
+              children: [
+                // 헤더
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Text('획득량',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ))),
+                      SizedBox(
+                          width: 70,
+                          child: Text('출현 확률',
+                              textAlign: TextAlign.right,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ))),
+                      SizedBox(
+                          width: 80,
+                          child: Text('이상 확률',
+                              textAlign: TextAlign.right,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ))),
+                    ],
+                  ),
+                ),
+                const Divider(height: 4),
+                // 아이템 행 (역순 - 높은 금액부터)
+                ...sortedItems.reversed.map((item) {
+                  final prob = item.probability;
+                  final cumAbove = reverseCumul[item.amount] ?? 0;
+                  final isRare = prob < 2.0;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 3),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _numberFormat.format(item.amount),
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: isRare
+                                  ? theme.colorScheme.secondary
+                                  : null,
+                              fontWeight:
+                                  isRare ? FontWeight.bold : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 70,
+                          child: Text(
+                            '${prob.toStringAsFixed(2)}%',
+                            textAlign: TextAlign.right,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: isRare
+                                  ? theme.colorScheme.secondary
+                                  : null,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 80,
+                          child: Text(
+                            '${cumAbove.toStringAsFixed(1)}%',
+                            textAlign: TextAlign.right,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
 class PouchResultDialog extends StatelessWidget {
   final PouchType pouchType;
