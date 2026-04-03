@@ -23,6 +23,10 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   String _searchOption = '이름';
   final List<String> _searchOptions = ['이름', '옵션'];
 
+  // 비교 모드 상태
+  bool _compareMode = false;
+  final List<Accessory> _compareList = [];
+
   @override
   void initState() {
     super.initState();
