@@ -157,6 +157,24 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     });
   }
 
+  // 계산 결과 공유
+  void _shareResults() {
+    if (_stageDisplayResults.isEmpty) return;
+    final buffer = StringBuffer();
+    buffer.writeln('📊 루프 계산기 결과');
+    buffer.writeln('');
+    for (final r in _stageDisplayResults.take(10)) {
+      if (r.settingsIncomplete) continue;
+      buffer.writeln('▶ ${r.stageName}');
+      buffer.writeln(
+          '  영혼석: ${r.showSoulStonesPerMinute ? r.soulStonesPerMinStr : r.soulStonesStr}');
+      buffer.writeln('  골드: ${r.loopGoldStr}');
+      buffer.writeln('');
+    }
+    buffer.writeln('— GOH Calculator 앱에서 공유됨');
+    Share.share(buffer.toString(), subject: 'GOH 루프 계산기 결과');
+  }
+
   // 스테이지 설정 화면으로 이동하는 함수
   void _navigateToStageSettings() {
     if (!mounted) return;
