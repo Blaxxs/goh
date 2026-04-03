@@ -174,6 +174,14 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
             ),
           ),
         ),
+        actions: [
+          if (onSharePressed != null)
+            IconButton(
+              icon: const Icon(Icons.share),
+              tooltip: '결과 공유',
+              onPressed: onSharePressed,
+            ),
+        ],
       ), // AppBar 닫는 괄호
       body: SafeArea(
         child: Stack(
