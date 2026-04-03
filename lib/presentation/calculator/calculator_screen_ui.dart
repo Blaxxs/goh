@@ -316,6 +316,14 @@ class CalculatorScreenUI extends StatelessWidget {
                 ),
               ),
               iconTheme: IconThemeData(color: colorScheme.onSurface),
+              actions: [
+                if (onSharePressed != null)
+                  IconButton(
+                    icon: const Icon(Icons.share),
+                    tooltip: '결과 공유',
+                    onPressed: onSharePressed,
+                  ),
+              ],
             ),
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(12.0, 16.0, 12.0, 0),
