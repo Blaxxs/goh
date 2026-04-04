@@ -446,7 +446,16 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           ? titleColor.withAlpha(120)
                           : titleColor,
                       height: 1.15,
-                      fontSize: 10.5,
+                      fontSize: 11,
+                      shadows: [
+                        Shadow(
+                          color: theme.brightness == Brightness.dark
+                              ? Colors.black.withAlpha(120)
+                              : Colors.white.withAlpha(210),
+                          blurRadius: 2,
+                          offset: const Offset(0, 0.5),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -532,6 +541,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.w800,
               letterSpacing: 0.5,
+              shadows: [
+                Shadow(
+                  color: theme.brightness == Brightness.dark
+                      ? Colors.black.withAlpha(120)
+                      : Colors.white.withAlpha(200),
+                  blurRadius: 2,
+                  offset: const Offset(0, 0.5),
+                ),
+              ],
             ),
           ),
         ),
@@ -834,18 +852,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             if (_isEditMode && _hiddenEntryKeys.isNotEmpty)
-                              Container(
-                                margin: const EdgeInsets.only(bottom: 8),
+                              Padding(
                                 padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(14),
-                                  color: theme.brightness == Brightness.dark
-                                      ? Colors.white.withAlpha(8)
-                                      : theme.colorScheme.surface.withAlpha(155),
-                                  border: Border.all(
-                                    color: theme.colorScheme.outline.withAlpha(85),
-                                  ),
-                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -853,6 +861,15 @@ class _MainScreenUIState extends State<MainScreenUI> {
                                       '숨긴 버튼 (탭해서 다시 표시)',
                                       style: theme.textTheme.labelSmall?.copyWith(
                                         fontWeight: FontWeight.w800,
+                                        shadows: [
+                                          Shadow(
+                                            color: theme.brightness == Brightness.dark
+                                                ? Colors.black.withAlpha(120)
+                                                : Colors.white.withAlpha(200),
+                                            blurRadius: 2,
+                                            offset: const Offset(0, 0.5),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     const SizedBox(height: 6),
