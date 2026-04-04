@@ -849,6 +849,52 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
+                            if (_isEditMode && _hiddenEntryKeys.isNotEmpty)
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(14),
+                                  color: theme.brightness == Brightness.dark
+                                      ? Colors.white.withAlpha(8)
+                                      : theme.colorScheme.surface.withAlpha(155),
+                                  border: Border.all(
+                                    color: theme.colorScheme.outline.withAlpha(85),
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      '숨긴 버튼 (탭해서 다시 표시)',
+                                      style: theme.textTheme.labelSmall?.copyWith(
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Wrap(
+                                      spacing: 6,
+                                      runSpacing: 6,
+                                      children: _hiddenEntryKeys
+                                          .map((entryKey) {
+                                            final entry = _findEntryByKey(entryKey);
+                                            if (entry == null) {
+                                              return const SizedBox.shrink();
+                                            }
+                                            return ActionChip(
+                                              avatar: Icon(
+                                                _menuIcons[entry.text] ?? Icons.apps_rounded,
+                                                size: 14,
+                                              ),
+                                              label: Text(entry.text),
+                                              onPressed: () => _toggleHidden(entryKey),
+                                            );
+                                          })
+                                          .toList(),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             if (favoriteEntries.isNotEmpty)
                               _buildCategoryCard(
                                 context: context,
