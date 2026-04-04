@@ -1,8 +1,8 @@
 // lib/presentation/simulator/accessory_enhancement_screen.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:math'; // Random 사용
 import '../../data/models/accessory.dart'; // Accessory model
-import '../accessory/accessory_screen.dart'; // To use as a picker
 import '../../core/constants/accessory_constants.dart'; // AccessoryDataManager().allAccessories 사용
 import 'accessory_enhancement_screen_ui.dart';
 
@@ -50,45 +50,192 @@ class _AccessoryEnhancementScreenState
     _resetScreenState(); // 최초 진입 시 화면 전체 초기화 (랜덤 악세사리 선택 포함)
   }
 
-  Future<void> _selectAccessory(BuildContext context) async {
-    Accessory? pickedAccessory;
-    debugPrint(
-        "[AccessoryEnhancementScreen] _selectAccessory: Attempting to navigate to AccessoryScreen...");
-    try {
-      pickedAccessory = await Navigator.push<Accessory>(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const AccessoryScreen(isPickerMode: true),
-        ),
-      );
-      debugPrint(
-          "[AccessoryEnhancementScreen] _selectAccessory: Returned from AccessoryScreen. Accessory was picked: ${pickedAccessory != null}");
-    } catch (e, s) {
-      debugPrint(
-          "[AccessoryEnhancementScreen] _selectAccessory: Error during Navigator.push: $e");
-      debugPrint(
-          "[AccessoryEnhancementScreen] _selectAccessory: Stacktrace: $s");
-      // 오류 발생 시 사용자에게 알림 (선택 사항)
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('악세사리 선택 중 오류가 발생했습니다: $e')),
-        );
-      }
-      return; // 오류 발생 시 더 이상 진행하지 않음
-    }
+  void _selectAccessory(BuildContext context) {
+    final allAccessories = AccessoryDataManager().allAccessories;
+    if (allAccessories.isEmpty) return;
 
-    if (pickedAccessory != null && mounted) {
-      // 디버깅: 선택된 악세사리 정보 출력
-      debugPrint(
-          "[AccessoryEnhancementScreen] Accessory picked: ${pickedAccessory.name}, ID: ${pickedAccessory.id}");
-      setState(() {
-        _selectedAccessory = pickedAccessory; // 선택된 악세사리로 업데이트
-        _resetForNewAccessorySelection(); // 나머지 상태 초기화
-      });
-    } else {
-      debugPrint(
-          "[AccessoryEnhancementScreen] _selectAccessory: No accessory picked or widget not mounted after return. Picked: ${pickedAccessory?.name}, Mounted: $mounted");
-    }
+    final parts = allAccessories.map((a) => a.part).toSet().toList()..sort();
+    String? selectedPart;
+    String searchQuery = '';
+
+    showModalBottomSheet<Accessory>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            final filtered = allAccessories.where((a) {
+              final matchesPart =
+                  selectedPart == null || a.part == selectedPart;
+              final matchesSearch = searchQuery.isEmpty ||
+                  a.name.toLowerCase().contains(searchQuery.toLowerCase());
+              return matchesPart && matchesSearch;
+            }).toList()..sort((a, b) => a.name.compareTo(b.name));
+
+            return DraggableScrollableSheet(
+              expand: false,
+              initialChildSize: 0.75,
+              maxChildSize: 0.95,
+              minChildSize: 0.4,
+              builder: (_, scrollController) {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Row(
+                        children: [
+                          Text(
+                            '악세사리 선택',
+                            style: Theme.of(ctx)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // 검색창
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TextField(
+                        onChanged: (v) =>
+                            setSheetState(() => searchQuery = v),
+                        decoration: const InputDecoration(
+                          hintText: '이름 검색',
+                          prefixIcon: Icon(Icons.search, size: 20),
+                          isDense: true,
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    // 부위 필터 칩
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: [
+                          FilterChip(
+                            label: const Text('전체'),
+                            selected: selectedPart == null,
+                            onSelected: (_) =>
+                                setSheetState(() => selectedPart = null),
+                          ),
+                          const SizedBox(width: 6),
+                          ...parts.map((p) => Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: FilterChip(
+                                  label: Text(p),
+                                  selected: selectedPart == p,
+                                  onSelected: (_) => setSheetState(
+                                      () => selectedPart =
+                                          selectedPart == p ? null : p),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 8),
+                    // 그리드
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? const Center(child: Text('검색 결과가 없습니다.'))
+                          : GridView.builder(
+                              controller: scrollController,
+                              padding: const EdgeInsets.all(12),
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 90,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 0.75,
+                              ),
+                              itemCount: filtered.length,
+                              itemBuilder: (_, index) {
+                                final acc = filtered[index];
+                                final isCurrent =
+                                    _selectedAccessory?.id == acc.id;
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(sheetContext);
+                                    if (mounted) {
+                                      setState(() {
+                                        _selectedAccessory = acc;
+                                        _resetForNewAccessorySelection();
+                                      });
+                                    }
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: isCurrent
+                                                ? Theme.of(ctx)
+                                                    .colorScheme
+                                                    .primary
+                                                : Colors.transparent,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: CachedNetworkImage(
+                                            imageUrl: acc.imageUrl,
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            placeholder: (_, __) =>
+                                                const SizedBox(
+                                              width: 60,
+                                              height: 60,
+                                              child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 1.5)),
+                                            ),
+                                            errorWidget: (_, __, ___) =>
+                                                const SizedBox(
+                                              width: 60,
+                                              height: 60,
+                                              child: Icon(Icons
+                                                  .image_not_supported_outlined),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        acc.name,
+                                        style: Theme.of(ctx)
+                                            .textTheme
+                                            .labelSmall,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   // 통계 초기화 함수
