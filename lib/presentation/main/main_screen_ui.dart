@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart'; // [추가]
 import 'package:goh_calculator/core/services/settings_service.dart';
+import 'package:goh_calculator/core/widgets/liquid_glass.dart';
 import '../../core/services/event_manager.dart';
 
 // 실시간 공지사항을 위해 StatefulWidget으로 변경했습니다.
@@ -159,12 +160,27 @@ class _MainScreenUIState extends State<MainScreenUI> {
   }
 
   int _resolveGridColumns(double panelWidth) {
+    final int maxSafeColumns = _maxSafeGridColumns(panelWidth);
+    final int preferredColumns;
     if (_gridColumnsOverride != null) {
-      return _gridColumnsOverride!;
+      preferredColumns = _gridColumnsOverride!;
+    } else if (panelWidth >= 780) {
+      preferredColumns = 5;
+    } else if (panelWidth >= 620) {
+      preferredColumns = 4;
+    } else {
+      preferredColumns = 3;
     }
-    if (panelWidth >= 780) return 5;
-    if (panelWidth >= 620) return 4;
-    return 3;
+    return preferredColumns.clamp(2, maxSafeColumns);
+  }
+
+  int _maxSafeGridColumns(double panelWidth) {
+    const double gap = 8;
+    const double horizontalPadding = 20;
+    const double minTileWidth = 96;
+    final double innerWidth = panelWidth - horizontalPadding;
+    final int raw = ((innerWidth + gap) / (minTileWidth + gap)).floor();
+    return raw.clamp(2, 5);
   }
 
   void _setGridColumnsOverride(int? columns) {
@@ -176,6 +192,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
   Future<void> _showGridModeSheet() async {
     if (!mounted) return;
+    final screenWidth = MediaQuery.of(context).size.width;
+    const double panelMaxWidth = 820;
+    const double horizontalInset = 20;
+    final panelWidth =
+        (screenWidth - (horizontalInset * 2)).clamp(280.0, panelMaxWidth);
+    final int maxSafeColumns = _maxSafeGridColumns(panelWidth);
+
     await showModalBottomSheet<void>(
       context: context,
       builder: (context) {
@@ -195,33 +218,45 @@ class _MainScreenUIState extends State<MainScreenUI> {
               ),
               ListTile(
                 title: const Text('3열 고정'),
+                subtitle:
+                    maxSafeColumns < 3 ? const Text('현재 화면에서는 오버플로우 위험') : null,
                 trailing: _gridColumnsOverride == 3
                     ? const Icon(Icons.check_rounded)
                     : null,
-                onTap: () {
+                onTap: maxSafeColumns >= 3
+                    ? () {
                   Navigator.pop(context);
                   _setGridColumnsOverride(3);
-                },
+                }
+                    : null,
               ),
               ListTile(
                 title: const Text('4열 고정'),
+                subtitle:
+                    maxSafeColumns < 4 ? const Text('현재 화면에서는 오버플로우 위험') : null,
                 trailing: _gridColumnsOverride == 4
                     ? const Icon(Icons.check_rounded)
                     : null,
-                onTap: () {
+                onTap: maxSafeColumns >= 4
+                    ? () {
                   Navigator.pop(context);
                   _setGridColumnsOverride(4);
-                },
+                }
+                    : null,
               ),
               ListTile(
                 title: const Text('5열 고정'),
+                subtitle:
+                    maxSafeColumns < 5 ? const Text('현재 화면에서는 오버플로우 위험') : null,
                 trailing: _gridColumnsOverride == 5
                     ? const Icon(Icons.check_rounded)
                     : null,
-                onTap: () {
+                onTap: maxSafeColumns >= 5
+                    ? () {
                   Navigator.pop(context);
                   _setGridColumnsOverride(5);
-                },
+                }
+                    : null,
               ),
             ],
           ),
@@ -620,8 +655,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final int columns = _resolveGridColumns(panelWidth);
     final double innerWidth = panelWidth - 20;
     final double tileWidth =
-        (innerWidth - (gap * (columns - 1))).clamp(100.0, innerWidth) /
-            columns;
+      ((innerWidth - (gap * (columns - 1))) / columns).clamp(72.0, innerWidth);
 
     return Wrap(
       spacing: gap,
