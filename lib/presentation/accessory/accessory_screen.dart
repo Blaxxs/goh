@@ -1067,6 +1067,128 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
     );
   }
 
+  void _showPartPickerSheet(
+      BuildContext context, String part, List<Accessory> partItems) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          maxChildSize: 0.9,
+          minChildSize: 0.3,
+          builder: (_, scrollController) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
+                  child: Row(
+                    children: [
+                      Text(
+                        '$part 선택',
+                        style: Theme.of(sheetContext)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      const Spacer(),
+                      TextButton.icon(
+                        icon: const Icon(Icons.remove_circle_outline, size: 16),
+                        label: const Text('선택 안함'),
+                        onPressed: () {
+                          setState(() => _selectedByPart[part] = null);
+                          Navigator.pop(sheetContext);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                const Divider(height: 1),
+                Expanded(
+                  child: GridView.builder(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(12),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 90,
+                      crossAxisSpacing: 8,
+                      mainAxisSpacing: 8,
+                      childAspectRatio: 0.75,
+                    ),
+                    itemCount: partItems.length,
+                    itemBuilder: (_, index) {
+                      final acc = partItems[index];
+                      final isSelected = _selectedByPart[part]?.id == acc.id;
+                      return GestureDetector(
+                        onTap: () {
+                          setState(() => _selectedByPart[part] = acc);
+                          Navigator.pop(sheetContext);
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Theme.of(sheetContext)
+                                          .colorScheme
+                                          .primary
+                                      : Colors.transparent,
+                                  width: 2,
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: CachedNetworkImage(
+                                  imageUrl: acc.imageUrl,
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                  placeholder: (_, __) => const SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 1.5)),
+                                  ),
+                                  errorWidget: (_, __, ___) => const SizedBox(
+                                    width: 60,
+                                    height: 60,
+                                    child: Icon(
+                                        Icons.image_not_supported_outlined),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              acc.name,
+                              style:
+                                  Theme.of(sheetContext).textTheme.labelSmall,
+                              textAlign: TextAlign.center,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   List<_OptionSummary> _buildOptionSummary(List<Accessory> selected) {
     final sums = <String, double>{};
     final isPercent = <String, bool>{};
