@@ -152,11 +152,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
           actions: [
             if (!widget.isPickerMode) ...[
-              IconButton(
-                icon: const Icon(Icons.auto_awesome_mosaic_rounded),
-                tooltip: '세트 빌더',
-                onPressed: _showSetBuilderDialog,
-              ),
               if (_compareMode && _compareList.length == 2)
                 TextButton.icon(
                   onPressed: _showCompareDialog,
