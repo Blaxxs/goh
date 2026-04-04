@@ -218,46 +218,36 @@ class _MainScreenUIState extends State<MainScreenUI> {
               ),
               ListTile(
                 title: const Text('3열 고정'),
-                subtitle:
-                    maxSafeColumns < 3 ? const Text('현재 화면에서는 오버플로우 위험') : null,
                 trailing: _gridColumnsOverride == 3
                     ? const Icon(Icons.check_rounded)
                     : null,
-                onTap: maxSafeColumns >= 3
-                    ? () {
+                onTap: () {
                   Navigator.pop(context);
                   _setGridColumnsOverride(3);
-                }
-                    : null,
+                },
               ),
-              ListTile(
-                title: const Text('4열 고정'),
-                subtitle:
-                    maxSafeColumns < 4 ? const Text('현재 화면에서는 오버플로우 위험') : null,
-                trailing: _gridColumnsOverride == 4
-                    ? const Icon(Icons.check_rounded)
-                    : null,
-                onTap: maxSafeColumns >= 4
-                    ? () {
-                  Navigator.pop(context);
-                  _setGridColumnsOverride(4);
-                }
-                    : null,
-              ),
-              ListTile(
-                title: const Text('5열 고정'),
-                subtitle:
-                    maxSafeColumns < 5 ? const Text('현재 화면에서는 오버플로우 위험') : null,
-                trailing: _gridColumnsOverride == 5
-                    ? const Icon(Icons.check_rounded)
-                    : null,
-                onTap: maxSafeColumns >= 5
-                    ? () {
-                  Navigator.pop(context);
-                  _setGridColumnsOverride(5);
-                }
-                    : null,
-              ),
+              if (maxSafeColumns >= 4)
+                ListTile(
+                  title: const Text('4열 고정'),
+                  trailing: _gridColumnsOverride == 4
+                      ? const Icon(Icons.check_rounded)
+                      : null,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _setGridColumnsOverride(4);
+                  },
+                ),
+              if (maxSafeColumns >= 5)
+                ListTile(
+                  title: const Text('5열 고정'),
+                  trailing: _gridColumnsOverride == 5
+                      ? const Icon(Icons.check_rounded)
+                      : null,
+                  onTap: () {
+                    Navigator.pop(context);
+                    _setGridColumnsOverride(5);
+                  },
+                ),
             ],
           ),
         );
