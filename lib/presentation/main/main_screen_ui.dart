@@ -422,18 +422,10 @@ class _MainScreenUIState extends State<MainScreenUI> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      color: iconColor.withAlpha(isDark ? 24 : 18),
-                      borderRadius: BorderRadius.circular(11),
-                    ),
-                    child: Icon(
-                      _menuIcons[entry.text] ?? Icons.apps_rounded,
-                      size: 18,
-                      color: iconColor,
-                    ),
+                  Icon(
+                    _menuIcons[entry.text] ?? Icons.apps_rounded,
+                    size: 9,
+                    color: iconColor,
                   ),
                   const SizedBox(height: 7),
                   Expanded(
@@ -687,7 +679,9 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final bool settingsComplete = _areEssentialSettingsSet();
     final List<_MenuEntry> favoriteEntries = _menuSections
         .expand((section) => section.items)
-        .where((entry) => _favoriteEntryKeys.contains(entry.key))
+      .where((entry) =>
+        _favoriteEntryKeys.contains(entry.key) &&
+        !_hiddenEntryKeys.contains(entry.key))
         .toList();
 
     return Scaffold(
