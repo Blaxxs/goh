@@ -500,6 +500,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final bool isDark = theme.brightness == Brightness.dark;
+    final double fontScale =
+        SettingsService.instance.appSettings.fontSizeMultiplier.clamp(0.8, 1.8);
+    final double tileHeight = (96 * fontScale).clamp(86.0, 124.0);
+    final double iconBoxSize = (34 * fontScale).clamp(26.0, 44.0);
+    final double iconSize = (16 * fontScale).clamp(12.0, 22.0);
+    final double labelFontSize = (11 * fontScale).clamp(9.0, 18.0);
+    final double iconTextGap = (6 * fontScale).clamp(4.0, 10.0);
     final bool isEnabled = onPressed != null && !isEditMode;
     final bool isHidden = _hiddenEntryKeys.contains(entry.key);
     final Color titleColor = colorScheme.onSurface;
@@ -512,7 +519,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 96,
+      height: tileHeight,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -526,8 +533,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 34,
-                  height: 34,
+                  width: iconBoxSize,
+                  height: iconBoxSize,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     gradient: isDark
@@ -546,12 +553,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   child: Center(
                     child: Icon(
                       _menuIcons[entry.text] ?? Icons.apps_rounded,
-                      size: 16,
+                      size: iconSize,
                       color: iconColor,
                     ),
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: iconTextGap),
                 Expanded(
                   child: Text(
                     entry.text,
@@ -564,7 +571,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           ? titleColor.withAlpha(120)
                           : titleColor,
                       height: 1.15,
-                      fontSize: 11,
+                        fontSize: labelFontSize,
                       shadows: [
                         Shadow(
                           color: theme.brightness == Brightness.dark
