@@ -45,6 +45,9 @@ class _MainScreenUIState extends State<MainScreenUI> {
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("message");
   String _noticeMessage = "";
   bool _logoPrecached = false;
+  bool _isEditMode = false;
+  late final List<_MenuSection> _menuSections;
+  final Set<String> _favoriteEntryKeys = <String>{};
 
   static const Map<String, IconData> _menuIcons = {
     '루프 계산기': Icons.calculate_rounded,
@@ -70,9 +73,149 @@ class _MainScreenUIState extends State<MainScreenUI> {
         settings.vipLevel!.isNotEmpty;
   }
 
+  VoidCallback? _resolveOnPressed(String entryKey, bool isEventActive) {
+    switch (entryKey) {
+      case 'loop':
+        return widget.onCalculatorPressed;
+      case 'gold':
+        return widget.onGoldCalculatorPressed;
+      case 'damage':
+        return widget.onDamageCalculatorPressed;
+      case 'accessory':
+        return widget.onAccessoryPressed;
+      case 'journal':
+        return widget.onJournalPressed;
+      case 'box':
+        return isEventActive ? widget.onBoxCalculatorPressed : null;
+      case 'enhancement':
+        return widget.onAccessoryEnhancementPressed;
+      case 'optionChange':
+        return widget.onAccessoryOptionChangePressed;
+      case 'exploration':
+        return widget.onExplorationOptionSimulationPressed;
+      case 'pouch':
+        return widget.onPouchSimulationPressed;
+      case 'stageSettings':
+        return widget.onStageSettingsPressed;
+      default:
+        return null;
+    }
+  }
+
+  String? _resolveTooltip(_MenuEntry entry, bool isEventActive) {
+    if (entry.key == 'box' && !isEventActive) {
+      return entry.tooltip;
+    }
+    return null;
+  }
+
+  void _toggleSectionExpanded(String sectionId) {
+    final idx = _menuSections.indexWhere((section) => section.id == sectionId);
+    if (idx == -1) return;
+    setState(() {
+      _menuSections[idx].expanded = !_menuSections[idx].expanded;
+    });
+  }
+
+  void _moveSection(int fromIndex, int toIndex) {
+    if (toIndex < 0 || toIndex >= _menuSections.length) return;
+    setState(() {
+      final section = _menuSections.removeAt(fromIndex);
+      _menuSections.insert(toIndex, section);
+    });
+  }
+
+  void _moveEntryWithinSection(String sectionId, int fromIndex, int toIndex) {
+    final sectionIndex =
+        _menuSections.indexWhere((section) => section.id == sectionId);
+    if (sectionIndex == -1) return;
+    final items = _menuSections[sectionIndex].items;
+    if (toIndex < 0 || toIndex >= items.length) return;
+    setState(() {
+      final entry = items.removeAt(fromIndex);
+      items.insert(toIndex, entry);
+    });
+  }
+
+  void _toggleFavorite(String entryKey) {
+    setState(() {
+      if (_favoriteEntryKeys.contains(entryKey)) {
+        _favoriteEntryKeys.remove(entryKey);
+      } else {
+        _favoriteEntryKeys.add(entryKey);
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    _menuSections = [
+      _MenuSection(
+        id: 'calc',
+        title: '계산기',
+        items: [
+          const _MenuEntry(key: 'loop', text: '루프 계산기', subtitle: '스테이지 반복 계산'),
+          const _MenuEntry(key: 'gold', text: '골드 효율 계산기', subtitle: '루프 대비 수익'),
+          const _MenuEntry(key: 'damage', text: '데미지 계산기_ Beta', subtitle: '대미지 검증'),
+        ],
+      ),
+      _MenuSection(
+        id: 'tools',
+        title: '도구 / 기록',
+        items: [
+          const _MenuEntry(
+            key: 'accessory',
+            text: '악세사리 도감',
+            subtitle: '옵션 및 세트 확인',
+          ),
+          const _MenuEntry(key: 'journal', text: '일지', subtitle: '기록 및 추이 확인'),
+          const _MenuEntry(
+            key: 'box',
+            text: '상자 기대값 계산기',
+            subtitle: '이벤트 상자 기대값',
+            tooltip: '이벤트 기간에만 사용 가능합니다',
+          ),
+        ],
+      ),
+      _MenuSection(
+        id: 'sim',
+        title: '시뮬레이터',
+        items: [
+          const _MenuEntry(
+            key: 'enhancement',
+            text: '악세 강화 시뮬',
+            subtitle: '강화 기대값 계산',
+          ),
+          const _MenuEntry(
+            key: 'optionChange',
+            text: '악세 옵변 시뮬',
+            subtitle: '옵션 변경 시뮬',
+          ),
+          const _MenuEntry(
+            key: 'exploration',
+            text: '탐 옵션 시뮬',
+            subtitle: '탐험 옵션 실험',
+          ),
+          const _MenuEntry(
+            key: 'pouch',
+            text: '주머니 시뮬',
+            subtitle: '주머니 획득 시뮬',
+          ),
+        ],
+      ),
+      _MenuSection(
+        id: 'settings',
+        title: '설정',
+        items: [
+          const _MenuEntry(
+            key: 'stageSettings',
+            text: '스테이지 설정',
+            subtitle: '팀/달기지/VIP 설정',
+          ),
+        ],
+      ),
+    ];
     // [추가] 실시간 데이터 감시
     _dbRef.onValue.listen((event) {
       if (mounted) {
