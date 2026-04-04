@@ -1,8 +1,8 @@
 // lib/presentation/simulator/accessory_option_change_screen.dart
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'dart:math';
 import '../../data/models/accessory.dart';
-import '../accessory/accessory_screen.dart';
 import '../../core/constants/accessory_constants.dart'; // AccessoryOptionNames 사용
 import 'accessory_option_change_screen_ui.dart';
 
@@ -129,17 +129,183 @@ class _AccessoryOptionChangeScreenState
     _updateAccessory(newAccessory);
   }
 
-  Future<void> _selectAccessory(BuildContext context) async {
-    final pickedAccessory = await Navigator.push<Accessory>(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AccessoryScreen(isPickerMode: true),
-      ),
-    );
+  void _selectAccessory(BuildContext context) {
+    final allAccessories = AccessoryDataManager().allAccessories;
+    if (allAccessories.isEmpty) return;
 
-    if (pickedAccessory != null && mounted) {
-      _updateAccessory(pickedAccessory);
-    }
+    final parts = allAccessories.map((a) => a.part).toSet().toList()..sort();
+    String? selectedPart;
+    String searchQuery = '';
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            final filtered = allAccessories.where((a) {
+              final matchesPart =
+                  selectedPart == null || a.part == selectedPart;
+              final matchesSearch = searchQuery.isEmpty ||
+                  a.name.toLowerCase().contains(searchQuery.toLowerCase());
+              return matchesPart && matchesSearch;
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
+
+            return DraggableScrollableSheet(
+              expand: false,
+              initialChildSize: 0.75,
+              maxChildSize: 0.95,
+              minChildSize: 0.4,
+              builder: (_, scrollController) {
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Text(
+                        '악세사리 선택',
+                        style: Theme.of(ctx)
+                            .textTheme
+                            .titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: TextField(
+                        onChanged: (v) =>
+                            setSheetState(() => searchQuery = v),
+                        decoration: const InputDecoration(
+                          hintText: '이름 검색',
+                          prefixIcon: Icon(Icons.search, size: 20),
+                          isDense: true,
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 8),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: [
+                          FilterChip(
+                            label: const Text('전체'),
+                            selected: selectedPart == null,
+                            onSelected: (_) =>
+                                setSheetState(() => selectedPart = null),
+                          ),
+                          const SizedBox(width: 6),
+                          ...parts.map((p) => Padding(
+                                padding: const EdgeInsets.only(right: 6),
+                                child: FilterChip(
+                                  label: Text(p),
+                                  selected: selectedPart == p,
+                                  onSelected: (_) => setSheetState(
+                                      () => selectedPart =
+                                          selectedPart == p ? null : p),
+                                ),
+                              )),
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 8),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? const Center(child: Text('검색 결과가 없습니다.'))
+                          : GridView.builder(
+                              controller: scrollController,
+                              padding: const EdgeInsets.all(12),
+                              gridDelegate:
+                                  const SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 90,
+                                crossAxisSpacing: 8,
+                                mainAxisSpacing: 8,
+                                childAspectRatio: 0.75,
+                              ),
+                              itemCount: filtered.length,
+                              itemBuilder: (_, index) {
+                                final acc = filtered[index];
+                                final isCurrent =
+                                    _selectedAccessory?.id == acc.id;
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.pop(sheetContext);
+                                    if (mounted) {
+                                      _updateAccessory(acc);
+                                    }
+                                  },
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: isCurrent
+                                                ? Theme.of(ctx)
+                                                    .colorScheme
+                                                    .primary
+                                                : Colors.transparent,
+                                            width: 2,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          child: CachedNetworkImage(
+                                            imageUrl: acc.imageUrl,
+                                            width: 60,
+                                            height: 60,
+                                            fit: BoxFit.cover,
+                                            placeholder: (_, __) =>
+                                                const SizedBox(
+                                              width: 60,
+                                              height: 60,
+                                              child: Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 1.5)),
+                                            ),
+                                            errorWidget: (_, __, ___) =>
+                                                const SizedBox(
+                                              width: 60,
+                                              height: 60,
+                                              child: Icon(Icons
+                                                  .image_not_supported_outlined),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        acc.name,
+                                        style: Theme.of(ctx)
+                                            .textTheme
+                                            .labelSmall,
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
+    );
   }
 
   // Helper to set a new accessory and reset related states
