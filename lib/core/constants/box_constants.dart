@@ -15,6 +15,8 @@ enum AppScreen {
   journal,
   encyclopedia,
   simulator,
+  accessoryEnhancement,
+  accessoryOptionChange,
   explorationOptionSimulation,
   pouchSimulation,
   stageSettings,
