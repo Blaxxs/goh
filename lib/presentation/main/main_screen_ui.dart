@@ -542,32 +542,10 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     final bool isEventActive = EventManager.isEventPeriodActive();
     final bool settingsComplete = _areEssentialSettingsSet();
-
-    // 섹션별 버튼 그룹
-    final List<_MenuEntry> calculatorButtons = [
-      _MenuEntry(text: '루프 계산기', subtitle: '스테이지 반복 계산', onPressed: widget.onCalculatorPressed),
-      _MenuEntry(text: '골드 효율 계산기', subtitle: '루프 대비 수익', onPressed: widget.onGoldCalculatorPressed),
-      _MenuEntry(text: '데미지 계산기_ Beta', subtitle: '대미지 검증', onPressed: widget.onDamageCalculatorPressed),
-    ];
-    final List<_MenuEntry> toolButtons = [
-      _MenuEntry(text: '악세사리 도감', subtitle: '옵션 및 세트 확인', onPressed: widget.onAccessoryPressed),
-      _MenuEntry(text: '일지', subtitle: '기록 및 추이 확인', onPressed: widget.onJournalPressed),
-      _MenuEntry(
-        text: '상자 기대값 계산기',
-        subtitle: '이벤트 상자 기대값',
-        onPressed: isEventActive ? widget.onBoxCalculatorPressed : null,
-        tooltip: '이벤트 기간에만 사용 가능합니다',
-      ),
-    ];
-    final List<_MenuEntry> simulatorButtons = [
-      _MenuEntry(text: '악세 강화 시뮬', subtitle: '강화 기대값 계산', onPressed: widget.onAccessoryEnhancementPressed),
-      _MenuEntry(text: '악세 옵변 시뮬', subtitle: '옵션 변경 시뮬', onPressed: widget.onAccessoryOptionChangePressed),
-      _MenuEntry(text: '탐 옵션 시뮬', subtitle: '탐험 옵션 실험', onPressed: widget.onExplorationOptionSimulationPressed),
-      _MenuEntry(text: '주머니 시뮬', subtitle: '주머니 획득 시뮬', onPressed: widget.onPouchSimulationPressed),
-    ];
-    final List<_MenuEntry> settingButtons = [
-      _MenuEntry(text: '스테이지 설정', subtitle: '팀/달기지/VIP 설정', onPressed: widget.onStageSettingsPressed),
-    ];
+    final List<_MenuEntry> favoriteEntries = _menuSections
+        .expand((section) => section.items)
+        .where((entry) => _favoriteEntryKeys.contains(entry.key))
+        .toList();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -658,6 +636,18 @@ class _MainScreenUIState extends State<MainScreenUI> {
                         const SizedBox(width: 10),
                         _buildTopIconButton(
                           context: context,
+                          icon: _isEditMode
+                              ? Icons.check_circle_outline_rounded
+                              : Icons.edit_note_rounded,
+                          onPressed: () {
+                            setState(() {
+                              _isEditMode = !_isEditMode;
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 8),
+                        _buildTopIconButton(
+                          context: context,
                           icon: Icons.settings_applications_outlined,
                           onPressed: widget.onAppSettingsPressed,
                         ),
@@ -716,29 +706,27 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _buildCategoryCard(
-                              context: context,
-                              title: '계산기',
-                              items: calculatorButtons,
-                              panelWidth: panelWidth,
-                            ),
-                            _buildCategoryCard(
-                              context: context,
-                              title: '도구 / 기록',
-                              items: toolButtons,
-                              panelWidth: panelWidth,
-                            ),
-                            _buildCategoryCard(
-                              context: context,
-                              title: '시뮬레이터',
-                              items: simulatorButtons,
-                              panelWidth: panelWidth,
-                            ),
-                            _buildCategoryCard(
-                              context: context,
-                              title: '설정',
-                              items: settingButtons,
-                              panelWidth: panelWidth,
+                            if (favoriteEntries.isNotEmpty)
+                              _buildCategoryCard(
+                                context: context,
+                                section: _MenuSection(
+                                  id: 'favorites',
+                                  title: '즐겨찾기',
+                                  expanded: true,
+                                  items: List<_MenuEntry>.from(favoriteEntries),
+                                ),
+                                sectionIndex: -1,
+                                isEventActive: isEventActive,
+                                panelWidth: panelWidth,
+                              ),
+                            ..._menuSections.asMap().entries.map(
+                              (entry) => _buildCategoryCard(
+                                context: context,
+                                section: entry.value,
+                                sectionIndex: entry.key,
+                                isEventActive: isEventActive,
+                                panelWidth: panelWidth,
+                              ),
                             ),
                           ],
                         ),
