@@ -705,12 +705,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     final bool isEventActive = EventManager.isEventPeriodActive();
     final bool settingsComplete = _areEssentialSettingsSet();
-    final List<_MenuEntry> favoriteEntries = _menuSections
-        .expand((section) => section.items)
-      .where((entry) =>
-        _favoriteEntryKeys.contains(entry.key) &&
-        !_hiddenEntryKeys.contains(entry.key))
-        .toList();
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -823,6 +817,14 @@ class _MainScreenUIState extends State<MainScreenUI> {
                         const SizedBox(width: 8),
                         _buildTopIconButton(
                           context: context,
+                          icon: _gridColumnsOverride == null
+                              ? Icons.grid_view_rounded
+                              : Icons.grid_on_rounded,
+                          onPressed: _showGridModeSheet,
+                        ),
+                        const SizedBox(width: 8),
+                        _buildTopIconButton(
+                          context: context,
                           icon: Icons.settings_applications_outlined,
                           onPressed: widget.onAppSettingsPressed,
                         ),
@@ -931,27 +933,10 @@ class _MainScreenUIState extends State<MainScreenUI> {
                                   ],
                                 ),
                               ),
-                            if (favoriteEntries.isNotEmpty)
-                              _buildCategoryCard(
-                                context: context,
-                                section: _MenuSection(
-                                  id: 'favorites',
-                                  title: '즐겨찾기',
-                                  expanded: true,
-                                  items: List<_MenuEntry>.from(favoriteEntries),
-                                ),
-                                sectionIndex: -1,
-                                isEventActive: isEventActive,
-                                panelWidth: panelWidth,
-                              ),
-                            ..._menuSections.asMap().entries.map(
-                              (entry) => _buildCategoryCard(
-                                context: context,
-                                section: entry.value,
-                                sectionIndex: entry.key,
-                                isEventActive: isEventActive,
-                                panelWidth: panelWidth,
-                              ),
+                            _buildIconGrid(
+                              context: context,
+                              isEventActive: isEventActive,
+                              panelWidth: panelWidth,
                             ),
                           ],
                         ),
