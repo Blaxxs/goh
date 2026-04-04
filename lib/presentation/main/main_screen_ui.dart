@@ -50,6 +50,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
   bool _isEditMode = false;
   late final List<_MenuSection> _menuSections;
   final Set<String> _favoriteEntryKeys = <String>{};
+  final Set<String> _hiddenEntryKeys = <String>{};
 
   static const Map<String, IconData> _menuIcons = {
     '루프 계산기': Icons.calculate_rounded,
@@ -117,6 +118,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     setState(() {
       _menuSections[idx].expanded = !_menuSections[idx].expanded;
     });
+    _persistMenuLayout();
   }
 
   void _moveSection(int fromIndex, int toIndex) {
@@ -125,6 +127,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
       final section = _menuSections.removeAt(fromIndex);
       _menuSections.insert(toIndex, section);
     });
+    _persistMenuLayout();
   }
 
   void _moveEntryWithinSection(String sectionId, int fromIndex, int toIndex) {
@@ -137,6 +140,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
       final entry = items.removeAt(fromIndex);
       items.insert(toIndex, entry);
     });
+    _persistMenuLayout();
   }
 
   void _toggleFavorite(String entryKey) {
@@ -147,6 +151,128 @@ class _MainScreenUIState extends State<MainScreenUI> {
         _favoriteEntryKeys.add(entryKey);
       }
     });
+    _persistMenuLayout();
+  }
+
+  void _toggleHidden(String entryKey) {
+    setState(() {
+      if (_hiddenEntryKeys.contains(entryKey)) {
+        _hiddenEntryKeys.remove(entryKey);
+      } else {
+        _hiddenEntryKeys.add(entryKey);
+      }
+    });
+    _persistMenuLayout();
+  }
+
+  Map<String, dynamic> _buildMenuLayoutPayload() {
+    return {
+      'sections': _menuSections
+          .map((section) => {
+                'id': section.id,
+                'expanded': section.expanded,
+                'itemKeys': section.items.map((item) => item.key).toList(),
+              })
+          .toList(),
+      'favorites': _favoriteEntryKeys.toList(),
+      'hidden': _hiddenEntryKeys.toList(),
+    };
+  }
+
+  Future<void> _persistMenuLayout() async {
+    final settingsService = SettingsService.instance;
+    final current = settingsService.appSettings;
+    final layoutJson = jsonEncode(_buildMenuLayoutPayload());
+    await settingsService.saveAppSettings(
+      current.copyWith(homeMenuLayoutJson: layoutJson),
+    );
+  }
+
+  _MenuEntry? _findEntryByKey(String key) {
+    for (final section in _menuSections) {
+      for (final entry in section.items) {
+        if (entry.key == key) return entry;
+      }
+    }
+    return null;
+  }
+
+  void _applyStoredLayout(String layoutJson) {
+    final decoded = jsonDecode(layoutJson);
+    if (decoded is! Map<String, dynamic>) return;
+
+    final Map<String, _MenuSection> sectionById = {
+      for (final section in _menuSections) section.id: section,
+    };
+
+    final sectionsData = decoded['sections'];
+    if (sectionsData is List) {
+      final List<_MenuSection> reorderedSections = [];
+      for (final sectionData in sectionsData) {
+        if (sectionData is! Map) continue;
+        final sectionId = sectionData['id']?.toString();
+        if (sectionId == null || !sectionById.containsKey(sectionId)) continue;
+        final section = sectionById.remove(sectionId)!;
+        section.expanded = sectionData['expanded'] as bool? ?? true;
+
+        final itemKeys = sectionData['itemKeys'];
+        if (itemKeys is List) {
+          final Map<String, _MenuEntry> itemMap = {
+            for (final item in section.items) item.key: item,
+          };
+          final List<_MenuEntry> reordered = [];
+          for (final key in itemKeys) {
+            final entry = itemMap.remove(key.toString());
+            if (entry != null) reordered.add(entry);
+          }
+          reordered.addAll(itemMap.values);
+          section.items
+            ..clear()
+            ..addAll(reordered);
+        }
+
+        reorderedSections.add(section);
+      }
+      reorderedSections.addAll(sectionById.values);
+      _menuSections
+        ..clear()
+        ..addAll(reorderedSections);
+    }
+
+    _favoriteEntryKeys.clear();
+    final favorites = decoded['favorites'];
+    if (favorites is List) {
+      for (final key in favorites) {
+        final keyStr = key.toString();
+        if (_findEntryByKey(keyStr) != null) {
+          _favoriteEntryKeys.add(keyStr);
+        }
+      }
+    }
+
+    _hiddenEntryKeys.clear();
+    final hidden = decoded['hidden'];
+    if (hidden is List) {
+      for (final key in hidden) {
+        final keyStr = key.toString();
+        if (_findEntryByKey(keyStr) != null) {
+          _hiddenEntryKeys.add(keyStr);
+        }
+      }
+    }
+  }
+
+  Future<void> _loadStoredLayout() async {
+    final layoutJson = SettingsService.instance.appSettings.homeMenuLayoutJson;
+    if (layoutJson == null || layoutJson.isEmpty) return;
+    try {
+      _applyStoredLayout(layoutJson);
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (_) {
+      // 저장 포맷이 깨진 경우 기본 레이아웃으로 유지
+    }
   }
 
   @override
@@ -218,6 +344,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
         ],
       ),
     ];
+    _loadStoredLayout();
     // [추가] 실시간 데이터 감시
     _dbRef.onValue.listen((event) {
       if (mounted) {
