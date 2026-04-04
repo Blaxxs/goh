@@ -424,10 +424,10 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 children: [
                   Icon(
                     _menuIcons[entry.text] ?? Icons.apps_rounded,
-                    size: 9,
+                    size: 6,
                     color: iconColor,
                   ),
-                  const SizedBox(height: 7),
+                  const SizedBox(height: 4),
                   Expanded(
                     child: Text(
                       entry.text,
