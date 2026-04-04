@@ -15,7 +15,6 @@ import '../simulator/accessory_enhancement_screen.dart';
 import '../simulator/accessory_option_change_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
 import '../simulator/pouch_simulation_screen.dart';
-import '../reverse_calculator/reverse_calculator_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -79,9 +78,6 @@ class _MainScreenState extends State<MainScreen> {
         },
         onAppSettingsPressed: () {
           _navigateToScreen(context, const AppSettingsScreen());
-        },
-        onReverseCalculatorPressed: () {
-          _navigateToScreen(context, const ReverseCalculatorScreen());
         },
         settingsService: SettingsService.instance,
       );
