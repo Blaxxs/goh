@@ -826,9 +826,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
                       maxWidth: panelWidth,
                       maxHeight: screenSize.height * 0.64,
                     ),
-                    child: GlassPanel(
+                    child: Padding(
                       padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
-                      borderRadius: const BorderRadius.all(Radius.circular(24)),
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
