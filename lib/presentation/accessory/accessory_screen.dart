@@ -218,15 +218,15 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     );
   }
 
-  void _showSetBuilderDialog() {
-    final accessories = AccessoryDataManager().allAccessories;
-    if (accessories.isEmpty) return;
-
-    showDialog(
-      context: context,
-      builder: (_) => _AccessorySetBuilderDialog(allAccessories: accessories),
-    );
-  }
+  // TODO: 세트 빌더 - 추후 재추가 예정
+  // void _showSetBuilderDialog() {
+  //   final accessories = AccessoryDataManager().allAccessories;
+  //   if (accessories.isEmpty) return;
+  //   showDialog(
+  //     context: context,
+  //     builder: (_) => _AccessorySetBuilderDialog(allAccessories: accessories),
+  //   );
+  // }
 }
 
 // 세트 옵션 단계 네비게이션을 지원하는 상세 다이얼로그
