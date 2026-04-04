@@ -297,14 +297,6 @@ class PouchSimulationScreenUI extends StatelessWidget {
     final sortedItems = List<PouchItem>.from(currentItems)
       ..sort((a, b) => a.amount.compareTo(b.amount));
 
-    // 내림차순 누적 확률 (이 값 이상 나올 확률)
-    final reverseCumul = <int, double>{};
-    double cumFromTop = 0;
-    for (int i = sortedItems.length - 1; i >= 0; i--) {
-      cumFromTop += sortedItems[i].probability;
-      reverseCumul[sortedItems[i].amount] = cumFromTop.clamp(0, 100);
-    }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -359,13 +351,7 @@ class PouchSimulationScreenUI extends StatelessWidget {
                               style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ))),
-                      SizedBox(
-                          width: 80,
-                          child: Text('이상 확률',
-                              textAlign: TextAlign.right,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ))),
+
                     ],
                   ),
                 ),
@@ -373,7 +359,6 @@ class PouchSimulationScreenUI extends StatelessWidget {
                 // 아이템 행 (역순 - 높은 금액부터)
                 ...sortedItems.reversed.map((item) {
                   final prob = item.probability;
-                  final cumAbove = reverseCumul[item.amount] ?? 0;
                   final isRare = prob < 2.0;
                   return Padding(
                     padding: const EdgeInsets.symmetric(
@@ -404,17 +389,7 @@ class PouchSimulationScreenUI extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(
-                          width: 80,
-                          child: Text(
-                            '${cumAbove.toStringAsFixed(1)}%',
-                            textAlign: TextAlign.right,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.onSurface
-                                  .withValues(alpha: 0.5),
-                            ),
-                          ),
-                        ),
+
                       ],
                     ),
                   );
