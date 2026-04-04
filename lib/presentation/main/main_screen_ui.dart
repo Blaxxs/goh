@@ -51,6 +51,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
   late final List<_MenuSection> _menuSections;
   final Set<String> _favoriteEntryKeys = <String>{};
   final Set<String> _hiddenEntryKeys = <String>{};
+  int? _gridColumnsOverride;
 
   static const Map<String, IconData> _menuIcons = {
     '루프 계산기': Icons.calculate_rounded,
@@ -112,35 +113,122 @@ class _MainScreenUIState extends State<MainScreenUI> {
     return null;
   }
 
-  void _toggleSectionExpanded(String sectionId) {
+  _MenuSection? _findSectionById(String sectionId) {
     final idx = _menuSections.indexWhere((section) => section.id == sectionId);
-    if (idx == -1) return;
+    if (idx == -1) return null;
+    return _menuSections[idx];
+  }
+
+  List<_EntryRef> _visibleEntryRefs() {
+    final refs = <_EntryRef>[];
+    for (final section in _menuSections) {
+      for (final indexed in section.items.asMap().entries) {
+        if (_hiddenEntryKeys.contains(indexed.value.key)) continue;
+        refs.add(
+          _EntryRef(
+            sectionId: section.id,
+            itemIndex: indexed.key,
+            entry: indexed.value,
+          ),
+        );
+      }
+    }
+    return refs;
+  }
+
+  void _moveEntryByStep(String entryKey, int step) {
+    final refs = _visibleEntryRefs();
+    final currentIndex = refs.indexWhere((ref) => ref.entry.key == entryKey);
+    if (currentIndex == -1) return;
+    final targetIndex = currentIndex + step;
+    if (targetIndex < 0 || targetIndex >= refs.length) return;
+
+    final currentRef = refs[currentIndex];
+    final targetRef = refs[targetIndex];
+
+    final currentSection = _findSectionById(currentRef.sectionId);
+    final targetSection = _findSectionById(targetRef.sectionId);
+    if (currentSection == null || targetSection == null) return;
+
     setState(() {
-      _menuSections[idx].expanded = !_menuSections[idx].expanded;
+      final currentEntry = currentSection.items[currentRef.itemIndex];
+      final targetEntry = targetSection.items[targetRef.itemIndex];
+      currentSection.items[currentRef.itemIndex] = targetEntry;
+      targetSection.items[targetRef.itemIndex] = currentEntry;
     });
     _persistMenuLayout();
   }
 
-  void _moveSection(int fromIndex, int toIndex) {
-    if (toIndex < 0 || toIndex >= _menuSections.length) return;
+  int _resolveGridColumns(double panelWidth) {
+    if (_gridColumnsOverride != null) {
+      return _gridColumnsOverride!;
+    }
+    if (panelWidth >= 780) return 5;
+    if (panelWidth >= 620) return 4;
+    return 3;
+  }
+
+  void _setGridColumnsOverride(int? columns) {
     setState(() {
-      final section = _menuSections.removeAt(fromIndex);
-      _menuSections.insert(toIndex, section);
+      _gridColumnsOverride = columns;
     });
     _persistMenuLayout();
   }
 
-  void _moveEntryWithinSection(String sectionId, int fromIndex, int toIndex) {
-    final sectionIndex =
-        _menuSections.indexWhere((section) => section.id == sectionId);
-    if (sectionIndex == -1) return;
-    final items = _menuSections[sectionIndex].items;
-    if (toIndex < 0 || toIndex >= items.length) return;
-    setState(() {
-      final entry = items.removeAt(fromIndex);
-      items.insert(toIndex, entry);
-    });
-    _persistMenuLayout();
+  Future<void> _showGridModeSheet() async {
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('자동'),
+                trailing: _gridColumnsOverride == null
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  _setGridColumnsOverride(null);
+                },
+              ),
+              ListTile(
+                title: const Text('3열 고정'),
+                trailing: _gridColumnsOverride == 3
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  _setGridColumnsOverride(3);
+                },
+              ),
+              ListTile(
+                title: const Text('4열 고정'),
+                trailing: _gridColumnsOverride == 4
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  _setGridColumnsOverride(4);
+                },
+              ),
+              ListTile(
+                title: const Text('5열 고정'),
+                trailing: _gridColumnsOverride == 5
+                    ? const Icon(Icons.check_rounded)
+                    : null,
+                onTap: () {
+                  Navigator.pop(context);
+                  _setGridColumnsOverride(5);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _toggleFavorite(String entryKey) {
@@ -176,6 +264,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
           .toList(),
       'favorites': _favoriteEntryKeys.toList(),
       'hidden': _hiddenEntryKeys.toList(),
+      'gridColumns': _gridColumnsOverride,
     };
   }
 
@@ -259,6 +348,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
           _hiddenEntryKeys.add(keyStr);
         }
       }
+    }
+
+    final gridColumns = decoded['gridColumns'];
+    if (gridColumns is int && (gridColumns == 3 || gridColumns == 4 || gridColumns == 5)) {
+      _gridColumnsOverride = gridColumns;
+    } else {
+      _gridColumnsOverride = null;
     }
   }
 
