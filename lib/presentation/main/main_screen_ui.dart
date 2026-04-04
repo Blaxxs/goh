@@ -380,9 +380,17 @@ class _MainScreenUIState extends State<MainScreenUI> {
     String? tooltip,
   }) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final bool isDark = theme.brightness == Brightness.dark;
     final bool isEnabled = onPressed != null && !isEditMode;
     final bool isHidden = _hiddenEntryKeys.contains(entry.key);
     final Color titleColor = colorScheme.onSurface;
+    final Color iconColor = (isEnabled && !isHidden)
+        ? colorScheme.primary
+        : colorScheme.onSurface.withAlpha(145);
+    final Color iconBorderColor = (isEnabled && !isHidden)
+        ? colorScheme.outline.withAlpha(isDark ? 170 : 145)
+        : colorScheme.outline.withAlpha(90);
 
     Widget button = SizedBox(
       width: itemWidth,
@@ -399,7 +407,33 @@ class _MainScreenUIState extends State<MainScreenUI> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 2),
+                Container(
+                  width: 34,
+                  height: 34,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    gradient: isDark
+                        ? const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xCC1E2A3B), Color(0xB3192434)],
+                          )
+                        : const LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [Color(0xF8FFFFFF), Color(0xECEDF3FF)],
+                          ),
+                    border: Border.all(color: iconBorderColor, width: 1),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      _menuIcons[entry.text] ?? Icons.apps_rounded,
+                      size: 16,
+                      color: iconColor,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 6),
                 Expanded(
                   child: Text(
                     entry.text,
