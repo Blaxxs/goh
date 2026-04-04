@@ -575,6 +575,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double tileWidth =
         (innerWidth - (innerGap * (columns - 1))).clamp(100.0, innerWidth) /
             columns;
+    final visibleEntries = section.items
+      .asMap()
+      .entries
+      .where((entryWithIndex) =>
+        !_hiddenEntryKeys.contains(entryWithIndex.value.key))
+      .toList();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
@@ -603,43 +609,18 @@ class _MainScreenUIState extends State<MainScreenUI> {
             Wrap(
               spacing: innerGap,
               runSpacing: innerGap,
-              children: section.items
-                  .asMap()
-                  .entries
-                  .where((entryWithIndex) =>
-                      !_hiddenEntryKeys.contains(entryWithIndex.value.key))
-                  .toList()
-                  .asMap()
-                  .entries
+              children: visibleEntries
+                .asMap()
+                .entries
                   .map((visibleEntryWithIndex) {
                 final int visibleIndex = visibleEntryWithIndex.key;
-                final int itemIndex = visibleEntryWithIndex.value.value.key;
+              final int itemIndex = visibleEntryWithIndex.value.key;
                 final int? prevIndex = visibleIndex > 0
-                    ? visibleEntryWithIndex
-                        .value
-                        .value
-                        .key -
-                        (visibleEntryWithIndex.value.value.key -
-                            visibleEntryWithIndex
-                                .value
-                                .value
-                                .key)
+                ? visibleEntries[visibleIndex - 1].key
                     : null;
                 final int? nextIndex = visibleIndex <
-                        section.items
-                                .asMap()
-                                .entries
-                                .where((entry) =>
-                                    !_hiddenEntryKeys.contains(entry.value.key))
-                                .length -
-                            1
-                    ? section.items
-                        .asMap()
-                        .entries
-                        .where((entry) =>
-                            !_hiddenEntryKeys.contains(entry.value.key))
-                        .toList()[visibleIndex + 1]
-                        .key
+                  visibleEntries.length - 1
+                ? visibleEntries[visibleIndex + 1].key
                     : null;
                 final _MenuEntry entry = visibleEntryWithIndex.value.value;
                 final onPressed = _resolveOnPressed(entry.key, isEventActive);
