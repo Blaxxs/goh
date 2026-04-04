@@ -858,72 +858,80 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
               Text('부위별 악세사리 선택', style: theme.textTheme.titleSmall),
               const SizedBox(height: 8),
               ..._parts.map((part) {
+                final partAcc = _selectedByPart[part];
                 final partItems = widget.allAccessories
                     .where((a) => a.part == part)
                     .toList()
                   ..sort((a, b) => a.name.compareTo(b.name));
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 8),
-                  child: DropdownButtonFormField<Accessory?>(
-                    value: _selectedByPart[part],
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: part,
-                      border: const OutlineInputBorder(),
-                      contentPadding:
-                          const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    ),
-                    items: [
-                      const DropdownMenuItem<Accessory?>(
-                        value: null,
-                        child: Row(
-                          children: [
-                            Icon(Icons.remove_circle_outline, size: 18),
-                            SizedBox(width: 8),
-                            Text('선택 안함'),
-                          ],
-                        ),
+                  child: InkWell(
+                    onTap: () => _showPartPickerSheet(context, part, partItems),
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: theme.dividerColor),
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                      ...partItems.map(
-                        (acc) => DropdownMenuItem<Accessory?>(
-                          value: acc,
-                          child: Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(4),
-                                child: CachedNetworkImage(
-                                  imageUrl: acc.imageUrl,
-                                  width: 20,
-                                  height: 20,
-                                  fit: BoxFit.cover,
-                                  placeholder: (_, __) => const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: Center(
-                                      child: SizedBox(
-                                        width: 10,
-                                        height: 10,
-                                        child: CircularProgressIndicator(strokeWidth: 1.5),
-                                      ),
-                                    ),
-                                  ),
-                                  errorWidget: (_, __, ___) => const Icon(Icons.image_not_supported_outlined, size: 16),
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(acc.name, overflow: TextOverflow.ellipsis),
-                              ),
-                            ],
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 52,
+                            child: Text(
+                              part,
+                              style: theme.textTheme.bodySmall
+                                  ?.copyWith(color: theme.hintColor),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: 8),
+                          if (partAcc != null) ...[
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: CachedNetworkImage(
+                                imageUrl: partAcc.imageUrl,
+                                width: 28,
+                                height: 28,
+                                fit: BoxFit.cover,
+                                errorWidget: (_, __, ___) =>
+                                    const Icon(Icons.broken_image, size: 20),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                partAcc.name,
+                                style: theme.textTheme.bodyMedium,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () =>
+                                  setState(() => _selectedByPart[part] = null),
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 4),
+                                child: Icon(Icons.clear,
+                                    size: 18, color: theme.hintColor),
+                              ),
+                            ),
+                          ] else ...[
+                            const Icon(Icons.add_circle_outline,
+                                size: 18, color: Colors.grey),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                '선택 안함',
+                                style: theme.textTheme.bodyMedium
+                                    ?.copyWith(color: theme.hintColor),
+                              ),
+                            ),
+                            Icon(Icons.chevron_right,
+                                size: 18, color: theme.hintColor),
+                          ],
+                        ],
                       ),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedByPart[part] = value;
-                      });
-                    },
+                    ),
                   ),
                 );
               }),
