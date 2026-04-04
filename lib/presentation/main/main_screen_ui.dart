@@ -346,6 +346,31 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 ),
               ),
               Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 220,
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: theme.brightness == Brightness.dark
+                            ? [
+                                Colors.transparent,
+                                Colors.black.withAlpha(76),
+                              ]
+                            : [
+                                Colors.transparent,
+                                Colors.black.withAlpha(28),
+                              ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
                 top: topPadding + 10,
                 left: horizontalInset,
                 right: horizontalInset,
@@ -433,17 +458,37 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   padding: EdgeInsets.only(bottom: 14 + bottomPadding),
                   child: SizedBox(
                     width: panelWidth,
-                    child: GlassPanel(
-                      padding: const EdgeInsets.fromLTRB(9, 4, 9, 8),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildSection('계산기', calculatorButtons),
-                          buildSection('도구 / 기록', toolButtons),
-                          buildSection('시뮬레이터', simulatorButtons),
-                          buildSection('설정', settingButtons),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(28),
+                        border: Border.all(
+                          color: theme.brightness == Brightness.dark
+                              ? Colors.white.withAlpha(40)
+                              : theme.colorScheme.outline.withAlpha(120),
+                          width: 1.1,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.brightness == Brightness.dark
+                                ? Colors.black.withAlpha(55)
+                                : Colors.black.withAlpha(24),
+                            blurRadius: 28,
+                            offset: const Offset(0, 14),
+                          ),
                         ],
+                      ),
+                      child: GlassPanel(
+                        padding: const EdgeInsets.fromLTRB(9, 4, 9, 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            buildSection('계산기', calculatorButtons),
+                            buildSection('도구 / 기록', toolButtons),
+                            buildSection('시뮬레이터', simulatorButtons),
+                            buildSection('설정', settingButtons),
+                          ],
+                        ),
                       ),
                     ),
                   ),
