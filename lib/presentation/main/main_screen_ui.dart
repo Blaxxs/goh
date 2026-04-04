@@ -422,12 +422,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    _menuIcons[entry.text] ?? Icons.apps_rounded,
-                    size: 6,
-                    color: iconColor,
-                  ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Expanded(
                     child: Text(
                       entry.text,
