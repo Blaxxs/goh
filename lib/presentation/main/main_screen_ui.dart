@@ -258,7 +258,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
       'sections': _menuSections
           .map((section) => {
                 'id': section.id,
-                'expanded': section.expanded,
                 'itemKeys': section.items.map((item) => item.key).toList(),
               })
           .toList(),
@@ -302,7 +301,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
         final sectionId = sectionData['id']?.toString();
         if (sectionId == null || !sectionById.containsKey(sectionId)) continue;
         final section = sectionById.remove(sectionId)!;
-        section.expanded = sectionData['expanded'] as bool? ?? true;
 
         final itemKeys = sectionData['itemKeys'];
         if (itemKeys is List) {
@@ -956,13 +954,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
 class _MenuSection {
   final String id;
   final String title;
-  bool expanded;
   final List<_MenuEntry> items;
 
   _MenuSection({
     required this.id,
     required this.title,
-    this.expanded = true,
     required this.items,
   });
 }
