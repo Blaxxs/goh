@@ -243,20 +243,17 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double bottomPadding = mediaQuery.padding.bottom;
     final double topPadding = mediaQuery.padding.top;
     final Size screenSize = MediaQuery.of(context).size;
-    const double panelMaxWidth = 760;
-    final int columns = screenSize.width >= 900
-      ? 6
-        : screenSize.width >= 650
-        ? 5
-            : screenSize.width >= 420
-          ? 4
-          : 3;
+    const double panelMaxWidth = 700;
     const double horizontalInset = 20;
-    const double menuGap = 4;
+    const double menuGap = 6;
     const double panelHorizontalPadding = 18;
+    const double targetTileWidth = 112;
     final double panelWidth =
-      (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth)
-        as double;
+      (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth);
+    final double panelContentWidth = panelWidth - panelHorizontalPadding;
+    final int rawColumns =
+      ((panelContentWidth + menuGap) / (targetTileWidth + menuGap)).floor();
+    final int columns = rawColumns < 3 ? 3 : (rawColumns > 5 ? 5 : rawColumns);
     final double availableWidth =
       panelWidth - panelHorizontalPadding - (menuGap * (columns - 1));
     final double menuItemWidth = availableWidth / columns;
