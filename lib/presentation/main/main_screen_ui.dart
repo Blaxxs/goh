@@ -296,7 +296,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     Widget buildSection(String label, List<Map<String, dynamic>> buttons) {
       return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _buildSectionHeader(context, label),
           Wrap(
