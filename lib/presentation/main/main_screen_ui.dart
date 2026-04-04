@@ -380,95 +380,71 @@ class _MainScreenUIState extends State<MainScreenUI> {
     String? tooltip,
   }) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final bool isDark = theme.brightness == Brightness.dark;
     final bool isEnabled = onPressed != null && !isEditMode;
     final bool isHidden = _hiddenEntryKeys.contains(entry.key);
-
-    final Color borderColor = isFavorite
-        ? colorScheme.primary.withAlpha(isDark ? 170 : 150)
-        : colorScheme.outline.withAlpha(isDark ? 150 : 120);
-    final Color iconColor = isEnabled
-        ? colorScheme.primary
-        : colorScheme.onSurface.withAlpha(145);
     final Color titleColor = colorScheme.onSurface;
-
-    final List<Color> backgroundColors = isDark
-        ? [const Color(0xC4172537), const Color(0xB8122032)]
-        : [const Color(0xE6FFFFFF), const Color(0xD7F3F8FF)];
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 108,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: backgroundColors,
-          ),
-          border: Border.all(color: borderColor, width: 1),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: isEditMode
-                ? onToggleHidden
-                : (isEnabled && !isHidden ? onPressed : null),
-            borderRadius: BorderRadius.circular(12),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 2),
-                  Expanded(
-                    child: Text(
-                      entry.text,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: isHidden
-                            ? titleColor.withAlpha(120)
-                            : titleColor,
-                        height: 1.15,
-                        fontSize: 10.5,
-                      ),
+      height: 96,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: isEditMode
+              ? onToggleHidden
+              : (isEnabled && !isHidden ? onPressed : null),
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 2),
+                Expanded(
+                  child: Text(
+                    entry.text,
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: isHidden
+                          ? titleColor.withAlpha(120)
+                          : titleColor,
+                      height: 1.15,
+                      fontSize: 10.5,
                     ),
                   ),
-                  if (isEditMode)
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        _buildTinyIconButton(
-                          icon: Icons.keyboard_arrow_up_rounded,
-                          onTap: canMoveUp ? onMoveUp : null,
-                        ),
-                        _buildTinyIconButton(
-                          icon: Icons.keyboard_arrow_down_rounded,
-                          onTap: canMoveDown ? onMoveDown : null,
-                        ),
-                        _buildTinyIconButton(
-                          icon: isHidden
-                              ? Icons.visibility_off_rounded
-                              : Icons.visibility_rounded,
-                          onTap: onToggleHidden,
-                        ),
-                        _buildTinyIconButton(
-                          icon:
-                              isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
-                          onTap: onToggleFavorite,
-                        ),
-                      ],
-                    )
-                  else
-                    const SizedBox(height: 22),
-                ],
-              ),
+                ),
+                if (isEditMode)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _buildTinyIconButton(
+                        icon: Icons.keyboard_arrow_up_rounded,
+                        onTap: canMoveUp ? onMoveUp : null,
+                      ),
+                      _buildTinyIconButton(
+                        icon: Icons.keyboard_arrow_down_rounded,
+                        onTap: canMoveDown ? onMoveDown : null,
+                      ),
+                      _buildTinyIconButton(
+                        icon: isHidden
+                            ? Icons.visibility_off_rounded
+                            : Icons.visibility_rounded,
+                        onTap: onToggleHidden,
+                      ),
+                      _buildTinyIconButton(
+                        icon:
+                            isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                        onTap: onToggleFavorite,
+                      ),
+                    ],
+                  )
+                else
+                  const SizedBox(height: 22),
+              ],
             ),
           ),
         ),
