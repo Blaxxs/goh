@@ -413,7 +413,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
             ),
           ),
         ),
-        if (_isEditMode) ...[
+        if (_isEditMode && sectionIndex >= 0) ...[
           _buildTinyIconButton(
             icon: Icons.vertical_align_top_rounded,
             onTap: sectionIndex > 0
@@ -743,16 +743,30 @@ class _MainScreenUIState extends State<MainScreenUI> {
   }
 }
 
+class _MenuSection {
+  final String id;
+  final String title;
+  bool expanded;
+  final List<_MenuEntry> items;
+
+  _MenuSection({
+    required this.id,
+    required this.title,
+    this.expanded = true,
+    required this.items,
+  });
+}
+
 class _MenuEntry {
+  final String key;
   final String text;
   final String subtitle;
-  final VoidCallback? onPressed;
   final String? tooltip;
 
   const _MenuEntry({
+    required this.key,
     required this.text,
     required this.subtitle,
-    required this.onPressed,
     this.tooltip,
   });
 }
