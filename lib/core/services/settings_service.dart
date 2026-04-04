@@ -16,6 +16,7 @@ class AppSettings {
   final bool
       hideUnconfiguredStagesInGoldCalculator; // 골드 계산기 화면에서 미설정 스테이지 숨기기 여부
   final StartingDayOfWeek startingDayOfWeek; // 캘린더 시작 요일 추가
+  final String? homeMenuLayoutJson; // 홈 화면 버튼 배치/숨김/즐겨찾기 저장
 
   AppSettings({
     this.isDarkModeEnabled = false,
@@ -23,6 +24,7 @@ class AppSettings {
     this.hideUnconfiguredStagesInCalculator = false, // 기본값 false (모두 표시)
     this.hideUnconfiguredStagesInGoldCalculator = false, // 기본값 false
     this.startingDayOfWeek = StartingDayOfWeek.sunday, // 기본값 일요일
+    this.homeMenuLayoutJson,
   });
 
   AppSettings copyWith({
@@ -31,6 +33,7 @@ class AppSettings {
     bool? hideUnconfiguredStagesInCalculator, // copyWith에 추가
     bool? hideUnconfiguredStagesInGoldCalculator, // copyWith에 파라미터 추가
     StartingDayOfWeek? startingDayOfWeek, // copyWith에 추가
+    String? homeMenuLayoutJson,
   }) {
     return AppSettings(
       isDarkModeEnabled: isDarkModeEnabled ?? this.isDarkModeEnabled,
@@ -42,6 +45,7 @@ class AppSettings {
               this.hideUnconfiguredStagesInGoldCalculator, // 새 파라미터 사용
       startingDayOfWeek: startingDayOfWeek ??
           this.startingDayOfWeek, // startingDayOfWeek 파라미터를 올바르게 사용
+        homeMenuLayoutJson: homeMenuLayoutJson ?? this.homeMenuLayoutJson,
     );
   }
 
@@ -60,6 +64,7 @@ class AppSettings {
       hideUnconfiguredStagesInGoldCalculator:
           json['hideUnconfiguredStagesInGoldCalculator'] as bool? ?? false,
       startingDayOfWeek: day,
+      homeMenuLayoutJson: json['homeMenuLayoutJson'] as String?,
     );
   }
 
@@ -72,6 +77,7 @@ class AppSettings {
           hideUnconfiguredStagesInGoldCalculator,
       'startingDayOfWeek':
           startingDayOfWeek.toString(), // enum을 String으로 변환하여 저장
+      'homeMenuLayoutJson': homeMenuLayoutJson,
     };
   }
 }
