@@ -235,41 +235,40 @@ class _MainScreenUIState extends State<MainScreenUI> {
     }
   }
 
-  // 액션 타일 버튼 (활성/비활성 지원)
   Widget _buildActionTile({
     required BuildContext context,
-    required String text,
+    required _MenuEntry entry,
     required VoidCallback? onPressed,
     required double itemWidth,
-    String? subtitle,
+    required bool isEditMode,
+    required bool isFavorite,
+    required bool canMoveUp,
+    required bool canMoveDown,
+    required VoidCallback onMoveUp,
+    required VoidCallback onMoveDown,
+    required VoidCallback onToggleFavorite,
     String? tooltip,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final bool isDark = theme.brightness == Brightness.dark;
-    final bool isEnabled = onPressed != null;
+    final bool isEnabled = onPressed != null && !isEditMode;
 
-    final Color borderColor = isEnabled
-      ? colorScheme.outline.withAlpha(isDark ? 150 : 125)
-      : colorScheme.outline.withAlpha(90);
+    final Color borderColor = isFavorite
+        ? colorScheme.primary.withAlpha(isDark ? 170 : 150)
+        : colorScheme.outline.withAlpha(isDark ? 150 : 120);
     final Color iconColor = isEnabled
         ? colorScheme.primary
-        : colorScheme.onSurface.withAlpha(125);
-    final Color titleColor = isEnabled
-        ? colorScheme.onSurface
-        : colorScheme.onSurface.withAlpha(130);
+        : colorScheme.onSurface.withAlpha(145);
+    final Color titleColor = colorScheme.onSurface;
 
-    final List<Color> backgroundColors = isEnabled
-        ? (isDark
-        ? [const Color(0xD9172537), const Color(0xCC122032)]
-        : [const Color(0xE6FFFFFF), const Color(0xDBF4F8FF)])
-        : (isDark
-        ? [const Color(0xB8141D2A), const Color(0xB2101823)]
-        : [const Color(0xDFF8FAFC), const Color(0xD8F0F4F8)]);
+    final List<Color> backgroundColors = isDark
+        ? [const Color(0xC4172537), const Color(0xB8122032)]
+        : [const Color(0xE6FFFFFF), const Color(0xD7F3F8FF)];
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 56,
+      height: 58,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -279,34 +278,25 @@ class _MainScreenUIState extends State<MainScreenUI> {
             colors: backgroundColors,
           ),
           border: Border.all(color: borderColor, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: isDark
-                  ? Colors.black.withAlpha(isEnabled ? 34 : 18)
-                  : const Color(0xFF90A4C0).withAlpha(isEnabled ? 36 : 20),
-              blurRadius: isEnabled ? 8 : 4,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: onPressed,
+            onTap: isEnabled ? onPressed : null,
             borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
               child: Row(
                 children: [
                   Container(
                     width: 24,
                     height: 24,
                     decoration: BoxDecoration(
-                      color: iconColor.withAlpha(isDark ? 22 : 18),
+                      color: iconColor.withAlpha(isDark ? 24 : 18),
                       borderRadius: BorderRadius.circular(7),
                     ),
                     child: Icon(
-                      _menuIcons[text] ?? Icons.apps_rounded,
+                      _menuIcons[entry.text] ?? Icons.apps_rounded,
                       size: 14,
                       color: iconColor,
                     ),
@@ -318,36 +308,53 @@ class _MainScreenUIState extends State<MainScreenUI> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          text,
+                          entry.text,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelSmall?.copyWith(
-                            fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.1,
                             fontWeight: FontWeight.w800,
                             color: titleColor,
                             height: 1.1,
                           ),
-                      ),
-                        if (subtitle != null)
-                          Text(
-                            subtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              fontSize: 10,
-                              color: titleColor.withAlpha(160),
-                              height: 1.1,
-                            ),
+                        ),
+                        Text(
+                          entry.subtitle,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            fontSize: 10,
+                            color: titleColor.withAlpha(155),
+                            height: 1.1,
                           ),
+                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.chevron_right_rounded,
-                    size: 15,
-                    color: iconColor.withAlpha(isEnabled ? 170 : 90),
-                  ),
+                  const SizedBox(width: 2),
+                  if (isEditMode)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildTinyIconButton(
+                          icon: Icons.keyboard_arrow_up_rounded,
+                          onTap: canMoveUp ? onMoveUp : null,
+                        ),
+                        _buildTinyIconButton(
+                          icon: Icons.keyboard_arrow_down_rounded,
+                          onTap: canMoveDown ? onMoveDown : null,
+                        ),
+                        _buildTinyIconButton(
+                          icon: isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                          onTap: onToggleFavorite,
+                        ),
+                      ],
+                    )
+                  else
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 15,
+                      color: iconColor.withAlpha(170),
+                    ),
                 ],
               ),
             ),
@@ -356,16 +363,83 @@ class _MainScreenUIState extends State<MainScreenUI> {
       ),
     );
 
-    if (tooltip != null && !isEnabled) {
+    if (tooltip != null && onPressed == null && !isEditMode) {
       return Tooltip(message: tooltip, child: button);
     }
     return button;
   }
 
+  Widget _buildTinyIconButton({
+    required IconData icon,
+    required VoidCallback? onTap,
+  }) {
+    return SizedBox(
+      width: 22,
+      height: 22,
+      child: IconButton(
+        padding: EdgeInsets.zero,
+        splashRadius: 12,
+        visualDensity: VisualDensity.compact,
+        onPressed: onTap,
+        icon: Icon(icon, size: 14),
+      ),
+    );
+  }
+
+  Widget _buildCategoryHeader({
+    required BuildContext context,
+    required _MenuSection section,
+    required int sectionIndex,
+  }) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Container(
+          width: 3,
+          height: 10,
+          decoration: BoxDecoration(
+            color: theme.colorScheme.primary,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            section.title,
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.primary,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        if (_isEditMode) ...[
+          _buildTinyIconButton(
+            icon: Icons.vertical_align_top_rounded,
+            onTap: sectionIndex > 0
+                ? () => _moveSection(sectionIndex, sectionIndex - 1)
+                : null,
+          ),
+          _buildTinyIconButton(
+            icon: Icons.vertical_align_bottom_rounded,
+            onTap: sectionIndex < _menuSections.length - 1
+                ? () => _moveSection(sectionIndex, sectionIndex + 1)
+                : null,
+          ),
+        ],
+        _buildTinyIconButton(
+          icon: section.expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+          onTap: () => _toggleSectionExpanded(section.id),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCategoryCard({
     required BuildContext context,
-    required String title,
-    required List<_MenuEntry> items,
+    required _MenuSection section,
+    required int sectionIndex,
+    required bool isEventActive,
     required double panelWidth,
   }) {
     final theme = Theme.of(context);
@@ -394,53 +468,40 @@ class _MainScreenUIState extends State<MainScreenUI> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildSectionHeader(context, title),
-          const SizedBox(height: 2),
-          Wrap(
-            spacing: innerGap,
-            runSpacing: innerGap,
-            children: items
-                .map(
-                  (entry) => _buildActionTile(
-                    context: context,
-                    text: entry.text,
-                    subtitle: entry.subtitle,
-                    onPressed: entry.onPressed,
-                    itemWidth: tileWidth,
-                    tooltip: entry.tooltip,
-                  ),
-                )
-                .toList(),
+          _buildCategoryHeader(
+            context: context,
+            section: section,
+            sectionIndex: sectionIndex,
           ),
-        ],
-      ),
-    );
-  }
+          if (section.expanded) ...[
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: innerGap,
+              runSpacing: innerGap,
+              children: section.items.asMap().entries.map((entryWithIndex) {
+                final int itemIndex = entryWithIndex.key;
+                final _MenuEntry entry = entryWithIndex.value;
+                final onPressed = _resolveOnPressed(entry.key, isEventActive);
 
-  // 섹션 헤더 위젯
-  Widget _buildSectionHeader(BuildContext context, String label) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(top: 4, bottom: 2, left: 2),
-      child: Row(
-        children: [
-          Container(
-            width: 3,
-            height: 10,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
-              borderRadius: BorderRadius.circular(2),
+                return _buildActionTile(
+                  context: context,
+                  entry: entry,
+                  onPressed: onPressed,
+                  itemWidth: tileWidth,
+                  isEditMode: _isEditMode,
+                  isFavorite: _favoriteEntryKeys.contains(entry.key),
+                  canMoveUp: itemIndex > 0,
+                  canMoveDown: itemIndex < section.items.length - 1,
+                  onMoveUp: () =>
+                      _moveEntryWithinSection(section.id, itemIndex, itemIndex - 1),
+                  onMoveDown: () =>
+                      _moveEntryWithinSection(section.id, itemIndex, itemIndex + 1),
+                  onToggleFavorite: () => _toggleFavorite(entry.key),
+                  tooltip: _resolveTooltip(entry, isEventActive),
+                );
+              }).toList(),
             ),
-          ),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.5,
-            ),
-          ),
+          ],
         ],
       ),
     );
