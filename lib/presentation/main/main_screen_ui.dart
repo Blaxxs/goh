@@ -613,137 +613,44 @@ class _MainScreenUIState extends State<MainScreenUI> {
     );
   }
 
-  Widget _buildCategoryHeader({
+  Widget _buildIconGrid({
     required BuildContext context,
-    required _MenuSection section,
-    required int sectionIndex,
-  }) {
-    final theme = Theme.of(context);
-    return Row(
-      children: [
-        Container(
-          width: 3,
-          height: 10,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primary,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            section.title,
-            style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w800,
-              letterSpacing: 0.5,
-              shadows: [
-                Shadow(
-                  color: theme.brightness == Brightness.dark
-                      ? Colors.black.withAlpha(120)
-                      : Colors.white.withAlpha(200),
-                  blurRadius: 2,
-                  offset: const Offset(0, 0.5),
-                ),
-              ],
-            ),
-          ),
-        ),
-        if (_isEditMode && sectionIndex >= 0) ...[
-          _buildTinyIconButton(
-            icon: Icons.vertical_align_top_rounded,
-            onTap: sectionIndex > 0
-                ? () => _moveSection(sectionIndex, sectionIndex - 1)
-                : null,
-          ),
-          _buildTinyIconButton(
-            icon: Icons.vertical_align_bottom_rounded,
-            onTap: sectionIndex < _menuSections.length - 1
-                ? () => _moveSection(sectionIndex, sectionIndex + 1)
-                : null,
-          ),
-        ],
-        _buildTinyIconButton(
-          icon: section.expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
-          onTap: () => _toggleSectionExpanded(section.id),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildCategoryCard({
-    required BuildContext context,
-    required _MenuSection section,
-    required int sectionIndex,
     required bool isEventActive,
     required double panelWidth,
   }) {
-    const double innerGap = 8;
-    final int columns = panelWidth >= 700 ? 5 : panelWidth >= 560 ? 4 : 3;
+    final visibleRefs = _visibleEntryRefs();
+    const double gap = 8;
+    final int columns = _resolveGridColumns(panelWidth);
     final double innerWidth = panelWidth - 20;
     final double tileWidth =
-        (innerWidth - (innerGap * (columns - 1))).clamp(100.0, innerWidth) /
+        (innerWidth - (gap * (columns - 1))).clamp(100.0, innerWidth) /
             columns;
-    final visibleEntries = section.items
-      .asMap()
-      .entries
-      .where((entryWithIndex) =>
-        !_hiddenEntryKeys.contains(entryWithIndex.value.key))
-      .toList();
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(9, 8, 9, 9),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildCategoryHeader(
-            context: context,
-            section: section,
-            sectionIndex: sectionIndex,
-          ),
-          if (section.expanded) ...[
-            const SizedBox(height: 6),
-            Wrap(
-              spacing: innerGap,
-              runSpacing: innerGap,
-              children: visibleEntries
-                .asMap()
-                .entries
-                  .map((visibleEntryWithIndex) {
-                final int visibleIndex = visibleEntryWithIndex.key;
-              final int itemIndex = visibleEntryWithIndex.value.key;
-                final int? prevIndex = visibleIndex > 0
-                ? visibleEntries[visibleIndex - 1].key
-                    : null;
-                final int? nextIndex = visibleIndex <
-                  visibleEntries.length - 1
-                ? visibleEntries[visibleIndex + 1].key
-                    : null;
-                final _MenuEntry entry = visibleEntryWithIndex.value.value;
-                final onPressed = _resolveOnPressed(entry.key, isEventActive);
+    return Wrap(
+      spacing: gap,
+      runSpacing: gap,
+      children: visibleRefs.asMap().entries.map((indexedRef) {
+        final int visibleIndex = indexedRef.key;
+        final ref = indexedRef.value;
+        final entry = ref.entry;
+        final onPressed = _resolveOnPressed(entry.key, isEventActive);
 
-                return _buildActionTile(
-                  context: context,
-                  entry: entry,
-                  onPressed: onPressed,
-                  itemWidth: tileWidth,
-                  isEditMode: _isEditMode,
-                  isFavorite: _favoriteEntryKeys.contains(entry.key),
-                  canMoveUp: prevIndex != null,
-                  canMoveDown: nextIndex != null,
-                  onMoveUp: () =>
-                      _moveEntryWithinSection(section.id, itemIndex, prevIndex!),
-                  onMoveDown: () =>
-                      _moveEntryWithinSection(section.id, itemIndex, nextIndex!),
-                  onToggleFavorite: () => _toggleFavorite(entry.key),
-                  onToggleHidden: () => _toggleHidden(entry.key),
-                  tooltip: _resolveTooltip(entry, isEventActive),
-                );
-              }).toList(),
-            ),
-          ],
-        ],
-      ),
+        return _buildActionTile(
+          context: context,
+          entry: entry,
+          onPressed: onPressed,
+          itemWidth: tileWidth,
+          isEditMode: _isEditMode,
+          isFavorite: _favoriteEntryKeys.contains(entry.key),
+          canMoveUp: visibleIndex > 0,
+          canMoveDown: visibleIndex < visibleRefs.length - 1,
+          onMoveUp: () => _moveEntryByStep(entry.key, -1),
+          onMoveDown: () => _moveEntryByStep(entry.key, 1),
+          onToggleFavorite: () => _toggleFavorite(entry.key),
+          onToggleHidden: () => _toggleHidden(entry.key),
+          tooltip: _resolveTooltip(entry, isEventActive),
+        );
+      }).toList(),
     );
   }
 
