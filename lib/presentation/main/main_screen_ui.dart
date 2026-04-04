@@ -376,12 +376,14 @@ class _MainScreenUIState extends State<MainScreenUI> {
     required VoidCallback onMoveUp,
     required VoidCallback onMoveDown,
     required VoidCallback onToggleFavorite,
+    required VoidCallback onToggleHidden,
     String? tooltip,
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final bool isDark = theme.brightness == Brightness.dark;
     final bool isEnabled = onPressed != null && !isEditMode;
+    final bool isHidden = _hiddenEntryKeys.contains(entry.key);
 
     final Color borderColor = isFavorite
         ? colorScheme.primary.withAlpha(isDark ? 170 : 150)
@@ -397,7 +399,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 58,
+      height: 108,
       child: DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -411,58 +413,49 @@ class _MainScreenUIState extends State<MainScreenUI> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: isEnabled ? onPressed : null,
+            onTap: isEditMode
+                ? onToggleHidden
+                : (isEnabled && !isHidden ? onPressed : null),
             borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 7),
-              child: Row(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 7),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 24,
-                    height: 24,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: iconColor.withAlpha(isDark ? 24 : 18),
-                      borderRadius: BorderRadius.circular(7),
+                      borderRadius: BorderRadius.circular(11),
                     ),
                     child: Icon(
                       _menuIcons[entry.text] ?? Icons.apps_rounded,
-                      size: 14,
+                      size: 18,
                       color: iconColor,
                     ),
                   ),
-                  const SizedBox(width: 7),
+                  const SizedBox(height: 7),
                   Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          entry.text,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: titleColor,
-                            height: 1.1,
-                          ),
-                        ),
-                        Text(
-                          entry.subtitle,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            fontSize: 10,
-                            color: titleColor.withAlpha(155),
-                            height: 1.1,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      entry.text,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: isHidden
+                            ? titleColor.withAlpha(120)
+                            : titleColor,
+                        height: 1.15,
+                        fontSize: 10.5,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 2),
                   if (isEditMode)
                     Row(
                       mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         _buildTinyIconButton(
                           icon: Icons.keyboard_arrow_up_rounded,
@@ -473,17 +466,20 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           onTap: canMoveDown ? onMoveDown : null,
                         ),
                         _buildTinyIconButton(
-                          icon: isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                          icon: isHidden
+                              ? Icons.visibility_off_rounded
+                              : Icons.visibility_rounded,
+                          onTap: onToggleHidden,
+                        ),
+                        _buildTinyIconButton(
+                          icon:
+                              isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
                           onTap: onToggleFavorite,
                         ),
                       ],
                     )
                   else
-                    Icon(
-                      Icons.chevron_right_rounded,
-                      size: 15,
-                      color: iconColor.withAlpha(170),
-                    ),
+                    const SizedBox(height: 22),
                 ],
               ),
             ),
@@ -492,7 +488,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
       ),
     );
 
-    if (tooltip != null && onPressed == null && !isEditMode) {
+    if (tooltip != null && onPressed == null && !isEditMode && !isHidden) {
       return Tooltip(message: tooltip, child: button);
     }
     return button;
@@ -574,7 +570,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
     const double innerGap = 8;
-    final int columns = panelWidth >= 640 ? 3 : 2;
+    final int columns = panelWidth >= 700 ? 5 : panelWidth >= 560 ? 4 : 3;
     final double innerWidth = panelWidth - 20;
     final double tileWidth =
         (innerWidth - (innerGap * (columns - 1))).clamp(100.0, innerWidth) /
@@ -607,9 +603,45 @@ class _MainScreenUIState extends State<MainScreenUI> {
             Wrap(
               spacing: innerGap,
               runSpacing: innerGap,
-              children: section.items.asMap().entries.map((entryWithIndex) {
-                final int itemIndex = entryWithIndex.key;
-                final _MenuEntry entry = entryWithIndex.value;
+              children: section.items
+                  .asMap()
+                  .entries
+                  .where((entryWithIndex) =>
+                      !_hiddenEntryKeys.contains(entryWithIndex.value.key))
+                  .toList()
+                  .asMap()
+                  .entries
+                  .map((visibleEntryWithIndex) {
+                final int visibleIndex = visibleEntryWithIndex.key;
+                final int itemIndex = visibleEntryWithIndex.value.value.key;
+                final int? prevIndex = visibleIndex > 0
+                    ? visibleEntryWithIndex
+                        .value
+                        .value
+                        .key -
+                        (visibleEntryWithIndex.value.value.key -
+                            visibleEntryWithIndex
+                                .value
+                                .value
+                                .key)
+                    : null;
+                final int? nextIndex = visibleIndex <
+                        section.items
+                                .asMap()
+                                .entries
+                                .where((entry) =>
+                                    !_hiddenEntryKeys.contains(entry.value.key))
+                                .length -
+                            1
+                    ? section.items
+                        .asMap()
+                        .entries
+                        .where((entry) =>
+                            !_hiddenEntryKeys.contains(entry.value.key))
+                        .toList()[visibleIndex + 1]
+                        .key
+                    : null;
+                final _MenuEntry entry = visibleEntryWithIndex.value.value;
                 final onPressed = _resolveOnPressed(entry.key, isEventActive);
 
                 return _buildActionTile(
@@ -619,13 +651,14 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   itemWidth: tileWidth,
                   isEditMode: _isEditMode,
                   isFavorite: _favoriteEntryKeys.contains(entry.key),
-                  canMoveUp: itemIndex > 0,
-                  canMoveDown: itemIndex < section.items.length - 1,
+                  canMoveUp: prevIndex != null,
+                  canMoveDown: nextIndex != null,
                   onMoveUp: () =>
-                      _moveEntryWithinSection(section.id, itemIndex, itemIndex - 1),
+                      _moveEntryWithinSection(section.id, itemIndex, prevIndex!),
                   onMoveDown: () =>
-                      _moveEntryWithinSection(section.id, itemIndex, itemIndex + 1),
+                      _moveEntryWithinSection(section.id, itemIndex, nextIndex!),
                   onToggleFavorite: () => _toggleFavorite(entry.key),
+                  onToggleHidden: () => _toggleHidden(entry.key),
                   tooltip: _resolveTooltip(entry, isEventActive),
                 );
               }).toList(),
