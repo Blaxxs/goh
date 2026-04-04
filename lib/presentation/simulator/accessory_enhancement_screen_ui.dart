@@ -249,7 +249,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
           ),
         ],
       ),
-      drawer: const AppDrawer(currentScreen: AppScreen.simulator),
+      drawer: const AppDrawer(currentScreen: AppScreen.accessoryEnhancement),
       body: !isAccessorySelected
           ? Center(
               // 악세사리가 선택되지 않았을 때만 Center 사용

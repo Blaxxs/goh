@@ -52,7 +52,7 @@ class AccessoryOptionChangeScreenUI extends StatelessWidget {
           ),
         ],
       ),
-      drawer: const AppDrawer(currentScreen: AppScreen.simulator),
+      drawer: const AppDrawer(currentScreen: AppScreen.accessoryOptionChange),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
