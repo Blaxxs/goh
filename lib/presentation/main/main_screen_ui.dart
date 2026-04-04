@@ -106,8 +106,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final bool isEnabled = onPressed != null;
 
     final Color borderColor = isEnabled
-        ? colorScheme.primary.withAlpha(isDark ? 170 : 155)
-        : colorScheme.outline.withAlpha(95);
+      ? colorScheme.outline.withAlpha(isDark ? 150 : 125)
+      : colorScheme.outline.withAlpha(90);
     final Color iconColor = isEnabled
         ? colorScheme.primary
         : colorScheme.onSurface.withAlpha(125);
@@ -117,31 +117,31 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     final List<Color> backgroundColors = isEnabled
         ? (isDark
-            ? [const Color(0xFF1A2A43), const Color(0xFF16263D)]
-            : [const Color(0xFFFDFEFF), const Color(0xFFF0F6FF)])
+        ? [const Color(0xD9172537), const Color(0xCC122032)]
+        : [const Color(0xE6FFFFFF), const Color(0xDBF4F8FF)])
         : (isDark
-            ? [const Color(0xFF131D2D), const Color(0xFF101927)]
-            : [const Color(0xFFF7F9FC), const Color(0xFFEFF3F8)]);
+        ? [const Color(0xB8141D2A), const Color(0xB2101823)]
+        : [const Color(0xDFF8FAFC), const Color(0xD8F0F4F8)]);
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 62,
+      height: 58,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: backgroundColors,
           ),
-          border: Border.all(color: borderColor, width: 1.2),
+          border: Border.all(color: borderColor, width: 1),
           boxShadow: [
             BoxShadow(
               color: isDark
-                  ? Colors.black.withAlpha(isEnabled ? 60 : 26)
-                  : const Color(0xFF8EA2C5).withAlpha(isEnabled ? 80 : 38),
-              blurRadius: isEnabled ? 14 : 8,
-              offset: const Offset(0, 8),
+                  ? Colors.black.withAlpha(isEnabled ? 34 : 18)
+                  : const Color(0xFF90A4C0).withAlpha(isEnabled ? 36 : 20),
+              blurRadius: isEnabled ? 8 : 4,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -149,21 +149,21 @@ class _MainScreenUIState extends State<MainScreenUI> {
           color: Colors.transparent,
           child: InkWell(
             onTap: onPressed,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               child: Row(
                 children: [
                   Container(
-                    width: 28,
-                    height: 28,
+                    width: 26,
+                    height: 26,
                     decoration: BoxDecoration(
-                      color: iconColor.withAlpha(isDark ? 34 : 28),
-                      borderRadius: BorderRadius.circular(10),
+                      color: iconColor.withAlpha(isDark ? 22 : 18),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
                       _menuIcons[text] ?? Icons.apps_rounded,
-                      size: 16,
+                      size: 15,
                       color: iconColor,
                     ),
                   ),
@@ -174,18 +174,18 @@ class _MainScreenUIState extends State<MainScreenUI> {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.labelSmall?.copyWith(
-                        fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.3,
+                        fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.2,
                         fontWeight: FontWeight.w800,
                         color: titleColor,
-                        height: 1.12,
+                        height: 1.1,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 4),
                   Icon(
                     Icons.chevron_right_rounded,
-                    size: 16,
-                    color: iconColor.withAlpha(isEnabled ? 220 : 110),
+                    size: 15,
+                    color: iconColor.withAlpha(isEnabled ? 170 : 90),
                   ),
                 ],
               ),
@@ -258,11 +258,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double bottomPadding = mediaQuery.padding.bottom;
     final double topPadding = mediaQuery.padding.top;
     final Size screenSize = MediaQuery.of(context).size;
-    const double panelMaxWidth = 700;
+    const double panelMaxWidth = 720;
     const double horizontalInset = 20;
-    const double menuGap = 6;
+    const double menuGap = 8;
     const double panelHorizontalPadding = 18;
-    const double targetTileWidth = 164;
+    const double targetTileWidth = 172;
     final double panelWidth =
       (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth);
     final double panelContentWidth = panelWidth - panelHorizontalPadding;
@@ -364,11 +364,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
                         colors: theme.brightness == Brightness.dark
                             ? [
                                 Colors.transparent,
-                                Colors.black.withAlpha(76),
+                                Colors.black.withAlpha(42),
                               ]
                             : [
                                 Colors.transparent,
-                                Colors.black.withAlpha(28),
+                                Colors.black.withAlpha(14),
                               ],
                       ),
                     ),
@@ -463,37 +463,18 @@ class _MainScreenUIState extends State<MainScreenUI> {
                   padding: EdgeInsets.only(bottom: 14 + bottomPadding),
                   child: SizedBox(
                     width: panelWidth,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(
-                          color: theme.brightness == Brightness.dark
-                              ? Colors.white.withAlpha(40)
-                              : theme.colorScheme.outline.withAlpha(120),
-                          width: 1.1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.brightness == Brightness.dark
-                                ? Colors.black.withAlpha(55)
-                                : Colors.black.withAlpha(24),
-                            blurRadius: 28,
-                            offset: const Offset(0, 14),
-                          ),
+                    child: GlassPanel(
+                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
+                      borderRadius: const BorderRadius.all(Radius.circular(26)),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildSection('계산기', calculatorButtons),
+                          buildSection('도구 / 기록', toolButtons),
+                          buildSection('시뮬레이터', simulatorButtons),
+                          buildSection('설정', settingButtons),
                         ],
-                      ),
-                      child: GlassPanel(
-                        padding: const EdgeInsets.fromLTRB(9, 4, 9, 8),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            buildSection('계산기', calculatorButtons),
-                            buildSection('도구 / 기록', toolButtons),
-                            buildSection('시뮬레이터', simulatorButtons),
-                            buildSection('설정', settingButtons),
-                          ],
-                        ),
                       ),
                     ),
                   ),
@@ -505,16 +486,4 @@ class _MainScreenUIState extends State<MainScreenUI> {
       ),
     );
   }
-}
-
-class _MenuTileMetrics {
-  final double height;
-  final int maxLines;
-  final TextStyle textStyle;
-
-  _MenuTileMetrics({
-    required this.height,
-    required this.maxLines,
-    required this.textStyle,
-  });
 }
