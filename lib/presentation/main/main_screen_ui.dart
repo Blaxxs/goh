@@ -300,6 +300,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
         children: [
           _buildSectionHeader(context, label),
           Wrap(
+            alignment: WrapAlignment.center,
+            runAlignment: WrapAlignment.center,
             spacing: menuGap,
             runSpacing: menuGap,
             children: buttons.map((config) {
@@ -407,7 +409,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
-                                  '계산기 진입은 가능하지만, 팀/달기지/VIP 미설정 시 결과값이 정확히 표시되지 않습니다. 탭하여 설정하기 →',
+                                  '스테이지 설정을 먼저 진행 해 주세요',
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.labelSmall?.copyWith(
