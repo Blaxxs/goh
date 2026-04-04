@@ -18,7 +18,6 @@ class MainScreenUI extends StatefulWidget {
   final VoidCallback onPouchSimulationPressed;
   final VoidCallback onStageSettingsPressed;
   final VoidCallback onAppSettingsPressed;
-  final VoidCallback onReverseCalculatorPressed;
 
   const MainScreenUI({
     super.key,
@@ -34,7 +33,6 @@ class MainScreenUI extends StatefulWidget {
     required this.onPouchSimulationPressed,
     required this.onStageSettingsPressed,
     required this.onAppSettingsPressed,
-    required this.onReverseCalculatorPressed,
     required SettingsService settingsService,
   });
 
@@ -90,7 +88,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
     '루프 계산기': Icons.calculate_rounded,
     '골드 효율 계산기': Icons.paid_rounded,
     '데미지 계산기_ Beta': Icons.flash_on_rounded,
-    '역산 계산기': Icons.swap_vert_circle_rounded,
     '악세사리 도감': Icons.diamond_outlined,
     '일지': Icons.calendar_month_rounded,
     '상자 기대값 계산기': Icons.inventory_2_rounded,
@@ -267,7 +264,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
       {'text': '루프 계산기', 'onPressed': widget.onCalculatorPressed, 'needsSettings': true},
       {'text': '골드 효율 계산기', 'onPressed': widget.onGoldCalculatorPressed, 'needsSettings': true},
       {'text': '데미지 계산기_ Beta', 'onPressed': widget.onDamageCalculatorPressed, 'needsSettings': true},
-      {'text': '역산 계산기', 'onPressed': widget.onReverseCalculatorPressed, 'needsSettings': true},
     ];
     final List<Map<String, dynamic>> toolButtons = [
       {'text': '악세사리 도감', 'onPressed': widget.onAccessoryPressed, 'needsSettings': false},
