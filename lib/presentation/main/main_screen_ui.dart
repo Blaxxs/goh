@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart'; // [추가]
 import 'package:goh_calculator/core/services/settings_service.dart';
-import 'package:goh_calculator/core/widgets/liquid_glass.dart';
 import '../../core/services/event_manager.dart';
 
 // 실시간 공지사항을 위해 StatefulWidget으로 변경했습니다.
@@ -672,12 +671,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.all(Radius.circular(20)),
               color: isDark
-                  ? Colors.white.withAlpha(10)
-                  : theme.colorScheme.surface.withAlpha(210),
+                  ? Colors.white.withAlpha(6)
+                  : theme.colorScheme.surface.withAlpha(100),
               border: Border.all(
                 color: isDark
                     ? Colors.white.withAlpha(26)
-                    : theme.colorScheme.outline.withAlpha(80),
+                    : theme.colorScheme.outline.withAlpha(56),
               ),
             ),
             child: Center(
@@ -770,12 +769,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
                                 borderRadius:
                                     const BorderRadius.all(Radius.circular(16)),
                                 color: theme.brightness == Brightness.dark
-                                    ? Colors.white.withAlpha(10)
-                                    : theme.colorScheme.surface.withAlpha(210),
+                                    ? Colors.white.withAlpha(6)
+                                    : theme.colorScheme.surface.withAlpha(96),
                                 border: Border.all(
                                   color: theme.brightness == Brightness.dark
                                       ? Colors.white.withAlpha(24)
-                                      : theme.colorScheme.outline.withAlpha(78),
+                                      : theme.colorScheme.outline.withAlpha(52),
                                 ),
                               ),
                               child: Row(
@@ -839,9 +838,9 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           decoration: BoxDecoration(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(14)),
-                            color: theme.colorScheme.errorContainer.withAlpha(220),
+                            color: theme.colorScheme.errorContainer.withAlpha(130),
                             border: Border.all(
-                              color: theme.colorScheme.error.withAlpha(120),
+                              color: theme.colorScheme.error.withAlpha(95),
                             ),
                           ),
                           child: Row(
@@ -960,6 +959,18 @@ class _MenuSection {
     required this.id,
     required this.title,
     required this.items,
+  });
+}
+
+class _EntryRef {
+  final String sectionId;
+  final int itemIndex;
+  final _MenuEntry entry;
+
+  const _EntryRef({
+    required this.sectionId,
+    required this.itemIndex,
+    required this.entry,
   });
 }
 
