@@ -564,8 +564,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
     required bool isEventActive,
     required double panelWidth,
   }) {
-    final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
     const double innerGap = 8;
     final int columns = panelWidth >= 700 ? 5 : panelWidth >= 560 ? 4 : 3;
     final double innerWidth = panelWidth - 20;
@@ -579,20 +577,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
         !_hiddenEntryKeys.contains(entryWithIndex.value.key))
       .toList();
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+    return Padding(
       padding: const EdgeInsets.fromLTRB(9, 8, 9, 9),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: isDark
-            ? Colors.white.withAlpha(10)
-            : theme.colorScheme.surface.withAlpha(140),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withAlpha(24)
-              : theme.colorScheme.outline.withAlpha(72),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
