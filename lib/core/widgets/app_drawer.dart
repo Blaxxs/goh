@@ -349,7 +349,7 @@ class AppDrawer extends StatelessWidget {
                           onTap: () {
                             navigateFromMain(
                               const AccessoryEnhancementScreen(),
-                              target: AppScreen.simulator,
+                              target: AppScreen.accessoryEnhancement,
                             );
                           },
                         ),
@@ -364,7 +364,7 @@ class AppDrawer extends StatelessWidget {
                           onTap: () {
                             navigateFromMain(
                               const AccessoryOptionChangeScreen(),
-                              target: AppScreen.simulator,
+                              target: AppScreen.accessoryOptionChange,
                             );
                           },
                         ),
