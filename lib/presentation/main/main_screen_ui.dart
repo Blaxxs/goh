@@ -119,10 +119,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
     return _menuSections[idx];
   }
 
-  List<_EntryRef> _visibleEntryRefs() {
+  List<_EntryRef> _visibleEntryRefs(bool isEventActive) {
     final refs = <_EntryRef>[];
     for (final section in _menuSections) {
       for (final indexed in section.items.asMap().entries) {
+        if (indexed.value.key == 'box' && !isEventActive) continue;
         if (_hiddenEntryKeys.contains(indexed.value.key)) continue;
         refs.add(
           _EntryRef(
@@ -137,7 +138,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
   }
 
   void _moveEntryByStep(String entryKey, int step) {
-    final refs = _visibleEntryRefs();
+    final refs = _visibleEntryRefs(EventManager.isEventPeriodActive());
     final currentIndex = refs.indexWhere((ref) => ref.entry.key == entryKey);
     if (currentIndex == -1) return;
     final targetIndex = currentIndex + step;
@@ -647,7 +648,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     required bool isEventActive,
     required double panelWidth,
   }) {
-    final visibleRefs = _visibleEntryRefs();
+    final visibleRefs = _visibleEntryRefs(isEventActive);
     const double gap = 8;
     final int columns = _resolveGridColumns(panelWidth);
     final double innerWidth = panelWidth - 20;
