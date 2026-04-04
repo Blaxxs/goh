@@ -243,6 +243,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double bottomPadding = mediaQuery.padding.bottom;
     final double topPadding = mediaQuery.padding.top;
     final Size screenSize = MediaQuery.of(context).size;
+    const double panelMaxWidth = 760;
     final int columns = screenSize.width >= 900
       ? 6
         : screenSize.width >= 650
@@ -252,8 +253,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
           : 3;
     const double horizontalInset = 20;
     const double menuGap = 4;
+    const double panelHorizontalPadding = 18;
+    final double panelWidth =
+      (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth)
+        as double;
     final double availableWidth =
-        screenSize.width - (horizontalInset * 2) - (menuGap * (columns - 1));
+      panelWidth - panelHorizontalPadding - (menuGap * (columns - 1));
     final double menuItemWidth = availableWidth / columns;
 
     final bool isEventActive = EventManager.isEventPeriodActive();
@@ -428,19 +433,21 @@ class _MainScreenUIState extends State<MainScreenUI> {
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(
-                      horizontalInset, 0, horizontalInset, 14 + bottomPadding),
-                  child: GlassPanel(
-                    padding: const EdgeInsets.fromLTRB(9, 4, 9, 8),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        buildSection('계산기', calculatorButtons),
-                        buildSection('도구 / 기록', toolButtons),
-                        buildSection('시뮬레이터', simulatorButtons),
-                        buildSection('설정', settingButtons),
-                      ],
+                  padding: EdgeInsets.only(bottom: 14 + bottomPadding),
+                  child: SizedBox(
+                    width: panelWidth,
+                    child: GlassPanel(
+                      padding: const EdgeInsets.fromLTRB(9, 4, 9, 8),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          buildSection('계산기', calculatorButtons),
+                          buildSection('도구 / 기록', toolButtons),
+                          buildSection('시뮬레이터', simulatorButtons),
+                          buildSection('설정', settingButtons),
+                        ],
+                      ),
                     ),
                   ),
                 ),
