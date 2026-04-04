@@ -657,16 +657,32 @@ class _MainScreenUIState extends State<MainScreenUI> {
     required IconData icon,
     required VoidCallback onPressed,
   }) {
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
     return SizedBox(
       width: 56,
       height: 56,
-      child: GlassPanel(
-        onTap: onPressed,
-        padding: EdgeInsets.zero,
-        borderRadius: const BorderRadius.all(Radius.circular(20)),
-        child: Center(
-          child: Icon(icon,
-              color: Theme.of(context).colorScheme.primary, size: 24),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(20)),
+              color: isDark
+                  ? Colors.white.withAlpha(10)
+                  : theme.colorScheme.surface.withAlpha(210),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withAlpha(26)
+                    : theme.colorScheme.outline.withAlpha(80),
+              ),
+            ),
+            child: Center(
+              child: Icon(icon, color: theme.colorScheme.primary, size: 24),
+            ),
+          ),
         ),
       ),
     );
@@ -752,11 +768,21 @@ class _MainScreenUIState extends State<MainScreenUI> {
                       children: [
                         if (_noticeMessage.isNotEmpty)
                           Expanded(
-                            child: GlassPanel(
+                            child: Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(16)),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(16)),
+                                color: theme.brightness == Brightness.dark
+                                    ? Colors.white.withAlpha(10)
+                                    : theme.colorScheme.surface.withAlpha(210),
+                                border: Border.all(
+                                  color: theme.brightness == Brightness.dark
+                                      ? Colors.white.withAlpha(24)
+                                      : theme.colorScheme.outline.withAlpha(78),
+                                ),
+                              ),
                               child: Row(
                                 children: [
                                   Icon(
@@ -804,11 +830,17 @@ class _MainScreenUIState extends State<MainScreenUI> {
                       const SizedBox(height: 8),
                       GestureDetector(
                         onTap: widget.onStageSettingsPressed,
-                        child: GlassPanel(
+                        child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 9),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(14)),
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(14)),
+                            color: theme.colorScheme.errorContainer.withAlpha(220),
+                            border: Border.all(
+                              color: theme.colorScheme.error.withAlpha(120),
+                            ),
+                          ),
                           child: Row(
                             children: [
                               Icon(
