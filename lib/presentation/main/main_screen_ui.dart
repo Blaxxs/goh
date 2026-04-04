@@ -46,44 +46,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
   String _noticeMessage = "";
   bool _logoPrecached = false;
 
-  _MenuTileMetrics _calculateMenuTileMetrics(
-    BuildContext context,
-    double itemWidth,
-    List<String> labels,
-  ) {
-    final theme = Theme.of(context);
-    final textStyle = theme.textTheme.labelSmall?.copyWith(
-          fontWeight: FontWeight.w700,
-          fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 1.2,
-          height: 1.05,
-        ) ??
-        const TextStyle(fontSize: 9.8, height: 1.05, fontWeight: FontWeight.w700);
-
-    final textWidth = (itemWidth - 12).clamp(24.0, itemWidth);
-    int maxLinesNeeded = 1;
-    for (final label in labels) {
-      final tp = TextPainter(
-        text: TextSpan(text: label, style: textStyle),
-        textDirection: TextDirection.ltr,
-        maxLines: 3,
-      )..layout(maxWidth: textWidth);
-      final lines = tp.computeLineMetrics().length;
-      if (lines > maxLinesNeeded) maxLinesNeeded = lines;
-    }
-
-    final int lineCount = maxLinesNeeded.clamp(1, 3);
-    final lineHeight =
-        (textStyle.fontSize ?? 9.8) * (textStyle.height ?? 1.05);
-    final rawHeight = 4 + 15 + 2 + (lineCount * lineHeight) + 4;
-    final height = rawHeight.clamp(48.0, 66.0);
-
-    return _MenuTileMetrics(
-      height: height,
-      maxLines: lineCount,
-      textStyle: textStyle,
-    );
-  }
-
   static const Map<String, IconData> _menuIcons = {
     '루프 계산기': Icons.calculate_rounded,
     '골드 효율 계산기': Icons.paid_rounded,
@@ -136,45 +98,98 @@ class _MainScreenUIState extends State<MainScreenUI> {
     required String text,
     required VoidCallback? onPressed,
     required double itemWidth,
-    required _MenuTileMetrics metrics,
     String? tooltip,
   }) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final bool isDark = theme.brightness == Brightness.dark;
     final bool isEnabled = onPressed != null;
-    final color = isEnabled
-        ? theme.colorScheme.primary
-        : theme.colorScheme.onSurface.withValues(alpha: 0.3);
-    final textColor = isEnabled
-        ? null
-        : theme.textTheme.labelSmall?.color?.withValues(alpha: 0.35);
+
+    final Color borderColor = isEnabled
+        ? colorScheme.primary.withAlpha(isDark ? 170 : 155)
+        : colorScheme.outline.withAlpha(95);
+    final Color iconColor = isEnabled
+        ? colorScheme.primary
+        : colorScheme.onSurface.withAlpha(125);
+    final Color titleColor = isEnabled
+        ? colorScheme.onSurface
+        : colorScheme.onSurface.withAlpha(130);
+
+    final List<Color> backgroundColors = isEnabled
+        ? (isDark
+            ? [const Color(0xFF1A2A43), const Color(0xFF16263D)]
+            : [const Color(0xFFFDFEFF), const Color(0xFFF0F6FF)])
+        : (isDark
+            ? [const Color(0xFF131D2D), const Color(0xFF101927)]
+            : [const Color(0xFFF7F9FC), const Color(0xFFEFF3F8)]);
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: metrics.height,
-      child: Opacity(
-        opacity: isEnabled ? 1.0 : 0.45,
-        child: GlassPanel(
-          onTap: isEnabled ? onPressed : null,
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 5),
-          borderRadius: const BorderRadius.all(Radius.circular(14)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                _menuIcons[text] ?? Icons.apps_rounded,
-                size: 15,
-                color: color,
+      height: 62,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: backgroundColors,
+          ),
+          border: Border.all(color: borderColor, width: 1.2),
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black.withAlpha(isEnabled ? 60 : 26)
+                  : const Color(0xFF8EA2C5).withAlpha(isEnabled ? 80 : 38),
+              blurRadius: isEnabled ? 14 : 8,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onPressed,
+            borderRadius: BorderRadius.circular(16),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
+              child: Row(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: iconColor.withAlpha(isDark ? 34 : 28),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      _menuIcons[text] ?? Icons.apps_rounded,
+                      size: 16,
+                      color: iconColor,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      text,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.3,
+                        fontWeight: FontWeight.w800,
+                        color: titleColor,
+                        height: 1.12,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    size: 16,
+                    color: iconColor.withAlpha(isEnabled ? 220 : 110),
+                  ),
+                ],
               ),
-              const SizedBox(height: 2),
-              Text(
-                text,
-                maxLines: metrics.maxLines,
-                overflow: TextOverflow.visible,
-                softWrap: true,
-                textAlign: TextAlign.center,
-                style: metrics.textStyle.copyWith(color: textColor),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -247,13 +262,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
     const double horizontalInset = 20;
     const double menuGap = 6;
     const double panelHorizontalPadding = 18;
-    const double targetTileWidth = 112;
+    const double targetTileWidth = 164;
     final double panelWidth =
       (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth);
     final double panelContentWidth = panelWidth - panelHorizontalPadding;
     final int rawColumns =
       ((panelContentWidth + menuGap) / (targetTileWidth + menuGap)).floor();
-    final int columns = rawColumns < 3 ? 3 : (rawColumns > 5 ? 5 : rawColumns);
+    final int columns = rawColumns < 2 ? 2 : (rawColumns > 4 ? 4 : rawColumns);
     final double availableWidth =
       panelWidth - panelHorizontalPadding - (menuGap * (columns - 1));
     final double menuItemWidth = availableWidth / columns;
@@ -287,15 +302,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
       {'text': '스테이지 설정', 'onPressed': widget.onStageSettingsPressed, 'needsSettings': false},
     ];
 
-    final allMenuLabels = [
-      ...calculatorButtons.map((e) => e['text'] as String),
-      ...toolButtons.map((e) => e['text'] as String),
-      ...simulatorButtons.map((e) => e['text'] as String),
-      ...settingButtons.map((e) => e['text'] as String),
-    ];
-    final menuTileMetrics =
-        _calculateMenuTileMetrics(context, menuItemWidth, allMenuLabels);
-
     Widget buildSection(String label, List<Map<String, dynamic>> buttons) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -313,7 +319,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 text: config['text'] as String,
                 onPressed: onPressed,
                 itemWidth: menuItemWidth,
-                metrics: menuTileMetrics,
                 tooltip: config['tooltip'] as String?,
               );
             }).toList(),
