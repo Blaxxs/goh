@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart'; // [추가]
 import 'package:goh_calculator/core/services/settings_service.dart';
