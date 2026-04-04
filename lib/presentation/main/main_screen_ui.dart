@@ -92,12 +92,13 @@ class _MainScreenUIState extends State<MainScreenUI> {
     }
   }
 
-  // 메뉴 버튼 (활성/비활성 지원)
-  Widget _buildMenuButton({
+  // 액션 타일 버튼 (활성/비활성 지원)
+  Widget _buildActionTile({
     required BuildContext context,
     required String text,
     required VoidCallback? onPressed,
     required double itemWidth,
+    String? subtitle,
     String? tooltip,
   }) {
     final theme = Theme.of(context);
@@ -125,10 +126,10 @@ class _MainScreenUIState extends State<MainScreenUI> {
 
     Widget button = SizedBox(
       width: itemWidth,
-      height: 58,
+      height: 56,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -149,36 +150,53 @@ class _MainScreenUIState extends State<MainScreenUI> {
           color: Colors.transparent,
           child: InkWell(
             onTap: onPressed,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(12),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
               child: Row(
                 children: [
                   Container(
-                    width: 26,
-                    height: 26,
+                    width: 24,
+                    height: 24,
                     decoration: BoxDecoration(
                       color: iconColor.withAlpha(isDark ? 22 : 18),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(7),
                     ),
                     child: Icon(
                       _menuIcons[text] ?? Icons.apps_rounded,
-                      size: 15,
+                      size: 14,
                       color: iconColor,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 7),
                   Expanded(
-                    child: Text(
-                      text,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.2,
-                        fontWeight: FontWeight.w800,
-                        color: titleColor,
-                        height: 1.1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          text,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            fontSize: (theme.textTheme.labelSmall?.fontSize ?? 11) - 0.1,
+                            fontWeight: FontWeight.w800,
+                            color: titleColor,
+                            height: 1.1,
+                          ),
                       ),
+                        if (subtitle != null)
+                          Text(
+                            subtitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              fontSize: 10,
+                              color: titleColor.withAlpha(160),
+                              height: 1.1,
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const SizedBox(width: 4),
@@ -199,6 +217,61 @@ class _MainScreenUIState extends State<MainScreenUI> {
       return Tooltip(message: tooltip, child: button);
     }
     return button;
+  }
+
+  Widget _buildCategoryCard({
+    required BuildContext context,
+    required String title,
+    required List<_MenuEntry> items,
+    required double panelWidth,
+  }) {
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
+    const double innerGap = 8;
+    final int columns = panelWidth >= 640 ? 3 : 2;
+    final double innerWidth = panelWidth - 20;
+    final double tileWidth =
+        (innerWidth - (innerGap * (columns - 1))).clamp(100.0, innerWidth) /
+            columns;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.fromLTRB(9, 8, 9, 9),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: isDark
+            ? Colors.white.withAlpha(10)
+            : theme.colorScheme.surface.withAlpha(140),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withAlpha(24)
+              : theme.colorScheme.outline.withAlpha(72),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _buildSectionHeader(context, title),
+          const SizedBox(height: 2),
+          Wrap(
+            spacing: innerGap,
+            runSpacing: innerGap,
+            children: items
+                .map(
+                  (entry) => _buildActionTile(
+                    context: context,
+                    text: entry.text,
+                    subtitle: entry.subtitle,
+                    onPressed: entry.onPressed,
+                    itemWidth: tileWidth,
+                    tooltip: entry.tooltip,
+                  ),
+                )
+                .toList(),
+          ),
+        ],
+      ),
+    );
   }
 
   // 섹션 헤더 위젯
@@ -258,74 +331,39 @@ class _MainScreenUIState extends State<MainScreenUI> {
     final double bottomPadding = mediaQuery.padding.bottom;
     final double topPadding = mediaQuery.padding.top;
     final Size screenSize = MediaQuery.of(context).size;
-    const double panelMaxWidth = 720;
+    const double panelMaxWidth = 820;
     const double horizontalInset = 20;
-    const double menuGap = 8;
-    const double panelHorizontalPadding = 18;
-    const double targetTileWidth = 172;
     final double panelWidth =
       (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth);
-    final double panelContentWidth = panelWidth - panelHorizontalPadding;
-    final int rawColumns =
-      ((panelContentWidth + menuGap) / (targetTileWidth + menuGap)).floor();
-    final int columns = rawColumns < 2 ? 2 : (rawColumns > 4 ? 4 : rawColumns);
-    final double availableWidth =
-      panelWidth - panelHorizontalPadding - (menuGap * (columns - 1));
-    final double menuItemWidth = availableWidth / columns;
 
     final bool isEventActive = EventManager.isEventPeriodActive();
     final bool settingsComplete = _areEssentialSettingsSet();
 
     // 섹션별 버튼 그룹
-    final List<Map<String, dynamic>> calculatorButtons = [
-      {'text': '루프 계산기', 'onPressed': widget.onCalculatorPressed, 'needsSettings': true},
-      {'text': '골드 효율 계산기', 'onPressed': widget.onGoldCalculatorPressed, 'needsSettings': true},
-      {'text': '데미지 계산기_ Beta', 'onPressed': widget.onDamageCalculatorPressed, 'needsSettings': true},
+    final List<_MenuEntry> calculatorButtons = [
+      _MenuEntry(text: '루프 계산기', subtitle: '스테이지 반복 계산', onPressed: widget.onCalculatorPressed),
+      _MenuEntry(text: '골드 효율 계산기', subtitle: '루프 대비 수익', onPressed: widget.onGoldCalculatorPressed),
+      _MenuEntry(text: '데미지 계산기_ Beta', subtitle: '대미지 검증', onPressed: widget.onDamageCalculatorPressed),
     ];
-    final List<Map<String, dynamic>> toolButtons = [
-      {'text': '악세사리 도감', 'onPressed': widget.onAccessoryPressed, 'needsSettings': false},
-      {'text': '일지', 'onPressed': widget.onJournalPressed, 'needsSettings': false},
-      {
-        'text': '상자 기대값 계산기',
-        'onPressed': isEventActive ? widget.onBoxCalculatorPressed : null,
-        'tooltip': '이벤트 기간에만 사용 가능합니다',
-        'needsSettings': false,
-      },
+    final List<_MenuEntry> toolButtons = [
+      _MenuEntry(text: '악세사리 도감', subtitle: '옵션 및 세트 확인', onPressed: widget.onAccessoryPressed),
+      _MenuEntry(text: '일지', subtitle: '기록 및 추이 확인', onPressed: widget.onJournalPressed),
+      _MenuEntry(
+        text: '상자 기대값 계산기',
+        subtitle: '이벤트 상자 기대값',
+        onPressed: isEventActive ? widget.onBoxCalculatorPressed : null,
+        tooltip: '이벤트 기간에만 사용 가능합니다',
+      ),
     ];
-    final List<Map<String, dynamic>> simulatorButtons = [
-      {'text': '악세 강화 시뮬', 'onPressed': widget.onAccessoryEnhancementPressed, 'needsSettings': false},
-      {'text': '악세 옵변 시뮬', 'onPressed': widget.onAccessoryOptionChangePressed, 'needsSettings': false},
-      {'text': '탐 옵션 시뮬', 'onPressed': widget.onExplorationOptionSimulationPressed, 'needsSettings': false},
-      {'text': '주머니 시뮬', 'onPressed': widget.onPouchSimulationPressed, 'needsSettings': false},
+    final List<_MenuEntry> simulatorButtons = [
+      _MenuEntry(text: '악세 강화 시뮬', subtitle: '강화 기대값 계산', onPressed: widget.onAccessoryEnhancementPressed),
+      _MenuEntry(text: '악세 옵변 시뮬', subtitle: '옵션 변경 시뮬', onPressed: widget.onAccessoryOptionChangePressed),
+      _MenuEntry(text: '탐 옵션 시뮬', subtitle: '탐험 옵션 실험', onPressed: widget.onExplorationOptionSimulationPressed),
+      _MenuEntry(text: '주머니 시뮬', subtitle: '주머니 획득 시뮬', onPressed: widget.onPouchSimulationPressed),
     ];
-    final List<Map<String, dynamic>> settingButtons = [
-      {'text': '스테이지 설정', 'onPressed': widget.onStageSettingsPressed, 'needsSettings': false},
+    final List<_MenuEntry> settingButtons = [
+      _MenuEntry(text: '스테이지 설정', subtitle: '팀/달기지/VIP 설정', onPressed: widget.onStageSettingsPressed),
     ];
-
-    Widget buildSection(String label, List<Map<String, dynamic>> buttons) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _buildSectionHeader(context, label),
-          Wrap(
-            alignment: WrapAlignment.center,
-            runAlignment: WrapAlignment.center,
-            spacing: menuGap,
-            runSpacing: menuGap,
-            children: buttons.map((config) {
-              final VoidCallback? onPressed = config['onPressed'] as VoidCallback?;
-              return _buildMenuButton(
-                context: context,
-                text: config['text'] as String,
-                onPressed: onPressed,
-                itemWidth: menuItemWidth,
-                tooltip: config['tooltip'] as String?,
-              );
-            }).toList(),
-          ),
-        ],
-      );
-    }
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -461,20 +499,45 @@ class _MainScreenUIState extends State<MainScreenUI> {
                 alignment: Alignment.bottomCenter,
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 14 + bottomPadding),
-                  child: SizedBox(
-                    width: panelWidth,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxWidth: panelWidth,
+                      maxHeight: screenSize.height * 0.64,
+                    ),
                     child: GlassPanel(
-                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 9),
-                      borderRadius: const BorderRadius.all(Radius.circular(26)),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          buildSection('계산기', calculatorButtons),
-                          buildSection('도구 / 기록', toolButtons),
-                          buildSection('시뮬레이터', simulatorButtons),
-                          buildSection('설정', settingButtons),
-                        ],
+                      padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                      borderRadius: const BorderRadius.all(Radius.circular(24)),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildCategoryCard(
+                              context: context,
+                              title: '계산기',
+                              items: calculatorButtons,
+                              panelWidth: panelWidth,
+                            ),
+                            _buildCategoryCard(
+                              context: context,
+                              title: '도구 / 기록',
+                              items: toolButtons,
+                              panelWidth: panelWidth,
+                            ),
+                            _buildCategoryCard(
+                              context: context,
+                              title: '시뮬레이터',
+                              items: simulatorButtons,
+                              panelWidth: panelWidth,
+                            ),
+                            _buildCategoryCard(
+                              context: context,
+                              title: '설정',
+                              items: settingButtons,
+                              panelWidth: panelWidth,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -486,4 +549,18 @@ class _MainScreenUIState extends State<MainScreenUI> {
       ),
     );
   }
+}
+
+class _MenuEntry {
+  final String text;
+  final String subtitle;
+  final VoidCallback? onPressed;
+  final String? tooltip;
+
+  const _MenuEntry({
+    required this.text,
+    required this.subtitle,
+    required this.onPressed,
+    this.tooltip,
+  });
 }
