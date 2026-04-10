@@ -181,6 +181,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           onPartFilterChanged: _handlePartFilterChanged,
           onAccessoryTap: (ctx, acc) {
             if (widget.isPickerMode) {
+              AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
               Navigator.of(context).pop(acc);
             } else if (_compareMode) {
               setState(() {
@@ -193,6 +194,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                 }
               });
             } else {
+              AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
               _showAccessoryDetails(ctx, acc);
             }
           },
