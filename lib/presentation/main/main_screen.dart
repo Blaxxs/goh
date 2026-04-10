@@ -47,10 +47,11 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _warmupAccessoryImageCache({required int limit}) async {
-    final accessories = AccessoryDataManager().allAccessories;
-    if (accessories.isEmpty) return;
+    final urls = await AccessoryDataManager().getPrioritizedAccessoryImageUrls(
+      limit: limit,
+    );
+    if (urls.isEmpty) return;
 
-    final urls = accessories.take(limit).map((a) => a.imageUrl).toSet();
     await Future.wait(urls.map((url) async {
       try {
         await DefaultCacheManager().downloadFile(url);
