@@ -30,6 +30,8 @@ class AccessoryDataManager {
   // --- Cache Keys ---
   static const String _cacheKeyAccessories = 'cached_accessories';
   static const String _cacheKeyParts = 'cached_accessory_parts';
+  static const String _cacheKeyRecentAccessoryIds = 'recent_accessory_ids';
+  static const int _maxRecentAccessoryIds = 40;
 
   /// Loads accessories from local cache first, then updates from Firebase in the background.
   /// 
@@ -198,6 +200,65 @@ class AccessoryDataManager {
       if (kDebugMode) {
         print('[AccessoryDataManager] Error saving cache: $e');
       }
+    }
+  }
+
+  /// 최근 열람/선택한 악세사리 ID를 LRU 방식으로 저장한다.
+  Future<void> markAccessoryAsRecentlyUsed(String accessoryId) async {
+    if (accessoryId.trim().isEmpty) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final current = prefs.getStringList(_cacheKeyRecentAccessoryIds) ?? [];
+
+      final normalized = accessoryId.trim();
+      final next = <String>[normalized, ...current.where((id) => id != normalized)];
+      if (next.length > _maxRecentAccessoryIds) {
+        next.removeRange(_maxRecentAccessoryIds, next.length);
+      }
+      await prefs.setStringList(_cacheKeyRecentAccessoryIds, next);
+    } catch (e) {
+      if (kDebugMode) {
+        print('[AccessoryDataManager] Error updating recent accessory ids: $e');
+      }
+    }
+  }
+
+  /// 최근 사용 악세를 우선으로 하여 이미지 URL 목록을 반환한다.
+  Future<List<String>> getPrioritizedAccessoryImageUrls({
+    required int limit,
+  }) async {
+    if (limit <= 0 || allAccessories.isEmpty) return const [];
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final recentIds = prefs.getStringList(_cacheKeyRecentAccessoryIds) ?? const [];
+
+      final byId = <String, Accessory>{for (final a in allAccessories) a.id: a};
+      final used = <String>{};
+      final urls = <String>[];
+
+      for (final id in recentIds) {
+        final acc = byId[id];
+        if (acc == null) continue;
+        if (used.add(acc.imageUrl)) {
+          urls.add(acc.imageUrl);
+          if (urls.length >= limit) return urls;
+        }
+      }
+
+      for (final acc in allAccessories) {
+        if (used.add(acc.imageUrl)) {
+          urls.add(acc.imageUrl);
+          if (urls.length >= limit) break;
+        }
+      }
+
+      return urls;
+    } catch (e) {
+      if (kDebugMode) {
+        print('[AccessoryDataManager] Error building prioritized image URLs: $e');
+      }
+      return allAccessories.take(limit).map((a) => a.imageUrl).toSet().toList();
     }
   }
 }
