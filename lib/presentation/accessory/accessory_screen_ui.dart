@@ -267,6 +267,12 @@ class AccessoryScreenUI extends StatelessWidget {
                                     child: CachedNetworkImage(
                                       imageUrl: accessory.imageUrl,
                                       fit: BoxFit.contain,
+                                      memCacheWidth: 256,
+                                      memCacheHeight: 256,
+                                      maxWidthDiskCache: 256,
+                                      maxHeightDiskCache: 256,
+                                      fadeInDuration: Duration.zero,
+                                      fadeOutDuration: Duration.zero,
                                       placeholder: (context, url) => const Center(
                                         child: SizedBox(
                                           width: 24,

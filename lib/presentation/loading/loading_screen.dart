@@ -58,11 +58,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
     const batchSize = 8;
     for (int i = 0; i < urls.length; i += batchSize) {
       final batch = urls.skip(i).take(batchSize);
-      await Future.wait(
-        batch.map(
-          (url) => DefaultCacheManager().downloadFile(url).catchError((_) {}),
-        ),
-      );
+      await Future.wait(batch.map(_downloadWithIgnoreError));
+    }
+  }
+
+  Future<void> _downloadWithIgnoreError(String url) async {
+    try {
+      await DefaultCacheManager().downloadFile(url);
+    } catch (_) {
+      // Warm-up 단계 실패는 무시하고 실제 화면 진입 시 재시도한다.
     }
   }
 
