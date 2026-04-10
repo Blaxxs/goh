@@ -1,6 +1,7 @@
 // lib/loading_screen.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../main/main_screen.dart'; // MainScreen으로 이동하기 위함
 import '../../core/services/settings_service.dart'; // 설정 로딩을 위함
 import '../../core/constants/accessory_constants.dart';
@@ -13,6 +14,7 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+  static const int _accessoryImageWarmupCount = 72;
   late final Future<void> _initializationFuture;
   bool _hasNavigated = false;
 
@@ -36,10 +38,32 @@ class _LoadingScreenState extends State<LoadingScreen> {
     Future(() async {
       try {
         await AccessoryDataManager().loadAccessories();
+        await _warmupAccessoryImageCache();
       } catch (e) {
         debugPrint('[LoadingScreen] Accessory data load error: $e');
       }
     });
+  }
+
+  Future<void> _warmupAccessoryImageCache() async {
+    final accessories = AccessoryDataManager().allAccessories;
+    if (accessories.isEmpty) return;
+
+    final urls = accessories
+        .take(_accessoryImageWarmupCount)
+        .map((a) => a.imageUrl)
+        .toSet()
+        .toList(growable: false);
+
+    const batchSize = 8;
+    for (int i = 0; i < urls.length; i += batchSize) {
+      final batch = urls.skip(i).take(batchSize);
+      await Future.wait(
+        batch.map(
+          (url) => DefaultCacheManager().downloadFile(url).catchError((_) {}),
+        ),
+      );
+    }
   }
 
   void _navigateToMain() {
