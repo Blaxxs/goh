@@ -1,10 +1,12 @@
 // lib/main_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../calculator/calculator_screen.dart';
 import '../stage_settings/settings_screen.dart'; // 스테이지 설정 화면
 import 'main_screen_ui.dart';
 import '../app_settings/app_settings_screen.dart'; // 앱 설정 화면 import
 import '../../core/services/settings_service.dart'; // SettingsService import
+import '../../core/constants/accessory_constants.dart';
 import '../gold_calculator/gold_calculator_screen.dart';
 import '../accessory/accessory_screen.dart';
 import '../damage_calculator/damage_calculator_screen.dart';
@@ -24,11 +26,38 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  static const int _quickWarmupCount = 24;
+
   void _navigateToScreen(BuildContext context, Widget screen) {
     Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => screen),
     );
+  }
+
+  Future<void> _openAccessoryScreenWithWarmup() async {
+    final warmupFuture = _warmupAccessoryImageCache(limit: _quickWarmupCount);
+    await Future.any<void>([
+      warmupFuture,
+      Future<void>.delayed(const Duration(milliseconds: 350)),
+    ]);
+
+    if (!mounted) return;
+    _navigateToScreen(context, const AccessoryScreen());
+  }
+
+  Future<void> _warmupAccessoryImageCache({required int limit}) async {
+    final accessories = AccessoryDataManager().allAccessories;
+    if (accessories.isEmpty) return;
+
+    final urls = accessories.take(limit).map((a) => a.imageUrl).toSet();
+    await Future.wait(urls.map((url) async {
+      try {
+        await DefaultCacheManager().downloadFile(url);
+      } catch (_) {
+        // 선로딩 실패는 무시하고 실제 화면 렌더 시 재시도한다.
+      }
+    }));
   }
 
   @override
@@ -40,8 +69,8 @@ class _MainScreenState extends State<MainScreen> {
         onGoldCalculatorPressed: () {
           _navigateToScreen(context, const GoldCalculatorScreen());
         },
-        onAccessoryPressed: () {
-          _navigateToScreen(context, const AccessoryScreen());
+        onAccessoryPressed: () async {
+          await _openAccessoryScreenWithWarmup();
         },
         onDamageCalculatorPressed: () {
           _navigateToScreen(context, const DamageCalculatorScreen());
