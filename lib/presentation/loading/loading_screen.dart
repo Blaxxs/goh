@@ -46,14 +46,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future<void> _warmupAccessoryImageCache() async {
-    final accessories = AccessoryDataManager().allAccessories;
-    if (accessories.isEmpty) return;
-
-    final urls = accessories
-        .take(_accessoryImageWarmupCount)
-        .map((a) => a.imageUrl)
-        .toSet()
-        .toList(growable: false);
+    final urls = await AccessoryDataManager().getPrioritizedAccessoryImageUrls(
+      limit: _accessoryImageWarmupCount,
+    );
+    if (urls.isEmpty) return;
 
     const batchSize = 8;
     for (int i = 0; i < urls.length; i += batchSize) {
