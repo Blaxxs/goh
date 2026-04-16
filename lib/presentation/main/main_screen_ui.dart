@@ -18,6 +18,7 @@ class MainScreenUI extends StatefulWidget {
   final VoidCallback onAccessoryOptionChangePressed;
   final VoidCallback onExplorationOptionSimulationPressed;
   final VoidCallback onPouchSimulationPressed;
+  final VoidCallback onRandomAccessorySimulatorPressed;
   final VoidCallback onStageSettingsPressed;
   final VoidCallback onAppSettingsPressed;
 
