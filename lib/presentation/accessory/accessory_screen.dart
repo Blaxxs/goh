@@ -686,6 +686,30 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
       ),
     );
   }
+
+  String _resolveSparseStageValue(SetOptionEffect effect, int stage) {
+    final exactValue = effect.stageValues[stage.toString()];
+    if (exactValue != null && exactValue.isNotEmpty) {
+      return exactValue;
+    }
+
+    final availableStages = effect.stageValues.keys
+        .map(int.tryParse)
+        .whereType<int>()
+        .where((value) => value <= stage)
+        .toList()
+      ..sort();
+
+    if (availableStages.isNotEmpty) {
+      final fallbackValue =
+          effect.stageValues[availableStages.last.toString()];
+      if (fallbackValue != null && fallbackValue.isNotEmpty) {
+        return fallbackValue;
+      }
+    }
+
+    return effect.stageValues['0'] ?? '-';
+  }
 }
 
 // 악세사리 비교 다이얼로그
