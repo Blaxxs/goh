@@ -104,6 +104,9 @@ class _MainScreenState extends State<MainScreen> {
         onPouchSimulationPressed: () {
           _navigateToScreen(context, const PouchSimulationScreen());
         },
+        onRandomAccessorySimulatorPressed: () {
+          _navigateToScreen(context, const RandomAccessorySimulatorScreen());
+        },
         onStageSettingsPressed: () {
           _navigateToScreen(context, const SettingsScreen());
         },
