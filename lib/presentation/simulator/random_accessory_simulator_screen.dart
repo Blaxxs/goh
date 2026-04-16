@@ -38,7 +38,14 @@ class _RandomAccessorySimulatorScreenState
     final cost = _isModify ? config?.modifyCost ?? {} : config?.craftCost ?? {};
 
     return Scaffold(
+      drawer: const AppDrawer(currentScreen: AppScreen.randomAccessorySimulation),
       appBar: AppBar(
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
+          ),
+        ),
         title: const Text('랜덤악세 시뮬레이터'),
       ),
       body: config == null
