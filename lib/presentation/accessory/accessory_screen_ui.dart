@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart'; // 패키지 import 필수
-import 'package:dropdown_button2/dropdown_button2.dart';
 import '../../data/models/accessory.dart';
 
 class AccessoryScreenUI extends StatelessWidget {
@@ -85,62 +84,46 @@ class AccessoryScreenUI extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  // --- 검색 + 필터 (한 줄) ---
+                  // --- 검색 + 필터 (대중적인 검색바 + 칩 UI) ---
                   Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color:
+                      SizedBox(
+                        width: 112,
+                        child: DropdownButtonFormField<String>(
+                          value: searchOption,
+                          isExpanded: true,
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor:
                                 isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                                color: isDark
-                                    ? Colors.grey[700]!
-                                    : Colors.grey.shade300),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
                           ),
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            value: searchOption,
-                            items: searchOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style: TextStyle(
+                          items: searchOptions
+                              .map(
+                                (value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
                                         fontSize: 13,
-                                        fontWeight: FontWeight.w500,
                                         color: isDark
                                             ? Colors.white
-                                            : Colors.black87)),
-                              );
-                            }).toList(),
-                            onChanged: onSearchOptionChanged,
-                            iconStyleData: IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down,
-                                  color:
-                                      isDark ? Colors.white70 : Colors.black54),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              offset: const Offset(0, 0),
-                            ),
-                            buttonStyleData: const ButtonStyleData(
-                              height: 40,
-                              padding: EdgeInsets.symmetric(horizontal: 10.0),
-                            ),
-                            underline: const SizedBox(),
-                          ),
+                                            : Colors.black87,
+                                      )),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: onSearchOptionChanged,
                         ),
                       ),
-                      const SizedBox(width: 6),
+                      const SizedBox(width: 8),
                       Expanded(
-                        flex: 3,
                         child: SizedBox(
-                          height: 40,
+                          height: 46,
                           child: TextField(
                             controller: searchController,
                             style: TextStyle(
@@ -148,6 +131,7 @@ class AccessoryScreenUI extends StatelessWidget {
                             ),
                             textAlignVertical: TextAlignVertical.center,
                             decoration: InputDecoration(
+                              hintText: '악세 이름/옵션 검색',
                               filled: true,
                               fillColor: isDark
                                   ? Colors.grey[800]
@@ -163,128 +147,68 @@ class AccessoryScreenUI extends StatelessWidget {
                                   : null,
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.0),
-                                borderSide: BorderSide(
-                                    color: isDark
-                                        ? Colors.grey[700]!
-                                        : Colors.grey.shade300),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                                borderSide: BorderSide(
-                                    color: isDark
-                                        ? Colors.grey[700]!
-                                        : Colors.grey.shade300),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
-                                borderSide: BorderSide(
-                                    color: Theme.of(context).primaryColor),
                               ),
                               isDense: true,
                               contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 10),
+                                  horizontal: 10, vertical: 10),
                             ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color:
-                                isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                                color: isDark
-                                    ? Colors.grey[700]!
-                                    : Colors.grey.shade300),
-                          ),
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            value: selectedPartFilter ?? '전체',
-                            items: partFilterOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black87)),
-                              );
-                            }).toList(),
-                            onChanged: onPartFilterChanged,
-                            iconStyleData: IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down,
-                                  color:
-                                      isDark ? Colors.white70 : Colors.black54),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              offset: const Offset(0, 0),
-                            ),
-                            buttonStyleData: const ButtonStyleData(
-                              height: 40,
-                              padding: EdgeInsets.symmetric(horizontal: 10.0),
-                            ),
-                            underline: const SizedBox(),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color:
-                                isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(
-                                color: isDark
-                                    ? Colors.grey[700]!
-                                    : Colors.grey.shade300),
-                          ),
-                          child: DropdownButton2<String>(
-                            isExpanded: true,
-                            value: selectedOptionTypeFilter,
-                            items: optionTypeFilterOptions.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value,
-                                    style: TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w500,
-                                        color: isDark
-                                            ? Colors.white
-                                            : Colors.black87),
-                                    overflow: TextOverflow.ellipsis),
-                              );
-                            }).toList(),
-                            onChanged: onOptionTypeFilterChanged,
-                            iconStyleData: IconStyleData(
-                              icon: Icon(Icons.keyboard_arrow_down,
-                                  color:
-                                      isDark ? Colors.white70 : Colors.black54),
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              offset: const Offset(0, 0),
-                            ),
-                            buttonStyleData: const ButtonStyleData(
-                              height: 40,
-                              padding: EdgeInsets.symmetric(horizontal: 10.0),
-                            ),
-                            underline: const SizedBox(),
                           ),
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '옵션 타입',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: isDark ? Colors.white70 : Colors.black54,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: optionTypeFilterOptions.map((type) {
+                        final selected = selectedOptionTypeFilter == type;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: ChoiceChip(
+                            label: Text(type),
+                            selected: selected,
+                            onSelected: (_) =>
+                                onOptionTypeFilterChanged(type),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  DropdownButtonFormField<String>(
+                    value: selectedPartFilter ?? '전체',
+                    isExpanded: true,
+                    decoration: InputDecoration(
+                      labelText: '부위 필터',
+                      filled: true,
+                      fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 10),
+                    ),
+                    items: partFilterOptions
+                        .map(
+                          (value) => DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value, overflow: TextOverflow.ellipsis),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: onPartFilterChanged,
                   ),
                 ],
               ),
