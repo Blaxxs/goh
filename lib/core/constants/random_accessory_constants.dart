@@ -333,18 +333,18 @@ class RandomAccessoryRepository {
   // 파랑 최소 = 초록 최대 + 1
   // 초록 최소 = 노랑 최대 + 1
   // 노랑 최소 = min
-  static (int, int) _gradeRange(int min, int max, String grade) {
-    final span = max - min;
+  static (int, int) _gradeRange(int minValue, int maxValue, String grade) {
+    final span = maxValue - minValue;
     final accessoryConst = max(1, (span / 3).ceil());
 
-    final yellowMin = min;
-    final yellowMax = max(min, max - accessoryConst * 2);
+    final yellowMin = minValue;
+    final yellowMax = max(minValue, maxValue - accessoryConst * 2);
 
-    final greenMin = min(max, yellowMax + 1);
-    final greenMax = max(greenMin, max - accessoryConst);
+    final greenMin = min(maxValue, yellowMax + 1);
+    final greenMax = max(greenMin, maxValue - accessoryConst);
 
-    final blueMin = min(max, greenMax + 1);
-    final blueMax = max;
+    final blueMin = min(maxValue, greenMax + 1);
+    final blueMax = maxValue;
 
     if (grade == gradeBlue) {
       return (blueMin, blueMax);
