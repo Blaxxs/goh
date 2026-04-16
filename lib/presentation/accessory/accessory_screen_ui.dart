@@ -162,27 +162,49 @@ class AccessoryScreenUI extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        Text(
-                          '옵션',
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color:
-                                        isDark ? Colors.white70 : Colors.black54,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                        const SizedBox(width: 8),
-                        ...optionTypeFilterOptions.map((type) {
-                          final selected = selectedOptionTypeFilter == type;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 6),
-                            child: ChoiceChip(
-                              label: Text(type),
-                              selected: selected,
-                              onSelected: (_) => onOptionTypeFilterChanged(type),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.22),
                             ),
-                          );
-                        }),
+                          ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8),
+                                child: Text(
+                                  '옵션',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: isDark
+                                            ? Colors.white70
+                                            : Colors.black54,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                ),
+                              ),
+                              ...optionTypeFilterOptions.map((type) {
+                                final selected = selectedOptionTypeFilter == type;
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 6),
+                                  child: ChoiceChip(
+                                    label: Text(type),
+                                    selected: selected,
+                                    onSelected: (_) =>
+                                        onOptionTypeFilterChanged(type),
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
                         const SizedBox(width: 10),
                         Container(
                           width: 1,
