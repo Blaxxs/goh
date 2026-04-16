@@ -455,9 +455,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
                           // 효과들을 '효과 : 수치' 형식으로 나열 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
-                            String currentValue = effect.stageValues[
-                                    currentStageIndex.toString()] ??
-                                '-';
+                            final currentValue =
+                                _resolveSparseStageValue(effect, currentStageIndex);
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 4.0),
@@ -582,9 +581,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           const SizedBox(height: 10),
                           // 세트 효과들 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
-                            String currentValue = effect.stageValues[
-                                    currentStageIndex.toString()] ??
-                                '-';
+                            final currentValue =
+                                _resolveSparseStageValue(effect, currentStageIndex);
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 4.0),
