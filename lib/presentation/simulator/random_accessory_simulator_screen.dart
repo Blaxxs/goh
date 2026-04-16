@@ -144,9 +144,8 @@ class _RandomAccessorySimulatorScreenState
 
   Widget _buildModeControls(
       BuildContext context, RandomAccessoryConfig config) {
-    final optionCountProbabilities = config.maxOptionCount >= 3
-      ? RandomAccessoryRepository.optionCountProbabilitiesOneToThree
-      : RandomAccessoryRepository.optionCountProbabilitiesOneToTwo;
+    final optionCountProbabilities =
+      _optionCountProbabilitiesForDisplay(config);
 
     return Card(
       child: Padding(
@@ -313,6 +312,16 @@ class _RandomAccessorySimulatorScreenState
     return items
         .map((e) => '${e.key}개 ${e.value.toStringAsFixed(0)}%')
         .join(', ');
+  }
+
+  Map<int, double> _optionCountProbabilitiesForDisplay(
+      RandomAccessoryConfig config) {
+    if (config.minOptionCount == config.maxOptionCount) {
+      return {config.minOptionCount: 100};
+    }
+    return config.maxOptionCount >= 3
+        ? RandomAccessoryRepository.optionCountProbabilitiesOneToThree
+        : RandomAccessoryRepository.optionCountProbabilitiesOneToTwo;
   }
 
   String _gradeProbText(Map<String, double> probs) {
