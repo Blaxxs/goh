@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../core/constants/box_constants.dart';
 import '../../core/constants/random_accessory_constants.dart';
+import '../../core/widgets/app_drawer.dart';
 import '../../data/models/accessory.dart';
 
 class RandomAccessorySimulatorScreen extends StatefulWidget {
