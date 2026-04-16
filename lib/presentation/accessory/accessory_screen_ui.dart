@@ -63,13 +63,11 @@ class AccessoryScreenUI extends StatelessWidget {
                         : compareList.length == 1
                             ? '${compareList[0].name} 선택됨 · 하나 더 선택하세요'
                             : '${compareList[0].name} vs ${compareList[1].name}',
-                    style:
-                        Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
-                              fontWeight: FontWeight.w600,
-                            ),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.w600,
+                        ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -95,9 +93,13 @@ class AccessoryScreenUI extends StatelessWidget {
                         flex: 2,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                            color:
+                                isDark ? Colors.grey[800] : Colors.blueGrey[50],
                             borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                            border: Border.all(
+                                color: isDark
+                                    ? Colors.grey[700]!
+                                    : Colors.grey.shade300),
                           ),
                           child: DropdownButton2<String>(
                             isExpanded: true,
@@ -109,13 +111,16 @@ class AccessoryScreenUI extends StatelessWidget {
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
-                                        color: isDark ? Colors.white : Colors.black87)),
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black87)),
                               );
                             }).toList(),
                             onChanged: onSearchOptionChanged,
                             iconStyleData: IconStyleData(
                               icon: Icon(Icons.keyboard_arrow_down,
-                                  color: isDark ? Colors.white70 : Colors.black54),
+                                  color:
+                                      isDark ? Colors.white70 : Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
@@ -144,9 +149,12 @@ class AccessoryScreenUI extends StatelessWidget {
                             textAlignVertical: TextAlignVertical.center,
                             decoration: InputDecoration(
                               filled: true,
-                              fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                              fillColor: isDark
+                                  ? Colors.grey[800]
+                                  : Colors.blueGrey[50],
                               prefixIcon: Icon(Icons.search,
-                                  color: isDark ? Colors.white54 : Colors.black54),
+                                  color:
+                                      isDark ? Colors.white54 : Colors.black54),
                               suffixIcon: currentSearchQuery.isNotEmpty
                                   ? IconButton(
                                       icon: const Icon(Icons.clear, size: 20),
@@ -156,12 +164,16 @@ class AccessoryScreenUI extends StatelessWidget {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                                 borderSide: BorderSide(
-                                    color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                                    color: isDark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey.shade300),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.0),
                                 borderSide: BorderSide(
-                                    color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                                    color: isDark
+                                        ? Colors.grey[700]!
+                                        : Colors.grey.shade300),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8.0),
@@ -180,9 +192,13 @@ class AccessoryScreenUI extends StatelessWidget {
                         flex: 2,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                            color:
+                                isDark ? Colors.grey[800] : Colors.blueGrey[50],
                             borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                            border: Border.all(
+                                color: isDark
+                                    ? Colors.grey[700]!
+                                    : Colors.grey.shade300),
                           ),
                           child: DropdownButton2<String>(
                             isExpanded: true,
@@ -194,13 +210,16 @@ class AccessoryScreenUI extends StatelessWidget {
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
-                                        color: isDark ? Colors.white : Colors.black87)),
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black87)),
                               );
                             }).toList(),
                             onChanged: onPartFilterChanged,
                             iconStyleData: IconStyleData(
                               icon: Icon(Icons.keyboard_arrow_down,
-                                  color: isDark ? Colors.white70 : Colors.black54),
+                                  color:
+                                      isDark ? Colors.white70 : Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
@@ -221,9 +240,13 @@ class AccessoryScreenUI extends StatelessWidget {
                         flex: 2,
                         child: Container(
                           decoration: BoxDecoration(
-                            color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                            color:
+                                isDark ? Colors.grey[800] : Colors.blueGrey[50],
                             borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                            border: Border.all(
+                                color: isDark
+                                    ? Colors.grey[700]!
+                                    : Colors.grey.shade300),
                           ),
                           child: DropdownButton2<String>(
                             isExpanded: true,
@@ -235,14 +258,17 @@ class AccessoryScreenUI extends StatelessWidget {
                                     style: TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w500,
-                                        color: isDark ? Colors.white : Colors.black87),
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black87),
                                     overflow: TextOverflow.ellipsis),
                               );
                             }).toList(),
                             onChanged: onOptionTypeFilterChanged,
                             iconStyleData: IconStyleData(
                               icon: Icon(Icons.keyboard_arrow_down,
-                                  color: isDark ? Colors.white70 : Colors.black54),
+                                  color:
+                                      isDark ? Colors.white70 : Colors.black54),
                             ),
                             dropdownStyleData: DropdownStyleData(
                               decoration: BoxDecoration(
@@ -286,7 +312,8 @@ class AccessoryScreenUI extends StatelessWidget {
                   itemCount: filteredAccessories.length,
                   itemBuilder: (context, index) {
                     final accessory = filteredAccessories[index];
-                    final isSelected = compareMode && compareList.contains(accessory);
+                    final isSelected =
+                        compareMode && compareList.contains(accessory);
 
                     return GestureDetector(
                       onTap: () => onAccessoryTap(context, accessory),
@@ -299,7 +326,8 @@ class AccessoryScreenUI extends StatelessWidget {
                               borderRadius: BorderRadius.circular(12),
                               side: isSelected
                                   ? BorderSide(
-                                      color: Theme.of(context).colorScheme.primary,
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
                                       width: 2.5,
                                     )
                                   : BorderSide.none,
@@ -310,7 +338,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                 // 1. 이미지 영역
                                 Expanded(
                                   child: Container(
-                                    color: isDark ? Colors.grey[800] : Colors.grey[200],
+                                    color: isDark
+                                        ? Colors.grey[800]
+                                        : Colors.grey[200],
                                     padding: const EdgeInsets.all(6.0),
                                     child: CachedNetworkImage(
                                       imageUrl: accessory.imageUrl,
@@ -321,7 +351,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                       maxHeightDiskCache: 256,
                                       fadeInDuration: Duration.zero,
                                       fadeOutDuration: Duration.zero,
-                                      placeholder: (context, url) => const Center(
+                                      placeholder: (context, url) =>
+                                          const Center(
                                         child: SizedBox(
                                           width: 24,
                                           height: 24,
@@ -349,7 +380,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
-                                          color: isDark ? Colors.white : Colors.black87,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black87,
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -359,7 +392,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                         accessory.part,
                                         style: TextStyle(
                                           fontSize: 10,
-                                          color: isDark ? Colors.white70 : Colors.grey[700],
+                                          color: isDark
+                                              ? Colors.white70
+                                              : Colors.grey[700],
                                         ),
                                       ),
                                     ],
@@ -385,7 +420,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                     ? Icon(
                                         Icons.check_rounded,
                                         size: 13,
-                                        color: Theme.of(context).colorScheme.onPrimary,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimary,
                                       )
                                     : null,
                               ),

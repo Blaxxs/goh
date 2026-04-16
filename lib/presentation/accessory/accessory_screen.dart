@@ -139,12 +139,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           _selectedPartFilter == '전체' ||
           acc.part == _selectedPartFilter;
 
-        final bool isRandom = RandomAccessoryRepository.isRandomAccessory(acc.id);
-        final bool matchesType = _selectedOptionTypeFilter == '전체' ||
+      final bool isRandom = RandomAccessoryRepository.isRandomAccessory(acc.id);
+      final bool matchesType = _selectedOptionTypeFilter == '전체' ||
           (_selectedOptionTypeFilter == '고정옵션 악세' && !isRandom) ||
           (_selectedOptionTypeFilter == '랜덤옵션 악세' && isRandom);
 
-        return matchesSearch && matchesPart && matchesType;
+      return matchesSearch && matchesPart && matchesType;
     }).toList();
 
     // 기본 정렬: tam 최우선 -> 한자 -> 영문 알파벳 -> 기타, 그룹 내 id 순
@@ -160,75 +160,75 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     });
 
     return Scaffold(
-        drawer: const AppDrawer(currentScreen: AppScreen.accessory),
-        appBar: AppBar(
-          leading: Builder(
-            builder: (ctx) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () => Scaffold.of(ctx).openDrawer(),
-            ),
+      drawer: const AppDrawer(currentScreen: AppScreen.accessory),
+      appBar: AppBar(
+        leading: Builder(
+          builder: (ctx) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
-          title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
-          actions: [
-            if (!widget.isPickerMode) ...[
-              if (_compareMode && _compareList.length == 2)
-                TextButton.icon(
-                  onPressed: _showCompareDialog,
-                  icon: const Icon(Icons.compare_arrows_rounded),
-                  label: const Text('비교'),
-                ),
-              IconButton(
-                icon: Icon(
-                  _compareMode ? Icons.close_rounded : Icons.compare_rounded,
-                ),
-                tooltip: _compareMode ? '비교 모드 끄기' : '비교 모드 켜기',
-                onPressed: () {
-                  setState(() {
-                    _compareMode = !_compareMode;
-                    _compareList.clear();
-                  });
-                },
+        ),
+        title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
+        actions: [
+          if (!widget.isPickerMode) ...[
+            if (_compareMode && _compareList.length == 2)
+              TextButton.icon(
+                onPressed: _showCompareDialog,
+                icon: const Icon(Icons.compare_arrows_rounded),
+                label: const Text('비교'),
               ),
-            ],
+            IconButton(
+              icon: Icon(
+                _compareMode ? Icons.close_rounded : Icons.compare_rounded,
+              ),
+              tooltip: _compareMode ? '비교 모드 끄기' : '비교 모드 켜기',
+              onPressed: () {
+                setState(() {
+                  _compareMode = !_compareMode;
+                  _compareList.clear();
+                });
+              },
+            ),
           ],
-        ),
-        body: AccessoryScreenUI(
-          searchController: _searchController,
-          filteredAccessories: displayList,
-          selectedPartFilter: _selectedPartFilter,
-          partFilterOptions: partFilterOptions,
-          onPartFilterChanged: _handlePartFilterChanged,
-          selectedOptionTypeFilter: _selectedOptionTypeFilter,
-          optionTypeFilterOptions: _optionTypeFilterOptions,
-          onOptionTypeFilterChanged: _handleOptionTypeFilterChanged,
-          onAccessoryTap: (ctx, acc) {
-            if (widget.isPickerMode) {
-              AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
-              Navigator.of(context).pop(acc);
-            } else if (_compareMode) {
-              setState(() {
-                if (_compareList.contains(acc)) {
-                  _compareList.remove(acc);
-                } else if (_compareList.length < 2) {
-                  _compareList.add(acc);
-                } else {
-                  _compareList[1] = acc;
-                }
-              });
-            } else {
-              AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
-              _showAccessoryDetails(ctx, acc);
-            }
-          },
-          currentSearchQuery: _searchQuery,
-          onClearSearch: _clearSearch,
-          searchOption: _searchOption,
-          searchOptions: _searchOptions,
-          onSearchOptionChanged: _handleSearchOptionChanged,
-          compareMode: _compareMode,
-          compareList: _compareList,
-        ),
-      );
+        ],
+      ),
+      body: AccessoryScreenUI(
+        searchController: _searchController,
+        filteredAccessories: displayList,
+        selectedPartFilter: _selectedPartFilter,
+        partFilterOptions: partFilterOptions,
+        onPartFilterChanged: _handlePartFilterChanged,
+        selectedOptionTypeFilter: _selectedOptionTypeFilter,
+        optionTypeFilterOptions: _optionTypeFilterOptions,
+        onOptionTypeFilterChanged: _handleOptionTypeFilterChanged,
+        onAccessoryTap: (ctx, acc) {
+          if (widget.isPickerMode) {
+            AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
+            Navigator.of(context).pop(acc);
+          } else if (_compareMode) {
+            setState(() {
+              if (_compareList.contains(acc)) {
+                _compareList.remove(acc);
+              } else if (_compareList.length < 2) {
+                _compareList.add(acc);
+              } else {
+                _compareList[1] = acc;
+              }
+            });
+          } else {
+            AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
+            _showAccessoryDetails(ctx, acc);
+          }
+        },
+        currentSearchQuery: _searchQuery,
+        onClearSearch: _clearSearch,
+        searchOption: _searchOption,
+        searchOptions: _searchOptions,
+        onSearchOptionChanged: _handleSearchOptionChanged,
+        compareMode: _compareMode,
+        compareList: _compareList,
+      ),
+    );
   }
 
   void _showCompareDialog() {
@@ -264,7 +264,8 @@ class _AccessoryDetailDialog extends StatefulWidget {
 }
 
 class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
-  late Map<String, int> _stageIndexMap; // 각 세트 옵션의 현재 단계 인덱스 저장 (setId -> stageIndex)
+  late Map<String, int>
+      _stageIndexMap; // 각 세트 옵션의 현재 단계 인덱스 저장 (setId -> stageIndex)
   // 공통 단계 인덱스 (세트 옵션이 2개일 때 통합 제어에 사용)
   int _sharedStageIndex = 0;
 
@@ -280,7 +281,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final randomConfig = RandomAccessoryRepository.configOf(widget.accessory.id);
+    final randomConfig =
+        RandomAccessoryRepository.configOf(widget.accessory.id);
     return AlertDialog(
       title: Text(widget.accessory.name,
           style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -305,8 +307,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
             _buildDetailRow('부위', widget.accessory.part),
             _buildDetailRow('착용 제한', widget.accessory.restrictions),
             const Divider(),
-            const Text('기본 옵션',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text('기본 옵션', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             ...widget.accessory.options.map((option) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
@@ -389,8 +390,10 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
                   final theme = Theme.of(context);
                   final bool isDark = theme.brightness == Brightness.dark;
-                  final cardColor = isDark ? Colors.grey[850] : Colors.orange[50];
-                  final borderColor = isDark ? Colors.grey[700] : Colors.orange[300];
+                  final cardColor =
+                      isDark ? Colors.grey[850] : Colors.orange[50];
+                  final borderColor =
+                      isDark ? Colors.grey[700] : Colors.orange[300];
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
@@ -460,11 +463,12 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
                           // 효과들을 '효과 : 수치' 형식으로 나열 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
-                            String currentValue =
-                                effect.stageValues[currentStageIndex.toString()] ??
-                                    '-';
+                            String currentValue = effect.stageValues[
+                                    currentStageIndex.toString()] ??
+                                '-';
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -472,7 +476,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       effect.optionName,
                                       style: TextStyle(
                                         color: theme.colorScheme.onSurface
-                                          .withAlpha((0.9 * 255).round()),
+                                            .withAlpha((0.9 * 255).round()),
                                         fontSize: 13,
                                       ),
                                     ),
@@ -484,7 +488,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     decoration: BoxDecoration(
                                       color: isDark
                                           ? Colors.white12
-                                            : theme.colorScheme.primary
+                                          : theme.colorScheme.primary
                                               .withAlpha((0.12 * 255).round()),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
@@ -513,8 +517,10 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
                   final theme = Theme.of(context);
                   final bool isDark = theme.brightness == Brightness.dark;
-                  final cardColor = isDark ? Colors.grey[850] : Colors.orange[50];
-                  final borderColor = isDark ? Colors.grey[700] : Colors.orange[300];
+                  final cardColor =
+                      isDark ? Colors.grey[850] : Colors.orange[50];
+                  final borderColor =
+                      isDark ? Colors.grey[700] : Colors.orange[300];
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12.0),
@@ -584,11 +590,12 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           const SizedBox(height: 10),
                           // 세트 효과들 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
-                            String currentValue =
-                                effect.stageValues[currentStageIndex.toString()] ??
-                                    '-';
+                            String currentValue = effect.stageValues[
+                                    currentStageIndex.toString()] ??
+                                '-';
                             return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4.0),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 4.0),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -596,7 +603,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       effect.optionName,
                                       style: TextStyle(
                                         color: theme.colorScheme.onSurface
-                                          .withAlpha((0.9 * 255).round()),
+                                            .withAlpha((0.9 * 255).round()),
                                         fontSize: 13,
                                       ),
                                     ),
@@ -608,7 +615,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     decoration: BoxDecoration(
                                       color: isDark
                                           ? Colors.white12
-                                            : theme.colorScheme.primary
+                                          : theme.colorScheme.primary
                                               .withAlpha((0.12 * 255).round()),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
@@ -709,11 +716,16 @@ class _AccessoryCompareDialog extends StatelessWidget {
       ...b.options.map((o) => o.optionName),
     }.toList();
 
-    Map<String, String> aMap = {for (var o in a.options) o.optionName: o.optionValue};
-    Map<String, String> bMap = {for (var o in b.options) o.optionName: o.optionValue};
+    Map<String, String> aMap = {
+      for (var o in a.options) o.optionName: o.optionValue
+    };
+    Map<String, String> bMap = {
+      for (var o in b.options) o.optionName: o.optionValue
+    };
 
     return AlertDialog(
-      title: const Text('악세사리 비교', style: TextStyle(fontWeight: FontWeight.bold)),
+      title:
+          const Text('악세사리 비교', style: TextStyle(fontWeight: FontWeight.bold)),
       contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       content: SizedBox(
@@ -733,7 +745,8 @@ class _AccessoryCompareDialog extends StatelessWidget {
               const Divider(height: 16),
               // 기본 정보 비교
               _buildCompareRow(context, '부위', a.part, b.part, isDark),
-              _buildCompareRow(context, '착용 제한', a.restrictions, b.restrictions, isDark),
+              _buildCompareRow(
+                  context, '착용 제한', a.restrictions, b.restrictions, isDark),
               if (allOptionNames.isNotEmpty) ...[
                 const Divider(height: 16),
                 Padding(
@@ -825,9 +838,7 @@ class _AccessoryCompareDialog extends StatelessWidget {
               valA,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: missingA
-                    ? dimColor
-                    : (aWins ? highlightColor : null),
+                color: missingA ? dimColor : (aWins ? highlightColor : null),
                 fontWeight: aWins ? FontWeight.bold : FontWeight.normal,
                 fontSize: 12,
               ),
@@ -849,9 +860,7 @@ class _AccessoryCompareDialog extends StatelessWidget {
               valB,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: missingB
-                    ? dimColor
-                    : (bWins ? highlightColor : null),
+                color: missingB ? dimColor : (bWins ? highlightColor : null),
                 fontWeight: bWins ? FontWeight.bold : FontWeight.normal,
                 fontSize: 12,
               ),
@@ -873,7 +882,8 @@ class _AccessorySetBuilderDialog extends StatefulWidget {
       _AccessorySetBuilderDialogState();
 }
 
-class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> {
+class _AccessorySetBuilderDialogState
+    extends State<_AccessorySetBuilderDialog> {
   late final List<String> _parts;
   late Map<String, Accessory?> _selectedByPart;
   int _setStage = 0;
@@ -915,7 +925,8 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
                     onTap: () => _showPartPickerSheet(context, part, partItems),
                     borderRadius: BorderRadius.circular(8),
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
                         border: Border.all(color: theme.dividerColor),
                         borderRadius: BorderRadius.circular(8),
@@ -992,7 +1003,8 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
                   children: selected
                       .map(
                         (acc) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 4),
                           decoration: BoxDecoration(
                             border: Border.all(color: theme.dividerColor),
                             borderRadius: BorderRadius.circular(8),
@@ -1007,7 +1019,8 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
                                   width: 18,
                                   height: 18,
                                   fit: BoxFit.cover,
-                                  errorWidget: (_, __, ___) => const Icon(Icons.broken_image, size: 14),
+                                  errorWidget: (_, __, ___) =>
+                                      const Icon(Icons.broken_image, size: 14),
                                 ),
                               ),
                               const SizedBox(width: 5),
@@ -1031,7 +1044,9 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
                       padding: const EdgeInsets.symmetric(vertical: 2),
                       child: Row(
                         children: [
-                          Expanded(child: Text(row.name, style: theme.textTheme.bodySmall)),
+                          Expanded(
+                              child: Text(row.name,
+                                  style: theme.textTheme.bodySmall)),
                           Text(row.displayValue,
                               style: theme.textTheme.bodySmall
                                   ?.copyWith(fontWeight: FontWeight.w700)),
@@ -1060,7 +1075,8 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
                 Text('관련 세트 옵션이 없습니다.', style: theme.textTheme.bodySmall)
               else
                 ...setStatus.map((set) {
-                  final color = set.active ? Colors.green[700] : theme.hintColor;
+                  final color =
+                      set.active ? Colors.green[700] : theme.hintColor;
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
                     padding: const EdgeInsets.all(8),
@@ -1261,7 +1277,6 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
     return rows;
   }
 
-
   List<_SetStatus> _buildSetStatus(List<Accessory> selected) {
     final selectedKeys = <String>{
       ...selected.map((a) => a.id),
@@ -1298,7 +1313,8 @@ class _AccessorySetBuilderDialogState extends State<_AccessorySetBuilderDialog> 
   }
 
   double? _parseFirstNumber(String text) {
-    final match = RegExp(r'[-+]?\d+(?:\.\d+)?').firstMatch(text.replaceAll(',', ''));
+    final match =
+        RegExp(r'[-+]?\d+(?:\.\d+)?').firstMatch(text.replaceAll(',', ''));
     if (match == null) return null;
     return double.tryParse(match.group(0)!);
   }
@@ -1316,7 +1332,8 @@ class _OptionSummary {
   });
 
   String get displayValue {
-    final rounded = value % 1 == 0 ? value.toStringAsFixed(0) : value.toStringAsFixed(2);
+    final rounded =
+        value % 1 == 0 ? value.toStringAsFixed(0) : value.toStringAsFixed(2);
     return percent ? '$rounded%' : rounded;
   }
 }
@@ -1334,4 +1351,3 @@ class _SetStatus {
     required this.effects,
   });
 }
-

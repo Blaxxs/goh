@@ -120,7 +120,8 @@ class _RandomAccessorySimulatorScreenState
     );
   }
 
-  Widget _buildModeControls(BuildContext context, RandomAccessoryConfig config) {
+  Widget _buildModeControls(
+      BuildContext context, RandomAccessoryConfig config) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -278,8 +279,11 @@ class _RandomAccessorySimulatorScreenState
   }
 
   String _optionProbText(Map<int, double> probs) {
-    final items = probs.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
-    return items.map((e) => '${e.key}개 ${e.value.toStringAsFixed(0)}%').join(', ');
+    final items = probs.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+    return items
+        .map((e) => '${e.key}개 ${e.value.toStringAsFixed(0)}%')
+        .join(', ');
   }
 
   String _gradeProbText(Map<String, double> probs) {

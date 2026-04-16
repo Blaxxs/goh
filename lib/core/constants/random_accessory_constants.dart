@@ -275,11 +275,13 @@ class RandomAccessoryRepository {
 
     final optionCount = _pickWeightedInt(config.optionCountProbabilities, rng);
 
-    final gradeProb =
-        useGoldMoru ? config.goldMoruGradeProbabilities : config.silverMoruGradeProbabilities;
+    final gradeProb = useGoldMoru
+        ? config.goldMoruGradeProbabilities
+        : config.silverMoruGradeProbabilities;
     final grade = _pickWeightedString(gradeProb, rng);
 
-    final ranges = List<RandomAccessoryOptionRange>.from(config.optionRanges)..shuffle(rng);
+    final ranges = List<RandomAccessoryOptionRange>.from(config.optionRanges)
+      ..shuffle(rng);
     final selectedRanges = ranges.take(optionCount).toList(growable: false);
 
     final options = selectedRanges.map((range) {
