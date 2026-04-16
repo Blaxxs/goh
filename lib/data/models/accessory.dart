@@ -3,16 +3,30 @@ import 'package:flutter/foundation.dart';
 class AccessoryOption {
   final String optionName;
   final String optionValue;
+  final int? minNormalValue;
+  final int? maxNormalValue;
 
   const AccessoryOption({
     required this.optionName,
     required this.optionValue,
+    this.minNormalValue,
+    this.maxNormalValue,
   });
 
   factory AccessoryOption.fromJson(Map<String, dynamic> json) {
+    final parsedMin = int.tryParse(json['minNormalValue']?.toString() ?? '');
+    final parsedMax = int.tryParse(json['maxNormalValue']?.toString() ?? '');
+    final rawOptionValue = json['optionValue']?.toString() ?? '';
+
     return AccessoryOption(
       optionName: json['optionName']?.toString() ?? '',
-      optionValue: json['optionValue']?.toString() ?? '',
+      optionValue: rawOptionValue.isNotEmpty
+          ? rawOptionValue
+          : (parsedMin != null && parsedMax != null
+              ? '$parsedMin~$parsedMax'
+              : ''),
+      minNormalValue: parsedMin,
+      maxNormalValue: parsedMax,
     );
   }
 }
@@ -41,66 +55,20 @@ class AccessoryRandomOptionRange {
 class AccessoryRandomOptionConfig {
   final int minOptionCount;
   final int maxOptionCount;
-  final Map<int, double> optionCountProbabilities;
-  final Map<String, double> silverMoruGradeProbabilities;
-  final Map<String, double> goldMoruGradeProbabilities;
-  final Map<String, int> craftCost;
-  final Map<String, int> modifyCost;
-  final List<AccessoryRandomOptionRange> optionRanges;
 
   const AccessoryRandomOptionConfig({
     required this.minOptionCount,
     required this.maxOptionCount,
-    required this.optionCountProbabilities,
-    required this.silverMoruGradeProbabilities,
-    required this.goldMoruGradeProbabilities,
-    required this.craftCost,
-    required this.modifyCost,
-    required this.optionRanges,
   });
 
   factory AccessoryRandomOptionConfig.fromJson(dynamic json) {
     final jsonMap = json is Map ? Map<String, dynamic>.from(json) : {};
 
-    Map<int, double> parseIntDoubleMap(dynamic value) {
-      final source = value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
-      return source.map((key, val) {
-        final parsedKey = int.tryParse(key.toString()) ?? 0;
-        final parsedValue = double.tryParse(val?.toString() ?? '') ?? 0;
-        return MapEntry(parsedKey, parsedValue);
-      });
-    }
-
-    Map<String, double> parseStringDoubleMap(dynamic value) {
-      final source = value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
-      return source.map((key, val) {
-        final parsedValue = double.tryParse(val?.toString() ?? '') ?? 0;
-        return MapEntry(key.toString(), parsedValue);
-      });
-    }
-
-    Map<String, int> parseStringIntMap(dynamic value) {
-      final source = value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
-      return source.map((key, val) {
-        final parsedValue = int.tryParse(val?.toString() ?? '') ?? 0;
-        return MapEntry(key.toString(), parsedValue);
-      });
-    }
-
-    final ranges = (jsonMap['optionRanges'] as List? ?? [])
-        .map((item) => AccessoryRandomOptionRange.fromJson(item))
-        .where((item) => item.optionName.isNotEmpty)
-        .toList();
-
     return AccessoryRandomOptionConfig(
-      minOptionCount: int.tryParse(jsonMap['minOptionCount']?.toString() ?? '') ?? 0,
-      maxOptionCount: int.tryParse(jsonMap['maxOptionCount']?.toString() ?? '') ?? 0,
-      optionCountProbabilities: parseIntDoubleMap(jsonMap['optionCountProbabilities']),
-      silverMoruGradeProbabilities: parseStringDoubleMap(jsonMap['silverMoruGradeProbabilities']),
-      goldMoruGradeProbabilities: parseStringDoubleMap(jsonMap['goldMoruGradeProbabilities']),
-      craftCost: parseStringIntMap(jsonMap['craftCost']),
-      modifyCost: parseStringIntMap(jsonMap['modifyCost']),
-      optionRanges: ranges,
+      minOptionCount:
+          int.tryParse(jsonMap['minOptionCount']?.toString() ?? '') ?? 1,
+      maxOptionCount:
+          int.tryParse(jsonMap['maxOptionCount']?.toString() ?? '') ?? 2,
     );
   }
 }
