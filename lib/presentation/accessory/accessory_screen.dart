@@ -316,11 +316,6 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
             if (randomConfig != null) ...[
               const SizedBox(height: 12),
               const Divider(),
-              Text(
-                '랜덤 옵션 규칙: ${randomConfig.minOptionCount}~${randomConfig.maxOptionCount}개, 옵션 종류 균등 등장, 상수 계산은 올림',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
                 child: FilledButton.icon(
