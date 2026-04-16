@@ -24,7 +24,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   String _searchQuery = "";
   String _searchOption = '이름';
   final List<String> _searchOptions = ['이름', '옵션'];
-  final List<String> _optionTypeFilterOptions = ['전체', '고정옵션 악세', '랜덤옵션 악세'];
+  final List<String> _optionTypeFilterOptions = ['전체', '고정옵션', '랜덤옵션'];
 
   // 비교 모드 상태
   bool _compareMode = false;
@@ -141,8 +141,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
       final bool isRandom = RandomAccessoryRepository.isRandomAccessory(acc.id);
       final bool matchesType = _selectedOptionTypeFilter == '전체' ||
-          (_selectedOptionTypeFilter == '고정옵션 악세' && !isRandom) ||
-          (_selectedOptionTypeFilter == '랜덤옵션 악세' && isRandom);
+          (_selectedOptionTypeFilter == '고정옵션' && !isRandom) ||
+          (_selectedOptionTypeFilter == '랜덤옵션' && isRandom);
 
       return matchesSearch && matchesPart && matchesType;
     }).toList();
