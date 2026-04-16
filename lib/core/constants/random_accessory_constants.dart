@@ -116,20 +116,23 @@ class RandomAccessoryRepository {
   }) {
     final rng = random ?? Random();
 
-    final optionCountProbabilities = config.maxOptionCount >= 3
-        ? optionCountProbabilitiesOneToThree
-        : optionCountProbabilitiesOneToTwo;
-
-    final optionCount = _pickWeightedInt(optionCountProbabilities, rng);
+    final ranges = optionRangesOf(accessory);
+    final optionCount = _resolveOptionCount(
+      minOptionCount: config.minOptionCount,
+      maxOptionCount: config.maxOptionCount,
+      availableOptionKinds: ranges.length,
+      rng: rng,
+    );
 
     final gradeProb = useGoldMoru
         ? goldMoruGradeProbabilities
         : silverMoruGradeProbabilities;
     final grade = _pickWeightedString(gradeProb, rng);
 
-    final ranges = optionRangesOf(accessory)
+    final shuffledRanges = List<RandomAccessoryOptionRange>.from(ranges)
       ..shuffle(rng);
-    final selectedRanges = ranges.take(optionCount).toList(growable: false);
+    final selectedRanges =
+        shuffledRanges.take(optionCount).toList(growable: false);
 
     final options = selectedRanges.map((range) {
       final gradeRange = _gradeRange(range.min, range.max, grade);
@@ -147,6 +150,27 @@ class RandomAccessoryRepository {
       optionCount: optionCount,
       options: options,
     );
+  }
+
+  static int _resolveOptionCount({
+    required int minOptionCount,
+    required int maxOptionCount,
+    required int availableOptionKinds,
+    required Random rng,
+  }) {
+    final safeMin = max(1, minOptionCount);
+    final safeMax = max(safeMin, maxOptionCount);
+
+    if (safeMin == safeMax) {
+      return min(safeMin, max(1, availableOptionKinds));
+    }
+
+    final probs = safeMax >= 3
+        ? optionCountProbabilitiesOneToThree
+        : optionCountProbabilitiesOneToTwo;
+    final picked = _pickWeightedInt(probs, rng);
+    final clampedToConfig = picked.clamp(safeMin, safeMax);
+    return min(clampedToConfig, max(1, availableOptionKinds));
   }
 
   static List<RandomAccessoryOptionRange> optionRangesOf(Accessory accessory) {
