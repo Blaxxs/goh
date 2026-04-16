@@ -1320,9 +1320,25 @@ class _AccessorySetBuilderDialogState
   }
 
   String _resolveStageValue(SetOptionEffect effect, int stage) {
-    return effect.stageValues[stage.toString()] ??
-        effect.stageValues['0'] ??
-        '-';
+    final exactValue = effect.stageValues[stage.toString()];
+    if (exactValue != null && exactValue.isNotEmpty) {
+      return exactValue;
+    }
+
+    final availableStages = effect.stageValues.keys
+        .map(int.tryParse)
+        .whereType<int>()
+        .where((value) => value <= stage)
+        .toList()
+      ..sort();
+
+    if (availableStages.isNotEmpty) {
+      return effect.stageValues[availableStages.last.toString()] ??
+          effect.stageValues['0'] ??
+          '-';
+    }
+
+    return effect.stageValues['0'] ?? '-';
   }
 
   double? _parseFirstNumber(String text) {
