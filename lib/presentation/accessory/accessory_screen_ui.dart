@@ -187,28 +187,32 @@ class AccessoryScreenUI extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  DropdownButtonFormField<String>(
-                    value: selectedPartFilter ?? '전체',
-                    isExpanded: true,
-                    decoration: InputDecoration(
-                      labelText: '부위 필터',
-                      filled: true,
-                      fillColor: isDark ? Colors.grey[800] : Colors.blueGrey[50],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 10),
-                    ),
-                    items: partFilterOptions
-                        .map(
-                          (value) => DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value, overflow: TextOverflow.ellipsis),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      '부위 필터',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            color: isDark ? Colors.white70 : Colors.black54,
+                            fontWeight: FontWeight.w600,
                           ),
-                        )
-                        .toList(),
-                    onChanged: onPartFilterChanged,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: partFilterOptions.map((part) {
+                        final selected = (selectedPartFilter ?? '전체') == part;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 6),
+                          child: ChoiceChip(
+                            label: Text(part),
+                            selected: selected,
+                            onSelected: (_) => onPartFilterChanged(part),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ],
               ),
