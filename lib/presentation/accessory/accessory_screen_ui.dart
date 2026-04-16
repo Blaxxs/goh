@@ -9,6 +9,9 @@ class AccessoryScreenUI extends StatelessWidget {
   final String? selectedPartFilter;
   final List<String> partFilterOptions;
   final ValueChanged<String?> onPartFilterChanged;
+  final String selectedOptionTypeFilter;
+  final List<String> optionTypeFilterOptions;
+  final ValueChanged<String?> onOptionTypeFilterChanged;
   final Function(BuildContext, Accessory) onAccessoryTap;
   final String currentSearchQuery;
   final VoidCallback onClearSearch;
@@ -25,6 +28,9 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.selectedPartFilter,
     required this.partFilterOptions,
     required this.onPartFilterChanged,
+    required this.selectedOptionTypeFilter,
+    required this.optionTypeFilterOptions,
+    required this.onOptionTypeFilterChanged,
     required this.onAccessoryTap,
     required this.currentSearchQuery,
     required this.onClearSearch,
@@ -127,7 +133,7 @@ class AccessoryScreenUI extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Expanded(
-                        flex: 4,
+                        flex: 3,
                         child: SizedBox(
                           height: 40,
                           child: TextField(
@@ -192,6 +198,48 @@ class AccessoryScreenUI extends StatelessWidget {
                               );
                             }).toList(),
                             onChanged: onPartFilterChanged,
+                            iconStyleData: IconStyleData(
+                              icon: Icon(Icons.keyboard_arrow_down,
+                                  color: isDark ? Colors.white70 : Colors.black54),
+                            ),
+                            dropdownStyleData: DropdownStyleData(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              offset: const Offset(0, 0),
+                            ),
+                            buttonStyleData: const ButtonStyleData(
+                              height: 40,
+                              padding: EdgeInsets.symmetric(horizontal: 10.0),
+                            ),
+                            underline: const SizedBox(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: isDark ? Colors.grey[800] : Colors.blueGrey[50],
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(color: isDark ? Colors.grey[700]! : Colors.grey.shade300),
+                          ),
+                          child: DropdownButton2<String>(
+                            isExpanded: true,
+                            value: selectedOptionTypeFilter,
+                            items: optionTypeFilterOptions.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                        color: isDark ? Colors.white : Colors.black87),
+                                    overflow: TextOverflow.ellipsis),
+                              );
+                            }).toList(),
+                            onChanged: onOptionTypeFilterChanged,
                             iconStyleData: IconStyleData(
                               icon: Icon(Icons.keyboard_arrow_down,
                                   color: isDark ? Colors.white70 : Colors.black54),
