@@ -119,13 +119,6 @@ class AccessoryDataManager {
           // and matches the image name in Firebase Storage.
           accessoryData['id'] = key;
 
-          // [FIX] 이미지 URL을 올바른 버킷 주소와 대소문자를 유지한 키값으로 직접 생성하여 주입합니다.
-          // 로그상의 버킷(goh-calculator.appspot.com)과 실제 파일이 있는 버킷(gohcalculator.firebasestorage.app)이 다르며,
-          // Firebase Storage는 대소문자를 구분하므로 key를 소문자로 변환하지 않고 그대로 사용해야 합니다.
-          final String encodedId = Uri.encodeComponent(key);
-          final String imageUrl = 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
-          accessoryData['imageUrl'] = imageUrl;
-
           final accessory = Accessory.fromJson(accessoryData);
           loadedAccessories.add(accessory);
           if (accessory.part.isNotEmpty) {
@@ -175,6 +168,22 @@ class AccessoryDataManager {
             'optionName': o.optionName,
             'optionValue': o.optionValue,
           }).toList(),
+          'randomOptionConfig': a.randomOptionConfig == null ? null : {
+            'minOptionCount': a.randomOptionConfig!.minOptionCount,
+            'maxOptionCount': a.randomOptionConfig!.maxOptionCount,
+            'optionCountProbabilities': a.randomOptionConfig!.optionCountProbabilities.map(
+              (key, value) => MapEntry(key.toString(), value),
+            ),
+            'silverMoruGradeProbabilities': a.randomOptionConfig!.silverMoruGradeProbabilities,
+            'goldMoruGradeProbabilities': a.randomOptionConfig!.goldMoruGradeProbabilities,
+            'craftCost': a.randomOptionConfig!.craftCost,
+            'modifyCost': a.randomOptionConfig!.modifyCost,
+            'optionRanges': a.randomOptionConfig!.optionRanges.map((range) => {
+              'optionName': range.optionName,
+              'min': range.min,
+              'max': range.max,
+            }).toList(),
+          },
           'setOptions': a.setOptions.map((s) => {
             'setId': s.setId,
             'setName': s.setName,
