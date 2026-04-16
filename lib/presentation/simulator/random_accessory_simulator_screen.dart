@@ -40,7 +40,9 @@ class _RandomAccessorySimulatorScreenState
         (selectedAccessory == null
             ? null
             : RandomAccessoryRepository.configOf(selectedAccessory.id));
-    final cost = _isModify ? config?.modifyCost ?? {} : config?.craftCost ?? {};
+    final cost = _isModify
+      ? RandomAccessoryRepository.modifyCost
+      : RandomAccessoryRepository.craftCost;
 
     return Scaffold(
       drawer: const AppDrawer(currentScreen: AppScreen.randomAccessorySimulation),
@@ -71,6 +73,7 @@ class _RandomAccessorySimulatorScreenState
                     child: FilledButton.icon(
                       onPressed: () {
                         final result = RandomAccessoryRepository.roll(
+                          accessory: selectedAccessory,
                           config: config,
                           useGoldMoru: _useGoldMoru,
                         );
@@ -141,6 +144,10 @@ class _RandomAccessorySimulatorScreenState
 
   Widget _buildModeControls(
       BuildContext context, RandomAccessoryConfig config) {
+    final optionCountProbabilities = config.maxOptionCount >= 3
+      ? RandomAccessoryRepository.optionCountProbabilitiesOneToThree
+      : RandomAccessoryRepository.optionCountProbabilitiesOneToTwo;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -176,12 +183,12 @@ class _RandomAccessorySimulatorScreenState
             ),
             const SizedBox(height: 8),
             Text(
-              '옵션 개수 확률: ${_optionProbText(config.optionCountProbabilities)}',
+              '옵션 개수 확률: ${_optionProbText(optionCountProbabilities)}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 2),
             Text(
-              '등급 확률(${_useGoldMoru ? '금모루' : '은모루'}): ${_gradeProbText(_useGoldMoru ? config.goldMoruGradeProbabilities : config.silverMoruGradeProbabilities)}',
+              '등급 확률(${_useGoldMoru ? '금모루' : '은모루'}): ${_gradeProbText(_useGoldMoru ? RandomAccessoryRepository.goldMoruGradeProbabilities : RandomAccessoryRepository.silverMoruGradeProbabilities)}',
               style: Theme.of(context).textTheme.bodySmall,
             ),
             const SizedBox(height: 2),
@@ -233,6 +240,9 @@ class _RandomAccessorySimulatorScreenState
         ),
       );
     }
+
+    final optionRanges =
+      RandomAccessoryRepository.optionRangesOf(_selectedAccessory!);
 
     return Card(
       child: Padding(
@@ -288,7 +298,7 @@ class _RandomAccessorySimulatorScreenState
             ),
             const SizedBox(height: 6),
             Text(
-              '전체 가능한 옵션 종류: ${config.optionRanges.length}개',
+              '전체 가능한 옵션 종류: ${optionRanges.length}개',
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ],
