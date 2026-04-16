@@ -7,11 +7,11 @@ import '../../core/widgets/app_drawer.dart';
 import '../../data/models/accessory.dart';
 
 class RandomAccessorySimulatorScreen extends StatefulWidget {
-  final Accessory initialAccessory;
+  final Accessory? initialAccessory;
 
   const RandomAccessorySimulatorScreen({
     super.key,
-    required this.initialAccessory,
+    this.initialAccessory,
   });
 
   @override
@@ -21,7 +21,7 @@ class RandomAccessorySimulatorScreen extends StatefulWidget {
 
 class _RandomAccessorySimulatorScreenState
     extends State<RandomAccessorySimulatorScreen> {
-  late Accessory _selectedAccessory;
+  Accessory? _selectedAccessory;
   bool _useGoldMoru = false;
   bool _isModify = false;
   RandomAccessoryRollResult? _lastResult;
@@ -29,12 +29,17 @@ class _RandomAccessorySimulatorScreenState
   @override
   void initState() {
     super.initState();
-    _selectedAccessory = widget.initialAccessory;
+    _selectedAccessory = widget.initialAccessory ??
+        RandomAccessoryRepository.firstRandomAccessory();
   }
 
   @override
   Widget build(BuildContext context) {
-    final config = RandomAccessoryRepository.configOf(_selectedAccessory.id);
+    final selectedAccessory = _selectedAccessory;
+    final config = selectedAccessory?.randomOptionConfig ??
+        (selectedAccessory == null
+            ? null
+            : RandomAccessoryRepository.configOf(selectedAccessory.id));
     final cost = _isModify ? config?.modifyCost ?? {} : config?.craftCost ?? {};
 
     return Scaffold(
@@ -48,8 +53,8 @@ class _RandomAccessorySimulatorScreenState
         ),
         title: const Text('랜덤악세 시뮬레이터'),
       ),
-      body: config == null
-          ? const Center(child: Text('랜덤 악세 설정을 찾을 수 없습니다.'))
+        body: config == null || selectedAccessory == null
+          ? const Center(child: Text('랜덤 악세 데이터가 없습니다.'))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -86,6 +91,8 @@ class _RandomAccessorySimulatorScreenState
   }
 
   Widget _buildAccessoryPicker(BuildContext context) {
+    final accessories = RandomAccessoryRepository.randomAccessories;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10),
@@ -97,15 +104,18 @@ class _RandomAccessorySimulatorScreenState
               style: Theme.of(context).textTheme.titleSmall,
             ),
             const SizedBox(height: 8),
+            if (accessories.isEmpty)
+              const Text('Firebase에 등록된 랜덤악세가 없습니다.')
+            else
             DropdownButtonFormField<String>(
-              value: _selectedAccessory.id,
+              value: _selectedAccessory?.id,
               isExpanded: true,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 contentPadding:
                     EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               ),
-              items: RandomAccessoryRepository.randomAccessories
+              items: accessories
                   .map(
                     (a) => DropdownMenuItem<String>(
                       value: a.id,
@@ -115,7 +125,7 @@ class _RandomAccessorySimulatorScreenState
                   .toList(),
               onChanged: (value) {
                 if (value == null) return;
-                final selected = RandomAccessoryRepository.randomAccessories
+                final selected = accessories
                     .firstWhere((a) => a.id == value);
                 setState(() {
                   _selectedAccessory = selected;
@@ -236,7 +246,7 @@ class _RandomAccessorySimulatorScreenState
                   width: 52,
                   height: 52,
                   child: CachedNetworkImage(
-                    imageUrl: _selectedAccessory.imageUrl,
+                    imageUrl: _selectedAccessory!.imageUrl,
                     fit: BoxFit.contain,
                     errorWidget: (_, __, ___) =>
                         const Icon(Icons.image_not_supported_outlined),
@@ -248,7 +258,7 @@ class _RandomAccessorySimulatorScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _selectedAccessory.name,
+                        _selectedAccessory!.name,
                         style: Theme.of(context)
                             .textTheme
                             .titleSmall
