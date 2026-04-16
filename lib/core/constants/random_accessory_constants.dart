@@ -37,6 +37,42 @@ class RandomAccessoryRepository {
   static const String gradeGreen = '초록';
   static const String gradeYellow = '노랑';
 
+  // 공통 랜덤악세 규칙 (요청대로 시뮬레이터 공통 관리)
+  static const Map<int, double> optionCountProbabilitiesOneToTwo = {
+    1: 80,
+    2: 20,
+  };
+
+  static const Map<int, double> optionCountProbabilitiesOneToThree = {
+    1: 75,
+    2: 20,
+    3: 5,
+  };
+
+  static const Map<String, double> silverMoruGradeProbabilities = {
+    gradeBlue: 10,
+    gradeGreen: 35,
+    gradeYellow: 55,
+  };
+
+  static const Map<String, double> goldMoruGradeProbabilities = {
+    gradeBlue: 25,
+    gradeGreen: 50,
+    gradeYellow: 25,
+  };
+
+  static const Map<String, int> craftCost = {
+    '영혼석': 200,
+    '골드': 500000,
+    '은모루': 1,
+  };
+
+  static const Map<String, int> modifyCost = {
+    '영혼석': 100,
+    '숫돌이': 300,
+    '골드': 300000,
+  };
+
   static List<Accessory> get randomAccessories {
     final accessories = AccessoryDataManager()
         .allAccessories
@@ -73,20 +109,25 @@ class RandomAccessoryRepository {
   }
 
   static RandomAccessoryRollResult roll({
+    required Accessory accessory,
     required RandomAccessoryConfig config,
     required bool useGoldMoru,
     Random? random,
   }) {
     final rng = random ?? Random();
 
-    final optionCount = _pickWeightedInt(config.optionCountProbabilities, rng);
+    final optionCountProbabilities = config.maxOptionCount >= 3
+        ? optionCountProbabilitiesOneToThree
+        : optionCountProbabilitiesOneToTwo;
+
+    final optionCount = _pickWeightedInt(optionCountProbabilities, rng);
 
     final gradeProb = useGoldMoru
-        ? config.goldMoruGradeProbabilities
-        : config.silverMoruGradeProbabilities;
+        ? goldMoruGradeProbabilities
+        : silverMoruGradeProbabilities;
     final grade = _pickWeightedString(gradeProb, rng);
 
-    final ranges = List<RandomAccessoryOptionRange>.from(config.optionRanges)
+    final ranges = optionRangesOf(accessory)
       ..shuffle(rng);
     final selectedRanges = ranges.take(optionCount).toList(growable: false);
 
@@ -106,6 +147,19 @@ class RandomAccessoryRepository {
       optionCount: optionCount,
       options: options,
     );
+  }
+
+  static List<RandomAccessoryOptionRange> optionRangesOf(Accessory accessory) {
+    return accessory.options
+        .where((o) => o.minNormalValue != null && o.maxNormalValue != null)
+        .map(
+          (o) => RandomAccessoryOptionRange(
+            optionName: o.optionName,
+            min: o.minNormalValue!,
+            max: o.maxNormalValue!,
+          ),
+        )
+        .toList(growable: false);
   }
 
   static int _pickWeightedInt(Map<int, double> weights, Random rng) {
