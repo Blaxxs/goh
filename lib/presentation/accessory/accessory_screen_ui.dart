@@ -158,60 +158,63 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '옵션 타입',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: isDark ? Colors.white70 : Colors.black54,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      children: optionTypeFilterOptions.map((type) {
-                        final selected = selectedOptionTypeFilter == type;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 6),
-                          child: ChoiceChip(
-                            label: Text(type),
-                            selected: selected,
-                            onSelected: (_) =>
-                                onOptionTypeFilterChanged(type),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '부위 필터',
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: isDark ? Colors.white70 : Colors.black54,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: partFilterOptions.map((part) {
-                        final selected = (selectedPartFilter ?? '전체') == part;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 6),
-                          child: ChoiceChip(
-                            label: Text(part),
-                            selected: selected,
-                            onSelected: (_) => onPartFilterChanged(part),
-                          ),
-                        );
-                      }).toList(),
+                      children: [
+                        Text(
+                          '옵션',
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color:
+                                        isDark ? Colors.white70 : Colors.black54,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                        const SizedBox(width: 8),
+                        ...optionTypeFilterOptions.map((type) {
+                          final selected = selectedOptionTypeFilter == type;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: ChoiceChip(
+                              label: Text(type),
+                              selected: selected,
+                              onSelected: (_) => onOptionTypeFilterChanged(type),
+                            ),
+                          );
+                        }),
+                        const SizedBox(width: 10),
+                        Container(
+                          width: 1,
+                          height: 20,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.2),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          '부위',
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color:
+                                        isDark ? Colors.white70 : Colors.black54,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                        const SizedBox(width: 8),
+                        ...partFilterOptions.map((part) {
+                          final selected = (selectedPartFilter ?? '전체') == part;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: ChoiceChip(
+                              label: Text(part),
+                              selected: selected,
+                              onSelected: (_) => onPartFilterChanged(part),
+                            ),
+                          );
+                        }),
+                      ],
                     ),
                   ),
                 ],
