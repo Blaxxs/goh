@@ -66,6 +66,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     '악세 옵변 시뮬': Icons.swap_horiz_rounded,
     '탐 옵션 시뮬': Icons.explore_rounded,
     '주머니 시뮬': Icons.workspaces_outline,
+    '랜덤악세 시뮬': Icons.casino_rounded,
     '스테이지 설정': Icons.tune_rounded,
   };
 
@@ -101,6 +102,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
         return widget.onExplorationOptionSimulationPressed;
       case 'pouch':
         return widget.onPouchSimulationPressed;
+      case 'randomAccessory':
+        return widget.onRandomAccessorySimulatorPressed;
       case 'stageSettings':
         return widget.onStageSettingsPressed;
       default:
