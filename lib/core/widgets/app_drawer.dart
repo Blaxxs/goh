@@ -15,7 +15,6 @@ import '../../presentation/simulator/accessory_option_change_screen.dart'; // �
 import '../../presentation/simulator/random_accessory_simulator_screen.dart'; // 랜덤 악세 시뮬레이터 import
 import '../../presentation/simulator/exploration_option_simulation_screen.dart'; // 탐 옵션 시뮬레이션 import
 import '../../presentation/simulator/pouch_simulation_screen.dart'; // 주머니 시뮬레이션 import
-import '../constants/random_accessory_constants.dart';
 import '../../presentation/gold_calculator/gold_calculator_screen.dart'; // 골드 계산기 화면 import
 import '../../presentation/damage_calculator/damage_calculator_screen.dart'; // 데미지 계산기 import
 import '../../presentation/stage_settings/settings_screen.dart'; // SettingsScreen import
@@ -379,10 +378,7 @@ class AppDrawer extends StatelessWidget {
                           title: Text('랜덤악세 시뮬레이션', style: subDrawerItemTextStyle),
                           onTap: () {
                             navigateFromMain(
-                              RandomAccessorySimulatorScreen(
-                                initialAccessory:
-                                    RandomAccessoryRepository.randomAccessories.first,
-                              ),
+                              const RandomAccessorySimulatorScreen(),
                               target: AppScreen.randomAccessorySimulation,
                             );
                           },
