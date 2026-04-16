@@ -167,22 +167,14 @@ class AccessoryDataManager {
           'options': a.options.map((o) => {
             'optionName': o.optionName,
             'optionValue': o.optionValue,
+            if (o.minNormalValue != null)
+              'minNormalValue': o.minNormalValue.toString(),
+            if (o.maxNormalValue != null)
+              'maxNormalValue': o.maxNormalValue.toString(),
           }).toList(),
           'randomOptionConfig': a.randomOptionConfig == null ? null : {
             'minOptionCount': a.randomOptionConfig!.minOptionCount,
             'maxOptionCount': a.randomOptionConfig!.maxOptionCount,
-            'optionCountProbabilities': a.randomOptionConfig!.optionCountProbabilities.map(
-              (key, value) => MapEntry(key.toString(), value),
-            ),
-            'silverMoruGradeProbabilities': a.randomOptionConfig!.silverMoruGradeProbabilities,
-            'goldMoruGradeProbabilities': a.randomOptionConfig!.goldMoruGradeProbabilities,
-            'craftCost': a.randomOptionConfig!.craftCost,
-            'modifyCost': a.randomOptionConfig!.modifyCost,
-            'optionRanges': a.randomOptionConfig!.optionRanges.map((range) => {
-              'optionName': range.optionName,
-              'min': range.min,
-              'max': range.max,
-            }).toList(),
           },
           'setOptions': a.setOptions.map((s) => {
             'setId': s.setId,
