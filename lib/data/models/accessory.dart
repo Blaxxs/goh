@@ -17,6 +17,94 @@ class AccessoryOption {
   }
 }
 
+class AccessoryRandomOptionRange {
+  final String optionName;
+  final int min;
+  final int max;
+
+  const AccessoryRandomOptionRange({
+    required this.optionName,
+    required this.min,
+    required this.max,
+  });
+
+  factory AccessoryRandomOptionRange.fromJson(dynamic json) {
+    final jsonMap = json is Map ? Map<String, dynamic>.from(json) : {};
+    return AccessoryRandomOptionRange(
+      optionName: jsonMap['optionName']?.toString() ?? '',
+      min: int.tryParse(jsonMap['min']?.toString() ?? '') ?? 0,
+      max: int.tryParse(jsonMap['max']?.toString() ?? '') ?? 0,
+    );
+  }
+}
+
+class AccessoryRandomOptionConfig {
+  final int minOptionCount;
+  final int maxOptionCount;
+  final Map<int, double> optionCountProbabilities;
+  final Map<String, double> silverMoruGradeProbabilities;
+  final Map<String, double> goldMoruGradeProbabilities;
+  final Map<String, int> craftCost;
+  final Map<String, int> modifyCost;
+  final List<AccessoryRandomOptionRange> optionRanges;
+
+  const AccessoryRandomOptionConfig({
+    required this.minOptionCount,
+    required this.maxOptionCount,
+    required this.optionCountProbabilities,
+    required this.silverMoruGradeProbabilities,
+    required this.goldMoruGradeProbabilities,
+    required this.craftCost,
+    required this.modifyCost,
+    required this.optionRanges,
+  });
+
+  factory AccessoryRandomOptionConfig.fromJson(dynamic json) {
+    final jsonMap = json is Map ? Map<String, dynamic>.from(json) : {};
+
+    Map<int, double> parseIntDoubleMap(dynamic value) {
+      final source = value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
+      return source.map((key, val) {
+        final parsedKey = int.tryParse(key.toString()) ?? 0;
+        final parsedValue = double.tryParse(val?.toString() ?? '') ?? 0;
+        return MapEntry(parsedKey, parsedValue);
+      });
+    }
+
+    Map<String, double> parseStringDoubleMap(dynamic value) {
+      final source = value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
+      return source.map((key, val) {
+        final parsedValue = double.tryParse(val?.toString() ?? '') ?? 0;
+        return MapEntry(key.toString(), parsedValue);
+      });
+    }
+
+    Map<String, int> parseStringIntMap(dynamic value) {
+      final source = value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
+      return source.map((key, val) {
+        final parsedValue = int.tryParse(val?.toString() ?? '') ?? 0;
+        return MapEntry(key.toString(), parsedValue);
+      });
+    }
+
+    final ranges = (jsonMap['optionRanges'] as List? ?? [])
+        .map((item) => AccessoryRandomOptionRange.fromJson(item))
+        .where((item) => item.optionName.isNotEmpty)
+        .toList();
+
+    return AccessoryRandomOptionConfig(
+      minOptionCount: int.tryParse(jsonMap['minOptionCount']?.toString() ?? '') ?? 0,
+      maxOptionCount: int.tryParse(jsonMap['maxOptionCount']?.toString() ?? '') ?? 0,
+      optionCountProbabilities: parseIntDoubleMap(jsonMap['optionCountProbabilities']),
+      silverMoruGradeProbabilities: parseStringDoubleMap(jsonMap['silverMoruGradeProbabilities']),
+      goldMoruGradeProbabilities: parseStringDoubleMap(jsonMap['goldMoruGradeProbabilities']),
+      craftCost: parseStringIntMap(jsonMap['craftCost']),
+      modifyCost: parseStringIntMap(jsonMap['modifyCost']),
+      optionRanges: ranges,
+    );
+  }
+}
+
 // 세트 옵션의 개별 효과
 class SetOptionEffect {
   final String optionName;
@@ -159,6 +247,7 @@ class Accessory {
   final String restrictions;
   final List<AccessoryOption> options;
   final List<AccessorySetOption> setOptions;
+  final AccessoryRandomOptionConfig? randomOptionConfig;
 
   const Accessory({
     required this.id,
@@ -168,6 +257,7 @@ class Accessory {
     required this.restrictions,
     required this.options,
     this.setOptions = const [],
+    this.randomOptionConfig,
   });
 
   factory Accessory.fromJson(Map<String, dynamic> json) {
@@ -178,6 +268,20 @@ class Accessory {
     // final String autoImageUrl = 'assets/images/accessories/$id.png';
     final String encodedId = Uri.encodeComponent(id);
     final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media";
+
+    final rawImageUrl = json['imageUrl']?.toString() ?? '';
+    final rawImagePath = json['imagePath']?.toString() ?? '';
+    String resolvedImageUrl = autoImageUrl;
+
+    if (rawImageUrl.isNotEmpty) {
+      resolvedImageUrl = rawImageUrl;
+    } else if (rawImagePath.isNotEmpty) {
+      final imageName = rawImagePath.split('/').last;
+      final hasExtension = RegExp(r"\.[a-zA-Z0-9]{1,5}$").hasMatch(imageName);
+      final filename = hasExtension ? imageName : '$imageName.png';
+      final encodedFilename = Uri.encodeComponent(filename);
+      resolvedImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedFilename?alt=media";
+    }
 
     var optionsList = json['options'] as List? ?? [];
     List<AccessoryOption> options = optionsList
@@ -190,14 +294,20 @@ class Accessory {
         .map((i) => AccessorySetOption.fromJson(i))
         .toList();
 
+    final randomOptionConfigJson = json['randomOptionConfig'];
+    final randomOptionConfig = randomOptionConfigJson == null
+        ? null
+        : AccessoryRandomOptionConfig.fromJson(randomOptionConfigJson);
+
     return Accessory(
       id: id,
       name: json['name']?.toString() ?? '',
-      imageUrl: json['imageUrl']?.toString() ?? autoImageUrl, // 전달받은 imageUrl이 있으면 우선 사용
+      imageUrl: resolvedImageUrl,
       part: json['part']?.toString() ?? '',
       restrictions: json['restrictions']?.toString() ?? '',
       options: options,
       setOptions: setOptions,
+      randomOptionConfig: randomOptionConfig,
     );
   }
 }
