@@ -107,7 +107,12 @@ class _MainScreenState extends State<MainScreen> {
           _navigateToScreen(context, const PouchSimulationScreen());
         },
         onRandomAccessorySimulatorPressed: () {
-          _navigateToScreen(context, const RandomAccessorySimulatorScreen());
+          _navigateToScreen(
+            context,
+            RandomAccessorySimulatorScreen(
+              initialAccessory: RandomAccessoryRepository.randomAccessories.first,
+            ),
+          );
         },
         onStageSettingsPressed: () {
           _navigateToScreen(context, const SettingsScreen());
