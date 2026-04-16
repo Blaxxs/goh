@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
+import '../../core/constants/random_accessory_constants.dart';
 import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/constants/box_constants.dart';
+import '../simulator/random_accessory_simulator_screen.dart';
 
 class AccessoryScreen extends StatefulWidget {
   final bool isPickerMode;
@@ -18,10 +20,11 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   String? _selectedPartFilter;
+  String _selectedOptionTypeFilter = '전체';
   String _searchQuery = "";
-  late List<String> _partFilterOptions;
   String _searchOption = '이름';
   final List<String> _searchOptions = ['이름', '옵션'];
+  final List<String> _optionTypeFilterOptions = ['전체', '고정옵션 악세', '랜덤옵션 악세'];
 
   // 비교 모드 상태
   bool _compareMode = false;
@@ -30,11 +33,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void initState() {
     super.initState();
-    // 데이터 매니저에서 부위 목록을 가져와 필터 옵션을 초기화합니다.
-    _partFilterOptions = [
-      '전체',
-      ...AccessoryDataManager().accessoryParts.toSet()
-    ];
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -63,6 +61,13 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         _searchOption = newValue;
       });
     }
+  }
+
+  void _handleOptionTypeFilterChanged(String? newValue) {
+    if (newValue == null) return;
+    setState(() {
+      _selectedOptionTypeFilter = newValue;
+    });
   }
 
   void _clearSearch() {
@@ -99,8 +104,14 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // AccessoryDataManager에서 미리 로드된 데이터를 가져옵니다.
-    final List<Accessory> accessories = AccessoryDataManager().allAccessories;
+    final fixedAccessories = AccessoryDataManager().allAccessories;
+    final List<Accessory> accessories =
+        RandomAccessoryRepository.mergeWithFixed(fixedAccessories);
+    final partFilterOptions = [
+      '전체',
+      ...accessories.map((a) => a.part).where((part) => part.isNotEmpty).toSet()..toList()
+    ];
+    partFilterOptions.sort();
 
     // 필터링 로직을 적용합니다.
     List<Accessory> displayList = accessories.where((acc) {
@@ -125,7 +136,13 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       final matchesPart = _selectedPartFilter == null ||
           _selectedPartFilter == '전체' ||
           acc.part == _selectedPartFilter;
-      return matchesSearch && matchesPart;
+
+        final bool isRandom = RandomAccessoryRepository.isRandomAccessory(acc.id);
+        final bool matchesType = _selectedOptionTypeFilter == '전체' ||
+          (_selectedOptionTypeFilter == '고정옵션 악세' && !isRandom) ||
+          (_selectedOptionTypeFilter == '랜덤옵션 악세' && isRandom);
+
+        return matchesSearch && matchesPart && matchesType;
     }).toList();
 
     // 기본 정렬: tam 최우선 -> 한자 -> 영문 알파벳 -> 기타, 그룹 내 id 순
@@ -177,8 +194,11 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           searchController: _searchController,
           filteredAccessories: displayList,
           selectedPartFilter: _selectedPartFilter,
-          partFilterOptions: _partFilterOptions,
+          partFilterOptions: partFilterOptions,
           onPartFilterChanged: _handlePartFilterChanged,
+          selectedOptionTypeFilter: _selectedOptionTypeFilter,
+          optionTypeFilterOptions: _optionTypeFilterOptions,
+          onOptionTypeFilterChanged: _handleOptionTypeFilterChanged,
           onAccessoryTap: (ctx, acc) {
             if (widget.isPickerMode) {
               AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
@@ -258,6 +278,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final randomConfig = RandomAccessoryRepository.configOf(widget.accessory.id);
     return AlertDialog(
       title: Text(widget.accessory.name,
           style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -289,6 +310,32 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
                   child: Text('${option.optionName}: ${option.optionValue}'),
                 )),
+            if (randomConfig != null) ...[
+              const SizedBox(height: 12),
+              const Divider(),
+              Text(
+                '랜덤 옵션 규칙: ${randomConfig.minOptionCount}~${randomConfig.maxOptionCount}개, 옵션 종류 균등 등장, 상수 계산은 올림',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => RandomAccessorySimulatorScreen(
+                          initialAccessory: widget.accessory,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.casino_outlined),
+                  label: const Text('랜덤악세 시뮬레이터로 이동'),
+                ),
+              ),
+            ],
             // 세트 옵션 표시
             if (widget.accessory.setOptions.isNotEmpty) ...[
               const SizedBox(height: 16),
