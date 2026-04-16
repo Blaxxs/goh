@@ -158,11 +158,12 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: _buildChipGroup(
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildChipGroup(
                           context: context,
                           title: '옵션',
                           chips: optionTypeFilterOptions.map((type) {
@@ -204,10 +205,8 @@ class AccessoryScreenUI extends StatelessWidget {
                             );
                           }).toList(),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _buildChipGroup(
+                        const SizedBox(width: 8),
+                        _buildChipGroup(
                           context: context,
                           title: '부위',
                           chips: partFilterOptions.map((part) {
@@ -250,8 +249,8 @@ class AccessoryScreenUI extends StatelessWidget {
                             );
                           }).toList(),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -417,7 +416,6 @@ class AccessoryScreenUI extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: double.infinity,
           padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
