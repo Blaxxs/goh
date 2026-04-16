@@ -279,8 +279,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final randomConfig =
-        RandomAccessoryRepository.configOf(widget.accessory.id);
+    final randomConfig = widget.accessory.randomOptionConfig;
     return AlertDialog(
       title: Text(widget.accessory.name,
           style: const TextStyle(fontWeight: FontWeight.bold)),
