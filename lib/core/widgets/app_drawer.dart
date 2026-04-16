@@ -12,6 +12,7 @@ import '../../presentation/journal/journal_screen.dart'; // 일지 화면 import
 import '../../presentation/simulator/accessory_enhancement_screen.dart'; // Corrected path
 import '../constants/box_constants.dart'; // AppScreen enum을 box_constants.dart에서 가져옵니다.
 import '../../presentation/simulator/accessory_option_change_screen.dart'; // 악세사리 옵션 변경 시뮬레이터 import
+import '../../presentation/simulator/random_accessory_simulator_screen.dart'; // 랜덤 악세 시뮬레이터 import
 import '../../presentation/simulator/exploration_option_simulation_screen.dart'; // 탐 옵션 시뮬레이션 import
 import '../../presentation/simulator/pouch_simulation_screen.dart'; // 주머니 시뮬레이션 import
 import '../../presentation/gold_calculator/gold_calculator_screen.dart'; // 골드 계산기 화면 import
@@ -365,6 +366,23 @@ class AppDrawer extends StatelessWidget {
                             navigateFromMain(
                               const AccessoryOptionChangeScreen(),
                               target: AppScreen.accessoryOptionChange,
+                            );
+                          },
+                        ),
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.only(
+                              left:
+                                  showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
+                              right: 16.0),
+                          title: Text('랜덤악세 시뮬레이션', style: subDrawerItemTextStyle),
+                          onTap: () {
+                            navigateFromMain(
+                              RandomAccessorySimulatorScreen(
+                                initialAccessory:
+                                    RandomAccessoryRepository.randomAccessories.first,
+                              ),
+                              target: AppScreen.randomAccessorySimulation,
                             );
                           },
                         ),
