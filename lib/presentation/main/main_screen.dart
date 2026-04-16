@@ -16,8 +16,6 @@ import '../box_calculator/box_calculator_screen.dart';
 import '../simulator/accessory_enhancement_screen.dart';
 import '../simulator/accessory_option_change_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
-import 'package:goh_calculator/core/constants/random_accessory_constants.dart';
-
 import '../simulator/pouch_simulation_screen.dart';
 import '../simulator/random_accessory_simulator_screen.dart';
 
@@ -107,12 +105,7 @@ class _MainScreenState extends State<MainScreen> {
           _navigateToScreen(context, const PouchSimulationScreen());
         },
         onRandomAccessorySimulatorPressed: () {
-          _navigateToScreen(
-            context,
-            RandomAccessorySimulatorScreen(
-              initialAccessory: RandomAccessoryRepository.randomAccessories.first,
-            ),
-          );
+          _navigateToScreen(context, const RandomAccessorySimulatorScreen());
         },
         onStageSettingsPressed: () {
           _navigateToScreen(context, const SettingsScreen());
