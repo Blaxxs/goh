@@ -1,42 +1,10 @@
 import 'dart:math';
 
 import '../../data/models/accessory.dart';
+import 'accessory_constants.dart';
 
-class RandomAccessoryOptionRange {
-  final String optionName;
-  final int min;
-  final int max;
-
-  const RandomAccessoryOptionRange({
-    required this.optionName,
-    required this.min,
-    required this.max,
-  });
-}
-
-class RandomAccessoryConfig {
-  final String accessoryId;
-  final int minOptionCount;
-  final int maxOptionCount;
-  final Map<int, double> optionCountProbabilities;
-  final Map<String, double> silverMoruGradeProbabilities;
-  final Map<String, double> goldMoruGradeProbabilities;
-  final Map<String, int> craftCost;
-  final Map<String, int> modifyCost;
-  final List<RandomAccessoryOptionRange> optionRanges;
-
-  const RandomAccessoryConfig({
-    required this.accessoryId,
-    required this.minOptionCount,
-    required this.maxOptionCount,
-    required this.optionCountProbabilities,
-    required this.silverMoruGradeProbabilities,
-    required this.goldMoruGradeProbabilities,
-    required this.craftCost,
-    required this.modifyCost,
-    required this.optionRanges,
-  });
-}
+typedef RandomAccessoryConfig = AccessoryRandomOptionConfig;
+typedef RandomAccessoryOptionRange = AccessoryRandomOptionRange;
 
 class RandomOptionRoll {
   final String optionName;
@@ -69,200 +37,38 @@ class RandomAccessoryRepository {
   static const String gradeGreen = '초록';
   static const String gradeYellow = '노랑';
 
-  static const String _jinMoriId = 'jinmori_sleep_mask';
-  static const String _chuunibyouId = 'chuunibyou_seal_patch';
-  static const String _raidHatId = 'raid_commemorative_hat';
-
-  static String _url(String id) {
-    final encodedId = Uri.encodeComponent(id);
-    return 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media';
+  static List<Accessory> get randomAccessories {
+    final accessories = AccessoryDataManager()
+        .allAccessories
+        .where((accessory) => accessory.randomOptionConfig != null)
+        .toList();
+    accessories.sort((a, b) => a.name.compareTo(b.name));
+    return accessories;
   }
 
-  static const Map<int, double> _oneToTwoOptionProb = {
-    1: 80,
-    2: 20,
-  };
-
-  static const Map<int, double> _oneToThreeOptionProb = {
-    1: 75,
-    2: 20,
-    3: 5,
-  };
-
-  static const Map<String, double> _silverMoruGradeProb = {
-    gradeBlue: 10,
-    gradeGreen: 35,
-    gradeYellow: 55,
-  };
-
-  static const Map<String, double> _goldMoruGradeProb = {
-    gradeBlue: 25,
-    gradeGreen: 50,
-    gradeYellow: 25,
-  };
-
-  static final List<Accessory> randomAccessories = [
-    Accessory(
-      id: _jinMoriId,
-      name: '진모리수면안대',
-      imageUrl: _url(_jinMoriId),
-      part: '머리',
-      restrictions: '랜덤 옵션 악세사리',
-      options: const [
-        AccessoryOption(optionName: '공격력 증가', optionValue: '30~150'),
-        AccessoryOption(optionName: '체력 증가', optionValue: '200~500'),
-        AccessoryOption(optionName: '명중 증가', optionValue: '3~15'),
-        AccessoryOption(optionName: '회피 증가', optionValue: '2~10'),
-        AccessoryOption(optionName: '크리티컬 증가', optionValue: '3~15'),
-        AccessoryOption(optionName: '크리티컬 피해 증가', optionValue: '3~10'),
-      ],
-    ),
-    Accessory(
-      id: _chuunibyouId,
-      name: '중2병 봉인안대',
-      imageUrl: _url(_chuunibyouId),
-      part: '머리',
-      restrictions: '랜덤 옵션 악세사리',
-      options: const [
-        AccessoryOption(optionName: '공격력 증가', optionValue: '30~150'),
-        AccessoryOption(optionName: '체력 증가', optionValue: '200~500'),
-        AccessoryOption(optionName: '명중 증가', optionValue: '3~15'),
-        AccessoryOption(optionName: '크리티컬 증가', optionValue: '3~15'),
-        AccessoryOption(optionName: '크리티컬 저항 증가', optionValue: '3~15'),
-        AccessoryOption(optionName: '지속피해 %증가', optionValue: '10~25'),
-      ],
-    ),
-    Accessory(
-      id: _raidHatId,
-      name: '레이드기념 모자',
-      imageUrl: _url(_raidHatId),
-      part: '머리',
-      restrictions: '랜덤 옵션 악세사리',
-      options: const [
-        AccessoryOption(optionName: '공격력 증가', optionValue: '20~40'),
-        AccessoryOption(optionName: '체력 증가', optionValue: '150~250'),
-        AccessoryOption(optionName: '명중 증가', optionValue: '2~4'),
-        AccessoryOption(optionName: '크리티컬 증가', optionValue: '2~4'),
-      ],
-      setOptions: const [
-        AccessorySetOption(
-          setId: 'raid_memory_set',
-          setName: '레이드 기념 세트',
-          requiredAccessories: ['레이드기념 모자', '레이드기념 목걸이'],
-          requiredAccessoryImages: [
-            'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2Fraid_commemorative_hat.png?alt=media',
-            'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2Fraid_commemorative_necklace.png?alt=media',
-          ],
-          effects: [
-            SetOptionEffect(
-              optionName: '공격력 %증가',
-              stageValues: {
-                '0': '0%',
-                '6': '4%',
-                '12': '8%',
-                '18': '12%',
-              },
-            ),
-          ],
-        ),
-      ],
-    ),
-  ];
-
-  static final Map<String, RandomAccessoryConfig> _configById = {
-    _jinMoriId: const RandomAccessoryConfig(
-      accessoryId: _jinMoriId,
-      minOptionCount: 1,
-      maxOptionCount: 2,
-      optionCountProbabilities: _oneToTwoOptionProb,
-      silverMoruGradeProbabilities: _silverMoruGradeProb,
-      goldMoruGradeProbabilities: _goldMoruGradeProb,
-      craftCost: {
-        '영혼석': 200,
-        '골드': 500000,
-        '은모루': 1,
-      },
-      modifyCost: {
-        '영혼석': 100,
-        '숫돌이': 300,
-        '골드': 300000,
-      },
-      optionRanges: [
-        RandomAccessoryOptionRange(optionName: '공격력 증가', min: 30, max: 150),
-        RandomAccessoryOptionRange(optionName: '체력 증가', min: 200, max: 500),
-        RandomAccessoryOptionRange(optionName: '명중 증가', min: 3, max: 15),
-        RandomAccessoryOptionRange(optionName: '회피 증가', min: 2, max: 10),
-        RandomAccessoryOptionRange(optionName: '크리티컬 증가', min: 3, max: 15),
-        RandomAccessoryOptionRange(optionName: '크리티컬 피해 증가', min: 3, max: 10),
-      ],
-    ),
-    _chuunibyouId: const RandomAccessoryConfig(
-      accessoryId: _chuunibyouId,
-      minOptionCount: 1,
-      maxOptionCount: 2,
-      optionCountProbabilities: _oneToTwoOptionProb,
-      silverMoruGradeProbabilities: _silverMoruGradeProb,
-      goldMoruGradeProbabilities: _goldMoruGradeProb,
-      craftCost: {
-        '영혼석': 200,
-        '골드': 500000,
-        '은모루': 1,
-      },
-      modifyCost: {
-        '영혼석': 100,
-        '숫돌이': 300,
-        '골드': 300000,
-      },
-      optionRanges: [
-        RandomAccessoryOptionRange(optionName: '공격력 증가', min: 30, max: 150),
-        RandomAccessoryOptionRange(optionName: '체력 증가', min: 200, max: 500),
-        RandomAccessoryOptionRange(optionName: '명중 증가', min: 3, max: 15),
-        RandomAccessoryOptionRange(optionName: '크리티컬 증가', min: 3, max: 15),
-        RandomAccessoryOptionRange(optionName: '크리티컬 저항 증가', min: 3, max: 15),
-        RandomAccessoryOptionRange(optionName: '지속피해 %증가', min: 10, max: 25),
-      ],
-    ),
-    _raidHatId: const RandomAccessoryConfig(
-      accessoryId: _raidHatId,
-      minOptionCount: 1,
-      maxOptionCount: 3,
-      optionCountProbabilities: _oneToThreeOptionProb,
-      silverMoruGradeProbabilities: _silverMoruGradeProb,
-      goldMoruGradeProbabilities: _goldMoruGradeProb,
-      craftCost: {
-        '영혼석': 250,
-        '골드': 650000,
-        '금모루': 1,
-      },
-      modifyCost: {
-        '영혼석': 120,
-        '숫돌이': 360,
-        '골드': 350000,
-      },
-      optionRanges: [
-        RandomAccessoryOptionRange(optionName: '공격력 증가', min: 20, max: 40),
-        RandomAccessoryOptionRange(optionName: '체력 증가', min: 150, max: 250),
-        RandomAccessoryOptionRange(optionName: '명중 증가', min: 2, max: 4),
-        RandomAccessoryOptionRange(optionName: '크리티컬 증가', min: 2, max: 4),
-      ],
-    ),
-  };
+  static Accessory? firstRandomAccessory() {
+    final accessories = randomAccessories;
+    if (accessories.isEmpty) return null;
+    return accessories.first;
+  }
 
   static bool isRandomAccessory(String accessoryId) {
-    return _configById.containsKey(accessoryId);
+    return configOf(accessoryId) != null;
   }
 
   static RandomAccessoryConfig? configOf(String accessoryId) {
-    return _configById[accessoryId];
+    for (final accessory in AccessoryDataManager().allAccessories) {
+      if (accessory.id == accessoryId) {
+        return accessory.randomOptionConfig;
+      }
+    }
+    return null;
   }
 
-  static List<Accessory> mergeWithFixed(List<Accessory> fixedAccessories) {
+  static List<Accessory> mergeWithFixed(List<Accessory> accessories) {
     final byId = <String, Accessory>{
-      for (final accessory in fixedAccessories) accessory.id: accessory,
+      for (final accessory in accessories) accessory.id: accessory,
     };
-    for (final random in randomAccessories) {
-      byId[random.id] = random;
-    }
     return byId.values.toList();
   }
 
@@ -327,14 +133,6 @@ class RandomAccessoryRepository {
     return min + rng.nextInt(max - min + 1);
   }
 
-  // 규칙:
-  // 상수 = ceil((max - min) / 3), 1 미만이면 1
-  // 파랑 최대 = max
-  // 초록 최대 = max - 상수
-  // 노랑 최대 = max - 2*상수
-  // 파랑 최소 = 초록 최대 + 1
-  // 초록 최소 = 노랑 최대 + 1
-  // 노랑 최소 = min
   static (int, int) _gradeRange(int minValue, int maxValue, String grade) {
     final span = maxValue - minValue;
     final accessoryConst = max(1, (span / 3).ceil());
