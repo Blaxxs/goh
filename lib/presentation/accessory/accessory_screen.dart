@@ -104,9 +104,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final fixedAccessories = AccessoryDataManager().allAccessories;
-    final List<Accessory> accessories =
-        RandomAccessoryRepository.mergeWithFixed(fixedAccessories);
+    final List<Accessory> accessories = AccessoryDataManager().allAccessories;
     final parts = accessories
         .map((a) => a.part)
         .where((part) => part.isNotEmpty)
@@ -139,7 +137,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           _selectedPartFilter == '전체' ||
           acc.part == _selectedPartFilter;
 
-      final bool isRandom = RandomAccessoryRepository.isRandomAccessory(acc.id);
+      final bool isRandom = acc.randomOptionConfig != null;
       final bool matchesType = _selectedOptionTypeFilter == '전체' ||
           (_selectedOptionTypeFilter == '고정옵션' && !isRandom) ||
           (_selectedOptionTypeFilter == '랜덤옵션' && isRandom);
