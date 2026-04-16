@@ -158,86 +158,80 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                              color: Theme.of(context)
+                  _buildChipGroup(
+                    context: context,
+                    title: '옵션',
+                    chips: optionTypeFilterOptions.map((type) {
+                      final selected = selectedOptionTypeFilter == type;
+                      return ChoiceChip(
+                        label: Text(type),
+                        selected: selected,
+                        showCheckmark: false,
+                        selectedColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        side: BorderSide(
+                          color: selected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withValues(alpha: 0.22),
+                                  .withValues(alpha: 0.25),
+                        ),
+                        labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: selected
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.9),
+                              fontWeight:
+                                  selected ? FontWeight.w700 : FontWeight.w500,
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 8),
-                                child: Text(
-                                  '옵션',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelSmall
-                                      ?.copyWith(
-                                        color: isDark
-                                            ? Colors.white70
-                                            : Colors.black54,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                ),
-                              ),
-                              ...optionTypeFilterOptions.map((type) {
-                                final selected = selectedOptionTypeFilter == type;
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 6),
-                                  child: ChoiceChip(
-                                    label: Text(type),
-                                    selected: selected,
-                                    onSelected: (_) =>
-                                        onOptionTypeFilterChanged(type),
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
+                        visualDensity: VisualDensity.compact,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        onSelected: (_) => onOptionTypeFilterChanged(type),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildChipGroup(
+                    context: context,
+                    title: '부위',
+                    chips: partFilterOptions.map((part) {
+                      final selected = (selectedPartFilter ?? '전체') == part;
+                      return ChoiceChip(
+                        label: Text(part),
+                        selected: selected,
+                        showCheckmark: false,
+                        selectedColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        side: BorderSide(
+                          color: selected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.25),
                         ),
-                        const SizedBox(width: 10),
-                        Container(
-                          width: 1,
-                          height: 20,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.2),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          '부위',
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color:
-                                        isDark ? Colors.white70 : Colors.black54,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                        const SizedBox(width: 8),
-                        ...partFilterOptions.map((part) {
-                          final selected = (selectedPartFilter ?? '전체') == part;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 6),
-                            child: ChoiceChip(
-                              label: Text(part),
-                              selected: selected,
-                              onSelected: (_) => onPartFilterChanged(part),
+                        labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: selected
+                                  ? Theme.of(context)
+                                      .colorScheme
+                                      .onPrimaryContainer
+                                  : Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withValues(alpha: 0.9),
+                              fontWeight:
+                                  selected ? FontWeight.w700 : FontWeight.w500,
                             ),
-                          );
-                        }),
-                      ],
-                    ),
+                        visualDensity: VisualDensity.compact,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        onSelected: (_) => onPartFilterChanged(part),
+                      );
+                    }).toList(),
                   ),
                 ],
               ),
@@ -385,6 +379,56 @@ class AccessoryScreenUI extends StatelessWidget {
                     );
                   },
                 ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChipGroup({
+    required BuildContext context,
+    required String title,
+    required List<Widget> chips,
+  }) {
+    final borderColor =
+        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.22);
+    final backgroundColor = Theme.of(context).cardColor;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.fromLTRB(8, 12, 8, 8),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: borderColor),
+          ),
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 6,
+            children: chips,
+          ),
+        ),
+        Positioned(
+          top: -8,
+          left: 0,
+          right: 0,
+          child: Center(
+            child: Container(
+              color: backgroundColor,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 1),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 0.75),
+                    ),
+              ),
+            ),
+          ),
         ),
       ],
     );
