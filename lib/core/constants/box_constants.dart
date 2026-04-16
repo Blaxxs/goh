@@ -17,6 +17,7 @@ enum AppScreen {
   simulator,
   accessoryEnhancement,
   accessoryOptionChange,
+  randomAccessorySimulation,
   explorationOptionSimulation,
   pouchSimulation,
   stageSettings,
