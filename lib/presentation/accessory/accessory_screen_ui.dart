@@ -158,80 +158,100 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  _buildChipGroup(
-                    context: context,
-                    title: '옵션',
-                    chips: optionTypeFilterOptions.map((type) {
-                      final selected = selectedOptionTypeFilter == type;
-                      return ChoiceChip(
-                        label: Text(type),
-                        selected: selected,
-                        showCheckmark: false,
-                        selectedColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        side: BorderSide(
-                          color: selected
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.25),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _buildChipGroup(
+                          context: context,
+                          title: '옵션',
+                          chips: optionTypeFilterOptions.map((type) {
+                            final selected = selectedOptionTypeFilter == type;
+                            return ChoiceChip(
+                              label: Text(type),
+                              selected: selected,
+                              showCheckmark: false,
+                              selectedColor:
+                                  Theme.of(context).colorScheme.primaryContainer,
+                              side: BorderSide(
+                                color: selected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.25),
+                              ),
+                              labelStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                    color: selected
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.9),
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              onSelected: (_) => onOptionTypeFilterChanged(type),
+                            );
+                          }).toList(),
                         ),
-                        labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: selected
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withValues(alpha: 0.9),
-                              fontWeight:
-                                  selected ? FontWeight.w700 : FontWeight.w500,
-                            ),
-                        visualDensity: VisualDensity.compact,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        onSelected: (_) => onOptionTypeFilterChanged(type),
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildChipGroup(
-                    context: context,
-                    title: '부위',
-                    chips: partFilterOptions.map((part) {
-                      final selected = (selectedPartFilter ?? '전체') == part;
-                      return ChoiceChip(
-                        label: Text(part),
-                        selected: selected,
-                        showCheckmark: false,
-                        selectedColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        side: BorderSide(
-                          color: selected
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.25),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: _buildChipGroup(
+                          context: context,
+                          title: '부위',
+                          chips: partFilterOptions.map((part) {
+                            final selected =
+                                (selectedPartFilter ?? '전체') == part;
+                            return ChoiceChip(
+                              label: Text(part),
+                              selected: selected,
+                              showCheckmark: false,
+                              selectedColor:
+                                  Theme.of(context).colorScheme.primaryContainer,
+                              side: BorderSide(
+                                color: selected
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.25),
+                              ),
+                              labelStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall
+                                  ?.copyWith(
+                                    color: selected
+                                        ? Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.9),
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              onSelected: (_) => onPartFilterChanged(part),
+                            );
+                          }).toList(),
                         ),
-                        labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: selected
-                                  ? Theme.of(context)
-                                      .colorScheme
-                                      .onPrimaryContainer
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSurface
-                                      .withValues(alpha: 0.9),
-                              fontWeight:
-                                  selected ? FontWeight.w700 : FontWeight.w500,
-                            ),
-                        visualDensity: VisualDensity.compact,
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        onSelected: (_) => onPartFilterChanged(part),
-                      );
-                    }).toList(),
+                      ),
+                    ],
                   ),
                 ],
               ),
