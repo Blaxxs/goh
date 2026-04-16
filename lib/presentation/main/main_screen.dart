@@ -17,6 +17,7 @@ import '../simulator/accessory_enhancement_screen.dart';
 import '../simulator/accessory_option_change_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
 import '../simulator/pouch_simulation_screen.dart';
+import '../simulator/random_accessory_simulator_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
