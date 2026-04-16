@@ -107,11 +107,13 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     final fixedAccessories = AccessoryDataManager().allAccessories;
     final List<Accessory> accessories =
         RandomAccessoryRepository.mergeWithFixed(fixedAccessories);
-    final partFilterOptions = [
-      '전체',
-      ...accessories.map((a) => a.part).where((part) => part.isNotEmpty).toSet()..toList()
-    ];
-    partFilterOptions.sort();
+    final parts = accessories
+        .map((a) => a.part)
+        .where((part) => part.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+    final partFilterOptions = ['전체', ...parts];
 
     // 필터링 로직을 적용합니다.
     List<Accessory> displayList = accessories.where((acc) {
