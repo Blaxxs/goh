@@ -454,6 +454,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
             text: '주머니 시뮬',
             subtitle: '주머니 획득 시뮬',
           ),
+          const _MenuEntry(
+            key: 'randomAccessory',
+            text: '랜덤악세 시뮬',
+            subtitle: '랜덤악세 제작 시뮬',
+          ),
         ],
       ),
       _MenuSection(
