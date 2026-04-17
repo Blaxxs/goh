@@ -20,8 +20,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   String? _selectedPartFilter;
   String _selectedOptionTypeFilter = '전체';
   String _searchQuery = "";
-  String _searchOption = '이름';
-  final List<String> _searchOptions = ['이름', '옵션'];
   final List<String> _optionTypeFilterOptions = ['전체', '고정옵션', '랜덤옵션'];
 
   // 비교 모드 상태
@@ -51,14 +49,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     setState(() {
       _selectedPartFilter = newValue;
     });
-  }
-
-  void _handleSearchOptionChanged(String? newValue) {
-    if (newValue != null) {
-      setState(() {
-        _searchOption = newValue;
-      });
-    }
   }
 
   void _handleOptionTypeFilterChanged(String? newValue) {
@@ -112,24 +102,13 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     final partFilterOptions = ['전체', ...parts];
 
     // 필터링 로직을 적용합니다.
+    final query = _searchQuery.trim().toLowerCase();
     List<Accessory> displayList = accessories.where((acc) {
-      bool matchesSearch;
-      if (_searchQuery.isEmpty) {
-        matchesSearch = true;
-      } else if (_searchOption == '이름') {
-        matchesSearch =
-            acc.name.toLowerCase().contains(_searchQuery.toLowerCase());
-      } else if (_searchOption == '옵션') {
-        matchesSearch = acc.options.any((option) =>
-            option.optionName
-                .toLowerCase()
-                .contains(_searchQuery.toLowerCase()) ||
-            option.optionValue
-                .toLowerCase()
-                .contains(_searchQuery.toLowerCase()));
-      } else {
-        matchesSearch = true;
-      }
+      final bool matchesSearch = query.isEmpty ||
+          acc.name.toLowerCase().contains(query) ||
+          acc.options.any((option) =>
+              option.optionName.toLowerCase().contains(query) ||
+              option.optionValue.toLowerCase().contains(query));
 
       final matchesPart = _selectedPartFilter == null ||
           _selectedPartFilter == '전체' ||
@@ -218,9 +197,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         },
         currentSearchQuery: _searchQuery,
         onClearSearch: _clearSearch,
-        searchOption: _searchOption,
-        searchOptions: _searchOptions,
-        onSearchOptionChanged: _handleSearchOptionChanged,
         compareMode: _compareMode,
         compareList: _compareList,
       ),
