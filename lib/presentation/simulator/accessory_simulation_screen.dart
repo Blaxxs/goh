@@ -273,6 +273,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   int _silverMoruConsumed = 0;
   int _goldMoruConsumed = 0;
   int _totalRemodelGoldConsumed = 0;
+  int _totalRemodelSoulStonesConsumed = 0;
+  int _remodelAttemptCount = 0;
   int _craftAttemptCount = 0;
   final List<CraftedAccessoryLogEntry> _craftLogs = [];
 
@@ -310,7 +312,18 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         '골드': _useGoldMoruForRemodel
             ? _goldRemodelGoldCost
             : _silverRemodelGoldCost,
+        if (_currentRemodelSoulStoneCost > 0) '영혼석': _currentRemodelSoulStoneCost,
       };
+
+  int get _currentRemodelSoulStoneCost {
+    final nextAttempt = _remodelAttemptCount + 1;
+    if (nextAttempt <= 5) {
+      return 0;
+    }
+    return (nextAttempt - 5) * 20;
+  }
+
+  bool get _canAttemptRemodelByCount => _remodelAttemptCount < 15;
 
   void _selectAccessory(BuildContext context) {
     final allAccessories = AccessoryDataManager().allAccessories;
@@ -538,6 +551,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     _silverMoruConsumed = 0;
     _goldMoruConsumed = 0;
     _totalRemodelGoldConsumed = 0;
+    _totalRemodelSoulStonesConsumed = 0;
+    _remodelAttemptCount = 0;
   }
 
   void _syncSelectedOptionCount() {
