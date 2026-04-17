@@ -296,7 +296,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                             DropdownMenuItem(value: 1, child: Text('1옵')),
                             DropdownMenuItem(value: 2, child: Text('2옵+')),
                           ],
-                          onChanged: onOptionCountChanged,
+                          onChanged: embedded ? null : onOptionCountChanged,
                           alignment: AlignmentDirectional.center,
                           style: theme.textTheme.bodyMedium, // 드롭다운 텍스트 스타일 조정
                           underline: Container(), // 기본 밑줄 제거 (선택 사항)

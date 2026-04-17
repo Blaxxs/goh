@@ -696,7 +696,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         }
         break;
       }
-      await Future<void>.delayed(const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 1));
     }
     if (mounted) {
       setState(() => _isAutoEnhancing = false);
@@ -766,14 +766,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   List<AccessoryOption> _availableChangeableOptions() {
-    final accessory = _selectedAccessory;
-    if (accessory == null) return _defaultChangeableOptions;
-    if (accessory.randomOptionConfig != null) {
-      return accessory.options
-          .where((option) =>
-              option.minNormalValue != null && option.maxNormalValue != null)
-          .toList(growable: false);
-    }
     return _defaultChangeableOptions;
   }
 
@@ -800,6 +792,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     required int forSlot,
     required List<AccessoryOption> existingOptions,
   }) {
+    final accessory = _selectedAccessory;
+    if (accessory == null) {
+      return _defaultChangeableOptions.first;
+    }
     final availablePool = _availableChangeableOptions();
     final excludedOptionNames = <String>{};
 
@@ -829,10 +825,38 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     for (final option in pool) {
       randomValue -= _getOptionWeight(option.optionName);
       if (randomValue < 0) {
-        return option;
+        final (minValue, maxValue) = _resolveOptionRange(option);
+        final optionValue = accessory.randomOptionConfig == null
+            ? maxValue
+            : _randInt(_random, minValue, maxValue);
+        return AccessoryOption(
+          optionName: option.optionName,
+          optionValue: optionValue.toString(),
+          minNormalValue: minValue,
+          maxNormalValue: maxValue,
+        );
       }
     }
-    return pool.last;
+    final fallback = pool.last;
+    final (minValue, maxValue) = _resolveOptionRange(fallback);
+    final optionValue = accessory.randomOptionConfig == null
+        ? maxValue
+        : _randInt(_random, minValue, maxValue);
+    return AccessoryOption(
+      optionName: fallback.optionName,
+      optionValue: optionValue.toString(),
+      minNormalValue: minValue,
+      maxNormalValue: maxValue,
+    );
+  }
+
+  (int, int) _resolveOptionRange(AccessoryOption option) {
+    final parsedValue = int.tryParse(option.optionValue) ?? 1;
+    final rawMin = option.minNormalValue ?? max(1, (parsedValue * 0.6).round());
+    final rawMax = option.maxNormalValue ?? parsedValue;
+    final minValue = min(rawMin, rawMax);
+    final maxValue = max(rawMin, rawMax);
+    return (minValue, maxValue);
   }
 
   void _performRemodel() {
@@ -1341,7 +1365,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     if (isFilled) {
       optionName = _currentOptions[index].optionName;
-      optionValue = _currentOptions[index].optionValue;
+      optionValue = _formatOptionValueWithRange(_currentOptions[index]);
       optionColor = isBaseSlot ? Colors.grey : theme.textTheme.bodyLarge?.color;
 
       if (!isBaseSlot) {
@@ -1634,7 +1658,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildOptionValueWidget(BuildContext context, AccessoryOption option) {
     final isMaxRoll = _isMaxRollOption(option);
     return Text(
-      option.optionValue,
+      _formatOptionValueWithRange(option),
       style: isMaxRoll
           ? Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Colors.deepPurple.shade700,
@@ -1642,6 +1666,15 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               )
           : null,
     );
+  }
+
+  String _formatOptionValueWithRange(AccessoryOption option) {
+    final minValue = option.minNormalValue;
+    final maxValue = option.maxNormalValue;
+    if (minValue == null || maxValue == null) {
+      return option.optionValue;
+    }
+    return '${option.optionValue} ($minValue~$maxValue)';
   }
 
   bool _isMaxRollOption(AccessoryOption option) {
