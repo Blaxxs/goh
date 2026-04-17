@@ -1235,17 +1235,18 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   const SizedBox(height: 4),
                   Text(
                       '${accessory?.part ?? '-'} / ${accessory?.restrictions ?? '-'}'),
-                  if (displayOptions.isNotEmpty) ...[
+                  if (fixedRowCount > 0) ...[
                     const SizedBox(height: 8),
                     Column(
-                      children: displayOptions.map((option) {
+                      children: List.generate(fixedRowCount, (i) {
+                        final option = i < displayOptions.length ? displayOptions[i] : null;
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 1),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  option.optionName,
+                                  option?.optionName ?? '',
                                   style: Theme.of(context).textTheme.bodySmall,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -1255,7 +1256,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               SizedBox(
                                 width: 112,
                                 child: Text(
-                                  _formatOptionValueForSummary(option),
+                                  option != null ? _formatOptionValueForSummary(option) : '',
                                   textAlign: TextAlign.right,
                                   style: Theme.of(context)
                                       .textTheme
@@ -1266,7 +1267,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                     ),
                   ],
                   const SizedBox(height: 8),
