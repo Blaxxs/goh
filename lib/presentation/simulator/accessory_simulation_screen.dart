@@ -1235,42 +1235,36 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       '${accessory?.part ?? '-'} / ${accessory?.restrictions ?? '-'}'),
                   if (displayOptions.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    SizedBox(
-                      height: 54,
-                      child: Column(
-                        children: List.generate(4, (index) {
-                          final hasOption = index < displayOptions.length;
-                          final option = hasOption ? displayOptions[index] : null;
-                          return Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    option?.optionName ?? '',
-                                    style: Theme.of(context).textTheme.bodySmall,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
+                    Column(
+                      children: displayOptions.map((option) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 1),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  option.optionName,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                const SizedBox(width: 8),
-                                SizedBox(
-                                  width: 112,
-                                  child: Text(
-                                    option == null
-                                        ? ''
-                                        : _formatOptionValueForSummary(option),
-                                    textAlign: TextAlign.right,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
-                                        ?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
+                              ),
+                              const SizedBox(width: 8),
+                              SizedBox(
+                                width: 112,
+                                child: Text(
+                                  _formatOptionValueForSummary(option),
+                                  textAlign: TextAlign.right,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
-                              ],
-                            ),
-                          );
-                        }),
-                      ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ],
                   const SizedBox(height: 8),
