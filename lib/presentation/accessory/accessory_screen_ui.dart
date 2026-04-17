@@ -78,7 +78,7 @@ class AccessoryScreenUI extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  // --- 검색 + 필터 (악세 시뮬레이터와 동일한 칩 UI) ---
+                  // --- 검색 + 필터 (토글 옆 작은 검색창 + 부위 칩) ---
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
@@ -145,20 +145,20 @@ class AccessoryScreenUI extends StatelessWidget {
                       children: [
                         ...partFilterOptions
                             .where((part) => part != '전체')
-                              showCheckmark: false,
                             .map((part) {
                           final selected = selectedPartFilter == part;
                           return Padding(
                             padding: const EdgeInsets.only(right: 6),
                             child: FilterChip(
                               label: Text(part),
+                              showCheckmark: false,
                               selected: selected,
-                          onSelected: (_) => onOptionTypeFilterChanged(
-                            selectedOptionTypeFilter == '랜덤옵션'
-                                ? '전체'
-                                : '랜덤옵션',
-                          ),
-                        ),
+                              onSelected: (_) => onPartFilterChanged(
+                                selected ? null : part,
+                              ),
+                            ),
+                          );
+                        }),
                       ],
                     ),
                   ),
