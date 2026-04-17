@@ -1758,32 +1758,21 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(8),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             _buildAccessoryIcon(
               imageUrl: state.accessory.imageUrl,
               grade: state.grade,
-              size: 72,
+              size: 56,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    state.accessory.name,
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleMedium
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(state.grade == null ? '고정옵션 악세' : '테두리: ${state.grade}'),
-                  Text('현재 옵션 수: ${state.currentOptions.length}개'),
-                  Text('강화: ${_currentEnhancementLevel}강'),
-                  const SizedBox(height: 8),
                   ...state.currentOptions.map(
                     (option) => _buildCompactOptionLine(context, option),
                   ),
