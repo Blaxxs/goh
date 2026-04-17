@@ -922,6 +922,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       _showSnack('개조는 수치 범위가 있는 랜덤 악세사리만 가능합니다.');
       return;
     }
+    if (!_canAttemptRemodelByCount) {
+      _showSnack('개조가 불가능합니다.');
+      return;
+    }
 
     final grade = _pickWeightedString(
       _useGoldMoruForRemodel
@@ -971,6 +975,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         _silverMoruConsumed++;
         _totalRemodelGoldConsumed += _silverRemodelGoldCost;
       }
+      _totalRemodelSoulStonesConsumed += _currentRemodelSoulStoneCost;
+      _remodelAttemptCount++;
       _syncSelectedOptionCount();
     });
   }
