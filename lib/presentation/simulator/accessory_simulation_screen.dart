@@ -14,6 +14,8 @@ import 'accessory_enhancement_screen_ui.dart';
 
 const _silverRemodelGoldCost = 20000;
 const _goldRemodelGoldCost = 3000;
+const _autoEnhanceBatchSize = 30;
+const _maxCraftLogCount = 80;
 
 enum AccessorySimulationMode {
   craft,
@@ -312,7 +314,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         '골드': _useGoldMoruForRemodel
             ? _goldRemodelGoldCost
             : _silverRemodelGoldCost,
-        if (_currentRemodelSoulStoneCost > 0) '영혼석': _currentRemodelSoulStoneCost,
+        '영혼석': _currentRemodelSoulStoneCost,
       };
 
   int get _currentRemodelSoulStoneCost {
@@ -626,6 +628,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         grade: grade,
       ),
     );
+    if (_craftLogs.length > _maxCraftLogCount) {
+      _craftLogs.removeRange(_maxCraftLogCount, _craftLogs.length);
+    }
   }
 
   AccessoryOption _buildOptionFromRoll(
@@ -733,10 +738,20 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Future<void> _performEnhancementLoop() async {
     while (_isAutoEnhancing && mounted) {
-      _performSingleEnhancement();
-      if (_currentEnhancementLevel >= 9 ||
-          (_targetEnhancementLevel != null &&
-              _currentEnhancementLevel >= _targetEnhancementLevel!)) {
+      bool reachedTarget = false;
+      for (int i = 0; i < _autoEnhanceBatchSize; i++) {
+        if (!_isAutoEnhancing || !mounted) {
+          break;
+        }
+        _performSingleEnhancement();
+        if (_currentEnhancementLevel >= 9 ||
+            (_targetEnhancementLevel != null &&
+                _currentEnhancementLevel >= _targetEnhancementLevel!)) {
+          reachedTarget = true;
+          break;
+        }
+      }
+      if (reachedTarget) {
         if (mounted) {
           _showSnack('자동 강화가 완료되었습니다.');
         }
@@ -1266,7 +1281,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 ?.copyWith(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
-          ..._craftLogs.map((entry) => _buildCraftLogCard(context, entry)),
+          ..._craftLogs
+              .take(_maxCraftLogCount)
+              .map((entry) => _buildCraftLogCard(context, entry)),
         ],
       ],
     );
@@ -1522,12 +1539,22 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 if (!_canAttemptRemodelByCount)
-                  Text(
-                    '불가능(빨간색 글씨) 합니다.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
+                  RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                        const TextSpan(text: '개조가 '),
+                        TextSpan(
+                          text: '불가능',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
+                        const TextSpan(text: ' 합니다.'),
+                      ],
+                    ),
                   ),
                 const SizedBox(height: 12),
                 SizedBox(
