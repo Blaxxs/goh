@@ -6,6 +6,8 @@ import '../../data/models/accessory.dart'; // Accessory model
 import '../../core/constants/accessory_constants.dart'; // AccessoryDataManager().allAccessories 사용
 import 'accessory_enhancement_screen_ui.dart';
 
+const _autoEnhanceBatchSize = 30;
+
 class AccessoryEnhancementScreen extends StatefulWidget {
   const AccessoryEnhancementScreen({super.key});
 
@@ -406,12 +408,22 @@ class _AccessoryEnhancementScreenState
   // 자동 강화 루프
   Future<void> _performEnhancementLoop() async {
     while (_isAutoEnhancing && mounted) {
-      _performSingleEnhancement();
+      bool reachedTarget = false;
+      for (int i = 0; i < _autoEnhanceBatchSize; i++) {
+        if (!_isAutoEnhancing || !mounted) {
+          break;
+        }
+        _performSingleEnhancement();
 
-      // 목표 달성 또는 최대 강화 도달 시 자동 강화 중지
-      if (_currentEnhancementLevel >= 9 ||
-          (_targetEnhancementLevel != null &&
-              _currentEnhancementLevel >= _targetEnhancementLevel!)) {
+        // 목표 달성 또는 최대 강화 도달 시 자동 강화 중지
+        if (_currentEnhancementLevel >= 9 ||
+            (_targetEnhancementLevel != null &&
+                _currentEnhancementLevel >= _targetEnhancementLevel!)) {
+          reachedTarget = true;
+          break;
+        }
+      }
+      if (reachedTarget) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
