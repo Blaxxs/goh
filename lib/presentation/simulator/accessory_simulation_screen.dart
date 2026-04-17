@@ -1194,6 +1194,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     final displayOptions = _simulatedState?.accessory.id == accessory?.id
         ? _currentOptions
         : (accessory?.options ?? const <AccessoryOption>[]);
+    // 행 수는 원본 옵션 수로 고정 (제작 결과 옵션 수 변화에도 레이아웃 유지)
+    final fixedRowCount = accessory?.options.length ?? displayOptions.length;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
