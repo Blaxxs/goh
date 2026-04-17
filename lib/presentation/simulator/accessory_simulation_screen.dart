@@ -1787,6 +1787,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     final isMaxRoll = _isMaxRollOption(option);
     final text = _formatOptionValueWithRange(option);
     final baseStyle = Theme.of(context).textTheme.bodyMedium;
+    final baseFontSize = baseStyle?.fontSize ?? 14;
     return SizedBox(
       height: 22,
       child: Align(
@@ -1800,7 +1801,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   ? baseStyle?.copyWith(
                       color: Colors.deepPurple.shade700,
                       fontWeight: FontWeight.w900,
-                      fontSize: (baseStyle?.fontSize ?? 14) + 1,
+                      fontSize: baseFontSize + 1,
                       height: 1.0,
                     )
                   : baseStyle)
