@@ -868,6 +868,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     final current = List<AccessoryOption>.from(_currentOptions);
     final baseOptionCount = _baseOptions.length;
+    final isRandomAccessory = _selectedAccessory?.randomOptionConfig != null;
 
     setState(() {
       switch (_selectedAction) {
@@ -881,8 +882,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           }
           break;
         case AccessorySimulationOptionChangeAction.changeThird:
-          // 제작 시 기본으로 존재한 3옵은 변경 불가, 확장으로 열린 3옵만 변경 가능
-          if (current.length >= 3 && baseOptionCount < 3) {
+          // 고정 3옵은 변경 불가, 랜덤 제작 3옵 또는 확장 3옵은 변경 가능
+          if (current.length >= 3 && (isRandomAccessory || baseOptionCount < 3)) {
             current[2] =
                 _generateRandomOption(forSlot: 2, existingOptions: current);
             _totalSoulStonesConsumed += 100;
@@ -1557,6 +1558,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     final theme = Theme.of(context);
     final currentOptionCount = _currentOptions.length;
     final baseOptionCount = _baseOptions.length;
+    final isRandomAccessory = _selectedAccessory?.randomOptionConfig != null;
     final slot = index + 1;
     final isFilled = index < currentOptionCount;
     final isBaseSlot = index < baseOptionCount;
@@ -1572,18 +1574,16 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       optionValue = _formatOptionValueWithRange(_currentOptions[index]);
       optionColor = isBaseSlot ? Colors.grey : theme.textTheme.bodyLarge?.color;
 
-      if (!isBaseSlot) {
-        if (index == 2) {
-          actionLabel = '변경';
-          action = () => _handleOptionChangeAction(
-                AccessorySimulationOptionChangeAction.changeThird,
-              );
-        } else if (index == 3) {
-          actionLabel = '변경';
-          action = () => _handleOptionChangeAction(
-                AccessorySimulationOptionChangeAction.changeFourth,
-              );
-        }
+      if (index == 2 && (!isBaseSlot || isRandomAccessory)) {
+        actionLabel = '변경';
+        action = () => _handleOptionChangeAction(
+              AccessorySimulationOptionChangeAction.changeThird,
+            );
+      } else if (!isBaseSlot && index == 3) {
+        actionLabel = '변경';
+        action = () => _handleOptionChangeAction(
+              AccessorySimulationOptionChangeAction.changeFourth,
+            );
       }
     } else {
       if (index == 2 && baseOptionCount < 3) {
