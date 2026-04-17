@@ -1960,58 +1960,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return option.optionValue;
   }
 
-  Widget _buildOptionRangeGuideCard(BuildContext context) {
-    final accessory = _selectedAccessory;
-    if (accessory == null) {
-      return const SizedBox.shrink();
-    }
-
-    final options = accessory.options;
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '선택 악세 등장 옵션 범위',
-              style: Theme.of(context)
-                  .textTheme
-                  .titleSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            if (options.isEmpty)
-              const Text('표시할 옵션이 없습니다.')
-            else
-              ...options.map((option) {
-                final minValue = option.minNormalValue;
-                final maxValue = option.maxNormalValue;
-                final rangeText = (minValue != null && maxValue != null)
-                    ? '$minValue~$maxValue'
-                    : '-';
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          option.optionName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(rangeText),
-                    ],
-                  ),
-                );
-              }),
-          ],
-        ),
-      ),
-    );
-  }
 
   bool _isMaxRollOption(AccessoryOption option) {
     final maxValue = option.maxNormalValue;
