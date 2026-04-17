@@ -331,6 +331,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     final parts = allAccessories.map((a) => a.part).toSet().toList()..sort();
     String? selectedPart;
+    bool? selectedRandomType;
     String searchQuery = '';
 
     showModalBottomSheet<void>(
@@ -345,9 +346,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             final filtered = allAccessories.where((a) {
               final matchesPart =
                   selectedPart == null || a.part == selectedPart;
+              final isRandom = a.randomOptionConfig != null;
+              final matchesOptionType = selectedRandomType == null
+                  ? true
+                  : isRandom == selectedRandomType;
               final matchesSearch = searchQuery.isEmpty ||
                   a.name.toLowerCase().contains(searchQuery.toLowerCase());
-              return matchesPart && matchesSearch;
+              return matchesPart && matchesOptionType && matchesSearch;
             }).toList()
               ..sort((a, b) => a.name.compareTo(b.name));
 
@@ -409,6 +414,39 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                       selectedPart == part ? null : part,
                                 ),
                               ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Row(
+                        children: [
+                          FilterChip(
+                            label: const Text('전체 옵션'),
+                            selected: selectedRandomType == null,
+                            onSelected: (_) =>
+                                setSheetState(() => selectedRandomType = null),
+                          ),
+                          const SizedBox(width: 6),
+                          FilterChip(
+                            label: const Text('고정옵션'),
+                            selected: selectedRandomType == false,
+                            onSelected: (_) => setSheetState(
+                              () => selectedRandomType =
+                                  selectedRandomType == false ? null : false,
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          FilterChip(
+                            label: const Text('랜덤옵션'),
+                            selected: selectedRandomType == true,
+                            onSelected: (_) => setSheetState(
+                              () => selectedRandomType =
+                                  selectedRandomType == true ? null : true,
                             ),
                           ),
                         ],
