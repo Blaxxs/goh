@@ -396,13 +396,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         children: [
-                          FilterChip(
-                            label: const Text('전체'),
-                            selected: selectedPart == null,
-                            onSelected: (_) =>
-                                setSheetState(() => selectedPart = null),
-                          ),
-                          const SizedBox(width: 6),
                           ...parts.map(
                             (part) => Padding(
                               padding: const EdgeInsets.only(right: 6),
@@ -416,22 +409,15 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        children: [
-                          FilterChip(
-                            label: const Text('전체 옵션'),
-                            selected: selectedRandomType == null,
-                            onSelected: (_) =>
-                                setSheetState(() => selectedRandomType = null),
-                          ),
-                          const SizedBox(width: 6),
+                          if (parts.isNotEmpty) ...[
+                            const SizedBox(width: 4),
+                            Container(
+                              width: 1,
+                              height: 20,
+                              color: Theme.of(ctx).dividerColor,
+                            ),
+                            const SizedBox(width: 10),
+                          ],
                           FilterChip(
                             label: const Text('고정옵션'),
                             selected: selectedRandomType == false,
