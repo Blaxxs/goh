@@ -454,6 +454,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               padding: const EdgeInsets.only(right: 6),
                               child: FilterChip(
                                 label: Text(part),
+                                showCheckmark: false,
                                 selected: selectedPart == part,
                                 onSelected: (_) => setSheetState(
                                   () => selectedPart =
@@ -473,6 +474,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           ],
                           FilterChip(
                             label: const Text('고정옵션'),
+                            showCheckmark: false,
                             selected: selectedRandomType == false,
                             onSelected: (_) => setSheetState(
                               () => selectedRandomType =
@@ -482,6 +484,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           const SizedBox(width: 6),
                           FilterChip(
                             label: const Text('랜덤옵션'),
+                            showCheckmark: false,
                             selected: selectedRandomType == true,
                             onSelected: (_) => setSheetState(
                               () => selectedRandomType =
