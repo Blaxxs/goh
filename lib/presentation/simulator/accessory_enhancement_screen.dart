@@ -423,7 +423,7 @@ class _AccessoryEnhancementScreenState
       }
 
       await Future.delayed(
-          const Duration(milliseconds: 10)); // 다음 강화 시도 전 짧은 지연
+          const Duration(milliseconds: 1)); // 다음 강화 시도 전 짧은 지연
     }
     // 루프가 끝나면 (중지 버튼, 목표 달성 등) isAutoEnhancing 상태를 false로 변경
     if (mounted) {

@@ -245,6 +245,15 @@ class _OptionsListWidget extends StatefulWidget {
 }
 
 class _OptionsListWidgetState extends State<_OptionsListWidget> {
+  String _formatOptionValueWithRange(AccessoryOption option) {
+    final minValue = option.minNormalValue;
+    final maxValue = option.maxNormalValue;
+    if (minValue == null || maxValue == null) {
+      return option.optionValue;
+    }
+    return '${option.optionValue} ($minValue~$maxValue)';
+  }
+
   // Helper to build a single option row
   Widget _buildOptionRow(
     ThemeData theme, {
@@ -324,7 +333,7 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
         // Option exists
         final option = widget.currentOptions[i];
         optionName = option.optionName;
-        optionValue = option.optionValue;
+        optionValue = _formatOptionValueWithRange(option);
         optionTextColor = theme.textTheme.bodyLarge?.color;
 
         // Determine if this slot is a base option slot from the original accessory
@@ -335,7 +344,7 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
           // This is a base option slot (1st, 2nd, or 3rd if accessory has 3 base options)
           final baseOption = widget.selectedAccessory.options[i];
           optionName = baseOption.optionName;
-          optionValue = baseOption.optionValue;
+            optionValue = _formatOptionValueWithRange(baseOption);
           optionTextColor =
               Colors.grey; // Base options are greyed out and fixed
           onTapOptionArea = null; // Cannot tap to change/expand base options
