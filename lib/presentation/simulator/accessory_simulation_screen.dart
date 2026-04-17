@@ -1710,26 +1710,24 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Spacer(),
-          SizedBox(
-            width: 210,
+          Expanded(
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
                     option.optionName,
                     textAlign: TextAlign.right,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                    softWrap: true,
                   ),
                 ),
                 const SizedBox(width: 8),
                 SizedBox(
                   width: 112,
                   child: Align(
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.topRight,
                     child: _buildOptionValueWidget(context, option),
                   ),
                 ),
