@@ -290,8 +290,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     _syncSelectedOptionCount();
   }
 
-  bool get _isRandomAccessory => _selectedAccessory?.randomOptionConfig != null;
-
   bool get _hasSimulatedItem => _simulatedState != null;
 
   List<AccessoryOption> get _currentOptions =>
