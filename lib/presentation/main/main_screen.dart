@@ -13,12 +13,9 @@ import '../damage_calculator/damage_calculator_screen.dart';
 import '../journal/journal_screen.dart';
 import '../../core/services/event_manager.dart';
 import '../box_calculator/box_calculator_screen.dart';
-import '../simulator/accessory_enhancement_screen.dart';
-import '../simulator/accessory_option_change_screen.dart';
 import '../simulator/accessory_simulation_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
 import '../simulator/pouch_simulation_screen.dart';
-import '../simulator/random_accessory_simulator_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
