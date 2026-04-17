@@ -32,6 +32,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
   final int selectedOptionCount;
   final ValueChanged<int?> onOptionCountChanged;
   final Map<String, int> consumedAidsCount;
+  final bool embedded;
 
   const AccessoryEnhancementScreenUI({
     super.key,
@@ -59,6 +60,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
     required this.selectedOptionCount,
     required this.onOptionCountChanged,
     required this.consumedAidsCount,
+    this.embedded = false,
   });
 
   // 강화 단계별 기본 확률: 성공, 실패(유지), 하락
@@ -233,24 +235,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
         (currentEnhancementLevel < 9 && costs != null) ? costs['gold']! : 0;
     final formatter = NumberFormat('#,##0'); // 포맷터 추가
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '악세사리 강화', // 1. AppBar 제목 변경
-          style: titleStyle?.copyWith(
-            fontSize: (titleStyle.fontSize ?? 20), // Adjust size if needed
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            tooltip: '화면 초기화',
-            onPressed: onResetScreenPressed,
-          ),
-        ],
-      ),
-      drawer: const AppDrawer(currentScreen: AppScreen.accessoryEnhancement),
-      body: !isAccessorySelected
+    final body = !isAccessorySelected
           ? Center(
               // 악세사리가 선택되지 않았을 때만 Center 사용
               child: GestureDetector(
@@ -700,7 +685,30 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                   ],
                 ),
               ),
-            ), // This was the missing closing parenthesis for Padding
+            );
+
+    if (embedded) {
+      return body;
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          '악세사리 강화', // 1. AppBar 제목 변경
+          style: titleStyle?.copyWith(
+            fontSize: (titleStyle.fontSize ?? 20), // Adjust size if needed
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: '화면 초기화',
+            onPressed: onResetScreenPressed,
+          ),
+        ],
+      ),
+      drawer: const AppDrawer(currentScreen: AppScreen.accessoryEnhancement),
+      body: body,
     );
   } // build method ends here
 
