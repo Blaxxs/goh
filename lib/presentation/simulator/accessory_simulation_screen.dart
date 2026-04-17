@@ -1235,43 +1235,100 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       '${accessory?.part ?? '-'} / ${accessory?.restrictions ?? '-'}'),
                   if (fixedRowCount > 0) ...[
                     const SizedBox(height: 8),
+                    // 헤더 행
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Row(
+                        children: [
+                          const Expanded(child: SizedBox()),
+                          SizedBox(
+                            width: 50,
+                            child: Text(
+                              '수치',
+                              textAlign: TextAlign.right,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            width: 64,
+                            child: Text(
+                              '등장 범위',
+                              textAlign: TextAlign.right,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Theme.of(context).colorScheme.outline,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     Column(
                       children: List.generate(fixedRowCount, (i) {
                         final baseOption = i < (accessory?.options.length ?? 0) ? accessory!.options[i] : null;
-                        final displayOption = i < displayOptions.length ? displayOptions[i] : null;
+                        // 등장 여부: baseOption의 이름이 displayOptions에 있는지 확인
+                        final appearedOption = baseOption == null
+                            ? null
+                            : displayOptions.where((o) => o.optionName == baseOption.optionName).firstOrNull;
+                        final appeared = appearedOption != null;
                         final minVal = baseOption?.minNormalValue;
                         final maxVal = baseOption?.maxNormalValue;
                         final hasRange = minVal != null && maxVal != null;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 1),
+                        // 등장 시 등급 색상
+                        final grade = _simulatedState?.grade;
+                        final highlightColor = appeared
+                            ? _borderColorForGrade(grade, Theme.of(context)).withOpacity(0.18)
+                            : null;
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 1),
+                          decoration: highlightColor != null
+                              ? BoxDecoration(
+                                  color: highlightColor,
+                                  borderRadius: BorderRadius.circular(4),
+                                )
+                              : null,
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  displayOption?.optionName ?? '',
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                  baseOption?.optionName ?? '',
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontWeight: appeared ? FontWeight.w700 : FontWeight.normal,
+                                    color: appeared
+                                        ? _borderColorForGrade(grade, Theme.of(context))
+                                        : null,
+                                  ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              if (hasRange) ...[                                const SizedBox(width: 4),
-                                Text(
-                                  '$minVal~$maxVal',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context).colorScheme.outline,
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(width: 8),
                               SizedBox(
                                 width: 50,
                                 child: Text(
-                                  displayOption != null ? _formatOptionValueForSummary(displayOption) : '',
+                                  appeared ? _formatOptionValueForSummary(appearedOption) : '-',
                                   textAlign: TextAlign.right,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(fontWeight: FontWeight.w600),
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontWeight: appeared ? FontWeight.w700 : FontWeight.normal,
+                                    color: appeared
+                                        ? _borderColorForGrade(grade, Theme.of(context))
+                                        : Theme.of(context).colorScheme.outline,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              SizedBox(
+                                width: 64,
+                                child: Text(
+                                  hasRange ? '$minVal~$maxVal' : '-',
+                                  textAlign: TextAlign.right,
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context).colorScheme.outline,
+                                  ),
                                 ),
                               ),
                             ],
