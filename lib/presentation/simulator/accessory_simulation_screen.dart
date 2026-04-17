@@ -1175,8 +1175,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   const SizedBox(height: 12),
                   _buildModeSelector(),
                   const SizedBox(height: 12),
-                  _buildOptionRangeGuideCard(context),
-                  const SizedBox(height: 12),
                   if (_hasSimulatedItem &&
                       _selectedMode != AccessorySimulationMode.craft) ...[
                     _buildSimulatedAccessoryCard(context),
@@ -1239,24 +1237,36 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     const SizedBox(height: 8),
                     Column(
                       children: List.generate(fixedRowCount, (i) {
-                        final option = i < displayOptions.length ? displayOptions[i] : null;
+                        final baseOption = i < (accessory?.options.length ?? 0) ? accessory!.options[i] : null;
+                        final displayOption = i < displayOptions.length ? displayOptions[i] : null;
+                        final minVal = baseOption?.minNormalValue;
+                        final maxVal = baseOption?.maxNormalValue;
+                        final hasRange = minVal != null && maxVal != null;
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 1),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
-                                  option?.optionName ?? '',
+                                  displayOption?.optionName ?? '',
                                   style: Theme.of(context).textTheme.bodySmall,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
+                              if (hasRange) ...[                                const SizedBox(width: 4),
+                                Text(
+                                  '$minVal~$maxVal',
+                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context).colorScheme.outline,
+                                  ),
+                                ),
+                              ],
                               const SizedBox(width: 8),
                               SizedBox(
-                                width: 112,
+                                width: 50,
                                 child: Text(
-                                  option != null ? _formatOptionValueForSummary(option) : '',
+                                  displayOption != null ? _formatOptionValueForSummary(displayOption) : '',
                                   textAlign: TextAlign.right,
                                   style: Theme.of(context)
                                       .textTheme
