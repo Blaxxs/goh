@@ -1265,77 +1265,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     );
   }
 
-  (String, String, String) _enhancementDisplayProbabilities(
-    Map<String, double> baseProbs,
-  ) {
-    final baseSuccessChance = baseProbs['success']!;
-    final baseFailNoChangeChance = baseProbs['fail_no_change']!;
-    final baseDowngradeChance = baseProbs['downgrade']!;
-    final aidBonusValue = AccessoryEnhancementScreenUI
-            .enhancementAidBonuses[_selectedEnhancementAid] ??
-        0.0;
-    final isSpecialAidNoDowngrade = _selectedEnhancementAid.startsWith('스페셜') &&
-        _selectedEnhancementAid != '스페셜 특급 보조제';
-    final isSuperSpecialAid100Success = _selectedEnhancementAid == '스페셜 특급 보조제';
-
-    double finalSuccessChance;
-    double finalFailNoChangeChance;
-    double finalDowngradeChance;
-
-    if (isSuperSpecialAid100Success) {
-      finalSuccessChance = 1.0;
-      finalFailNoChangeChance = 0.0;
-      finalDowngradeChance = 0.0;
-    } else {
-      double bonusToApply = aidBonusValue;
-      if (bonusToApply > baseFailNoChangeChance) {
-        bonusToApply = baseFailNoChangeChance;
-      }
-      finalSuccessChance = baseSuccessChance + bonusToApply;
-      finalFailNoChangeChance = baseFailNoChangeChance - bonusToApply;
-      finalDowngradeChance =
-          isSpecialAidNoDowngrade ? 0.0 : baseDowngradeChance;
-    }
-
-    return (
-      '${(finalSuccessChance * 100).toStringAsFixed(0)}%',
-      '${(finalFailNoChangeChance * 100).toStringAsFixed(0)}%',
-      '${(finalDowngradeChance * 100).toStringAsFixed(0)}%',
-    );
-  }
-
-  Widget _buildEnhancementStatsCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('강화 통계', style: Theme.of(context).textTheme.titleSmall),
-            const SizedBox(height: 8),
-            Text('시도: ${_numberFormat.format(_enhancementAttemptCount)}회'),
-            Text('성공: ${_numberFormat.format(_enhancementSuccessCount)}회'),
-            Text('유지 실패: ${_numberFormat.format(_enhancementFailKeepCount)}회'),
-            Text(
-                '하락 실패: ${_numberFormat.format(_enhancementFailDowngradeCount)}회'),
-            const Divider(height: 20),
-            Text('누적 숫돌: ${_numberFormat.format(_totalConsumedStones)}개'),
-            Text('누적 골드: ${_numberFormat.format(_totalConsumedGold)}'),
-            if (_consumedAidsCount.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text('보조제 사용', style: Theme.of(context).textTheme.bodyMedium),
-              const SizedBox(height: 4),
-              ..._consumedAidsCount.entries.map(
-                (entry) =>
-                    Text('${entry.key}: ${_numberFormat.format(entry.value)}개'),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildOptionChangeSection(BuildContext context) {
     if (!_hasSimulatedItem) {
       return _buildInfoCard('먼저 제작에서 현재 악세를 생성해 주세요.');
@@ -1625,6 +1554,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return InkWell(
       onTap: () {
         setState(() {
+          _selectedAccessory = entry.accessory;
           _simulatedState = SimulatedAccessoryState(
             accessory: entry.accessory,
             baseOptions: List<AccessoryOption>.from(entry.options),
@@ -1807,25 +1737,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     final maxValue = option.maxNormalValue;
     final currentValue = int.tryParse(option.optionValue);
     return maxValue != null && currentValue != null && currentValue == maxValue;
-  }
-
-  Map<int, double> _optionCountProbabilitiesForDisplay(
-    AccessoryRandomOptionConfig config,
-  ) {
-    if (config.minOptionCount == config.maxOptionCount) {
-      return {config.minOptionCount: 100};
-    }
-    return config.maxOptionCount >= 3
-        ? RandomAccessoryRepository.optionCountProbabilitiesOneToThree
-        : RandomAccessoryRepository.optionCountProbabilitiesOneToTwo;
-  }
-
-  String _optionProbText(Map<int, double> probs) {
-    final items = probs.entries.toList()
-      ..sort((a, b) => a.key.compareTo(b.key));
-    return items
-        .map((e) => '${e.key}개 ${e.value.toStringAsFixed(0)}%')
-        .join(', ');
   }
 
   String _gradeProbText(Map<String, double> probs) {
