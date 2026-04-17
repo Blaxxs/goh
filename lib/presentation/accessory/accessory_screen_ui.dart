@@ -104,6 +104,23 @@ class AccessoryScreenUI extends StatelessWidget {
                                 : '랜덤옵션',
                           ),
                         ),
+                        const SizedBox(width: 8),
+                        ...partFilterOptions
+                            .where((part) => part != '전체')
+                            .map((part) {
+                          final selected = selectedPartFilter == part;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: FilterChip(
+                              label: Text(part),
+                              showCheckmark: false,
+                              selected: selected,
+                              onSelected: (_) => onPartFilterChanged(
+                                selected ? null : part,
+                              ),
+                            ),
+                          );
+                        }),
                         Container(
                           width: 1,
                           height: 22,
@@ -135,30 +152,6 @@ class AccessoryScreenUI extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        ...partFilterOptions
-                            .where((part) => part != '전체')
-                            .map((part) {
-                          final selected = selectedPartFilter == part;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 6),
-                            child: FilterChip(
-                              label: Text(part),
-                              showCheckmark: false,
-                              selected: selected,
-                              onSelected: (_) => onPartFilterChanged(
-                                selected ? null : part,
-                              ),
-                            ),
-                          );
-                        }),
                       ],
                     ),
                   ),
