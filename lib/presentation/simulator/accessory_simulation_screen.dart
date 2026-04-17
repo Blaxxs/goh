@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/accessory_constants.dart';
 import '../../core/constants/box_constants.dart';
@@ -16,6 +17,7 @@ const _silverRemodelGoldCost = 20000;
 const _goldRemodelGoldCost = 3000;
 const _autoEnhanceBatchSize = 30;
 const _maxCraftLogCount = 80;
+const _lastSelectedAccessoryIdKey = 'accessory_sim_last_selected_id';
 
 enum AccessorySimulationMode {
   craft,
@@ -289,6 +291,56 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       _selectedAccessory = allAccessories.first;
     }
     _syncSelectedOptionCount();
+    _loadLastSelectedAccessory();
+  }
+
+  Future<void> _loadLastSelectedAccessory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedId = prefs.getString(_lastSelectedAccessoryIdKey);
+      if (savedId == null || savedId.isEmpty) {
+        return;
+      }
+
+      final allAccessories = AccessoryDataManager().allAccessories;
+      if (allAccessories.isEmpty) {
+        return;
+      }
+
+      Accessory? matched;
+      for (final acc in allAccessories) {
+        if (acc.id == savedId) {
+          matched = acc;
+          break;
+        }
+      }
+      if (matched == null || !mounted) {
+        return;
+      }
+
+      setState(() {
+        _selectedAccessory = matched;
+        _simulatedState = null;
+        _craftAttemptCount = 0;
+        _craftLogs.clear();
+        _resetEnhancementState();
+        _resetOptionChangeState();
+        _resetRemodelState();
+        _syncSelectedOptionCount();
+        _selectedMode = AccessorySimulationMode.craft;
+      });
+    } catch (_) {
+      // Ignore persistence load failures and keep current in-memory selection.
+    }
+  }
+
+  Future<void> _saveLastSelectedAccessory(String accessoryId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_lastSelectedAccessoryIdKey, accessoryId);
+    } catch (_) {
+      // Ignore persistence save failures; simulation should still work.
+    }
   }
 
   bool get _hasSimulatedItem => _simulatedState != null;
@@ -546,6 +598,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       _syncSelectedOptionCount();
       _selectedMode = AccessorySimulationMode.craft;
     });
+    _saveLastSelectedAccessory(accessory.id);
   }
 
   void _resetEnhancementState() {
