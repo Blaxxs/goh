@@ -290,6 +290,16 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                           )
                         : const Icon(Icons.play_arrow),
                     label: Text(isSimulating ? '실행 중...' : '옵션 변경'),
+                    style: ElevatedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: const Size(0, 34),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      textStyle: theme.textTheme.labelMedium,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -301,6 +311,14 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: _darkGreenColor(),
                       side: BorderSide(color: _darkGreenColor()),
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: const Size(0, 34),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      textStyle: theme.textTheme.labelMedium,
                     ),
                   ),
                 ),
@@ -581,6 +599,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
+              style: TextButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                minimumSize: const Size(0, 32),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                textStyle: theme.textTheme.labelMedium,
+              ),
               child: const Text('취소'),
             ),
             ElevatedButton(
@@ -588,6 +613,13 @@ class ExplorationOptionSimulationScreenUI extends StatelessWidget {
                 Navigator.of(context).pop();
                 onRunAllSlotsSimulation();
               },
+              style: ElevatedButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                minimumSize: const Size(0, 32),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                textStyle: theme.textTheme.labelMedium,
+              ),
               child: const Text('옵션 변경'),
             ),
           ],
