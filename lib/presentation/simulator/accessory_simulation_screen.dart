@@ -1504,11 +1504,24 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 ),
                 const SizedBox(height: 8),
                 _buildSimpleCostCard(_currentRemodelCost),
+                const SizedBox(height: 6),
+                Text(
+                  '개조 횟수: $_remodelAttemptCount/15',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                if (!_canAttemptRemodelByCount)
+                  Text(
+                    '불가능(빨간색 글씨) 합니다.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
-                    onPressed: _performRemodel,
+                    onPressed: _canAttemptRemodelByCount ? _performRemodel : null,
                     icon: const Icon(Icons.build_circle_outlined),
                     label: const Text('개조 실행'),
                   ),
@@ -1529,6 +1542,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
                 Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
                 Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
+                Text('영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
               ],
             ),
           ),
