@@ -401,6 +401,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       builder: (sheetContext) {
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
+            final colorScheme = Theme.of(ctx).colorScheme;
             final filtered = allAccessories.where((a) {
             final matchesPart = _accessoryPickerSelectedPart == null ||
               a.part == _accessoryPickerSelectedPart;
@@ -465,6 +466,34 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                 label: Text(part),
                                 showCheckmark: false,
                                 selected: _accessoryPickerSelectedPart == part,
+                                selectedColor: colorScheme.primaryContainer,
+                                backgroundColor:
+                                  colorScheme.surface.withValues(alpha: 0.65),
+                                side: BorderSide(
+                                  color: _accessoryPickerSelectedPart == part
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurface
+                                      .withValues(alpha: 0.28),
+                                  width:
+                                    _accessoryPickerSelectedPart == part
+                                      ? 1.3
+                                      : 1,
+                                ),
+                                labelStyle: Theme.of(ctx)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                    color: _accessoryPickerSelectedPart == part
+                                      ? colorScheme.onPrimaryContainer
+                                      : colorScheme.onSurface,
+                                    fontWeight:
+                                      _accessoryPickerSelectedPart == part
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
+                                visualDensity: VisualDensity.compact,
+                                materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                                 onSelected: (_) => setSheetState(
                                   () => _accessoryPickerSelectedPart =
                                       _accessoryPickerSelectedPart == part
@@ -487,6 +516,36 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             label: const Text('고정옵션'),
                             showCheckmark: false,
                             selected: _accessoryPickerSelectedRandomType == false,
+                            selectedColor: colorScheme.primaryContainer,
+                            backgroundColor:
+                              colorScheme.surface.withValues(alpha: 0.65),
+                            side: BorderSide(
+                              color:
+                                _accessoryPickerSelectedRandomType == false
+                                  ? colorScheme.primary
+                                  : colorScheme.onSurface
+                                    .withValues(alpha: 0.28),
+                              width:
+                                _accessoryPickerSelectedRandomType == false
+                                  ? 1.3
+                                  : 1,
+                            ),
+                            labelStyle: Theme.of(ctx)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(
+                                color:
+                                  _accessoryPickerSelectedRandomType == false
+                                    ? colorScheme.onPrimaryContainer
+                                    : colorScheme.onSurface,
+                                fontWeight:
+                                  _accessoryPickerSelectedRandomType == false
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
+                            visualDensity: VisualDensity.compact,
+                            materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                             onSelected: (_) => setSheetState(
                               () => _accessoryPickerSelectedRandomType =
                                   _accessoryPickerSelectedRandomType == false
@@ -499,6 +558,34 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             label: const Text('랜덤옵션'),
                             showCheckmark: false,
                             selected: _accessoryPickerSelectedRandomType == true,
+                            selectedColor: colorScheme.primaryContainer,
+                            backgroundColor:
+                              colorScheme.surface.withValues(alpha: 0.65),
+                            side: BorderSide(
+                              color: _accessoryPickerSelectedRandomType == true
+                                ? colorScheme.primary
+                                : colorScheme.onSurface
+                                  .withValues(alpha: 0.28),
+                              width:
+                                _accessoryPickerSelectedRandomType == true
+                                  ? 1.3
+                                  : 1,
+                            ),
+                            labelStyle: Theme.of(ctx)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(
+                                color: _accessoryPickerSelectedRandomType == true
+                                  ? colorScheme.onPrimaryContainer
+                                  : colorScheme.onSurface,
+                                fontWeight:
+                                  _accessoryPickerSelectedRandomType == true
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
+                            visualDensity: VisualDensity.compact,
+                            materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
                             onSelected: (_) => setSheetState(
                               () => _accessoryPickerSelectedRandomType =
                                   _accessoryPickerSelectedRandomType == true
