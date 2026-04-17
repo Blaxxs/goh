@@ -1042,7 +1042,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   const SizedBox(height: 12),
                   _buildModeSelector(),
                   const SizedBox(height: 12),
-                  if (_hasSimulatedItem) ...[
+                  if (_hasSimulatedItem &&
+                      _selectedMode != AccessorySimulationMode.craft) ...[
                     _buildSimulatedAccessoryCard(context),
                     const SizedBox(height: 12),
                   ],
@@ -1165,17 +1166,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('제작', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 8),
-                Text(
-                  isRandom
-                      ? '랜덤 악세는 제작할 때마다 옵션과 테두리가 새로 결정됩니다.'
-                      : '고정옵션 악세사리는 제작 시 기본 옵션 그대로 생성됩니다.',
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '제작 시 재화는 차감되지 않으며, 결과는 아래 기록에 누적됩니다.',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
@@ -1567,19 +1557,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: borderColor, width: 2),
-              ),
-              child: CachedNetworkImage(
-                imageUrl: state.accessory.imageUrl,
-                fit: BoxFit.contain,
-                errorWidget: (_, __, ___) =>
-                    const Icon(Icons.image_not_supported_outlined),
-              ),
+            _buildAccessoryIcon(
+              imageUrl: state.accessory.imageUrl,
+              grade: state.grade,
+              size: 72,
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -1599,15 +1580,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   Text('강화: ${_currentEnhancementLevel}강'),
                   const SizedBox(height: 8),
                   ...state.currentOptions.map(
-                    (option) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Row(
-                        children: [
-                          Expanded(child: Text(option.optionName)),
-                          _buildOptionValueWidget(context, option),
-                        ],
-                      ),
-                    ),
+                    (option) => _buildCompactOptionLine(context, option),
                   ),
                 ],
               ),
@@ -1649,46 +1622,134 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     BuildContext context,
     CraftedAccessoryLogEntry entry,
   ) {
-    final borderColor = _borderColorForGrade(entry.grade, Theme.of(context));
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: borderColor, width: 1.5),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${entry.attempt}회차 · ${entry.accessory.name}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .titleSmall
-                        ?.copyWith(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                Text(entry.grade == null ? '고정옵션' : '테두리: ${entry.grade}'),
-              ],
-            ),
-            const SizedBox(height: 8),
-            ...entry.options.map(
-              (option) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 2),
-                child: Row(
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _simulatedState = SimulatedAccessoryState(
+            accessory: entry.accessory,
+            baseOptions: List<AccessoryOption>.from(entry.options),
+            currentOptions: List<AccessoryOption>.from(entry.options),
+            grade: entry.grade,
+          );
+          _resetEnhancementState();
+          _resetOptionChangeState();
+          _resetRemodelState();
+          _syncSelectedOptionCount();
+        });
+      },
+      borderRadius: BorderRadius.circular(12),
+      child: Card(
+        margin: const EdgeInsets.only(bottom: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildAccessoryIcon(
+                imageUrl: entry.accessory.imageUrl,
+                grade: entry.grade,
+                size: 56,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: Text(option.optionName)),
-                    _buildOptionValueWidget(context, option),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${entry.attempt}회차 · ${entry.accessory.name}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Text(entry.grade == null ? '고정옵션' : '테두리: ${entry.grade}'),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ...entry.options.map(
+                      (option) => _buildCompactOptionLine(context, option),
+                    ),
                   ],
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCompactOptionLine(BuildContext context, AccessoryOption option) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            flex: 11,
+            child: Text(
+              option.optionName,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-          ],
+          ),
+          const SizedBox(width: 8),
+          Flexible(
+            flex: 9,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildOptionValueWidget(context, option),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAccessoryIcon({
+    required String imageUrl,
+    required String? grade,
+    required double size,
+  }) {
+    final colors = _gradientColorsForGrade(grade);
+    return Container(
+      width: size,
+      height: size,
+      padding: const EdgeInsets.all(2.5),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: LinearGradient(
+          colors: colors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colors.last.withAlpha(90),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Container(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: ClipOval(
+          child: CachedNetworkImage(
+            imageUrl: imageUrl,
+            fit: BoxFit.contain,
+            errorWidget: (_, __, ___) =>
+                const Icon(Icons.image_not_supported_outlined),
+          ),
         ),
       ),
     );
@@ -1696,14 +1757,40 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Widget _buildOptionValueWidget(BuildContext context, AccessoryOption option) {
     final isMaxRoll = _isMaxRollOption(option);
-    return Text(
-      _formatOptionValueWithRange(option),
-      style: isMaxRoll
-          ? Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Colors.deepPurple.shade700,
-                fontWeight: FontWeight.bold,
-              )
-          : null,
+    final text = _formatOptionValueWithRange(option);
+    if (!isMaxRoll) {
+      return Text(
+        text,
+        textAlign: TextAlign.right,
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.deepPurple.shade400, Colors.pink.shade400],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(999),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.deepPurple.shade200.withAlpha(160),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: Colors.white.withAlpha(180)),
+      ),
+      child: Text(
+        text,
+        textAlign: TextAlign.right,
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w900,
+            ),
+      ),
     );
   }
 
@@ -1759,5 +1846,18 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       return Colors.amber.shade700;
     }
     return theme.dividerColor;
+  }
+
+  List<Color> _gradientColorsForGrade(String? grade) {
+    if (grade == RandomAccessoryRepository.gradeBlue) {
+      return [Colors.lightBlueAccent.shade100, Colors.blue.shade700];
+    }
+    if (grade == RandomAccessoryRepository.gradeGreen) {
+      return [Colors.lightGreenAccent.shade100, Colors.green.shade700];
+    }
+    if (grade == RandomAccessoryRepository.gradeYellow) {
+      return [Colors.amber.shade200, Colors.orange.shade700];
+    }
+    return [Colors.blueGrey.shade200, Colors.blueGrey.shade500];
   }
 }
