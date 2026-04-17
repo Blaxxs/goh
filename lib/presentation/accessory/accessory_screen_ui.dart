@@ -37,6 +37,7 @@ class AccessoryScreenUI extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final colorScheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         if (compareMode)
@@ -87,6 +88,29 @@ class AccessoryScreenUI extends StatelessWidget {
                           label: const Text('고정옵션'),
                           showCheckmark: false,
                           selected: selectedOptionTypeFilter == '고정옵션',
+                          selectedColor: colorScheme.primaryContainer,
+                          backgroundColor:
+                            colorScheme.surface.withValues(alpha: 0.65),
+                          side: BorderSide(
+                          color: selectedOptionTypeFilter == '고정옵션'
+                            ? colorScheme.primary
+                            : colorScheme.onSurface.withValues(alpha: 0.28),
+                          width:
+                            selectedOptionTypeFilter == '고정옵션' ? 1.3 : 1,
+                          ),
+                          labelStyle:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: selectedOptionTypeFilter == '고정옵션'
+                                ? colorScheme.onPrimaryContainer
+                                : colorScheme.onSurface,
+                              fontWeight:
+                                selectedOptionTypeFilter == '고정옵션'
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              ),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                            MaterialTapTargetSize.shrinkWrap,
                           onSelected: (_) => onOptionTypeFilterChanged(
                             selectedOptionTypeFilter == '고정옵션'
                                 ? '전체'
@@ -98,6 +122,29 @@ class AccessoryScreenUI extends StatelessWidget {
                           label: const Text('랜덤옵션'),
                           showCheckmark: false,
                           selected: selectedOptionTypeFilter == '랜덤옵션',
+                          selectedColor: colorScheme.primaryContainer,
+                          backgroundColor:
+                            colorScheme.surface.withValues(alpha: 0.65),
+                          side: BorderSide(
+                          color: selectedOptionTypeFilter == '랜덤옵션'
+                            ? colorScheme.primary
+                            : colorScheme.onSurface.withValues(alpha: 0.28),
+                          width:
+                            selectedOptionTypeFilter == '랜덤옵션' ? 1.3 : 1,
+                          ),
+                          labelStyle:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: selectedOptionTypeFilter == '랜덤옵션'
+                                ? colorScheme.onPrimaryContainer
+                                : colorScheme.onSurface,
+                              fontWeight:
+                                selectedOptionTypeFilter == '랜덤옵션'
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
+                              ),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                            MaterialTapTargetSize.shrinkWrap,
                           onSelected: (_) => onOptionTypeFilterChanged(
                             selectedOptionTypeFilter == '랜덤옵션'
                                 ? '전체'
@@ -115,6 +162,29 @@ class AccessoryScreenUI extends StatelessWidget {
                               label: Text(part),
                               showCheckmark: false,
                               selected: selected,
+                              selectedColor: colorScheme.primaryContainer,
+                              backgroundColor:
+                                  colorScheme.surface.withValues(alpha: 0.65),
+                              side: BorderSide(
+                                color: selected
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurface.withValues(alpha: 0.28),
+                                width: selected ? 1.3 : 1,
+                              ),
+                              labelStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                    color: selected
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurface,
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                               onSelected: (_) => onPartFilterChanged(
                                 selected ? null : part,
                               ),
