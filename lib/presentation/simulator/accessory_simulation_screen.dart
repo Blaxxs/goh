@@ -867,6 +867,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (_simulatedState == null || _selectedAccessory == null) return;
 
     final current = List<AccessoryOption>.from(_currentOptions);
+    final baseOptionCount = _baseOptions.length;
 
     setState(() {
       switch (_selectedAction) {
@@ -880,7 +881,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           }
           break;
         case AccessorySimulationOptionChangeAction.changeThird:
-          if (current.length >= 3) {
+          // 제작 시 기본으로 존재한 3옵은 변경 불가, 확장으로 열린 3옵만 변경 가능
+          if (current.length >= 3 && baseOptionCount < 3) {
             current[2] =
                 _generateRandomOption(forSlot: 2, existingOptions: current);
             _totalSoulStonesConsumed += 100;
