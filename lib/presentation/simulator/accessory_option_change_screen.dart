@@ -420,6 +420,9 @@ class _AccessoryOptionChangeScreenState
   // 랜덤 옵션을 생성하는 헬퍼 함수 (실제 게임 로직에 따라 구현 필요)
   AccessoryOption _generateRandomOption(
       {required int forSlot, required List<AccessoryOption> existingOptions}) {
+    if (_selectedAccessory == null) {
+      return _possibleChangeableOptions.first;
+    }
     final random = Random();
     Set<String> excludedOptionNames = {};
 
@@ -458,8 +461,9 @@ class _AccessoryOptionChangeScreenState
       // 실제 게임에서는 이런 경우가 발생하지 않도록 옵션 풀을 충분히 크게 설계해야 함.
       debugPrint(
           'Warning: No available options after applying duplication rules for slot $forSlot. Returning random from full list.');
-      return _possibleChangeableOptions[
+      final fallback = _possibleChangeableOptions[
           random.nextInt(_possibleChangeableOptions.length)];
+      return _rollOptionValue(fallback, random);
     }
 
     // 가중치 기반 랜덤 선택 로직
@@ -472,12 +476,36 @@ class _AccessoryOptionChangeScreenState
     for (var option in availableOptions) {
       randomValue -= _getOptionWeight(option.optionName);
       if (randomValue < 0) {
-        return option;
+        return _rollOptionValue(option, random);
       }
     }
 
     // 혹시 모를 예외 상황 시 마지막 옵션 반환
-    return availableOptions.last;
+    return _rollOptionValue(availableOptions.last, random);
+  }
+
+  AccessoryOption _rollOptionValue(AccessoryOption source, Random random) {
+    final (minValue, maxValue) = _resolveOptionRange(source);
+    final isFixedAccessory = _selectedAccessory?.randomOptionConfig == null;
+    final value = isFixedAccessory
+        ? maxValue
+        : minValue + random.nextInt(maxValue - minValue + 1);
+
+    return AccessoryOption(
+      optionName: source.optionName,
+      optionValue: value.toString(),
+      minNormalValue: minValue,
+      maxNormalValue: maxValue,
+    );
+  }
+
+  (int, int) _resolveOptionRange(AccessoryOption option) {
+    final parsedValue = int.tryParse(option.optionValue) ?? 1;
+    final rawMin = option.minNormalValue ?? (parsedValue * 0.6).round();
+    final rawMax = option.maxNormalValue ?? parsedValue;
+    final minValue = rawMin < 1 ? 1 : (rawMin <= rawMax ? rawMin : rawMax);
+    final maxValue = rawMax >= minValue ? rawMax : minValue;
+    return (minValue, maxValue);
   }
 
   @override
