@@ -283,6 +283,11 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   int _craftAttemptCount = 0;
   final List<CraftedAccessoryLogEntry> _craftLogs = [];
 
+  // 악세 선택 바텀시트 필터 상태 (사용자가 바꾸기 전까지 유지)
+  String? _accessoryPickerSelectedPart;
+  bool? _accessoryPickerSelectedRandomType;
+  String _accessoryPickerSearchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -383,9 +388,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (allAccessories.isEmpty) return;
 
     final parts = allAccessories.map((a) => a.part).toSet().toList()..sort();
-    String? selectedPart;
-    bool? selectedRandomType;
-    String searchQuery = '';
+    final searchController = TextEditingController(
+      text: _accessoryPickerSearchQuery,
+    );
 
     showModalBottomSheet<void>(
       context: context,
@@ -397,14 +402,15 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
             final filtered = allAccessories.where((a) {
-              final matchesPart =
-                  selectedPart == null || a.part == selectedPart;
+            final matchesPart = _accessoryPickerSelectedPart == null ||
+              a.part == _accessoryPickerSelectedPart;
               final isRandom = a.randomOptionConfig != null;
-              final matchesOptionType = selectedRandomType == null
+            final matchesOptionType = _accessoryPickerSelectedRandomType == null
                   ? true
-                  : isRandom == selectedRandomType;
-              final matchesSearch = searchQuery.isEmpty ||
-                  a.name.toLowerCase().contains(searchQuery.toLowerCase());
+              : isRandom == _accessoryPickerSelectedRandomType;
+            final query = _accessoryPickerSearchQuery.toLowerCase();
+            final matchesSearch = query.isEmpty ||
+              a.name.toLowerCase().contains(query);
               return matchesPart && matchesOptionType && matchesSearch;
             }).toList()
               ..sort((a, b) => a.name.compareTo(b.name));
@@ -430,7 +436,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: TextField(
-                        onChanged: (v) => setSheetState(() => searchQuery = v),
+                        controller: searchController,
+                        onChanged: (v) => setSheetState(
+                          () => _accessoryPickerSearchQuery = v,
+                        ),
                         decoration: const InputDecoration(
                           hintText: '이름 검색',
                           prefixIcon: Icon(Icons.search, size: 20),
@@ -455,10 +464,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               child: FilterChip(
                                 label: Text(part),
                                 showCheckmark: false,
-                                selected: selectedPart == part,
+                                selected: _accessoryPickerSelectedPart == part,
                                 onSelected: (_) => setSheetState(
-                                  () => selectedPart =
-                                      selectedPart == part ? null : part,
+                                  () => _accessoryPickerSelectedPart =
+                                      _accessoryPickerSelectedPart == part
+                                          ? null
+                                          : part,
                                 ),
                               ),
                             ),
@@ -475,20 +486,24 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           FilterChip(
                             label: const Text('고정옵션'),
                             showCheckmark: false,
-                            selected: selectedRandomType == false,
+                            selected: _accessoryPickerSelectedRandomType == false,
                             onSelected: (_) => setSheetState(
-                              () => selectedRandomType =
-                                  selectedRandomType == false ? null : false,
+                              () => _accessoryPickerSelectedRandomType =
+                                  _accessoryPickerSelectedRandomType == false
+                                      ? null
+                                      : false,
                             ),
                           ),
                           const SizedBox(width: 6),
                           FilterChip(
                             label: const Text('랜덤옵션'),
                             showCheckmark: false,
-                            selected: selectedRandomType == true,
+                            selected: _accessoryPickerSelectedRandomType == true,
                             onSelected: (_) => setSheetState(
-                              () => selectedRandomType =
-                                  selectedRandomType == true ? null : true,
+                              () => _accessoryPickerSelectedRandomType =
+                                  _accessoryPickerSelectedRandomType == true
+                                      ? null
+                                      : true,
                             ),
                           ),
                         ],
@@ -586,7 +601,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           },
         );
       },
-    );
+    ).whenComplete(searchController.dispose);
   }
 
   void _updateSelectedAccessory(Accessory accessory) {
