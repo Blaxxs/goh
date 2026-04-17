@@ -213,6 +213,37 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     ),
   ];
 
+  static const Map<String, List<int>> _randomOptionValueRangeTable = {
+    AccessoryOptionNames.attackPowerFlat: [300, 1500],
+    AccessoryOptionNames.hpFlat: [2000, 5000],
+    AccessoryOptionNames.critDamageFlat: [10, 35],
+    AccessoryOptionNames.critChanceFlat: [10, 30],
+    AccessoryOptionNames.critResistFlat: [10, 30],
+    AccessoryOptionNames.accuracyFlat: [10, 35],
+    AccessoryOptionNames.evasionFlat: [5, 25],
+    AccessoryOptionNames.activeSkillDmgPercent: [10, 35],
+    AccessoryOptionNames.activeSkillDmgTakenReducePercent: [10, 35],
+    AccessoryOptionNames.basicAtkDmgPercent: [10, 35],
+    AccessoryOptionNames.basicAtkDmgTakenReducePercent: [10, 35],
+    AccessoryOptionNames.dotDmgPercent: [10, 35],
+    AccessoryOptionNames.dotDmgTakenReducePercent: [10, 35],
+    AccessoryOptionNames.allBadEffectResistPercent: [10, 35],
+    AccessoryOptionNames.summonAtkFlat: [500, 2000],
+    AccessoryOptionNames.rabbitMaxHpChancePercent: [30, 50],
+    AccessoryOptionNames.counterAttackChancePercent: [3, 10],
+    AccessoryOptionNames.spaceTravelReturnChancePercent: [30, 50],
+    AccessoryOptionNames.hpRegenPerTurn: [1000, 3000],
+    AccessoryOptionNames.allDmgTakenReducePercent: [3, 15],
+    AccessoryOptionNames.miniGameSkillDmgPercent: [10, 35],
+    AccessoryOptionNames.recoveryEffectPercent: [5, 15],
+    AccessoryOptionNames.skillCooldownIncreaseResistPercent: [5, 20],
+    AccessoryOptionNames.atkPercent: [3, 10],
+    AccessoryOptionNames.defenseFlat: [2000, 5000],
+    AccessoryOptionNames.hpPercent: [3, 10],
+    AccessoryOptionNames.penetrationResistPercent: [2, 10],
+    AccessoryOptionNames.penetrationChancePercent: [2, 10],
+  };
+
   Accessory? _selectedAccessory;
   AccessorySimulationMode _selectedMode = AccessorySimulationMode.craft;
   SimulatedAccessoryState? _simulatedState;
@@ -851,6 +882,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   (int, int) _resolveOptionRange(AccessoryOption option) {
+    final isRandomAccessory = _selectedAccessory?.randomOptionConfig != null;
+    if (isRandomAccessory) {
+      final tableRange = _randomOptionValueRangeTable[option.optionName];
+      if (tableRange != null && tableRange.length == 2) {
+        return (tableRange[0], tableRange[1]);
+      }
+    }
+
     final parsedValue = int.tryParse(option.optionValue) ?? 1;
     final rawMin = option.minNormalValue ?? max(1, (parsedValue * 0.6).round());
     final rawMax = option.maxNormalValue ?? parsedValue;
