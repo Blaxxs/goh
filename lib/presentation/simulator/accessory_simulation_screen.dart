@@ -579,6 +579,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     _remodelAttemptCount = 0;
   }
 
+  void _resetRemodelAttemptCount() {
+    setState(() {
+      _remodelAttemptCount = 0;
+    });
+  }
+
   void _syncSelectedOptionCount() {
     final optionCount = _simulatedState?.currentOptions.length ??
         _selectedAccessory?.options.length ??
@@ -1113,6 +1119,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   const SizedBox(height: 12),
                   _buildModeSelector(),
                   const SizedBox(height: 12),
+                  _buildOptionRangeGuideCard(context),
+                  const SizedBox(height: 12),
                   if (_hasSimulatedItem &&
                       _selectedMode != AccessorySimulationMode.craft) ...[
                     _buildSimulatedAccessoryCard(context),
@@ -1550,15 +1558,20 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   },
                 ),
                 const SizedBox(height: 8),
-                Text(
-                  '등급 확률: ${_gradeProbText(_useGoldMoruForRemodel ? RandomAccessoryRepository.goldMoruGradeProbabilities : RandomAccessoryRepository.silverMoruGradeProbabilities)}',
-                ),
-                const SizedBox(height: 8),
                 _buildSimpleCostCard(_currentRemodelCost),
                 const SizedBox(height: 6),
                 Text(
                   '개조 횟수: $_remodelAttemptCount/15',
                   style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: OutlinedButton.icon(
+                    onPressed: _resetRemodelAttemptCount,
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text('개조 횟수 초기화'),
+                  ),
                 ),
                 if (!_canAttemptRemodelByCount)
                   RichText(
@@ -1600,6 +1613,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               children: [
                 Text('누적 소모', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
+                Text('개조 횟수: ${_numberFormat.format(_remodelAttemptCount)}회'),
                 Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
                 Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
                 Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
@@ -1832,7 +1846,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Widget _buildOptionValueWidget(BuildContext context, AccessoryOption option) {
     final isMaxRoll = _isMaxRollOption(option);
-    final text = _formatOptionValueWithRange(option);
+    final text = option.optionValue;
     final baseStyle = Theme.of(context).textTheme.bodyMedium;
     final baseFontSize = baseStyle?.fontSize ?? 14;
     return SizedBox(
@@ -1882,17 +1896,63 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return option.optionValue;
   }
 
+  Widget _buildOptionRangeGuideCard(BuildContext context) {
+    final accessory = _selectedAccessory;
+    if (accessory == null) {
+      return const SizedBox.shrink();
+    }
+
+    final options = accessory.options;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '선택 악세 등장 옵션 범위',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            if (options.isEmpty)
+              const Text('표시할 옵션이 없습니다.')
+            else
+              ...options.map((option) {
+                final minValue = option.minNormalValue;
+                final maxValue = option.maxNormalValue;
+                final rangeText = (minValue != null && maxValue != null)
+                    ? '$minValue~$maxValue'
+                    : '-';
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 2),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          option.optionName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(rangeText),
+                    ],
+                  ),
+                );
+              }),
+          ],
+        ),
+      ),
+    );
+  }
+
   bool _isMaxRollOption(AccessoryOption option) {
     final maxValue = option.maxNormalValue;
     final currentValue = int.tryParse(option.optionValue);
     return maxValue != null && currentValue != null && currentValue == maxValue;
-  }
-
-  String _gradeProbText(Map<String, double> probs) {
-    final blue = probs[RandomAccessoryRepository.gradeBlue] ?? 0;
-    final green = probs[RandomAccessoryRepository.gradeGreen] ?? 0;
-    final yellow = probs[RandomAccessoryRepository.gradeYellow] ?? 0;
-    return '파랑 ${blue.toStringAsFixed(0)}%, 초록 ${green.toStringAsFixed(0)}%, 노랑 ${yellow.toStringAsFixed(0)}%';
   }
 
   Color _borderColorForGrade(String? grade, ThemeData theme) {
