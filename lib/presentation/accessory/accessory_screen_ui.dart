@@ -14,9 +14,6 @@ class AccessoryScreenUI extends StatelessWidget {
   final Function(BuildContext, Accessory) onAccessoryTap;
   final String currentSearchQuery;
   final VoidCallback onClearSearch;
-  final String searchOption;
-  final List<String> searchOptions;
-  final ValueChanged<String?> onSearchOptionChanged;
   final bool compareMode;
   final List<Accessory> compareList;
 
@@ -33,9 +30,6 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.onAccessoryTap,
     required this.currentSearchQuery,
     required this.onClearSearch,
-    required this.searchOption,
-    required this.searchOptions,
-    required this.onSearchOptionChanged,
     this.compareMode = false,
     this.compareList = const [],
   });
@@ -85,57 +79,13 @@ class AccessoryScreenUI extends StatelessWidget {
               child: Column(
                 children: [
                   // --- 검색 + 필터 (악세 시뮬레이터와 동일한 칩 UI) ---
-                  TextField(
-                    controller: searchController,
-                    onChanged: (_) {},
-                    decoration: InputDecoration(
-                      hintText: '이름 검색',
-                      prefixIcon: const Icon(Icons.search, size: 20),
-                      isDense: true,
-                      border: const OutlineInputBorder(),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 8,
-                      ),
-                      suffixIcon: currentSearchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: const Icon(Icons.clear, size: 20),
-                              onPressed: onClearSearch,
-                            )
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        ...partFilterOptions
-                            .where((part) => part != '전체')
-                            .map((part) {
-                          final selected = selectedPartFilter == part;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 6),
-                            child: FilterChip(
-                              label: Text(part),
-                              selected: selected,
-                              onSelected: (_) => onPartFilterChanged(
-                                selected ? null : part,
-                              ),
-                            ),
-                          );
-                        }),
-                        Container(
-                          width: 1,
-                          height: 22,
-                          margin: const EdgeInsets.symmetric(horizontal: 8),
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.25),
-                        ),
                         FilterChip(
                           label: const Text('고정옵션'),
+                          showCheckmark: false,
                           selected: selectedOptionTypeFilter == '고정옵션',
                           onSelected: (_) => onOptionTypeFilterChanged(
                             selectedOptionTypeFilter == '고정옵션'
@@ -146,7 +96,63 @@ class AccessoryScreenUI extends StatelessWidget {
                         const SizedBox(width: 6),
                         FilterChip(
                           label: const Text('랜덤옵션'),
+                          showCheckmark: false,
                           selected: selectedOptionTypeFilter == '랜덤옵션',
+                          onSelected: (_) => onOptionTypeFilterChanged(
+                            selectedOptionTypeFilter == '랜덤옵션'
+                                ? '전체'
+                                : '랜덤옵션',
+                          ),
+                        ),
+                        Container(
+                          width: 1,
+                          height: 22,
+                          margin: const EdgeInsets.symmetric(horizontal: 8),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.25),
+                        ),
+                        SizedBox(
+                          width: 170,
+                          child: TextField(
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              hintText: '검색',
+                              prefixIcon: const Icon(Icons.search, size: 20),
+                              isDense: true,
+                              border: const OutlineInputBorder(),
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 8,
+                              ),
+                              suffixIcon: currentSearchQuery.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.clear, size: 20),
+                                      onPressed: onClearSearch,
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ...partFilterOptions
+                            .where((part) => part != '전체')
+                              showCheckmark: false,
+                            .map((part) {
+                          final selected = selectedPartFilter == part;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 6),
+                            child: FilterChip(
+                              label: Text(part),
+                              selected: selected,
                           onSelected: (_) => onOptionTypeFilterChanged(
                             selectedOptionTypeFilter == '랜덤옵션'
                                 ? '전체'
