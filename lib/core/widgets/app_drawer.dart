@@ -9,11 +9,8 @@ import '../../presentation/box_calculator/box_calculator_screen.dart';
 import '../services/event_manager.dart';
 import '../../presentation/app_settings/app_settings_screen.dart'; // 앱 설정 화면 import
 import '../../presentation/journal/journal_screen.dart'; // 일지 화면 import
-import '../../presentation/simulator/accessory_enhancement_screen.dart'; // Corrected path
 import '../../presentation/simulator/accessory_simulation_screen.dart';
 import '../constants/box_constants.dart'; // AppScreen enum을 box_constants.dart에서 가져옵니다.
-import '../../presentation/simulator/accessory_option_change_screen.dart'; // 악세사리 옵션 변경 시뮬레이터 import
-import '../../presentation/simulator/random_accessory_simulator_screen.dart'; // 랜덤 악세 시뮬레이터 import
 import '../../presentation/simulator/exploration_option_simulation_screen.dart'; // 탐 옵션 시뮬레이션 import
 import '../../presentation/simulator/pouch_simulation_screen.dart'; // 주머니 시뮬레이션 import
 import '../../presentation/gold_calculator/gold_calculator_screen.dart'; // 골드 계산기 화면 import
