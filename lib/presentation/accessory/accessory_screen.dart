@@ -5,7 +5,6 @@ import '../../core/constants/accessory_constants.dart';
 import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/constants/box_constants.dart';
-import '../simulator/random_accessory_simulator_screen.dart';
 
 class AccessoryScreen extends StatefulWidget {
   final bool isPickerMode;
@@ -278,7 +277,6 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final randomConfig = widget.accessory.randomOptionConfig;
     return AlertDialog(
       title: Text(widget.accessory.name,
           style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -309,27 +307,6 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
                   child: Text('${option.optionName}: ${option.optionValue}'),
                 )),
-            if (randomConfig != null) ...[
-              const SizedBox(height: 12),
-              const Divider(),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => RandomAccessorySimulatorScreen(
-                          initialAccessory: widget.accessory,
-                        ),
-                      ),
-                    );
-                  },
-                  icon: const Icon(Icons.casino_outlined),
-                  label: const Text('랜덤악세 시뮬레이터로 이동'),
-                ),
-              ),
-            ],
             // 세트 옵션 표시
             if (widget.accessory.setOptions.isNotEmpty) ...[
               const SizedBox(height: 16),
