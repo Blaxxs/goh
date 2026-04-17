@@ -1776,6 +1776,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           _resetRemodelState();
           _syncSelectedOptionCount();
         });
+        _saveLastSelectedAccessory(entry.accessory.id);
       },
       borderRadius: BorderRadius.circular(12),
       child: Card(
