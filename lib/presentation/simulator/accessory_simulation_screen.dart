@@ -277,6 +277,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   int _totalRemodelGoldConsumed = 0;
   int _totalRemodelSoulStonesConsumed = 0;
   int _remodelAttemptCount = 0;
+  int _totalRemodelAttemptCount = 0;
   int _craftAttemptCount = 0;
   final List<CraftedAccessoryLogEntry> _craftLogs = [];
 
@@ -577,6 +578,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     _totalRemodelGoldConsumed = 0;
     _totalRemodelSoulStonesConsumed = 0;
     _remodelAttemptCount = 0;
+    _totalRemodelAttemptCount = 0;
   }
 
   void _resetRemodelAttemptCount() {
@@ -1020,6 +1022,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       }
       _totalRemodelSoulStonesConsumed += _currentRemodelSoulStoneCost;
       _remodelAttemptCount++;
+      _totalRemodelAttemptCount++;
       _syncSelectedOptionCount();
     });
   }
@@ -1613,7 +1616,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               children: [
                 Text('누적 소모', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
-                Text('개조 횟수: ${_numberFormat.format(_remodelAttemptCount)}회'),
+                Text('개조 횟수: ${_numberFormat.format(_totalRemodelAttemptCount)}회'),
                 Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
                 Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
                 Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
