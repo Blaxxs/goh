@@ -1134,29 +1134,41 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       '${accessory?.part ?? '-'} / ${accessory?.restrictions ?? '-'}'),
                   if (displayOptions.isNotEmpty) ...[
                     const SizedBox(height: 8),
-                    ...displayOptions.take(4).map(
-                      (option) => Padding(
-                        padding: const EdgeInsets.only(bottom: 3),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                option.optionName,
-                                style: Theme.of(context).textTheme.bodySmall,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                    SizedBox(
+                      height: 54,
+                      child: Column(
+                        children: List.generate(4, (index) {
+                          final hasOption = index < displayOptions.length;
+                          final option = hasOption ? displayOptions[index] : null;
+                          return Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    option?.optionName ?? '',
+                                    style: Theme.of(context).textTheme.bodySmall,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                SizedBox(
+                                  width: 112,
+                                  child: Text(
+                                    option == null
+                                        ? ''
+                                        : _formatOptionValueForSummary(option),
+                                    textAlign: TextAlign.right,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(fontWeight: FontWeight.w600),
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            Text(
-                              _formatOptionValueForSummary(option),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
+                          );
+                        }),
                       ),
                     ),
                   ],
@@ -1696,24 +1708,32 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Widget _buildCompactOptionLine(BuildContext context, AccessoryOption option) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Flexible(
-            flex: 11,
-            child: Text(
-              option.optionName,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            flex: 9,
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: _buildOptionValueWidget(context, option),
+          const Spacer(),
+          SizedBox(
+            width: 210,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    option.optionName,
+                    textAlign: TextAlign.right,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 112,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: _buildOptionValueWidget(context, option),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -1766,18 +1786,27 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildOptionValueWidget(BuildContext context, AccessoryOption option) {
     final isMaxRoll = _isMaxRollOption(option);
     final text = _formatOptionValueWithRange(option);
-    return Text(
-      text,
-      textAlign: TextAlign.right,
-      style: isMaxRoll
-          ? Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Colors.deepPurple.shade700,
-                fontWeight: FontWeight.w900,
-                fontSize:
-                    (Theme.of(context).textTheme.bodyLarge?.fontSize ?? 16) +
-                        2,
-              )
-          : null,
+    final baseStyle = Theme.of(context).textTheme.bodyMedium;
+    return SizedBox(
+      height: 22,
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Text(
+          text,
+          textAlign: TextAlign.right,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: (isMaxRoll
+                  ? baseStyle?.copyWith(
+                      color: Colors.deepPurple.shade700,
+                      fontWeight: FontWeight.w900,
+                      fontSize: (baseStyle?.fontSize ?? 14) + 1,
+                      height: 1.0,
+                    )
+                  : baseStyle)
+              ?.copyWith(height: 1.0),
+        ),
+      ),
     );
   }
 
