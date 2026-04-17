@@ -16,6 +16,7 @@ class MainScreenUI extends StatefulWidget {
   final VoidCallback onBoxCalculatorPressed;
   final VoidCallback onAccessoryEnhancementPressed;
   final VoidCallback onAccessoryOptionChangePressed;
+  final VoidCallback onAccessorySimulationPressed;
   final VoidCallback onExplorationOptionSimulationPressed;
   final VoidCallback onPouchSimulationPressed;
   final VoidCallback onRandomAccessorySimulatorPressed;
@@ -32,6 +33,7 @@ class MainScreenUI extends StatefulWidget {
     required this.onBoxCalculatorPressed,
     required this.onAccessoryEnhancementPressed,
     required this.onAccessoryOptionChangePressed,
+    required this.onAccessorySimulationPressed,
     required this.onExplorationOptionSimulationPressed,
     required this.onPouchSimulationPressed,
     required this.onRandomAccessorySimulatorPressed,
@@ -64,6 +66,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     '상자 기대값 계산기': Icons.inventory_2_rounded,
     '악세 강화 시뮬': Icons.auto_awesome_rounded,
     '악세 옵변 시뮬': Icons.swap_horiz_rounded,
+    '악세사리 시뮬레이션': Icons.precision_manufacturing_rounded,
     '탐 옵션 시뮬': Icons.explore_rounded,
     '주머니 시뮬': Icons.workspaces_outline,
     '랜덤악세 시뮬': Icons.casino_rounded,
@@ -98,6 +101,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
         return widget.onAccessoryEnhancementPressed;
       case 'optionChange':
         return widget.onAccessoryOptionChangePressed;
+      case 'accessorySimulation':
+        return widget.onAccessorySimulationPressed;
       case 'exploration':
         return widget.onExplorationOptionSimulationPressed;
       case 'pouch':
@@ -435,14 +440,9 @@ class _MainScreenUIState extends State<MainScreenUI> {
         title: '시뮬레이터',
         items: [
           const _MenuEntry(
-            key: 'enhancement',
-            text: '악세 강화 시뮬',
-            subtitle: '강화 기대값 계산',
-          ),
-          const _MenuEntry(
-            key: 'optionChange',
-            text: '악세 옵변 시뮬',
-            subtitle: '옵션 변경 시뮬',
+            key: 'accessorySimulation',
+            text: '악세사리 시뮬레이션',
+            subtitle: '제작/강화/옵변/개조 통합',
           ),
           const _MenuEntry(
             key: 'exploration',
@@ -453,11 +453,6 @@ class _MainScreenUIState extends State<MainScreenUI> {
             key: 'pouch',
             text: '주머니 시뮬',
             subtitle: '주머니 획득 시뮬',
-          ),
-          const _MenuEntry(
-            key: 'randomAccessory',
-            text: '랜덤악세 시뮬',
-            subtitle: '랜덤악세 제작 시뮬',
           ),
         ],
       ),

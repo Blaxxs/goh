@@ -346,40 +346,11 @@ class AppDrawer extends StatelessWidget {
                               left:
                                   showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
                               right: 16.0), // 아이콘 공간(16+12) + 텍스트 시작 패딩(16)
-                          title: Text('악세사리 강화', style: subDrawerItemTextStyle),
+                          title: Text('악세사리 시뮬레이션', style: subDrawerItemTextStyle),
                           onTap: () {
                             navigateFromMain(
-                              const AccessoryEnhancementScreen(),
-                              target: AppScreen.accessoryEnhancement,
-                            );
-                          },
-                        ),
-                        ListTile(
-                          dense: true,
-                          contentPadding: EdgeInsets.only(
-                              left:
-                                  showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
-                              right: 16.0),
-                          title:
-                              Text('악세사리 옵션 변경', style: subDrawerItemTextStyle),
-                          onTap: () {
-                            navigateFromMain(
-                              const AccessoryOptionChangeScreen(),
-                              target: AppScreen.accessoryOptionChange,
-                            );
-                          },
-                        ),
-                        ListTile(
-                          dense: true,
-                          contentPadding: EdgeInsets.only(
-                              left:
-                                  showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
-                              right: 16.0),
-                          title: Text('랜덤악세 시뮬레이션', style: subDrawerItemTextStyle),
-                          onTap: () {
-                            navigateFromMain(
-                              const RandomAccessorySimulatorScreen(),
-                              target: AppScreen.randomAccessorySimulation,
+                              const AccessorySimulationScreen(),
+                              target: AppScreen.accessorySimulation,
                             );
                           },
                         ),

@@ -15,6 +15,7 @@ import '../../core/services/event_manager.dart';
 import '../box_calculator/box_calculator_screen.dart';
 import '../simulator/accessory_enhancement_screen.dart';
 import '../simulator/accessory_option_change_screen.dart';
+import '../simulator/accessory_simulation_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
 import '../simulator/pouch_simulation_screen.dart';
 import '../simulator/random_accessory_simulator_screen.dart';
@@ -93,10 +94,10 @@ class _MainScreenState extends State<MainScreen> {
           }
         },
         onAccessoryEnhancementPressed: () {
-          _navigateToScreen(context, const AccessoryEnhancementScreen());
+          _navigateToScreen(context, const AccessorySimulationScreen());
         },
         onAccessoryOptionChangePressed: () {
-          _navigateToScreen(context, const AccessoryOptionChangeScreen());
+          _navigateToScreen(context, const AccessorySimulationScreen());
         },
         onExplorationOptionSimulationPressed: () {
           _navigateToScreen(context, const ExplorationOptionSimulationScreen());
@@ -105,7 +106,10 @@ class _MainScreenState extends State<MainScreen> {
           _navigateToScreen(context, const PouchSimulationScreen());
         },
         onRandomAccessorySimulatorPressed: () {
-          _navigateToScreen(context, const RandomAccessorySimulatorScreen());
+          _navigateToScreen(context, const AccessorySimulationScreen());
+        },
+        onAccessorySimulationPressed: () {
+          _navigateToScreen(context, const AccessorySimulationScreen());
         },
         onStageSettingsPressed: () {
           _navigateToScreen(context, const SettingsScreen());
