@@ -283,7 +283,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
             final filtered = allAccessories.where((a) {
-              final matchesPart = selectedPart == null || a.part == selectedPart;
+              final matchesPart =
+                  selectedPart == null || a.part == selectedPart;
               final matchesSearch = searchQuery.isEmpty ||
                   a.name.toLowerCase().contains(searchQuery.toLowerCase());
               return matchesPart && matchesSearch;
@@ -370,7 +371,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               itemCount: filtered.length,
                               itemBuilder: (_, index) {
                                 final acc = filtered[index];
-                                final isCurrent = _selectedAccessory?.id == acc.id;
+                                final isCurrent =
+                                    _selectedAccessory?.id == acc.id;
                                 return GestureDetector(
                                   onTap: () {
                                     Navigator.pop(sheetContext);
@@ -388,20 +390,24 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                                 : Colors.transparent,
                                             width: 2,
                                           ),
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(6),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           child: CachedNetworkImage(
                                             imageUrl: acc.imageUrl,
                                             width: 60,
                                             height: 60,
                                             fit: BoxFit.cover,
-                                            placeholder: (_, __) => const SizedBox(
+                                            placeholder: (_, __) =>
+                                                const SizedBox(
                                               width: 60,
                                               height: 60,
                                               child: Center(
-                                                child: CircularProgressIndicator(
+                                                child:
+                                                    CircularProgressIndicator(
                                                   strokeWidth: 1.5,
                                                 ),
                                               ),
@@ -411,7 +417,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                               width: 60,
                                               height: 60,
                                               child: Icon(
-                                                Icons.image_not_supported_outlined,
+                                                Icons
+                                                    .image_not_supported_outlined,
                                               ),
                                             ),
                                           ),
@@ -420,7 +427,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                       const SizedBox(height: 4),
                                       Text(
                                         acc.name,
-                                        style: Theme.of(ctx).textTheme.labelSmall,
+                                        style:
+                                            Theme.of(ctx).textTheme.labelSmall,
                                         textAlign: TextAlign.center,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -549,7 +557,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     );
   }
 
-  AccessoryOption? _findSourceOptionByName(Accessory accessory, String optionName) {
+  AccessoryOption? _findSourceOptionByName(
+      Accessory accessory, String optionName) {
     for (final option in accessory.options) {
       if (option.optionName == optionName) {
         return option;
@@ -683,25 +692,29 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           break;
         case AccessorySimulationOptionChangeAction.expandToThird:
           if (current.length < 3) {
-            current.add(_generateRandomOption(forSlot: 2, existingOptions: current));
+            current.add(
+                _generateRandomOption(forSlot: 2, existingOptions: current));
             _totalRainbowAnvilsConsumed++;
           }
           break;
         case AccessorySimulationOptionChangeAction.changeThird:
           if (current.length >= 3) {
-            current[2] = _generateRandomOption(forSlot: 2, existingOptions: current);
+            current[2] =
+                _generateRandomOption(forSlot: 2, existingOptions: current);
             _totalSoulStonesConsumed += 100;
           }
           break;
         case AccessorySimulationOptionChangeAction.expandToFourth:
           if (current.length < 4 && current.length >= 3) {
-            current.add(_generateRandomOption(forSlot: 3, existingOptions: current));
+            current.add(
+                _generateRandomOption(forSlot: 3, existingOptions: current));
             _total9EnhanceAccessoriesConsumed++;
           }
           break;
         case AccessorySimulationOptionChangeAction.changeFourth:
           if (current.length >= 4) {
-            current[3] = _generateRandomOption(forSlot: 3, existingOptions: current);
+            current[3] =
+                _generateRandomOption(forSlot: 3, existingOptions: current);
             _totalSoulStonesConsumed += 100;
             _totalGrindstonesConsumed += 300;
           }
@@ -802,7 +815,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     );
 
     final remodeledOptions = _currentOptions.map((option) {
-      final source = _findSourceOptionByName(_selectedAccessory!, option.optionName)!;
+      final source =
+          _findSourceOptionByName(_selectedAccessory!, option.optionName)!;
       final range = _gradeRange(
         source.minNormalValue!,
         source.maxNormalValue!,
@@ -836,11 +850,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   bool _canRemodelCurrentAccessory() {
-    if (_selectedAccessory?.randomOptionConfig == null || _simulatedState == null) {
+    if (_selectedAccessory?.randomOptionConfig == null ||
+        _simulatedState == null) {
       return false;
     }
     for (final option in _currentOptions) {
-      final source = _findSourceOptionByName(_selectedAccessory!, option.optionName);
+      final source =
+          _findSourceOptionByName(_selectedAccessory!, option.optionName);
       if (source?.minNormalValue == null || source?.maxNormalValue == null) {
         return false;
       }
@@ -975,7 +991,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 4),
-                  Text('${accessory?.part ?? '-'} / ${accessory?.restrictions ?? '-'}'),
+                  Text(
+                      '${accessory?.part ?? '-'} / ${accessory?.restrictions ?? '-'}'),
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: () => _selectAccessory(context),
@@ -1089,7 +1106,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             .baseEnhancementProbabilities[_currentEnhancementLevel] ??
         {'success': 0.0, 'fail_no_change': 0.0, 'downgrade': 0.0};
     final finalProbs = _enhancementDisplayProbabilities(baseProbs);
-    final canManuallyEnhance = !_isAutoEnhancing && _currentEnhancementLevel < 9;
+    final canManuallyEnhance =
+        !_isAutoEnhancing && _currentEnhancementLevel < 9;
     final canStartAutoEnhance = _isAutoEnhanceMode &&
         !_isAutoEnhancing &&
         _targetEnhancementLevel != null &&
@@ -1223,10 +1241,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: (_isAutoEnhanceMode ? canStartAutoEnhance : canManuallyEnhance)
-                ? _handleEnhanceButtonPressed
-                : null,
-            icon: Icon(_isAutoEnhanceMode ? Icons.play_arrow_rounded : Icons.upgrade_rounded),
+            onPressed:
+                (_isAutoEnhanceMode ? canStartAutoEnhance : canManuallyEnhance)
+                    ? _handleEnhanceButtonPressed
+                    : null,
+            icon: Icon(_isAutoEnhanceMode
+                ? Icons.play_arrow_rounded
+                : Icons.upgrade_rounded),
             label: Text(_isAutoEnhanceMode ? '자동 강화 시작' : '1회 강화'),
           ),
         ),
@@ -1280,7 +1301,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       }
       finalSuccessChance = baseSuccessChance + bonusToApply;
       finalFailNoChangeChance = baseFailNoChangeChance - bonusToApply;
-      finalDowngradeChance = isSpecialAidNoDowngrade ? 0.0 : baseDowngradeChance;
+      finalDowngradeChance =
+          isSpecialAidNoDowngrade ? 0.0 : baseDowngradeChance;
     }
 
     return (
@@ -1302,7 +1324,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             Text('시도: ${_numberFormat.format(_enhancementAttemptCount)}회'),
             Text('성공: ${_numberFormat.format(_enhancementSuccessCount)}회'),
             Text('유지 실패: ${_numberFormat.format(_enhancementFailKeepCount)}회'),
-            Text('하락 실패: ${_numberFormat.format(_enhancementFailDowngradeCount)}회'),
+            Text(
+                '하락 실패: ${_numberFormat.format(_enhancementFailDowngradeCount)}회'),
             const Divider(height: 20),
             Text('누적 숫돌: ${_numberFormat.format(_totalConsumedStones)}개'),
             Text('누적 골드: ${_numberFormat.format(_totalConsumedGold)}'),
@@ -1311,7 +1334,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               Text('보조제 사용', style: Theme.of(context).textTheme.bodyMedium),
               const SizedBox(height: 4),
               ..._consumedAidsCount.entries.map(
-                (entry) => Text('${entry.key}: ${_numberFormat.format(entry.value)}개'),
+                (entry) =>
+                    Text('${entry.key}: ${_numberFormat.format(entry.value)}개'),
               ),
             ],
           ],
@@ -1348,9 +1372,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 Text('소모 재화', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 Text('영혼석: ${_numberFormat.format(_totalSoulStonesConsumed)}개'),
-                Text('숫돌이: ${_numberFormat.format(_totalGrindstonesConsumed)}개'),
-                Text('무지개 모루: ${_numberFormat.format(_totalRainbowAnvilsConsumed)}개'),
-                Text('3옵 9강 악세: ${_numberFormat.format(_total9EnhanceAccessoriesConsumed)}개'),
+                Text(
+                    '숫돌이: ${_numberFormat.format(_totalGrindstonesConsumed)}개'),
+                Text(
+                    '무지개 모루: ${_numberFormat.format(_totalRainbowAnvilsConsumed)}개'),
+                Text(
+                    '3옵 9강 악세: ${_numberFormat.format(_total9EnhanceAccessoriesConsumed)}개'),
               ],
             ),
           ),
@@ -1425,13 +1452,15 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   Expanded(
                     child: Text(
                       optionName,
-                      style: theme.textTheme.bodyLarge?.copyWith(color: optionColor),
+                      style: theme.textTheme.bodyLarge
+                          ?.copyWith(color: optionColor),
                     ),
                   ),
                   if (optionValue.isNotEmpty)
                     Text(
                       optionValue,
-                      style: theme.textTheme.bodyLarge?.copyWith(color: optionColor),
+                      style: theme.textTheme.bodyLarge
+                          ?.copyWith(color: optionColor),
                     ),
                 ],
               ),
@@ -1626,7 +1655,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   String _optionProbText(Map<int, double> probs) {
-    final items = probs.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+    final items = probs.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
     return items
         .map((e) => '${e.key}개 ${e.value.toStringAsFixed(0)}%')
         .join(', ');

@@ -63,58 +63,58 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return MainScreenUI(
-        onCalculatorPressed: () {
-          _navigateToScreen(context, const CalculatorScreen());
-        },
-        onGoldCalculatorPressed: () {
-          _navigateToScreen(context, const GoldCalculatorScreen());
-        },
-        onAccessoryPressed: () async {
-          await _openAccessoryScreenWithWarmup();
-        },
-        onDamageCalculatorPressed: () {
-          _navigateToScreen(context, const DamageCalculatorScreen());
-        },
-        onJournalPressed: () {
-          _navigateToScreen(context, const JournalScreen());
-        },
-        onBoxCalculatorPressed: () {
-          if (EventManager.isEventPeriodActive()) {
-            _navigateToScreen(context, const BoxCalculatorScreen());
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('이벤트 기간이 아닙니다.'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          }
-        },
-        onAccessoryEnhancementPressed: () {
-          _navigateToScreen(context, const AccessorySimulationScreen());
-        },
-        onAccessoryOptionChangePressed: () {
-          _navigateToScreen(context, const AccessorySimulationScreen());
-        },
-        onExplorationOptionSimulationPressed: () {
-          _navigateToScreen(context, const ExplorationOptionSimulationScreen());
-        },
-        onPouchSimulationPressed: () {
-          _navigateToScreen(context, const PouchSimulationScreen());
-        },
-        onRandomAccessorySimulatorPressed: () {
-          _navigateToScreen(context, const AccessorySimulationScreen());
-        },
-        onAccessorySimulationPressed: () {
-          _navigateToScreen(context, const AccessorySimulationScreen());
-        },
-        onStageSettingsPressed: () {
-          _navigateToScreen(context, const SettingsScreen());
-        },
-        onAppSettingsPressed: () {
-          _navigateToScreen(context, const AppSettingsScreen());
-        },
-        settingsService: SettingsService.instance,
-      );
+      onCalculatorPressed: () {
+        _navigateToScreen(context, const CalculatorScreen());
+      },
+      onGoldCalculatorPressed: () {
+        _navigateToScreen(context, const GoldCalculatorScreen());
+      },
+      onAccessoryPressed: () async {
+        await _openAccessoryScreenWithWarmup();
+      },
+      onDamageCalculatorPressed: () {
+        _navigateToScreen(context, const DamageCalculatorScreen());
+      },
+      onJournalPressed: () {
+        _navigateToScreen(context, const JournalScreen());
+      },
+      onBoxCalculatorPressed: () {
+        if (EventManager.isEventPeriodActive()) {
+          _navigateToScreen(context, const BoxCalculatorScreen());
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('이벤트 기간이 아닙니다.'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onAccessoryEnhancementPressed: () {
+        _navigateToScreen(context, const AccessorySimulationScreen());
+      },
+      onAccessoryOptionChangePressed: () {
+        _navigateToScreen(context, const AccessorySimulationScreen());
+      },
+      onExplorationOptionSimulationPressed: () {
+        _navigateToScreen(context, const ExplorationOptionSimulationScreen());
+      },
+      onPouchSimulationPressed: () {
+        _navigateToScreen(context, const PouchSimulationScreen());
+      },
+      onRandomAccessorySimulatorPressed: () {
+        _navigateToScreen(context, const AccessorySimulationScreen());
+      },
+      onAccessorySimulationPressed: () {
+        _navigateToScreen(context, const AccessorySimulationScreen());
+      },
+      onStageSettingsPressed: () {
+        _navigateToScreen(context, const SettingsScreen());
+      },
+      onAppSettingsPressed: () {
+        _navigateToScreen(context, const AppSettingsScreen());
+      },
+      settingsService: SettingsService.instance,
+    );
   }
 }

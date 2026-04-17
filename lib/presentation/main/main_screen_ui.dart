@@ -384,7 +384,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
     }
 
     final gridColumns = decoded['gridColumns'];
-    if (gridColumns is int && (gridColumns == 3 || gridColumns == 4 || gridColumns == 5)) {
+    if (gridColumns is int &&
+        (gridColumns == 3 || gridColumns == 4 || gridColumns == 5)) {
       _gridColumnsOverride = gridColumns;
     } else {
       _gridColumnsOverride = null;
@@ -413,8 +414,10 @@ class _MainScreenUIState extends State<MainScreenUI> {
         title: '계산기',
         items: [
           const _MenuEntry(key: 'loop', text: '루프 계산기', subtitle: '스테이지 반복 계산'),
-          const _MenuEntry(key: 'gold', text: '골드 효율 계산기', subtitle: '루프 대비 수익'),
-          const _MenuEntry(key: 'damage', text: '데미지 계산기_ Beta', subtitle: '대미지 검증'),
+          const _MenuEntry(
+              key: 'gold', text: '골드 효율 계산기', subtitle: '루프 대비 수익'),
+          const _MenuEntry(
+              key: 'damage', text: '데미지 계산기_ Beta', subtitle: '대미지 검증'),
         ],
       ),
       _MenuSection(
@@ -573,11 +576,9 @@ class _MainScreenUIState extends State<MainScreenUI> {
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.labelSmall?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: isHidden
-                          ? titleColor.withAlpha(120)
-                          : titleColor,
+                      color: isHidden ? titleColor.withAlpha(120) : titleColor,
                       height: 1.15,
-                        fontSize: labelFontSize,
+                      fontSize: labelFontSize,
                       shadows: [
                         Shadow(
                           color: theme.brightness == Brightness.dark
@@ -610,8 +611,9 @@ class _MainScreenUIState extends State<MainScreenUI> {
                         onTap: onToggleHidden,
                       ),
                       _buildTinyIconButton(
-                        icon:
-                            isFavorite ? Icons.star_rounded : Icons.star_border_rounded,
+                        icon: isFavorite
+                            ? Icons.star_rounded
+                            : Icons.star_border_rounded,
                         onTap: onToggleFavorite,
                       ),
                     ],
@@ -657,8 +659,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
     const double gap = 8;
     final int columns = _resolveGridColumns(panelWidth);
     final double innerWidth = panelWidth - 20;
-    final double tileWidth =
-      ((innerWidth - (gap * (columns - 1))) / columns).clamp(72.0, innerWidth);
+    final double tileWidth = ((innerWidth - (gap * (columns - 1))) / columns)
+        .clamp(72.0, innerWidth);
 
     return Wrap(
       spacing: gap,
@@ -735,7 +737,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     const double panelMaxWidth = 820;
     const double horizontalInset = 20;
     final double panelWidth =
-      (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth);
+        (screenSize.width - (horizontalInset * 2)).clamp(280.0, panelMaxWidth);
 
     final bool isEventActive = EventManager.isEventPeriodActive();
     final bool settingsComplete = _areEssentialSettingsSet();
@@ -875,7 +877,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           decoration: BoxDecoration(
                             borderRadius:
                                 const BorderRadius.all(Radius.circular(14)),
-                            color: theme.colorScheme.errorContainer.withAlpha(130),
+                            color:
+                                theme.colorScheme.errorContainer.withAlpha(130),
                             border: Border.all(
                               color: theme.colorScheme.error.withAlpha(95),
                             ),
@@ -924,17 +927,20 @@ class _MainScreenUIState extends State<MainScreenUI> {
                           children: [
                             if (_isEditMode && _hiddenEntryKeys.isNotEmpty)
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 8, 10, 10),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       '숨긴 버튼 (탭해서 다시 표시)',
-                                      style: theme.textTheme.labelSmall?.copyWith(
+                                      style:
+                                          theme.textTheme.labelSmall?.copyWith(
                                         fontWeight: FontWeight.w800,
                                         shadows: [
                                           Shadow(
-                                            color: theme.brightness == Brightness.dark
+                                            color: theme.brightness ==
+                                                    Brightness.dark
                                                 ? Colors.black.withAlpha(120)
                                                 : Colors.white.withAlpha(200),
                                             blurRadius: 2,
@@ -947,22 +953,23 @@ class _MainScreenUIState extends State<MainScreenUI> {
                                     Wrap(
                                       spacing: 6,
                                       runSpacing: 6,
-                                      children: _hiddenEntryKeys
-                                          .map((entryKey) {
-                                            final entry = _findEntryByKey(entryKey);
-                                            if (entry == null) {
-                                              return const SizedBox.shrink();
-                                            }
-                                            return ActionChip(
-                                              avatar: Icon(
-                                                _menuIcons[entry.text] ?? Icons.apps_rounded,
-                                                size: 14,
-                                              ),
-                                              label: Text(entry.text),
-                                              onPressed: () => _toggleHidden(entryKey),
-                                            );
-                                          })
-                                          .toList(),
+                                      children:
+                                          _hiddenEntryKeys.map((entryKey) {
+                                        final entry = _findEntryByKey(entryKey);
+                                        if (entry == null) {
+                                          return const SizedBox.shrink();
+                                        }
+                                        return ActionChip(
+                                          avatar: Icon(
+                                            _menuIcons[entry.text] ??
+                                                Icons.apps_rounded,
+                                            size: 14,
+                                          ),
+                                          label: Text(entry.text),
+                                          onPressed: () =>
+                                              _toggleHidden(entryKey),
+                                        );
+                                      }).toList(),
                                     ),
                                   ],
                                 ),

@@ -344,7 +344,8 @@ class AppDrawer extends StatelessWidget {
                               left:
                                   showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
                               right: 16.0), // 아이콘 공간(16+12) + 텍스트 시작 패딩(16)
-                          title: Text('악세사리 시뮬레이션', style: subDrawerItemTextStyle),
+                          title:
+                              Text('악세사리 시뮬레이션', style: subDrawerItemTextStyle),
                           onTap: () {
                             navigateFromMain(
                               const AccessorySimulationScreen(),
@@ -370,16 +371,16 @@ class AppDrawer extends StatelessWidget {
                         ListTile(
                           dense: true,
                           contentPadding: EdgeInsets.only(
-                            left:
-                              showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
-                            right: 16.0),
-                          title: Text('주머니 시뮬레이션',
-                            style: subDrawerItemTextStyle),
+                              left:
+                                  showDrawerText ? (16.0 + 12.0 + 16.0) : 16.0,
+                              right: 16.0),
+                          title:
+                              Text('주머니 시뮬레이션', style: subDrawerItemTextStyle),
                           onTap: () {
-                          navigateFromMain(
-                            const PouchSimulationScreen(),
-                            target: AppScreen.pouchSimulation,
-                          );
+                            navigateFromMain(
+                              const PouchSimulationScreen(),
+                              target: AppScreen.pouchSimulation,
+                            );
                           },
                         ),
                       ],
