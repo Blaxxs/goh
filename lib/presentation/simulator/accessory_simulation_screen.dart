@@ -58,6 +58,20 @@ class SimulatedAccessoryState {
   }
 }
 
+class CraftedAccessoryLogEntry {
+  final int attempt;
+  final Accessory accessory;
+  final List<AccessoryOption> options;
+  final String? grade;
+
+  const CraftedAccessoryLogEntry({
+    required this.attempt,
+    required this.accessory,
+    required this.options,
+    this.grade,
+  });
+}
+
 const _noValue = Object();
 
 class AccessorySimulationScreen extends StatefulWidget {
@@ -228,6 +242,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   int _silverMoruConsumed = 0;
   int _goldMoruConsumed = 0;
   int _totalRemodelGoldConsumed = 0;
+  int _craftAttemptCount = 0;
+  final List<CraftedAccessoryLogEntry> _craftLogs = [];
 
   @override
   void initState() {
@@ -453,6 +469,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     setState(() {
       _selectedAccessory = accessory;
       _simulatedState = null;
+      _craftAttemptCount = 0;
+      _craftLogs.clear();
       _resetEnhancementState();
       _resetOptionChangeState();
       _resetRemodelState();
@@ -503,12 +521,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (accessory == null) return;
 
     if (accessory.randomOptionConfig == null) {
+      final craftedOptions = List<AccessoryOption>.from(accessory.options);
       setState(() {
         _simulatedState = SimulatedAccessoryState(
           accessory: accessory,
-          baseOptions: List<AccessoryOption>.from(accessory.options),
-          currentOptions: List<AccessoryOption>.from(accessory.options),
+          baseOptions: craftedOptions,
+          currentOptions: List<AccessoryOption>.from(craftedOptions),
         );
+        _appendCraftLog(accessory, craftedOptions);
         _resetEnhancementState();
         _resetOptionChangeState();
         _resetRemodelState();
@@ -537,11 +557,29 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         currentOptions: List<AccessoryOption>.from(rolledOptions),
         grade: result.grade,
       );
+      _appendCraftLog(accessory, rolledOptions, grade: result.grade);
       _resetEnhancementState();
       _resetOptionChangeState();
       _resetRemodelState();
       _syncSelectedOptionCount();
     });
+  }
+
+  void _appendCraftLog(
+    Accessory accessory,
+    List<AccessoryOption> options, {
+    String? grade,
+  }) {
+    _craftAttemptCount += 1;
+    _craftLogs.insert(
+      0,
+      CraftedAccessoryLogEntry(
+        attempt: _craftAttemptCount,
+        accessory: accessory,
+        options: List<AccessoryOption>.from(options),
+        grade: grade,
+      ),
+    );
   }
 
   AccessoryOption _buildOptionFromRoll(
@@ -1053,7 +1091,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildCraftSection(BuildContext context) {
     final accessory = _selectedAccessory!;
     final isRandom = accessory.randomOptionConfig != null;
-    final config = accessory.randomOptionConfig;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1066,19 +1103,16 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               children: [
                 Text('제작', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
-                if (isRandom && config != null) ...[
-                  Text(
-                    '옵션 개수 확률: ${_optionProbText(_optionCountProbabilitiesForDisplay(config))}',
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '테두리 색 확률: ${_gradeProbText(RandomAccessoryRepository.silverMoruGradeProbabilities)}',
-                  ),
-                  const SizedBox(height: 8),
-                  _buildSimpleCostCard(RandomAccessoryRepository.craftCost),
-                ] else ...[
-                  const Text('고정옵션 악세사리는 제작 시 기본 옵션 그대로 생성됩니다.'),
-                ],
+                Text(
+                  isRandom
+                      ? '랜덤 악세는 제작할 때마다 옵션과 테두리가 새로 결정됩니다.'
+                      : '고정옵션 악세사리는 제작 시 기본 옵션 그대로 생성됩니다.',
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '제작 시 재화는 차감되지 않으며, 결과는 아래 기록에 누적됩니다.',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,
@@ -1092,6 +1126,18 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             ),
           ),
         ),
+        if (_craftLogs.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Text(
+            '제작 기록',
+            style: Theme.of(context)
+                .textTheme
+                .titleSmall
+                ?.copyWith(fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          ..._craftLogs.map((entry) => _buildCraftLogCard(context, entry)),
+        ],
       ],
     );
   }
@@ -1102,174 +1148,67 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     _syncSelectedOptionCount();
-    final baseProbs = AccessoryEnhancementScreenUI
-            .baseEnhancementProbabilities[_currentEnhancementLevel] ??
-        {'success': 0.0, 'fail_no_change': 0.0, 'downgrade': 0.0};
-    final finalProbs = _enhancementDisplayProbabilities(baseProbs);
-    final canManuallyEnhance =
-        !_isAutoEnhancing && _currentEnhancementLevel < 9;
-    final canStartAutoEnhance = _isAutoEnhanceMode &&
-        !_isAutoEnhancing &&
-        _targetEnhancementLevel != null &&
-        _currentEnhancementLevel < _targetEnhancementLevel! &&
-        _currentEnhancementLevel < 9;
-
-    return Column(
-      children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<int>(
-                        value: _currentEnhancementLevel,
-                        decoration: const InputDecoration(
-                          labelText: '현재 강화',
-                          border: OutlineInputBorder(),
-                        ),
-                        items: List.generate(
-                          10,
-                          (index) => DropdownMenuItem(
-                            value: index,
-                            child: Text('$index강'),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          if (value == null) return;
-                          setState(() {
-                            _currentEnhancementLevel = value;
-                            if (_targetEnhancementLevel != null &&
-                                _targetEnhancementLevel! <= value) {
-                              _targetEnhancementLevel = null;
-                            }
-                          });
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: '옵션 수',
-                          border: OutlineInputBorder(),
-                        ),
-                        child: Text(_selectedOptionCount == 1 ? '1옵' : '2옵+'),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                DropdownButtonFormField<String>(
-                  value: _selectedEnhancementAid,
-                  decoration: const InputDecoration(
-                    labelText: '강화 보조제',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: _enhancementAids
-                      .map(
-                        (aid) => DropdownMenuItem(value: aid, child: Text(aid)),
-                      )
-                      .toList(),
-                  onChanged: (value) {
-                    if (value == null) return;
-                    setState(() {
-                      _selectedEnhancementAid = value;
-                    });
-                  },
-                ),
-                const SizedBox(height: 12),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('자동 강화'),
-                  value: _isAutoEnhanceMode,
-                  onChanged: _isAutoEnhancing
-                      ? null
-                      : (value) {
-                          setState(() {
-                            _isAutoEnhanceMode = value;
-                            if (!value) {
-                              _targetEnhancementLevel = null;
-                            }
-                          });
-                        },
-                ),
-                if (_isAutoEnhanceMode) ...[
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<int>(
-                    value: _targetEnhancementLevel,
-                    decoration: const InputDecoration(
-                      labelText: '목표 강화',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: [
-                      for (int i = _currentEnhancementLevel + 1; i <= 9; i++)
-                        DropdownMenuItem(value: i, child: Text('$i강')),
-                    ],
-                    onChanged: (value) {
-                      setState(() {
-                        _targetEnhancementLevel = value;
-                      });
-                    },
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('현재 확률', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 8),
-                Text('성공: ${finalProbs.$1}'),
-                Text('유지: ${finalProbs.$2}'),
-                Text('하락: ${finalProbs.$3}'),
-                const SizedBox(height: 8),
-                _buildSimpleCostCard(_currentEnhancementCosts),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        SizedBox(
-          width: double.infinity,
-          child: FilledButton.icon(
-            onPressed:
-                (_isAutoEnhanceMode ? canStartAutoEnhance : canManuallyEnhance)
-                    ? _handleEnhanceButtonPressed
-                    : null,
-            icon: Icon(_isAutoEnhanceMode
-                ? Icons.play_arrow_rounded
-                : Icons.upgrade_rounded),
-            label: Text(_isAutoEnhanceMode ? '자동 강화 시작' : '1회 강화'),
-          ),
-        ),
-        if (_isAutoEnhancing) ...[
-          const SizedBox(height: 8),
-          SizedBox(
-            width: double.infinity,
-            child: OutlinedButton.icon(
-              onPressed: () {
-                setState(() {
-                  _isAutoEnhancing = false;
-                  _isAutoEnhanceMode = false;
-                });
-              },
-              icon: const Icon(Icons.stop_circle_outlined),
-              label: const Text('자동 강화 중지'),
-            ),
-          ),
-        ],
-        const SizedBox(height: 12),
-        _buildEnhancementStatsCard(context),
-      ],
+    return AccessoryEnhancementScreenUI(
+      embedded: true,
+      selectedAccessory: _simulatedState?.accessory,
+      onSelectAccessoryPressed: () => _selectAccessory(context),
+      currentEnhancementLevel: _currentEnhancementLevel,
+      onCurrentEnhancementLevelChanged: (value) {
+        if (value == null) return;
+        setState(() {
+          _currentEnhancementLevel = value;
+          if (_targetEnhancementLevel != null &&
+              _targetEnhancementLevel! <= value) {
+            _targetEnhancementLevel = null;
+          }
+        });
+      },
+      targetEnhancementLevel: _targetEnhancementLevel,
+      onTargetEnhancementLevelChanged: (value) {
+        setState(() {
+          _targetEnhancementLevel = value;
+        });
+      },
+      selectedEnhancementAid: _selectedEnhancementAid,
+      enhancementAidOptions: _enhancementAids,
+      onEnhancementAidChanged: (value) {
+        if (value == null) return;
+        setState(() {
+          _selectedEnhancementAid = value;
+        });
+      },
+      isAutoEnhanceMode: _isAutoEnhanceMode,
+      onAutoEnhanceModeChanged: (value) {
+        setState(() {
+          _isAutoEnhanceMode = value;
+          if (!value) {
+            _targetEnhancementLevel = null;
+          }
+        });
+      },
+      isAutoEnhancing: _isAutoEnhancing,
+      onEnhanceButtonPressed: _handleEnhanceButtonPressed,
+      onStopAutoEnhancePressed: () {
+        setState(() {
+          _isAutoEnhancing = false;
+          _isAutoEnhanceMode = false;
+        });
+      },
+      attemptCount: _enhancementAttemptCount,
+      successCount: _enhancementSuccessCount,
+      failKeepCount: _enhancementFailKeepCount,
+      failDowngradeCount: _enhancementFailDowngradeCount,
+      totalConsumedStones: _totalConsumedStones,
+      totalConsumedGold: _totalConsumedGold,
+      onResetScreenPressed: () {
+        setState(() {
+          _resetEnhancementState();
+          _syncSelectedOptionCount();
+        });
+      },
+      selectedOptionCount: _selectedOptionCount,
+      onOptionCountChanged: (_) {},
+      consumedAidsCount: _consumedAidsCount,
     );
   }
 
@@ -1602,7 +1541,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       child: Row(
                         children: [
                           Expanded(child: Text(option.optionName)),
-                          Text(option.optionValue),
+                          _buildOptionValueWidget(context, option),
                         ],
                       ),
                     ),
@@ -1641,6 +1580,74 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         child: Text(message),
       ),
     );
+  }
+
+  Widget _buildCraftLogCard(
+    BuildContext context,
+    CraftedAccessoryLogEntry entry,
+  ) {
+    final borderColor = _borderColorForGrade(entry.grade, Theme.of(context));
+
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        side: BorderSide(color: borderColor, width: 1.5),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${entry.attempt}회차 · ${entry.accessory.name}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Text(entry.grade == null ? '고정옵션' : '테두리: ${entry.grade}'),
+              ],
+            ),
+            const SizedBox(height: 8),
+            ...entry.options.map(
+              (option) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  children: [
+                    Expanded(child: Text(option.optionName)),
+                    _buildOptionValueWidget(context, option),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildOptionValueWidget(BuildContext context, AccessoryOption option) {
+    final isMaxRoll = _isMaxRollOption(option);
+    return Text(
+      option.optionValue,
+      style: isMaxRoll
+          ? Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.deepPurple.shade700,
+                fontWeight: FontWeight.bold,
+              )
+          : null,
+    );
+  }
+
+  bool _isMaxRollOption(AccessoryOption option) {
+    final maxValue = option.maxNormalValue;
+    final currentValue = int.tryParse(option.optionValue);
+    return maxValue != null && currentValue != null && currentValue == maxValue;
   }
 
   Map<int, double> _optionCountProbabilitiesForDisplay(
