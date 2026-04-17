@@ -915,22 +915,32 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       _random,
     );
 
-    final remodeledOptions = _currentOptions.map((option) {
-      final source =
-          _findSourceOptionByName(_selectedAccessory!, option.optionName)!;
-      final range = _gradeRange(
-        source.minNormalValue!,
-        source.maxNormalValue!,
-        grade,
-      );
-      final rolled = _randInt(_random, range.$1, range.$2);
-      return AccessoryOption(
-        optionName: option.optionName,
-        optionValue: rolled.toString(),
-        minNormalValue: source.minNormalValue,
-        maxNormalValue: source.maxNormalValue,
-      );
-    }).toList(growable: false);
+    final remodelableCount = min(2, _currentOptions.length);
+    final remodeledOptions = List<AccessoryOption>.generate(
+      _currentOptions.length,
+      (index) {
+        final option = _currentOptions[index];
+        if (index >= remodelableCount) {
+          return option;
+        }
+
+        final minValue = option.minNormalValue;
+        final maxValue = option.maxNormalValue;
+        if (minValue == null || maxValue == null) {
+          return option;
+        }
+
+        final range = _gradeRange(minValue, maxValue, grade);
+        final rolled = _randInt(_random, range.$1, range.$2);
+        return AccessoryOption(
+          optionName: option.optionName,
+          optionValue: rolled.toString(),
+          minNormalValue: minValue,
+          maxNormalValue: maxValue,
+        );
+      },
+      growable: false,
+    );
 
     final baseCount = _baseOptions.length;
     setState(() {
@@ -955,10 +965,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         _simulatedState == null) {
       return false;
     }
-    for (final option in _currentOptions) {
-      final source =
-          _findSourceOptionByName(_selectedAccessory!, option.optionName);
-      if (source?.minNormalValue == null || source?.maxNormalValue == null) {
+    final remodelableCount = min(2, _currentOptions.length);
+    if (remodelableCount == 0) {
+      return false;
+    }
+    for (int index = 0; index < remodelableCount; index++) {
+      final option = _currentOptions[index];
+      if (option.minNormalValue == null || option.maxNormalValue == null) {
         return false;
       }
     }
@@ -1056,6 +1069,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Widget _buildTopAccessorySelector(BuildContext context) {
     final accessory = _selectedAccessory;
+    final displayOptions = _simulatedState?.accessory.id == accessory?.id
+        ? _currentOptions
+        : (accessory?.options ?? const <AccessoryOption>[]);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -1095,6 +1111,34 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   const SizedBox(height: 4),
                   Text(
                       '${accessory?.part ?? '-'} / ${accessory?.restrictions ?? '-'}'),
+                  if (displayOptions.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    ...displayOptions.take(4).map(
+                      (option) => Padding(
+                        padding: const EdgeInsets.only(bottom: 3),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                option.optionName,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              _formatOptionValueForSummary(option),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(fontWeight: FontWeight.w600),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 8),
                   OutlinedButton.icon(
                     onPressed: () => _selectAccessory(context),
@@ -1599,7 +1643,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                 ?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
-                        Text(entry.grade == null ? '고정옵션' : '테두리: ${entry.grade}'),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -1688,39 +1731,18 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildOptionValueWidget(BuildContext context, AccessoryOption option) {
     final isMaxRoll = _isMaxRollOption(option);
     final text = _formatOptionValueWithRange(option);
-    if (!isMaxRoll) {
-      return Text(
-        text,
-        textAlign: TextAlign.right,
-      );
-    }
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.deepPurple.shade400, Colors.pink.shade400],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(999),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.deepPurple.shade200.withAlpha(160),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: Colors.white.withAlpha(180)),
-      ),
-      child: Text(
-        text,
-        textAlign: TextAlign.right,
-        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-            ),
-      ),
+    return Text(
+      text,
+      textAlign: TextAlign.right,
+      style: isMaxRoll
+          ? Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Colors.deepPurple.shade700,
+                fontWeight: FontWeight.w900,
+                fontSize:
+                    (Theme.of(context).textTheme.bodyLarge?.fontSize ?? 16) +
+                        2,
+              )
+          : null,
     );
   }
 
@@ -1730,7 +1752,22 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (minValue == null || maxValue == null) {
       return option.optionValue;
     }
+    if (option.optionValue == '$minValue~$maxValue') {
+      return option.optionValue;
+    }
     return '${option.optionValue} ($minValue~$maxValue)';
+  }
+
+  String _formatOptionValueForSummary(AccessoryOption option) {
+    final minValue = option.minNormalValue;
+    final maxValue = option.maxNormalValue;
+    if (minValue != null && maxValue != null) {
+      if (option.optionValue == '$minValue~$maxValue') {
+        return option.optionValue;
+      }
+      return option.optionValue;
+    }
+    return option.optionValue;
   }
 
   bool _isMaxRollOption(AccessoryOption option) {
