@@ -6,7 +6,7 @@ import '../../data/models/accessory.dart'; // Accessory model
 import '../../core/constants/accessory_constants.dart'; // AccessoryDataManager().allAccessories 사용
 import 'accessory_enhancement_screen_ui.dart';
 
-const _autoEnhanceBatchSize = 30;
+const _autoEnhanceBatchSize = 15;
 
 class AccessoryEnhancementScreen extends StatefulWidget {
   const AccessoryEnhancementScreen({super.key});
