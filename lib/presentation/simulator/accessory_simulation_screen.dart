@@ -15,7 +15,7 @@ import 'accessory_enhancement_screen_ui.dart';
 
 const _silverRemodelGoldCost = 20000;
 const _goldRemodelGoldCost = 3000;
-const _autoEnhanceBatchSize = 30;
+const _autoEnhanceBatchSize = 15;
 const _maxCraftLogCount = 80;
 const _lastSelectedAccessoryIdKey = 'accessory_sim_last_selected_id';
 
@@ -436,29 +436,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: TextField(
-                        controller: searchController,
-                        onChanged: (v) => setSheetState(
-                          () => _accessoryPickerSearchQuery = v,
-                        ),
-                        decoration: const InputDecoration(
-                          hintText: '이름 검색',
-                          prefixIcon: Icon(Icons.search, size: 20),
-                          isDense: true,
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         children: [
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
                           ...parts.map(
                             (part) => Padding(
                               padding: const EdgeInsets.only(right: 6),
@@ -593,9 +577,34 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                       : true,
                             ),
                           ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            width: 108,
+                            child: TextField(
+                              controller: searchController,
+                              onChanged: (v) => setSheetState(
+                                () => _accessoryPickerSearchQuery = v,
+                              ),
+                              decoration: const InputDecoration(
+                                hintText: '검색',
+                                prefixIcon: Icon(Icons.search, size: 18),
+                                isDense: true,
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 8,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
+                    const SizedBox(height: 6),
                     const Divider(height: 8),
                     Expanded(
                       child: filtered.isEmpty
@@ -1450,6 +1459,15 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     onPressed: () => _selectAccessory(context),
                     icon: const Icon(Icons.swap_horiz_rounded),
                     label: const Text('악세 선택'),
+                    style: OutlinedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: const Size(0, 34),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                    ),
                   ),
                 ],
               ),
