@@ -1708,7 +1708,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          SizedBox(width: 48, child: Text('${slot}옵')),
+          SizedBox(width: 48, child: Text('$slot옵')),
           Expanded(
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),

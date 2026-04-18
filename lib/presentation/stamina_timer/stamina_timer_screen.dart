@@ -86,7 +86,7 @@ class _StaminaTimerScreenState extends State<StaminaTimerScreen> {
     final h = d.inHours;
     final m = d.inMinutes.remainder(60).toString().padLeft(2, '0');
     final s = d.inSeconds.remainder(60).toString().padLeft(2, '0');
-    return '${h}시간 $m분 $s초';
+    return '$h시간 $m분 $s초';
   }
 
   String _formatTime(DateTime dt) {
