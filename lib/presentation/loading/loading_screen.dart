@@ -73,8 +73,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
       _hasNavigated = true;
       Widget destination = const MainScreen();
       if (kIsWeb) {
-        final fragment = Uri.base.fragment;
-        if (fragment == '/accessory') {
+        final initialRoute =
+            WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+        if (initialRoute == '/accessory') {
           destination = const AccessoryScreen();
         }
       }
