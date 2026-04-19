@@ -1140,7 +1140,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     final targetName = _autoOptionTargetName;
     if (targetName == null || targetName.isEmpty) {
-      _showSnack('옵션 선택');
+      _showSnack('원하는 옵션을 선택해 주세요.');
       return;
     }
 
@@ -2009,7 +2009,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             DropdownButtonFormField<String>(
               value: selectedTargetName,
               isDense: true,
-              hint: const Text('원하는 옵션 선택'),
+              hint: const Text('옵션 선택'),
               decoration: const InputDecoration(
                 isDense: true,
                 contentPadding: EdgeInsets.symmetric(
@@ -2042,7 +2042,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     onPressed:
                         _isAutoOptionChanging ? null : _startAutoOptionChange,
                     icon: const Icon(Icons.play_arrow_rounded),
-                    label: const Text('시작'),
+                    label: const Text('자동 시작'),
                     style: FilledButton.styleFrom(
                       visualDensity: VisualDensity.compact,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
