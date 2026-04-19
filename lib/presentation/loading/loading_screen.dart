@@ -1,8 +1,10 @@
 // lib/loading_screen.dart
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../main/main_screen.dart'; // MainScreen으로 이동하기 위함
+import '../accessory/accessory_screen.dart';
 import '../../core/services/settings_service.dart'; // 설정 로딩을 위함
 import '../../core/constants/accessory_constants.dart';
 
