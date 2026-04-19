@@ -1988,15 +1988,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     );
 
     const menuWidth = 180.0;
-    final menuHeight = min(300.0, targetOptionNames.length * 40.0 + 16.0);
     final left = (anchorBottomRight.dx - menuWidth).clamp(
       0.0,
       overlayBox.size.width - menuWidth,
-    );
-    final right = overlayBox.size.width - left - menuWidth;
-    final top = (anchorTopLeft.dy - menuHeight).clamp(
-      0.0,
-      overlayBox.size.height - anchorBox.size.height,
     );
 
     final maxMenuHeight = min(300.0, max(120.0, anchorTopLeft.dy - 2));
