@@ -9,7 +9,12 @@ import '../../core/services/settings_service.dart'; // 설정 로딩을 위함
 import '../../core/constants/accessory_constants.dart';
 
 class LoadingScreen extends StatefulWidget {
-  const LoadingScreen({super.key});
+  const LoadingScreen({
+    super.key,
+    this.openAccessoryFromInitialUrl = false,
+  });
+
+  final bool openAccessoryFromInitialUrl;
 
   @override
   State<LoadingScreen> createState() => _LoadingScreenState();
@@ -69,6 +74,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   bool _shouldOpenAccessoryFromDeepLink() {
+    if (widget.openAccessoryFromInitialUrl) {
+      return true;
+    }
+
     if (!kIsWeb) {
       return false;
     }

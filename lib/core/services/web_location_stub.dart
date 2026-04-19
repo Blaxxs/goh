@@ -1,0 +1,2 @@
+String currentHref() => '';
+String currentHash() => '';
