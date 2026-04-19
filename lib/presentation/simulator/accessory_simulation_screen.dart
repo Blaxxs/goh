@@ -1966,7 +1966,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   Future<void> _showAutoOptionTargetMenu(
-    BuildContext buttonContext,
+    BuildContext anchorContext,
     List<String> targetOptionNames,
   ) async {
     if (_isAutoOptionChanging || targetOptionNames.isEmpty) {
@@ -1974,38 +1974,38 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     final overlayBox =
-        Overlay.of(buttonContext).context.findRenderObject() as RenderBox?;
-    final buttonBox = buttonContext.findRenderObject() as RenderBox?;
-    if (overlayBox == null || buttonBox == null) {
+        Overlay.of(anchorContext).context.findRenderObject() as RenderBox?;
+    final anchorBox = anchorContext.findRenderObject() as RenderBox?;
+    if (overlayBox == null || anchorBox == null) {
       return;
     }
 
-    final buttonTopLeft =
-        buttonBox.localToGlobal(Offset.zero, ancestor: overlayBox);
-    final buttonBottomRight = buttonBox.localToGlobal(
-      buttonBox.size.bottomRight(Offset.zero),
+    final anchorTopLeft =
+        anchorBox.localToGlobal(Offset.zero, ancestor: overlayBox);
+    final anchorBottomRight = anchorBox.localToGlobal(
+      anchorBox.size.bottomRight(Offset.zero),
       ancestor: overlayBox,
     );
 
-    final menuWidth = buttonBox.size.width.clamp(120.0, 180.0);
+    const menuWidth = 180.0;
     final menuHeight = min(300.0, targetOptionNames.length * 40.0 + 16.0);
-    final left = (buttonBottomRight.dx - menuWidth).clamp(
+    final left = (anchorBottomRight.dx - menuWidth).clamp(
       0.0,
       overlayBox.size.width - menuWidth,
     );
     final right = overlayBox.size.width - left - menuWidth;
-    final top = (buttonTopLeft.dy - menuHeight).clamp(
+    final top = (anchorTopLeft.dy - menuHeight).clamp(
       0.0,
-      overlayBox.size.height - buttonBox.size.height,
+      overlayBox.size.height - anchorBox.size.height,
     );
 
     final selected = await showMenu<String>(
-      context: buttonContext,
+      context: anchorContext,
       position: RelativeRect.fromLTRB(
         left,
         top,
         right,
-        overlayBox.size.height - buttonTopLeft.dy,
+        overlayBox.size.height - anchorTopLeft.dy,
       ),
       items: targetOptionNames
           .map(
@@ -2064,7 +2064,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   label: const Text('4옵'),
                   enabled: canChangeFourth,
                 ),
-              ],
+     ],
               selected: {_autoOptionTargetSlot},
               onSelectionChanged: (value) {
                 if (_isAutoOptionChanging) return;
@@ -2092,47 +2092,54 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     final displayText = selectedTargetName ?? '옵션 선택';
                     final colorScheme = Theme.of(context).colorScheme;
 
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(4),
-                      onTap: enabled
-                          ? () => _showAutoOptionTargetMenu(
-                                buttonContext,
-                                targetOptionNames,
-                              )
-                          : null,
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 9,
+                    return InputDecorator(
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 9,
+                        ),
+                        border: OutlineInputBorder(),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              displayText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: enabled
+                                  ? null
+                                  : TextStyle(
+                                      color: colorScheme.onSurface
+                                          .withAlpha(140),
+                                    ),
+                            ),
                           ),
-                          border: OutlineInputBorder(),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                displayText,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: enabled
-                                    ? null
-                                    : TextStyle(
-                                        color: colorScheme.onSurface
-                                            .withAlpha(140),
-                                      ),
-                              ),
-                            ),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              color: enabled
-                                  ? colorScheme.onSurfaceVariant
-                                  : colorScheme.onSurface.withAlpha(110),
-                            ),
-                          ],
-                        ),
+                          Builder(
+                            builder: (iconContext) {
+                              return InkWell(
+                                borderRadius: BorderRadius.circular(12),
+                                onTap: enabled
+                                    ? () => _showAutoOptionTargetMenu(
+                                          iconContext,
+                                          targetOptionNames,
+                                        )
+                                    : null,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Icon(
+                                    Icons.arrow_drop_down,
+                                    color: enabled
+                                        ? colorScheme.onSurfaceVariant
+                                        : colorScheme.onSurface.withAlpha(110),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     );
                   },
