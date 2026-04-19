@@ -2087,8 +2087,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 ),
                 child: Builder(
                   builder: (buttonContext) {
-                    final enabled = !_isAutoOptionChanging &&
-                        targetOptionNames.isNotEmpty;
+                    final enabled =
+                        !_isAutoOptionChanging && targetOptionNames.isNotEmpty;
                     final displayText = selectedTargetName ?? '옵션 선택';
                     final colorScheme = Theme.of(context).colorScheme;
 
