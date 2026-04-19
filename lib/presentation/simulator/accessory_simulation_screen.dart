@@ -1160,7 +1160,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Future<void> _runAutoOptionChangeLoop() async {
     final action = _actionForAutoTargetSlot();
     var waitForNextHit = _autoOptionRequireNextHit;
-    var reachedTarget = false;
 
     while (_isAutoOptionChanging && mounted) {
       if (_selectedMode != AccessorySimulationMode.optionChange ||
