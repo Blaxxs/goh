@@ -1163,10 +1163,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         excludedNormalized
             .add(_normalizeOptionName(_currentOptions[1].optionName));
       }
-      if (_currentOptions.length > 3) {
-        excludedNormalized
-            .add(_normalizeOptionName(_currentOptions[3].optionName));
-      }
       names.removeWhere(
           (name) => excludedNormalized.contains(_normalizeOptionName(name)));
     }
@@ -1311,10 +1307,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       if (existingOptions.length > 1) {
         excludedOptionNames
             .add(_normalizeOptionName(existingOptions[1].optionName));
-      }
-      if (existingOptions.length > 3) {
-        excludedOptionNames
-            .add(_normalizeOptionName(existingOptions[3].optionName));
       }
     }
 
