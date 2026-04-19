@@ -1210,12 +1210,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       return;
     }
 
-    final targetName = _autoOptionTargetName;
-    final success = reachedTarget &&
-        targetName != null &&
-        targetName.isNotEmpty &&
-        _currentTargetSlotOptionName() == targetName;
-
     setState(() {
       _isAutoOptionChanging = false;
       _autoOptionRequireNextHit = false;
