@@ -66,7 +66,10 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return _AccessoryDetailDialog(accessory: accessory);
+        return _AccessoryDetailDialog(
+          accessory: accessory,
+          parentContext: this.context,
+        );
       },
     );
   }
@@ -228,8 +231,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 // 세트 옵션 단계 네비게이션을 지원하는 상세 다이얼로그
 class _AccessoryDetailDialog extends StatefulWidget {
   final Accessory accessory;
+  final BuildContext parentContext;
 
-  const _AccessoryDetailDialog({required this.accessory});
+  const _AccessoryDetailDialog({
+    required this.accessory,
+    required this.parentContext,
+  });
 
   @override
   State<_AccessoryDetailDialog> createState() => _AccessoryDetailDialogState();
@@ -240,6 +247,32 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
       _stageIndexMap; // 각 세트 옵션의 현재 단계 인덱스 저장 (setId -> stageIndex)
   // 공통 단계 인덱스 (세트 옵션이 2개일 때 통합 제어에 사용)
   int _sharedStageIndex = 0;
+
+  void _openLinkedAccessoryDetail(String accessoryIdOrName) {
+    final query = accessoryIdOrName.trim();
+    if (query.isEmpty) return;
+
+    final allAccessories = AccessoryDataManager().allAccessories;
+    Accessory? target;
+    for (final accessory in allAccessories) {
+      if (accessory.id == query || accessory.name == query) {
+        target = accessory;
+        break;
+      }
+    }
+    if (target == null) return;
+
+    Navigator.of(context).pop();
+    showDialog(
+      context: widget.parentContext,
+      builder: (BuildContext context) {
+        return _AccessoryDetailDialog(
+          accessory: target!,
+          parentContext: widget.parentContext,
+        );
+      },
+    );
+  }
 
   @override
   void initState() {
@@ -371,9 +404,28 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: setOption.requiredAccessoryImages
-                                      .map((imageUrl) => Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                        final imageIndex = entry.key;
+                                        final imageUrl = entry.value;
+                                        final linkedAccessory = imageIndex <
+                                                setOption
+                                                    .requiredAccessories.length
+                                            ? setOption
+                                                .requiredAccessories[imageIndex]
+                                            : '';
+
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            onTap: linkedAccessory.isEmpty
+                                                ? null
+                                                : () => _openLinkedAccessoryDetail(
+                                                    linkedAccessory),
                                             child: SizedBox(
                                               width: 72,
                                               height: 72,
@@ -397,7 +449,9 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                 ),
                                               ),
                                             ),
-                                          ))
+                                          ),
+                                        );
+                                      })
                                       .toList(),
                                 ),
                               ),
@@ -495,9 +549,28 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: setOption.requiredAccessoryImages
-                                      .map((imageUrl) => Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
+                                      .asMap()
+                                      .entries
+                                      .map((entry) {
+                                        final imageIndex = entry.key;
+                                        final imageUrl = entry.value;
+                                        final linkedAccessory = imageIndex <
+                                                setOption
+                                                    .requiredAccessories.length
+                                            ? setOption
+                                                .requiredAccessories[imageIndex]
+                                            : '';
+
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: InkWell(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            onTap: linkedAccessory.isEmpty
+                                                ? null
+                                                : () => _openLinkedAccessoryDetail(
+                                                    linkedAccessory),
                                             child: SizedBox(
                                               width: 72,
                                               height: 72,
@@ -523,7 +596,9 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                 ),
                                               ),
                                             ),
-                                          ))
+                                          ),
+                                        );
+                                      })
                                       .toList(),
                                 ),
                               ),
