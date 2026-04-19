@@ -25,11 +25,31 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   // 비교 모드 상태
   bool _compareMode = false;
   final List<Accessory> _compareList = [];
+  bool _isAccessoryDataLoading = false;
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
+    _ensureAccessoryDataReady();
+  }
+
+  Future<void> _ensureAccessoryDataReady() async {
+    final manager = AccessoryDataManager();
+    if (manager.allAccessories.isNotEmpty) {
+      return;
+    }
+
+    setState(() {
+      _isAccessoryDataLoading = true;
+    });
+
+    await manager.loadAccessories(waitForRemote: true);
+    if (!mounted) return;
+
+    setState(() {
+      _isAccessoryDataLoading = false;
+    });
   }
 
   @override
@@ -173,6 +193,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       body: AccessoryScreenUI(
         searchController: _searchController,
         filteredAccessories: displayList,
+        isDataLoading: _isAccessoryDataLoading,
         selectedPartFilter: _selectedPartFilter,
         partFilterOptions: partFilterOptions,
         onPartFilterChanged: _handlePartFilterChanged,
