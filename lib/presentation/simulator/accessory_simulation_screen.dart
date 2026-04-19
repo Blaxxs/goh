@@ -1999,30 +1999,58 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       overlayBox.size.height - anchorBox.size.height,
     );
 
-    final selected = await showMenu<String>(
+    final maxMenuHeight = min(300.0, max(120.0, anchorTopLeft.dy - 2));
+    final selected = await showGeneralDialog<String>(
       context: anchorContext,
-      position: RelativeRect.fromLTRB(
-        left,
-        top,
-        right,
-        overlayBox.size.height - anchorTopLeft.dy,
-      ),
-      items: targetOptionNames
-          .map(
-            (name) => PopupMenuItem<String>(
-              value: name,
-              height: 36,
-              child: SizedBox(
-                width: menuWidth - 16,
-                child: Text(
-                  name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+      barrierDismissible: true,
+      barrierLabel: 'dismiss_auto_option_menu',
+      barrierColor: Colors.transparent,
+      transitionDuration: const Duration(milliseconds: 90),
+      pageBuilder: (dialogContext, _, __) {
+        return Stack(
+          children: [
+            Positioned(
+              left: left,
+              width: menuWidth,
+              bottom: overlayBox.size.height - anchorTopLeft.dy,
+              child: Material(
+                elevation: 8,
+                borderRadius: BorderRadius.circular(8),
+                clipBehavior: Clip.antiAlias,
+                color: Theme.of(dialogContext).colorScheme.surface,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(maxHeight: maxMenuHeight),
+                  child: ListView.builder(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    itemCount: targetOptionNames.length,
+                    itemBuilder: (context, index) {
+                      final name = targetOptionNames[index];
+                      return InkWell(
+                        onTap: () => Navigator.of(dialogContext).pop(name),
+                        child: SizedBox(
+                          height: 36,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
-          )
-          .toList(growable: false),
+          ],
+        );
+      },
     );
 
     if (!mounted || selected == null) {
