@@ -1316,12 +1316,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         excludedOptionNames
             .add(_normalizeOptionName(existingOptions[3].optionName));
       }
-    } else if (forSlot == 3) {
-      // 4옵 생성 시 3옵과 중복되지 않도록 제외
-      if (existingOptions.length > 2) {
-        excludedOptionNames
-            .add(_normalizeOptionName(existingOptions[2].optionName));
-      }
     }
 
     final availableOptions = availablePool
@@ -1381,7 +1375,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
       if (option.optionName == legacyName) {
         if (hasCanonical) {
-          options.removeAt(i);
+          // 4옵(마지막 위치)은 절대 제거하지 않음
+          if (i < options.length - 1) {
+            options.removeAt(i);
+          }
           continue;
         }
         options[i] = AccessoryOption(
