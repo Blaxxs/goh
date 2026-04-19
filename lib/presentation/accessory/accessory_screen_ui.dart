@@ -17,6 +17,8 @@ class AccessoryScreenUI extends StatelessWidget {
   final bool compareMode;
   final List<Accessory> compareList;
   final bool isDataLoading;
+  final bool hasSourceData;
+  final VoidCallback? onRetryLoad;
 
   const AccessoryScreenUI({
     super.key,
@@ -34,6 +36,8 @@ class AccessoryScreenUI extends StatelessWidget {
     this.compareMode = false,
     this.compareList = const [],
     this.isDataLoading = false,
+    this.hasSourceData = true,
+    this.onRetryLoad,
   });
 
   @override
@@ -249,6 +253,27 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                 )
+              : !hasSourceData
+                  ? Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '악세사리 데이터를 아직 불러오지 못했습니다.',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: isDark ? Colors.white70 : Colors.black54,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          FilledButton.tonalIcon(
+                            onPressed: onRetryLoad,
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: const Text('다시 불러오기'),
+                          ),
+                        ],
+                      ),
+                    )
               : filteredAccessories.isEmpty
               ? Center(
                   child: Text("검색 결과가 없습니다.",
