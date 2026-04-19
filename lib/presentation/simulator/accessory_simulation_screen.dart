@@ -266,8 +266,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   int _totalConsumedGold = 0;
   final Map<String, int> _consumedAidsCount = {};
 
-  AccessorySimulationOptionChangeAction _selectedAction =
-      AccessorySimulationOptionChangeAction.none;
   bool _isAutoOptionChanging = false;
   int _autoOptionTargetSlot = 3;
   String? _autoOptionTargetName;
@@ -736,7 +734,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   void _resetOptionChangeState() {
     _isAutoOptionChanging = false;
-    _selectedAction = AccessorySimulationOptionChangeAction.none;
     _autoOptionTargetSlot = 3;
     _autoOptionTargetName = null;
     _autoOptionChangeAttempts = 0;
@@ -993,6 +990,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   bool _performOptionChange({
     required AccessorySimulationOptionChangeAction action,
+    bool countAsAutoAttempt = false,
   }) {
     if (_simulatedState == null || _selectedAccessory == null) return false;
 
@@ -1002,8 +1000,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     var changed = false;
 
     setState(() {
-      _selectedAction = action;
-
       switch (action) {
         case AccessorySimulationOptionChangeAction.none:
           break;
@@ -1043,8 +1039,11 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           break;
       }
 
+      if (changed && countAsAutoAttempt) {
+        _autoOptionChangeAttempts++;
+      }
+
       _simulatedState = _simulatedState!.copyWith(currentOptions: current);
-      _selectedAction = AccessorySimulationOptionChangeAction.none;
       _syncSelectedOptionCount();
     });
 
@@ -1150,13 +1149,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         if (!_isAutoOptionChanging || !mounted) {
           break;
         }
-        final changed = _performOptionChange(action: action);
+        final changed = _performOptionChange(
+          action: action,
+          countAsAutoAttempt: true,
+        );
         if (!changed) {
           _isAutoOptionChanging = false;
           break;
         }
-
-        _autoOptionChangeAttempts++;
         if (_currentTargetSlotOptionName() == targetName) {
           reachedTargetInBatch = true;
           break;
@@ -1669,8 +1669,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       ],
       selected: {_selectedMode},
       onSelectionChanged: (value) {
+        final nextMode = value.first;
         setState(() {
-          _selectedMode = value.first;
+          if (_selectedMode == AccessorySimulationMode.optionChange &&
+              nextMode != AccessorySimulationMode.optionChange) {
+            _isAutoOptionChanging = false;
+          }
+          _selectedMode = nextMode;
         });
       },
     );
@@ -1809,6 +1814,15 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       return _buildInfoCard('먼저 제작에서 현재 악세를 생성해 주세요.');
     }
 
+    final targetOptionNames = _autoTargetOptionNames();
+    final selectedTargetName = targetOptionNames.contains(_autoOptionTargetName)
+        ? _autoOptionTargetName
+        : null;
+    final canChangeThird = _currentOptions.length >= 3 &&
+        ((_selectedAccessory?.randomOptionConfig != null) ||
+            _baseOptions.length < 3);
+    final canChangeFourth = _currentOptions.length >= 4;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1819,6 +1833,90 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             padding: const EdgeInsets.all(10),
             child: Column(
               children: List.generate(4, _buildOptionRowByIndex),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('자동 변경', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 8),
+                SegmentedButton<int>(
+                  segments: [
+                    ButtonSegment<int>(
+                      value: 3,
+                      label: const Text('3옵'),
+                      enabled: canChangeThird,
+                    ),
+                    ButtonSegment<int>(
+                      value: 4,
+                      label: const Text('4옵'),
+                      enabled: canChangeFourth,
+                    ),
+                  ],
+                  selected: {_autoOptionTargetSlot},
+                  onSelectionChanged: (value) {
+                    if (_isAutoOptionChanging) return;
+                    setState(() {
+                      _autoOptionTargetSlot = value.first;
+                      final nextOptions = _autoTargetOptionNames();
+                      if (!nextOptions.contains(_autoOptionTargetName)) {
+                        _autoOptionTargetName = null;
+                      }
+                    });
+                  },
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: selectedTargetName,
+                  hint: const Text('원하는 옵션 선택'),
+                  items: targetOptionNames
+                      .map(
+                        (name) => DropdownMenuItem<String>(
+                          value: name,
+                          child: Text(name),
+                        ),
+                      )
+                      .toList(growable: false),
+                  onChanged: _isAutoOptionChanging
+                      ? null
+                      : (value) {
+                          setState(() {
+                            _autoOptionTargetName = value;
+                          });
+                        },
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed:
+                            _isAutoOptionChanging ? null : _startAutoOptionChange,
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        label: const Text('자동 시작'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed:
+                            _isAutoOptionChanging ? _stopAutoOptionChange : null,
+                        icon: const Icon(Icons.stop_rounded),
+                        label: const Text('중지'),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '자동 시도 횟수: ${_numberFormat.format(_autoOptionChangeAttempts)}회',
+                ),
+              ],
             ),
           ),
         ),
@@ -1844,6 +1942,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         ),
       ],
     );
+  }
+
+  @override
+  void dispose() {
+    _isAutoOptionChanging = false;
+    super.dispose();
   }
 
   Widget _buildOptionRowByIndex(int index) {
