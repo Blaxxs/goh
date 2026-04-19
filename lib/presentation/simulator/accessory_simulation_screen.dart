@@ -1220,10 +1220,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       _isAutoOptionChanging = false;
       _autoOptionRequireNextHit = false;
     });
-
-    if (success) {
-      _showSnack('원하는 옵션이 등장했습니다. (시도: $_autoOptionChangeAttempts회)');
-    }
   }
 
   void _stopAutoOptionChange() {
