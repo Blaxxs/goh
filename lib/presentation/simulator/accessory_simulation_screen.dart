@@ -1922,16 +1922,20 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         const SizedBox(height: 12),
         LayoutBuilder(
           builder: (context, constraints) {
-            final autoPanelWidth = (constraints.maxWidth * 0.48).clamp(
-              160.0,
-              330.0,
-            );
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: _buildOptionChangeCostCard(context)),
+                IntrinsicWidth(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(
+                      minWidth: 150,
+                      maxWidth: 240,
+                    ),
+                    child: _buildOptionChangeCostCard(context),
+                  ),
+                ),
                 const SizedBox(width: 8),
-                SizedBox(width: autoPanelWidth, child: autoChangeCard),
+                Expanded(child: autoChangeCard),
               ],
             );
           },
@@ -2015,6 +2019,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 ),
                 child: DropdownButtonFormField<String>(
                   value: selectedTargetName,
+                  isExpanded: true,
                   isDense: true,
                   hint: const Text('옵션 선택'),
                   decoration: const InputDecoration(
@@ -2029,10 +2034,28 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       .map(
                         (name) => DropdownMenuItem<String>(
                           value: name,
-                          child: Text(name),
+                          child: Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       )
                       .toList(growable: false),
+                  selectedItemBuilder: (context) {
+                    return targetOptionNames
+                        .map(
+                          (name) => Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
+                        .toList(growable: false);
+                  },
                   onChanged: _isAutoOptionChanging
                       ? null
                       : (value) {
