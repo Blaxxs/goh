@@ -706,8 +706,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height: 4),
-                                      Text(
+                                      const SizedBox(height                                      Text(
                                         acc.name,
                                         style:
                                             Theme.of(ctx).textTheme.labelSmall,
@@ -1959,8 +1958,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             const SizedBox(height: 8),
             Text('영혼석: ${_numberFormat.format(_totalSoulStonesConsumed)}개'),
             Text('숫돌이: ${_numberFormat.format(_totalGrindstonesConsumed)}개'),
-            Text('무지개 모루: ${_numberFormat.format(_totalRainbowAnvilsConsumed)}개'),
-            Text('3옵 9강 악세: ${_numberFormat.format(_total9EnhanceAccessoriesConsumed)}개'),
+            Text(
+                '무지개 모루: ${_numberFormat.format(_totalRainbowAnvilsConsumed)}개'),
+            Text(
+                '3옵 9강 악세: ${_numberFormat.format(_total9EnhanceAccessoriesConsumed)}개'),
           ],
         ),
       ),
@@ -2045,7 +2046,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: _isAutoOptionChanging ? null : _startAutoOptionChange,
+                    onPressed:
+                        _isAutoOptionChanging ? null : _startAutoOptionChange,
                     icon: const Icon(Icons.play_arrow_rounded),
                     label: const Text('자동 시작'),
                     style: FilledButton.styleFrom(
@@ -2062,7 +2064,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: _isAutoOptionChanging ? _stopAutoOptionChange : null,
+                    onPressed:
+                        _isAutoOptionChanging ? _stopAutoOptionChange : null,
                     icon: const Icon(Icons.stop_rounded),
                     label: const Text('중지'),
                     style: OutlinedButton.styleFrom(
@@ -2104,7 +2107,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     final isFilled = index < currentOptionCount;
     final isBaseSlot = index < baseOptionCount;
     final isRandomThirdChangeableSlot =
-      isRandomAccessory && index == 2 && isFilled;
+        isRandomAccessory && index == 2 && isFilled;
     final useFixedSlotStyle = isBaseSlot && !isRandomThirdChangeableSlot;
 
     String optionName = '비어있음';
