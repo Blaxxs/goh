@@ -36,6 +36,20 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <script>
+    (function () {
+      try {
+        var hash = (window.location.hash || '').toLowerCase();
+        if (hash === '#/accessory' || hash === '#accessory') {
+          var url = new URL(window.location.href);
+          url.searchParams.set('open', 'accessory');
+          window.history.replaceState(null, '', url.pathname + url.search + url.hash);
+        }
+      } catch (_) {
+        // Ignore URL parsing issues and continue normal bootstrap.
+      }
+    })();
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
