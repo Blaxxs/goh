@@ -706,7 +706,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(height                                      Text(
+                                      const SizedBox(height: 4),
+                                      Text(
                                         acc.name,
                                         style:
                                             Theme.of(ctx).textTheme.labelSmall,
@@ -1921,24 +1922,16 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         const SizedBox(height: 12),
         LayoutBuilder(
           builder: (context, constraints) {
-            final useSideBySide = constraints.maxWidth >= 820;
-            if (useSideBySide) {
-              final autoPanelWidth = min(330.0, constraints.maxWidth * 0.38);
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: _buildOptionChangeCostCard(context)),
-                  const SizedBox(width: 12),
-                  SizedBox(width: autoPanelWidth, child: autoChangeCard),
-                ],
-              );
-            }
-
-            return Column(
+            final autoPanelWidth = (constraints.maxWidth * 0.48).clamp(
+              160.0,
+              330.0,
+            );
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildOptionChangeCostCard(context),
-                const SizedBox(height: 12),
-                autoChangeCard,
+                Expanded(child: _buildOptionChangeCostCard(context)),
+                const SizedBox(width: 8),
+                SizedBox(width: autoPanelWidth, child: autoChangeCard),
               ],
             );
           },
