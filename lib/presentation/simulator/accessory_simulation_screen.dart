@@ -1982,13 +1982,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     final anchorTopLeft =
         anchorBox.localToGlobal(Offset.zero, ancestor: overlayBox);
-    final anchorBottomRight = anchorBox.localToGlobal(
-      anchorBox.size.bottomRight(Offset.zero),
-      ancestor: overlayBox,
-    );
 
     const menuWidth = 180.0;
-    final left = (anchorBottomRight.dx - menuWidth).clamp(
+    final left = anchorTopLeft.dx.clamp(
       0.0,
       overlayBox.size.width - menuWidth,
     );
