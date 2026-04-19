@@ -1965,6 +1965,74 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     );
   }
 
+  Future<void> _showAutoOptionTargetMenu(
+    BuildContext buttonContext,
+    List<String> targetOptionNames,
+  ) async {
+    if (_isAutoOptionChanging || targetOptionNames.isEmpty) {
+      return;
+    }
+
+    final overlayBox =
+        Overlay.of(buttonContext).context.findRenderObject() as RenderBox?;
+    final buttonBox = buttonContext.findRenderObject() as RenderBox?;
+    if (overlayBox == null || buttonBox == null) {
+      return;
+    }
+
+    final buttonTopLeft =
+        buttonBox.localToGlobal(Offset.zero, ancestor: overlayBox);
+    final buttonBottomRight = buttonBox.localToGlobal(
+      buttonBox.size.bottomRight(Offset.zero),
+      ancestor: overlayBox,
+    );
+
+    final menuWidth = buttonBox.size.width.clamp(120.0, 180.0);
+    final menuHeight = min(300.0, targetOptionNames.length * 40.0 + 16.0);
+    final left = (buttonBottomRight.dx - menuWidth).clamp(
+      0.0,
+      overlayBox.size.width - menuWidth,
+    );
+    final right = overlayBox.size.width - left - menuWidth;
+    final top = (buttonTopLeft.dy - menuHeight).clamp(
+      0.0,
+      overlayBox.size.height - buttonBox.size.height,
+    );
+
+    final selected = await showMenu<String>(
+      context: buttonContext,
+      position: RelativeRect.fromLTRB(
+        left,
+        top,
+        right,
+        overlayBox.size.height - buttonTopLeft.dy,
+      ),
+      items: targetOptionNames
+          .map(
+            (name) => PopupMenuItem<String>(
+              value: name,
+              height: 36,
+              child: SizedBox(
+                width: menuWidth - 16,
+                child: Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          )
+          .toList(growable: false),
+    );
+
+    if (!mounted || selected == null) {
+      return;
+    }
+    setState(() {
+      _autoOptionTargetName = selected;
+    });
+  }
+
   Widget _buildAutoOptionChangeCard(
     BuildContext context, {
     required List<String> targetOptionNames,
@@ -2017,52 +2085,58 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   minWidth: 120,
                   maxWidth: 180,
                 ),
-                child: DropdownButtonFormField<String>(
-                  value: selectedTargetName,
-                  isExpanded: true,
-                  isDense: true,
-                  hint: const Text('옵션 선택'),
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 9,
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                  items: targetOptionNames
-                      .map(
-                        (name) => DropdownMenuItem<String>(
-                          value: name,
-                          child: Text(
-                            name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                child: Builder(
+                  builder: (buttonContext) {
+                    final enabled = !_isAutoOptionChanging &&
+                        targetOptionNames.isNotEmpty;
+                    final displayText = selectedTargetName ?? '옵션 선택';
+                    final colorScheme = Theme.of(context).colorScheme;
+
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(4),
+                      onTap: enabled
+                          ? () => _showAutoOptionTargetMenu(
+                                buttonContext,
+                                targetOptionNames,
+                              )
+                          : null,
+                      child: InputDecorator(
+                        isDense: true,
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 9,
                           ),
+                          border: OutlineInputBorder(),
                         ),
-                      )
-                      .toList(growable: false),
-                  selectedItemBuilder: (context) {
-                    return targetOptionNames
-                        .map(
-                          (name) => Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                displayText,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: enabled
+                                    ? null
+                                    : TextStyle(
+                                        color: colorScheme.onSurface
+                                            .withAlpha(140),
+                                      ),
+                              ),
                             ),
-                          ),
-                        )
-                        .toList(growable: false);
+                            Icon(
+                              Icons.arrow_drop_down,
+                              color: enabled
+                                  ? colorScheme.onSurfaceVariant
+                                  : colorScheme.onSurface.withAlpha(110),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
-                  onChanged: _isAutoOptionChanging
-                      ? null
-                      : (value) {
-                          setState(() {
-                            _autoOptionTargetName = value;
-                          });
-                        },
                 ),
               ),
             ),
