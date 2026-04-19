@@ -405,15 +405,16 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           builder: (ctx, setSheetState) {
             final colorScheme = Theme.of(ctx).colorScheme;
             final filtered = allAccessories.where((a) {
-            final matchesPart = _accessoryPickerSelectedPart == null ||
-              a.part == _accessoryPickerSelectedPart;
+              final matchesPart = _accessoryPickerSelectedPart == null ||
+                  a.part == _accessoryPickerSelectedPart;
               final isRandom = a.randomOptionConfig != null;
-            final matchesOptionType = _accessoryPickerSelectedRandomType == null
-                  ? true
-              : isRandom == _accessoryPickerSelectedRandomType;
-            final query = _accessoryPickerSearchQuery.toLowerCase();
-            final matchesSearch = query.isEmpty ||
-              a.name.toLowerCase().contains(query);
+              final matchesOptionType =
+                  _accessoryPickerSelectedRandomType == null
+                      ? true
+                      : isRandom == _accessoryPickerSelectedRandomType;
+              final query = _accessoryPickerSearchQuery.toLowerCase();
+              final matchesSearch =
+                  query.isEmpty || a.name.toLowerCase().contains(query);
               return matchesPart && matchesOptionType && matchesSearch;
             }).toList()
               ..sort((a, b) => a.name.compareTo(b.name));
@@ -445,140 +446,167 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children: [
-                          ...parts.map(
-                            (part) => Padding(
-                              padding: const EdgeInsets.only(right: 6),
-                              child: FilterChip(
-                                label: Text(part),
-                                showCheckmark: false,
-                                selected: _accessoryPickerSelectedPart == part,
-                                selectedColor: colorScheme.primaryContainer,
-                                backgroundColor:
-                                  colorScheme.surface.withValues(alpha: 0.65),
-                                side: BorderSide(
-                                  color: _accessoryPickerSelectedPart == part
-                                    ? colorScheme.primary
-                                    : colorScheme.onSurface
-                                      .withValues(alpha: 0.28),
-                                  width:
-                                    _accessoryPickerSelectedPart == part
-                                      ? 1.3
-                                      : 1,
-                                ),
-                                labelStyle: Theme.of(ctx)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(
-                                    color: _accessoryPickerSelectedPart == part
-                                      ? colorScheme.onPrimaryContainer
-                                      : colorScheme.onSurface,
-                                    fontWeight:
-                                      _accessoryPickerSelectedPart == part
-                                        ? FontWeight.w700
-                                        : FontWeight.w500,
+                                  ...parts.map(
+                                    (part) => Padding(
+                                      padding: const EdgeInsets.only(right: 6),
+                                      child: FilterChip(
+                                        label: Text(part),
+                                        showCheckmark: false,
+                                        selected:
+                                            _accessoryPickerSelectedPart ==
+                                                part,
+                                        selectedColor:
+                                            colorScheme.primaryContainer,
+                                        backgroundColor: colorScheme.surface
+                                            .withValues(alpha: 0.65),
+                                        side: BorderSide(
+                                          color: _accessoryPickerSelectedPart ==
+                                                  part
+                                              ? colorScheme.primary
+                                              : colorScheme.onSurface
+                                                  .withValues(alpha: 0.28),
+                                          width: _accessoryPickerSelectedPart ==
+                                                  part
+                                              ? 1.3
+                                              : 1,
+                                        ),
+                                        labelStyle: Theme.of(ctx)
+                                            .textTheme
+                                            .labelMedium
+                                            ?.copyWith(
+                                              color:
+                                                  _accessoryPickerSelectedPart ==
+                                                          part
+                                                      ? colorScheme
+                                                          .onPrimaryContainer
+                                                      : colorScheme.onSurface,
+                                              fontWeight:
+                                                  _accessoryPickerSelectedPart ==
+                                                          part
+                                                      ? FontWeight.w700
+                                                      : FontWeight.w500,
+                                            ),
+                                        visualDensity: VisualDensity.compact,
+                                        materialTapTargetSize:
+                                            MaterialTapTargetSize.shrinkWrap,
+                                        onSelected: (_) => setSheetState(
+                                          () => _accessoryPickerSelectedPart =
+                                              _accessoryPickerSelectedPart ==
+                                                      part
+                                                  ? null
+                                                  : part,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                visualDensity: VisualDensity.compact,
-                                materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
-                                onSelected: (_) => setSheetState(
-                                  () => _accessoryPickerSelectedPart =
-                                      _accessoryPickerSelectedPart == part
-                                          ? null
-                                          : part,
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (parts.isNotEmpty) ...[
-                            const SizedBox(width: 4),
-                            Container(
-                              width: 1,
-                              height: 20,
-                              color: Theme.of(ctx).dividerColor,
-                            ),
-                            const SizedBox(width: 10),
-                          ],
-                          FilterChip(
-                            label: const Text('고정옵션'),
-                            showCheckmark: false,
-                            selected: _accessoryPickerSelectedRandomType == false,
-                            selectedColor: colorScheme.primaryContainer,
-                            backgroundColor:
-                              colorScheme.surface.withValues(alpha: 0.65),
-                            side: BorderSide(
-                              color:
-                                _accessoryPickerSelectedRandomType == false
-                                  ? colorScheme.primary
-                                  : colorScheme.onSurface
-                                    .withValues(alpha: 0.28),
-                              width:
-                                _accessoryPickerSelectedRandomType == false
-                                  ? 1.3
-                                  : 1,
-                            ),
-                            labelStyle: Theme.of(ctx)
-                              .textTheme
-                              .labelMedium
-                              ?.copyWith(
-                                color:
-                                  _accessoryPickerSelectedRandomType == false
-                                    ? colorScheme.onPrimaryContainer
-                                    : colorScheme.onSurface,
-                                fontWeight:
-                                  _accessoryPickerSelectedRandomType == false
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
-                              ),
-                            visualDensity: VisualDensity.compact,
-                            materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                            onSelected: (_) => setSheetState(
-                              () => _accessoryPickerSelectedRandomType =
-                                  _accessoryPickerSelectedRandomType == false
-                                      ? null
-                                      : false,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          FilterChip(
-                            label: const Text('랜덤옵션'),
-                            showCheckmark: false,
-                            selected: _accessoryPickerSelectedRandomType == true,
-                            selectedColor: colorScheme.primaryContainer,
-                            backgroundColor:
-                              colorScheme.surface.withValues(alpha: 0.65),
-                            side: BorderSide(
-                              color: _accessoryPickerSelectedRandomType == true
-                                ? colorScheme.primary
-                                : colorScheme.onSurface
-                                  .withValues(alpha: 0.28),
-                              width:
-                                _accessoryPickerSelectedRandomType == true
-                                  ? 1.3
-                                  : 1,
-                            ),
-                            labelStyle: Theme.of(ctx)
-                              .textTheme
-                              .labelMedium
-                              ?.copyWith(
-                                color: _accessoryPickerSelectedRandomType == true
-                                  ? colorScheme.onPrimaryContainer
-                                  : colorScheme.onSurface,
-                                fontWeight:
-                                  _accessoryPickerSelectedRandomType == true
-                                    ? FontWeight.w700
-                                    : FontWeight.w500,
-                              ),
-                            visualDensity: VisualDensity.compact,
-                            materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                            onSelected: (_) => setSheetState(
-                              () => _accessoryPickerSelectedRandomType =
-                                  _accessoryPickerSelectedRandomType == true
-                                      ? null
-                                      : true,
-                            ),
-                          ),
+                                  if (parts.isNotEmpty) ...[
+                                    const SizedBox(width: 4),
+                                    Container(
+                                      width: 1,
+                                      height: 20,
+                                      color: Theme.of(ctx).dividerColor,
+                                    ),
+                                    const SizedBox(width: 10),
+                                  ],
+                                  FilterChip(
+                                    label: const Text('고정옵션'),
+                                    showCheckmark: false,
+                                    selected:
+                                        _accessoryPickerSelectedRandomType ==
+                                            false,
+                                    selectedColor: colorScheme.primaryContainer,
+                                    backgroundColor: colorScheme.surface
+                                        .withValues(alpha: 0.65),
+                                    side: BorderSide(
+                                      color:
+                                          _accessoryPickerSelectedRandomType ==
+                                                  false
+                                              ? colorScheme.primary
+                                              : colorScheme.onSurface
+                                                  .withValues(alpha: 0.28),
+                                      width:
+                                          _accessoryPickerSelectedRandomType ==
+                                                  false
+                                              ? 1.3
+                                              : 1,
+                                    ),
+                                    labelStyle: Theme.of(ctx)
+                                        .textTheme
+                                        .labelMedium
+                                        ?.copyWith(
+                                          color:
+                                              _accessoryPickerSelectedRandomType ==
+                                                      false
+                                                  ? colorScheme
+                                                      .onPrimaryContainer
+                                                  : colorScheme.onSurface,
+                                          fontWeight:
+                                              _accessoryPickerSelectedRandomType ==
+                                                      false
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w500,
+                                        ),
+                                    visualDensity: VisualDensity.compact,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    onSelected: (_) => setSheetState(
+                                      () => _accessoryPickerSelectedRandomType =
+                                          _accessoryPickerSelectedRandomType ==
+                                                  false
+                                              ? null
+                                              : false,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  FilterChip(
+                                    label: const Text('랜덤옵션'),
+                                    showCheckmark: false,
+                                    selected:
+                                        _accessoryPickerSelectedRandomType ==
+                                            true,
+                                    selectedColor: colorScheme.primaryContainer,
+                                    backgroundColor: colorScheme.surface
+                                        .withValues(alpha: 0.65),
+                                    side: BorderSide(
+                                      color:
+                                          _accessoryPickerSelectedRandomType ==
+                                                  true
+                                              ? colorScheme.primary
+                                              : colorScheme.onSurface
+                                                  .withValues(alpha: 0.28),
+                                      width:
+                                          _accessoryPickerSelectedRandomType ==
+                                                  true
+                                              ? 1.3
+                                              : 1,
+                                    ),
+                                    labelStyle: Theme.of(ctx)
+                                        .textTheme
+                                        .labelMedium
+                                        ?.copyWith(
+                                          color:
+                                              _accessoryPickerSelectedRandomType ==
+                                                      true
+                                                  ? colorScheme
+                                                      .onPrimaryContainer
+                                                  : colorScheme.onSurface,
+                                          fontWeight:
+                                              _accessoryPickerSelectedRandomType ==
+                                                      true
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w500,
+                                        ),
+                                    visualDensity: VisualDensity.compact,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    onSelected: (_) => setSheetState(
+                                      () => _accessoryPickerSelectedRandomType =
+                                          _accessoryPickerSelectedRandomType ==
+                                                  true
+                                              ? null
+                                              : true,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -1013,7 +1041,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           break;
         case AccessorySimulationOptionChangeAction.changeThird:
           // 고정 3옵은 변경 불가, 랜덤 제작 3옵 또는 확장 3옵은 변경 가능
-          if (current.length >= 3 && (isRandomAccessory || baseOptionCount < 3)) {
+          if (current.length >= 3 &&
+              (isRandomAccessory || baseOptionCount < 3)) {
             current[2] =
                 _generateRandomOption(forSlot: 2, existingOptions: current);
             _totalSoulStonesConsumed += 100;
@@ -1532,10 +1561,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             child: Text(
                               '수치',
                               textAlign: TextAlign.right,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -1544,10 +1577,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             child: Text(
                               '등장 범위',
                               textAlign: TextAlign.right,
-                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.outline,
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodySmall
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.outline,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                             ),
                           ),
                         ],
@@ -1555,11 +1592,16 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     ),
                     Column(
                       children: List.generate(fixedRowCount, (i) {
-                        final baseOption = i < (accessory?.options.length ?? 0) ? accessory!.options[i] : null;
+                        final baseOption = i < (accessory?.options.length ?? 0)
+                            ? accessory!.options[i]
+                            : null;
                         // 등장 여부: baseOption의 이름이 displayOptions에 있는지 확인
                         final appearedOption = baseOption == null
                             ? null
-                            : displayOptions.where((o) => o.optionName == baseOption.optionName).firstOrNull;
+                            : displayOptions
+                                .where((o) =>
+                                    o.optionName == baseOption.optionName)
+                                .firstOrNull;
                         final appeared = appearedOption != null;
                         final minVal = baseOption?.minNormalValue;
                         final maxVal = baseOption?.maxNormalValue;
@@ -1567,7 +1609,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                         // 등장 시 등급 색상
                         final grade = _simulatedState?.grade;
                         final highlightColor = appeared
-                            ? _borderColorForGrade(grade, Theme.of(context)).withOpacity(0.18)
+                            ? _borderColorForGrade(grade, Theme.of(context))
+                                .withOpacity(0.18)
                             : null;
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 1),
@@ -1577,18 +1620,25 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                   borderRadius: BorderRadius.circular(4),
                                 )
                               : null,
-                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4, vertical: 1),
                           child: Row(
                             children: [
                               Expanded(
                                 child: Text(
                                   baseOption?.optionName ?? '',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontWeight: appeared ? FontWeight.w700 : FontWeight.normal,
-                                    color: appeared
-                                        ? _borderColorForGrade(grade, Theme.of(context))
-                                        : null,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontWeight: appeared
+                                            ? FontWeight.w700
+                                            : FontWeight.normal,
+                                        color: appeared
+                                            ? _borderColorForGrade(
+                                                grade, Theme.of(context))
+                                            : null,
+                                      ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -1596,14 +1646,25 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               SizedBox(
                                 width: 50,
                                 child: Text(
-                                  appeared ? _formatOptionValueForSummary(appearedOption) : '-',
+                                  appeared
+                                      ? _formatOptionValueForSummary(
+                                          appearedOption)
+                                      : '-',
                                   textAlign: TextAlign.right,
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontWeight: appeared ? FontWeight.w700 : FontWeight.normal,
-                                    color: appeared
-                                        ? _borderColorForGrade(grade, Theme.of(context))
-                                        : Theme.of(context).colorScheme.outline,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        fontWeight: appeared
+                                            ? FontWeight.w700
+                                            : FontWeight.normal,
+                                        color: appeared
+                                            ? _borderColorForGrade(
+                                                grade, Theme.of(context))
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .outline,
+                                      ),
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -1612,9 +1673,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                 child: Text(
                                   hasRange ? '$minVal~$maxVal' : '-',
                                   textAlign: TextAlign.right,
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context).colorScheme.outline,
-                                  ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                      ),
                                 ),
                               ),
                             ],
@@ -1895,8 +1961,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   children: [
                     Expanded(
                       child: FilledButton.icon(
-                        onPressed:
-                            _isAutoOptionChanging ? null : _startAutoOptionChange,
+                        onPressed: _isAutoOptionChanging
+                            ? null
+                            : _startAutoOptionChange,
                         icon: const Icon(Icons.play_arrow_rounded),
                         label: const Text('자동 시작'),
                       ),
@@ -1904,8 +1971,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed:
-                            _isAutoOptionChanging ? _stopAutoOptionChange : null,
+                        onPressed: _isAutoOptionChanging
+                            ? _stopAutoOptionChange
+                            : null,
                         icon: const Icon(Icons.stop_rounded),
                         label: const Text('중지'),
                       ),
@@ -2113,7 +2181,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton.icon(
-                    onPressed: _canAttemptRemodelByCount ? _performRemodel : null,
+                    onPressed:
+                        _canAttemptRemodelByCount ? _performRemodel : null,
                     icon: const Icon(Icons.build_circle_outlined),
                     label: const Text('개조 실행'),
                   ),
@@ -2131,11 +2200,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               children: [
                 Text('누적 소모', style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
-                Text('개조 횟수: ${_numberFormat.format(_totalRemodelAttemptCount)}회'),
+                Text(
+                    '개조 횟수: ${_numberFormat.format(_totalRemodelAttemptCount)}회'),
                 Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
                 Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
                 Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
-                Text('영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
+                Text(
+                    '영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
               ],
             ),
           ),
@@ -2403,7 +2474,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
     return option.optionValue;
   }
-
 
   bool _isMaxRollOption(AccessoryOption option) {
     final maxValue = option.maxNormalValue;
