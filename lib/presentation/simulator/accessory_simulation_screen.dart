@@ -1140,7 +1140,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     final targetName = _autoOptionTargetName;
     if (targetName == null || targetName.isEmpty) {
-      _showSnack('원하는 옵션을 선택해 주세요.');
+      _showSnack('옵션 선택');
       return;
     }
 
@@ -2042,7 +2042,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     onPressed:
                         _isAutoOptionChanging ? null : _startAutoOptionChange,
                     icon: const Icon(Icons.play_arrow_rounded),
-                    label: const Text('자동 시작'),
+                    label: const Text('시작'),
                     style: FilledButton.styleFrom(
                       visualDensity: VisualDensity.compact,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
