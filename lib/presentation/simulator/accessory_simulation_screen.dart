@@ -1258,18 +1258,23 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     if (forSlot == 2) {
       if (existingOptions.isNotEmpty) {
-        excludedOptionNames.add(existingOptions[0].optionName);
+        excludedOptionNames
+            .add(_normalizeOptionName(existingOptions[0].optionName));
       }
       if (existingOptions.length > 1) {
-        excludedOptionNames.add(existingOptions[1].optionName);
+        excludedOptionNames
+            .add(_normalizeOptionName(existingOptions[1].optionName));
       }
       if (existingOptions.length > 3) {
-        excludedOptionNames.add(existingOptions[3].optionName);
+        excludedOptionNames
+            .add(_normalizeOptionName(existingOptions[3].optionName));
       }
     }
 
     final availableOptions = availablePool
-        .where((option) => !excludedOptionNames.contains(option.optionName))
+        .where((option) =>
+            !excludedOptionNames
+                .contains(_normalizeOptionName(option.optionName)))
         .toList(growable: false);
     final pool = availableOptions.isEmpty ? availablePool : availableOptions;
 
@@ -1305,6 +1310,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       minNormalValue: minValue,
       maxNormalValue: maxValue,
     );
+  }
+
+  String _normalizeOptionName(String name) {
+    return name.trim();
   }
 
   (int, int) _resolveOptionRange(AccessoryOption option) {
