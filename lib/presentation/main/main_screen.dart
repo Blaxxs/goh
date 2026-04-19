@@ -27,8 +27,8 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   static const int _quickWarmupCount = 24;
 
-  void _navigateToScreen(BuildContext context, Widget screen) {
-    Navigator.push(
+  Future<void> _navigateToScreen(BuildContext context, Widget screen) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => screen),
     );
@@ -108,8 +108,10 @@ class _MainScreenState extends State<MainScreen> {
       onAccessorySimulationPressed: () {
         _navigateToScreen(context, const AccessorySimulationScreen());
       },
-      onStageSettingsPressed: () {
-        _navigateToScreen(context, const SettingsScreen());
+      onStageSettingsPressed: () async {
+        await _navigateToScreen(context, const SettingsScreen());
+        if (!mounted) return;
+        setState(() {});
       },
       onAppSettingsPressed: () {
         _navigateToScreen(context, const AppSettingsScreen());
