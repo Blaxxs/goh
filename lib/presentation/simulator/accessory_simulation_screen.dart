@@ -2068,6 +2068,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     final slot = index + 1;
     final isFilled = index < currentOptionCount;
     final isBaseSlot = index < baseOptionCount;
+    final isRandomThirdChangeableSlot =
+      isRandomAccessory && index == 2 && isFilled;
+    final useFixedSlotStyle = isBaseSlot && !isRandomThirdChangeableSlot;
 
     String optionName = '비어있음';
     String optionValue = '';
@@ -2078,7 +2081,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (isFilled) {
       optionName = _currentOptions[index].optionName;
       optionValue = _formatOptionValueWithRange(_currentOptions[index]);
-      optionColor = isBaseSlot ? Colors.grey : theme.textTheme.bodyLarge?.color;
+      optionColor =
+          useFixedSlotStyle ? Colors.grey : theme.textTheme.bodyLarge?.color;
 
       if (index == 2 && (!isBaseSlot || isRandomAccessory)) {
         actionLabel = '변경';
@@ -2115,7 +2119,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
-                color: isBaseSlot
+                color: useFixedSlotStyle
                     ? Colors.grey.withAlpha(20)
                     : Theme.of(context).cardColor,
                 border: Border.all(color: Theme.of(context).dividerColor),
