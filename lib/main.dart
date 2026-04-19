@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -11,8 +12,30 @@ import 'presentation/loading/loading_screen.dart';
 
 final GlobalKey<NavigatorState> appNavigatorKey = GlobalKey<NavigatorState>();
 
+bool _shouldOpenAccessoryFromInitialUrl() {
+  if (!kIsWeb) {
+    return false;
+  }
+
+  final initialRoute =
+      WidgetsBinding.instance.platformDispatcher.defaultRouteName
+          .trim()
+          .toLowerCase();
+  final fragment = Uri.base.fragment.trim().toLowerCase();
+  final path = Uri.base.path.trim().toLowerCase();
+  final fullUrl = Uri.base.toString().toLowerCase();
+
+  return initialRoute == '/accessory' ||
+      fragment == '/accessory' ||
+      fragment == 'accessory' ||
+      path.endsWith('/accessory') ||
+      fullUrl.contains('#/accessory') ||
+      fullUrl.contains('/accessory');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final openAccessoryFromInitialUrl = _shouldOpenAccessoryFromInitialUrl();
 
   try {
     if (Firebase.apps.isEmpty) {
@@ -24,7 +47,7 @@ void main() async {
     debugPrint('Firebase initialization error (ignored): $e');
   }
 
-  runApp(const MyApp());
+  runApp(MyApp(openAccessoryFromInitialUrl: openAccessoryFromInitialUrl));
 
   Future(() async {
     try {
@@ -36,7 +59,12 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+    required this.openAccessoryFromInitialUrl,
+  });
+
+  final bool openAccessoryFromInitialUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +86,9 @@ class MyApp extends StatelessWidget {
                 fontSizeMultiplier: currentFontSizeMultiplier,
               ),
               themeMode: currentThemeMode,
-              home: const LoadingScreen(),
+              home: LoadingScreen(
+                openAccessoryFromInitialUrl: openAccessoryFromInitialUrl,
+              ),
               localizationsDelegates: const [
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
