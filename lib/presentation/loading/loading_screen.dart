@@ -71,8 +71,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
   void _navigateToMain() {
     if (!_hasNavigated && mounted) {
       _hasNavigated = true;
+      Widget destination = const MainScreen();
+      if (kIsWeb) {
+        final fragment = Uri.base.fragment;
+        if (fragment == '/accessory') {
+          destination = const AccessoryScreen();
+        }
+      }
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MainScreen()),
+        MaterialPageRoute(builder: (_) => destination),
       );
     }
   }
