@@ -268,6 +268,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   AccessorySimulationOptionChangeAction _selectedAction =
       AccessorySimulationOptionChangeAction.none;
+  bool _isAutoOptionChanging = false;
+  int _autoOptionTargetSlot = 3;
+  String? _autoOptionTargetName;
+  int _autoOptionChangeAttempts = 0;
   int _totalSoulStonesConsumed = 0;
   int _totalGrindstonesConsumed = 0;
   int _totalRainbowAnvilsConsumed = 0;
@@ -731,7 +735,11 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   void _resetOptionChangeState() {
+    _isAutoOptionChanging = false;
     _selectedAction = AccessorySimulationOptionChangeAction.none;
+    _autoOptionTargetSlot = 3;
+    _autoOptionTargetName = null;
+    _autoOptionChangeAttempts = 0;
     _totalSoulStonesConsumed = 0;
     _totalGrindstonesConsumed = 0;
     _totalRainbowAnvilsConsumed = 0;
@@ -971,21 +979,32 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       return;
     }
 
-    setState(() {
-      _selectedAction = action;
-    });
-    _performOptionChange();
+    if (_isAutoOptionChanging) {
+      setState(() {
+        _isAutoOptionChanging = false;
+      });
+    }
+
+    final changed = _performOptionChange(action: action);
+    if (!changed) {
+      _showSnack('현재 상태에서는 해당 옵션 변경을 진행할 수 없습니다.');
+    }
   }
 
-  void _performOptionChange() {
-    if (_simulatedState == null || _selectedAccessory == null) return;
+  bool _performOptionChange({
+    required AccessorySimulationOptionChangeAction action,
+  }) {
+    if (_simulatedState == null || _selectedAccessory == null) return false;
 
     final current = List<AccessoryOption>.from(_currentOptions);
     final baseOptionCount = _baseOptions.length;
     final isRandomAccessory = _selectedAccessory?.randomOptionConfig != null;
+    var changed = false;
 
     setState(() {
-      switch (_selectedAction) {
+      _selectedAction = action;
+
+      switch (action) {
         case AccessorySimulationOptionChangeAction.none:
           break;
         case AccessorySimulationOptionChangeAction.expandToThird:
@@ -993,6 +1012,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             current.add(
                 _generateRandomOption(forSlot: 2, existingOptions: current));
             _totalRainbowAnvilsConsumed++;
+            changed = true;
           }
           break;
         case AccessorySimulationOptionChangeAction.changeThird:
@@ -1001,6 +1021,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             current[2] =
                 _generateRandomOption(forSlot: 2, existingOptions: current);
             _totalSoulStonesConsumed += 100;
+            changed = true;
           }
           break;
         case AccessorySimulationOptionChangeAction.expandToFourth:
@@ -1008,6 +1029,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             current.add(
                 _generateRandomOption(forSlot: 3, existingOptions: current));
             _total9EnhanceAccessoriesConsumed++;
+            changed = true;
           }
           break;
         case AccessorySimulationOptionChangeAction.changeFourth:
@@ -1016,6 +1038,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 _generateRandomOption(forSlot: 3, existingOptions: current);
             _totalSoulStonesConsumed += 100;
             _totalGrindstonesConsumed += 300;
+            changed = true;
           }
           break;
       }
@@ -1023,6 +1046,152 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       _simulatedState = _simulatedState!.copyWith(currentOptions: current);
       _selectedAction = AccessorySimulationOptionChangeAction.none;
       _syncSelectedOptionCount();
+    });
+
+    return changed;
+  }
+
+  AccessorySimulationOptionChangeAction _actionForAutoTargetSlot() {
+    return _autoOptionTargetSlot == 4
+        ? AccessorySimulationOptionChangeAction.changeFourth
+        : AccessorySimulationOptionChangeAction.changeThird;
+  }
+
+  bool _canChangeTargetSlot() {
+    final action = _actionForAutoTargetSlot();
+    if (action == AccessorySimulationOptionChangeAction.changeFourth) {
+      return _currentOptions.length >= 4;
+    }
+    final isRandomAccessory = _selectedAccessory?.randomOptionConfig != null;
+    return _currentOptions.length >= 3 &&
+        (isRandomAccessory || _baseOptions.length < 3);
+  }
+
+  int _targetSlotIndex() => _autoOptionTargetSlot - 1;
+
+  String? _currentTargetSlotOptionName() {
+    final index = _targetSlotIndex();
+    if (index < 0 || index >= _currentOptions.length) {
+      return null;
+    }
+    return _currentOptions[index].optionName;
+  }
+
+  List<String> _autoTargetOptionNames() {
+    final names = _availableChangeableOptions()
+        .map((option) => option.optionName)
+        .toSet();
+
+    if (_autoOptionTargetSlot == 3) {
+      if (_currentOptions.isNotEmpty) {
+        names.remove(_currentOptions[0].optionName);
+      }
+      if (_currentOptions.length > 1) {
+        names.remove(_currentOptions[1].optionName);
+      }
+      if (_currentOptions.length > 3) {
+        names.remove(_currentOptions[3].optionName);
+      }
+    }
+
+    final sorted = names.toList()..sort();
+    return sorted;
+  }
+
+  void _startAutoOptionChange() {
+    if (_simulatedState == null) {
+      _showSnack('먼저 악세사리를 제작해 주세요.');
+      return;
+    }
+    if (!_canChangeTargetSlot()) {
+      _showSnack('선택한 슬롯은 현재 옵션 변경이 불가능합니다.');
+      return;
+    }
+
+    final targetName = _autoOptionTargetName;
+    if (targetName == null || targetName.isEmpty) {
+      _showSnack('원하는 옵션을 선택해 주세요.');
+      return;
+    }
+
+    final currentName = _currentTargetSlotOptionName();
+    if (currentName == targetName) {
+      _showSnack('이미 원하는 옵션이 적용되어 있습니다.');
+      return;
+    }
+
+    setState(() {
+      _isAutoOptionChanging = true;
+      _autoOptionChangeAttempts = 0;
+    });
+
+    _runAutoOptionChangeLoop();
+  }
+
+  Future<void> _runAutoOptionChangeLoop() async {
+    final action = _actionForAutoTargetSlot();
+    while (_isAutoOptionChanging && mounted) {
+      if (_selectedMode != AccessorySimulationMode.optionChange ||
+          !_canChangeTargetSlot()) {
+        break;
+      }
+
+      final targetName = _autoOptionTargetName;
+      if (targetName == null || targetName.isEmpty) {
+        break;
+      }
+
+      if (_currentTargetSlotOptionName() == targetName) {
+        break;
+      }
+
+      var reachedTargetInBatch = false;
+      for (int i = 0; i < _autoEnhanceBatchSize; i++) {
+        if (!_isAutoOptionChanging || !mounted) {
+          break;
+        }
+        final changed = _performOptionChange(action: action);
+        if (!changed) {
+          _isAutoOptionChanging = false;
+          break;
+        }
+
+        _autoOptionChangeAttempts++;
+        if (_currentTargetSlotOptionName() == targetName) {
+          reachedTargetInBatch = true;
+          break;
+        }
+      }
+
+      if (reachedTargetInBatch) {
+        break;
+      }
+
+      await Future<void>.delayed(const Duration(milliseconds: 1));
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    final targetName = _autoOptionTargetName;
+    final success = targetName != null &&
+        targetName.isNotEmpty &&
+        _currentTargetSlotOptionName() == targetName;
+
+    setState(() {
+      _isAutoOptionChanging = false;
+    });
+
+    if (success) {
+      _showSnack('원하는 옵션이 등장했습니다. (시도: $_autoOptionChangeAttempts회)');
+    }
+  }
+
+  void _stopAutoOptionChange() {
+    if (!_isAutoOptionChanging) return;
+    setState(() {
+      _isAutoOptionChanging = false;
     });
   }
 
