@@ -2006,33 +2006,42 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               },
             ),
             const SizedBox(height: 6),
-            DropdownButtonFormField<String>(
-              value: selectedTargetName,
-              isDense: true,
-              hint: const Text('옵션 선택'),
-              decoration: const InputDecoration(
-                isDense: true,
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 9,
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  minWidth: 120,
+                  maxWidth: 180,
                 ),
-                border: OutlineInputBorder(),
-              ),
-              items: targetOptionNames
-                  .map(
-                    (name) => DropdownMenuItem<String>(
-                      value: name,
-                      child: Text(name),
+                child: DropdownButtonFormField<String>(
+                  value: selectedTargetName,
+                  isDense: true,
+                  hint: const Text('옵션 선택'),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 9,
                     ),
-                  )
-                  .toList(growable: false),
-              onChanged: _isAutoOptionChanging
-                  ? null
-                  : (value) {
-                      setState(() {
-                        _autoOptionTargetName = value;
-                      });
-                    },
+                    border: OutlineInputBorder(),
+                  ),
+                  items: targetOptionNames
+                      .map(
+                        (name) => DropdownMenuItem<String>(
+                          value: name,
+                          child: Text(name),
+                        ),
+                      )
+                      .toList(growable: false),
+                  onChanged: _isAutoOptionChanging
+                      ? null
+                      : (value) {
+                          setState(() {
+                            _autoOptionTargetName = value;
+                          });
+                        },
+                ),
+              ),
             ),
             const SizedBox(height: 6),
             Row(
