@@ -270,6 +270,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   int _autoOptionTargetSlot = 3;
   String? _autoOptionTargetName;
   int _autoOptionChangeAttempts = 0;
+  bool _autoOptionRequireNextHit = false;
   int _totalSoulStonesConsumed = 0;
   int _totalGrindstonesConsumed = 0;
   int _totalRainbowAnvilsConsumed = 0;
@@ -765,6 +766,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     _autoOptionTargetSlot = 3;
     _autoOptionTargetName = null;
     _autoOptionChangeAttempts = 0;
+    _autoOptionRequireNextHit = false;
     _totalSoulStonesConsumed = 0;
     _totalGrindstonesConsumed = 0;
     _totalRainbowAnvilsConsumed = 0;
@@ -1143,14 +1145,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     final currentName = _currentTargetSlotOptionName();
-    if (currentName == targetName) {
-      _showSnack('이미 원하는 옵션이 적용되어 있습니다.');
-      return;
-    }
 
     setState(() {
       _isAutoOptionChanging = true;
       _autoOptionChangeAttempts = 0;
+      // 이미 원하는 옵션인 상태에서 다시 시작하면,
+      // 한 번 벗어난 뒤 "다음 등장" 시점에 멈추도록 처리한다.
+      _autoOptionRequireNextHit = currentName == targetName;
     });
 
     _runAutoOptionChangeLoop();
@@ -1158,6 +1159,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Future<void> _runAutoOptionChangeLoop() async {
     final action = _actionForAutoTargetSlot();
+    var waitForNextHit = _autoOptionRequireNextHit;
+    var reachedTarget = false;
+
     while (_isAutoOptionChanging && mounted) {
       if (_selectedMode != AccessorySimulationMode.optionChange ||
           !_canChangeTargetSlot()) {
@@ -1166,10 +1170,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
       final targetName = _autoOptionTargetName;
       if (targetName == null || targetName.isEmpty) {
-        break;
-      }
-
-      if (_currentTargetSlotOptionName() == targetName) {
         break;
       }
 
@@ -1186,7 +1186,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           _isAutoOptionChanging = false;
           break;
         }
-        if (_currentTargetSlotOptionName() == targetName) {
+
+        final currentName = _currentTargetSlotOptionName();
+        if (waitForNextHit) {
+          if (currentName != targetName) {
+            waitForNextHit = false;
+          }
+        } else if (currentName == targetName) {
+          reachedTarget = true;
           reachedTargetInBatch = true;
           break;
         }
@@ -1204,12 +1211,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     final targetName = _autoOptionTargetName;
-    final success = targetName != null &&
+    final success = reachedTarget &&
+        targetName != null &&
         targetName.isNotEmpty &&
         _currentTargetSlotOptionName() == targetName;
 
     setState(() {
       _isAutoOptionChanging = false;
+      _autoOptionRequireNextHit = false;
     });
 
     if (success) {
@@ -1221,6 +1230,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (!_isAutoOptionChanging) return;
     setState(() {
       _isAutoOptionChanging = false;
+      _autoOptionRequireNextHit = false;
     });
   }
 
@@ -1905,13 +1915,17 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         const SizedBox(height: 12),
         Card(
           child: Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('자동 변경', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 SegmentedButton<int>(
+                  style: const ButtonStyle(
+                    visualDensity: VisualDensity.compact,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
                   segments: [
                     ButtonSegment<int>(
                       value: 3,
@@ -1936,10 +1950,19 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     });
                   },
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 DropdownButtonFormField<String>(
                   value: selectedTargetName,
+                  isDense: true,
                   hint: const Text('원하는 옵션 선택'),
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 9,
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
                   items: targetOptionNames
                       .map(
                         (name) => DropdownMenuItem<String>(
@@ -1956,7 +1979,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           });
                         },
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
                 Row(
                   children: [
                     Expanded(
@@ -1966,9 +1989,18 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             : _startAutoOptionChange,
                         icon: const Icon(Icons.play_arrow_rounded),
                         label: const Text('자동 시작'),
+                        style: FilledButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          minimumSize: const Size(0, 34),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 6),
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: _isAutoOptionChanging
@@ -1976,13 +2008,23 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             : null,
                         icon: const Icon(Icons.stop_rounded),
                         label: const Text('중지'),
+                        style: OutlinedButton.styleFrom(
+                          visualDensity: VisualDensity.compact,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          minimumSize: const Size(0, 34),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 Text(
                   '자동 시도 횟수: ${_numberFormat.format(_autoOptionChangeAttempts)}회',
+                  style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
