@@ -1098,12 +1098,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       }
     }
 
-    final fallbackPool = _availableChangeableOptions()
-        .where((option) {
-          final name = _normalizeOptionName(option.optionName);
-          return name != firstName && name != secondName;
-        })
-        .toList(growable: false);
+    final fallbackPool = _availableChangeableOptions().where((option) {
+      final name = _normalizeOptionName(option.optionName);
+      return name != firstName && name != secondName;
+    }).toList(growable: false);
 
     if (fallbackPool.isNotEmpty) {
       final fallback = fallbackPool[_random.nextInt(fallbackPool.length)];
@@ -1313,9 +1311,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     final availableOptions = availablePool
-        .where((option) =>
-            !excludedOptionNames
-                .contains(_normalizeOptionName(option.optionName)))
+        .where((option) => !excludedOptionNames
+            .contains(_normalizeOptionName(option.optionName)))
         .toList(growable: false);
     final pool = availableOptions.isEmpty ? availablePool : availableOptions;
 
@@ -2120,7 +2117,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   label: const Text('4옵'),
                   enabled: canChangeFourth,
                 ),
-     ],
+              ],
               selected: {_autoOptionTargetSlot},
               onSelectionChanged: (value) {
                 if (_isAutoOptionChanging) return;
