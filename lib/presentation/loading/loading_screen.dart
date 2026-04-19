@@ -6,6 +6,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../main/main_screen.dart'; // MainScreen으로 이동하기 위함
 import '../accessory/accessory_screen.dart';
 import '../../core/services/settings_service.dart'; // 설정 로딩을 위함
+import '../../core/services/web_location.dart' as web_location;
 import '../../core/constants/accessory_constants.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -89,13 +90,18 @@ class _LoadingScreenState extends State<LoadingScreen> {
     final fragment = Uri.base.fragment.trim().toLowerCase();
     final path = Uri.base.path.trim().toLowerCase();
     final fullUrl = Uri.base.toString().toLowerCase();
+    final rawHref = web_location.currentHref().trim().toLowerCase();
+    final rawHash = web_location.currentHash().trim().toLowerCase();
 
     return initialRoute == '/accessory' ||
         fragment == '/accessory' ||
         fragment == 'accessory' ||
         path.endsWith('/accessory') ||
         fullUrl.contains('#/accessory') ||
-        fullUrl.contains('/accessory');
+      fullUrl.contains('/accessory') ||
+      rawHash == '#/accessory' ||
+      rawHash == '#accessory' ||
+      rawHref.contains('#/accessory');
   }
 
   void _navigateToMain() {
