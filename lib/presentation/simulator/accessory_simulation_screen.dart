@@ -1316,6 +1316,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         excludedOptionNames
             .add(_normalizeOptionName(existingOptions[3].optionName));
       }
+    } else if (forSlot == 3) {
+      // 4옵 생성 시 3옵과 중복되지 않도록 제외
+      if (existingOptions.length > 2) {
+        excludedOptionNames
+            .add(_normalizeOptionName(existingOptions[2].optionName));
+      }
     }
 
     final availableOptions = availablePool
