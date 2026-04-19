@@ -1035,8 +1035,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           break;
         case AccessorySimulationOptionChangeAction.expandToThird:
           if (current.length < 3) {
-            current.add(
-                _generateRandomOption(forSlot: 2, existingOptions: current));
+            current.add(_rollThirdOptionWithoutFirstSecondDup(current));
             _totalRainbowAnvilsConsumed++;
             changed = true;
           }
@@ -1045,8 +1044,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           // 고정 3옵은 변경 불가, 랜덤 제작 3옵 또는 확장 3옵은 변경 가능
           if (current.length >= 3 &&
               (isRandomAccessory || baseOptionCount < 3)) {
-            current[2] =
-                _generateRandomOption(forSlot: 2, existingOptions: current);
+            current[2] = _rollThirdOptionWithoutFirstSecondDup(current);
             _totalSoulStonesConsumed += 100;
             changed = true;
           }
@@ -1079,6 +1077,49 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     });
 
     return changed;
+  }
+
+  AccessoryOption _rollThirdOptionWithoutFirstSecondDup(
+      List<AccessoryOption> currentOptions) {
+    const maxRetries = 20;
+    final firstName = currentOptions.isNotEmpty
+        ? _normalizeOptionName(currentOptions[0].optionName)
+        : '';
+    final secondName = currentOptions.length > 1
+        ? _normalizeOptionName(currentOptions[1].optionName)
+        : '';
+
+    for (int i = 0; i < maxRetries; i++) {
+      final rolled =
+          _generateRandomOption(forSlot: 2, existingOptions: currentOptions);
+      final rolledName = _normalizeOptionName(rolled.optionName);
+      if (rolledName != firstName && rolledName != secondName) {
+        return rolled;
+      }
+    }
+
+    final fallbackPool = _availableChangeableOptions()
+        .where((option) {
+          final name = _normalizeOptionName(option.optionName);
+          return name != firstName && name != secondName;
+        })
+        .toList(growable: false);
+
+    if (fallbackPool.isNotEmpty) {
+      final fallback = fallbackPool[_random.nextInt(fallbackPool.length)];
+      final (minValue, maxValue) = _resolveOptionRange(fallback);
+      final optionValue = (_selectedAccessory?.randomOptionConfig == null)
+          ? maxValue
+          : _randInt(_random, minValue, maxValue);
+      return AccessoryOption(
+        optionName: fallback.optionName,
+        optionValue: optionValue.toString(),
+        minNormalValue: minValue,
+        maxNormalValue: maxValue,
+      );
+    }
+
+    return _generateRandomOption(forSlot: 2, existingOptions: currentOptions);
   }
 
   AccessorySimulationOptionChangeAction _actionForAutoTargetSlot() {
