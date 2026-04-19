@@ -1898,6 +1898,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         ((_selectedAccessory?.randomOptionConfig != null) ||
             _baseOptions.length < 3);
     final canChangeFourth = _currentOptions.length >= 4;
+    final autoChangeCard = _buildAutoOptionChangeCard(
+      context,
+      targetOptionNames: targetOptionNames,
+      selectedTargetName: selectedTargetName,
+      canChangeThird: canChangeThird,
+      canChangeFourth: canChangeFourth,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1913,144 +1920,172 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final useSideBySide = constraints.maxWidth >= 820;
+            if (useSideBySide) {
+              final autoPanelWidth = min(330.0, constraints.maxWidth * 0.38);
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: _buildOptionChangeCostCard(context)),
+                  const SizedBox(width: 12),
+                  SizedBox(width: autoPanelWidth, child: autoChangeCard),
+                ],
+              );
+            }
+
+            return Column(
               children: [
-                Text('자동 변경', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 6),
-                SegmentedButton<int>(
-                  style: const ButtonStyle(
-                    visualDensity: VisualDensity.compact,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  segments: [
-                    ButtonSegment<int>(
-                      value: 3,
-                      label: const Text('3옵'),
-                      enabled: canChangeThird,
-                    ),
-                    ButtonSegment<int>(
-                      value: 4,
-                      label: const Text('4옵'),
-                      enabled: canChangeFourth,
-                    ),
-                  ],
-                  selected: {_autoOptionTargetSlot},
-                  onSelectionChanged: (value) {
-                    if (_isAutoOptionChanging) return;
-                    setState(() {
-                      _autoOptionTargetSlot = value.first;
-                      final nextOptions = _autoTargetOptionNames();
-                      if (!nextOptions.contains(_autoOptionTargetName)) {
-                        _autoOptionTargetName = null;
-                      }
-                    });
-                  },
-                ),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  value: selectedTargetName,
-                  isDense: true,
-                  hint: const Text('원하는 옵션 선택'),
-                  decoration: const InputDecoration(
-                    isDense: true,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 9,
-                    ),
-                    border: OutlineInputBorder(),
-                  ),
-                  items: targetOptionNames
-                      .map(
-                        (name) => DropdownMenuItem<String>(
-                          value: name,
-                          child: Text(name),
-                        ),
-                      )
-                      .toList(growable: false),
-                  onChanged: _isAutoOptionChanging
-                      ? null
-                      : (value) {
-                          setState(() {
-                            _autoOptionTargetName = value;
-                          });
-                        },
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: FilledButton.icon(
-                        onPressed: _isAutoOptionChanging
-                            ? null
-                            : _startAutoOptionChange,
-                        icon: const Icon(Icons.play_arrow_rounded),
-                        label: const Text('자동 시작'),
-                        style: FilledButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: const Size(0, 34),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _isAutoOptionChanging
-                            ? _stopAutoOptionChange
-                            : null,
-                        icon: const Icon(Icons.stop_rounded),
-                        label: const Text('중지'),
-                        style: OutlinedButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          minimumSize: const Size(0, 34),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 6,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '자동 시도 횟수: ${_numberFormat.format(_autoOptionChangeAttempts)}회',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
+                _buildOptionChangeCostCard(context),
+                const SizedBox(height: 12),
+                autoChangeCard,
               ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('소모 재화', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 8),
-                Text('영혼석: ${_numberFormat.format(_totalSoulStonesConsumed)}개'),
-                Text(
-                    '숫돌이: ${_numberFormat.format(_totalGrindstonesConsumed)}개'),
-                Text(
-                    '무지개 모루: ${_numberFormat.format(_totalRainbowAnvilsConsumed)}개'),
-                Text(
-                    '3옵 9강 악세: ${_numberFormat.format(_total9EnhanceAccessoriesConsumed)}개'),
-              ],
-            ),
-          ),
+            );
+          },
         ),
       ],
+    );
+  }
+
+  Widget _buildOptionChangeCostCard(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('소모 재화', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 8),
+            Text('영혼석: ${_numberFormat.format(_totalSoulStonesConsumed)}개'),
+            Text('숫돌이: ${_numberFormat.format(_totalGrindstonesConsumed)}개'),
+            Text('무지개 모루: ${_numberFormat.format(_totalRainbowAnvilsConsumed)}개'),
+            Text('3옵 9강 악세: ${_numberFormat.format(_total9EnhanceAccessoriesConsumed)}개'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAutoOptionChangeCard(
+    BuildContext context, {
+    required List<String> targetOptionNames,
+    required String? selectedTargetName,
+    required bool canChangeThird,
+    required bool canChangeFourth,
+  }) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('자동 변경', style: Theme.of(context).textTheme.titleSmall),
+            const SizedBox(height: 6),
+            SegmentedButton<int>(
+              style: const ButtonStyle(
+                visualDensity: VisualDensity.compact,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              segments: [
+                ButtonSegment<int>(
+                  value: 3,
+                  label: const Text('3옵'),
+                  enabled: canChangeThird,
+                ),
+                ButtonSegment<int>(
+                  value: 4,
+                  label: const Text('4옵'),
+                  enabled: canChangeFourth,
+                ),
+              ],
+              selected: {_autoOptionTargetSlot},
+              onSelectionChanged: (value) {
+                if (_isAutoOptionChanging) return;
+                setState(() {
+                  _autoOptionTargetSlot = value.first;
+                  final nextOptions = _autoTargetOptionNames();
+                  if (!nextOptions.contains(_autoOptionTargetName)) {
+                    _autoOptionTargetName = null;
+                  }
+                });
+              },
+            ),
+            const SizedBox(height: 6),
+            DropdownButtonFormField<String>(
+              value: selectedTargetName,
+              isDense: true,
+              hint: const Text('원하는 옵션 선택'),
+              decoration: const InputDecoration(
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 9,
+                ),
+                border: OutlineInputBorder(),
+              ),
+              items: targetOptionNames
+                  .map(
+                    (name) => DropdownMenuItem<String>(
+                      value: name,
+                      child: Text(name),
+                    ),
+                  )
+                  .toList(growable: false),
+              onChanged: _isAutoOptionChanging
+                  ? null
+                  : (value) {
+                      setState(() {
+                        _autoOptionTargetName = value;
+                      });
+                    },
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: _isAutoOptionChanging ? null : _startAutoOptionChange,
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: const Text('자동 시작'),
+                    style: FilledButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: const Size(0, 34),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _isAutoOptionChanging ? _stopAutoOptionChange : null,
+                    icon: const Icon(Icons.stop_rounded),
+                    label: const Text('중지'),
+                    style: OutlinedButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      minimumSize: const Size(0, 34),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '자동 시도 횟수: ${_numberFormat.format(_autoOptionChangeAttempts)}회',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
