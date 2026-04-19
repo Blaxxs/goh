@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../data/models/accessory.dart';
@@ -26,15 +28,19 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   bool _compareMode = false;
   final List<Accessory> _compareList = [];
   bool _isAccessoryDataLoading = false;
+  Timer? _accessoryReloadTimer;
 
   @override
   void initState() {
     super.initState();
     _searchController.addListener(_onSearchChanged);
     _ensureAccessoryDataReady();
+    _startAccessoryRecoveryPolling();
   }
 
   Future<void> _ensureAccessoryDataReady() async {
+    if (_isAccessoryDataLoading) return;
+
     final manager = AccessoryDataManager();
     if (manager.allAccessories.isNotEmpty) {
       return;
@@ -44,7 +50,15 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       _isAccessoryDataLoading = true;
     });
 
-    await manager.loadAccessories(waitForRemote: true);
+    const retryDelays = [200, 500, 900, 1300];
+    for (int i = 0; i < retryDelays.length; i++) {
+      await manager.loadAccessories(waitForRemote: true);
+      if (manager.allAccessories.isNotEmpty) {
+        break;
+      }
+      await Future<void>.delayed(Duration(milliseconds: retryDelays[i]));
+    }
+
     if (!mounted) return;
 
     setState(() {
@@ -52,8 +66,32 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     });
   }
 
+  void _startAccessoryRecoveryPolling() {
+    _accessoryReloadTimer?.cancel();
+    _accessoryReloadTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) {
+        if (!mounted) return;
+        final hasData = AccessoryDataManager().allAccessories.isNotEmpty;
+        if (hasData) {
+          _accessoryReloadTimer?.cancel();
+          if (_isAccessoryDataLoading) {
+            setState(() {
+              _isAccessoryDataLoading = false;
+            });
+          } else {
+            setState(() {});
+          }
+          return;
+        }
+        _ensureAccessoryDataReady();
+      },
+    );
+  }
+
   @override
   void dispose() {
+    _accessoryReloadTimer?.cancel();
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
@@ -194,6 +232,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         searchController: _searchController,
         filteredAccessories: displayList,
         isDataLoading: _isAccessoryDataLoading,
+        hasSourceData: accessories.isNotEmpty,
         selectedPartFilter: _selectedPartFilter,
         partFilterOptions: partFilterOptions,
         onPartFilterChanged: _handlePartFilterChanged,
@@ -223,6 +262,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         onClearSearch: _clearSearch,
         compareMode: _compareMode,
         compareList: _compareList,
+        onRetryLoad: _ensureAccessoryDataReady,
       ),
     );
   }
