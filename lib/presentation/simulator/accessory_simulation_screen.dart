@@ -1357,7 +1357,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     const canonicalName = '모든 피해 %감소';
 
     var hasCanonical = options.any(
-      (option) => _normalizeOptionName(option.optionName) == canonicalName,
+      (option) => option.optionName.trim() == canonicalName,
     );
 
     for (int i = options.length - 1; i >= 0; i--) {
