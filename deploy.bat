@@ -23,7 +23,7 @@ if %ERRORLEVEL% EQU 0 (
 	echo No changes to commit
 ) else (
 	git commit -m "Deploy to GitHub Pages"
-	if %ERRORLEVEL% NEQ 0 (
+	if errorlevel 1 (
 		echo ERROR: Commit failed. Deployment aborted.
 		popd
 		exit /b 1
