@@ -2101,7 +2101,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               )
                           : null,
                       child: InputDecorator(
-                        isDense: true,
                         decoration: const InputDecoration(
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(
