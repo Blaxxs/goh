@@ -110968,7 +110968,7 @@ af0(a){var s,r,q,p=B.b.hO(a,new A.aG9())
 for(s=a.length-1;s>=0;--s){r=a[s]
 q=r.a
 if(this.jy(q)!=="\ubaa8\ub4e0 \ud53c\ud574 %\uac10\uc18c")continue
-if(q==="\ubaa8\ub4e0\ud53c\ud574 %\uac10\uc18c"){if(p){B.b.kL(a,s)
+if(q==="\ubaa8\ub4e0\ud53c\ud574 %\uac10\uc18c"){if(p){if(s<a.length-1)B.b.kL(a,s)
 continue}a[s]=new A.bM("\ubaa8\ub4e0 \ud53c\ud574 %\uac10\uc18c",r.b,r.c,r.d)
 p=!0}}},
 jy(a){var s=B.d.dH(a)
