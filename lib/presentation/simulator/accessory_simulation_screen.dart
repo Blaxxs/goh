@@ -1154,15 +1154,21 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         .toSet();
 
     if (_autoOptionTargetSlot == 3) {
+      final excludedNormalized = <String>{};
       if (_currentOptions.isNotEmpty) {
-        names.remove(_currentOptions[0].optionName);
+        excludedNormalized
+            .add(_normalizeOptionName(_currentOptions[0].optionName));
       }
       if (_currentOptions.length > 1) {
-        names.remove(_currentOptions[1].optionName);
+        excludedNormalized
+            .add(_normalizeOptionName(_currentOptions[1].optionName));
       }
       if (_currentOptions.length > 3) {
-        names.remove(_currentOptions[3].optionName);
+        excludedNormalized
+            .add(_normalizeOptionName(_currentOptions[3].optionName));
       }
+      names.removeWhere(
+          (name) => excludedNormalized.contains(_normalizeOptionName(name)));
     }
 
     final sorted = names.toList()..sort();
