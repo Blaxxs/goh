@@ -90,10 +90,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
     final fragment = Uri.base.fragment.trim().toLowerCase();
     final path = Uri.base.path.trim().toLowerCase();
     final fullUrl = Uri.base.toString().toLowerCase();
+    final openQuery =
+      Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
     final rawHref = web_location.currentHref().trim().toLowerCase();
     final rawHash = web_location.currentHash().trim().toLowerCase();
 
     return initialRoute == '/accessory' ||
+      openQuery == 'accessory' ||
         fragment == '/accessory' ||
         fragment == 'accessory' ||
         path.endsWith('/accessory') ||
