@@ -17,9 +17,17 @@ if not exist .git (
 REM Stage all files
 git add -A
 
-REM Commit only if there are staged changes
-git commit -m "Deploy to GitHub Pages" >nul 2>&1 || (
+REM Commit only when there are staged changes; fail fast on commit errors
+git diff --cached --quiet
+if %ERRORLEVEL% EQU 0 (
 	echo No changes to commit
+) else (
+	git commit -m "Deploy to GitHub Pages"
+	if %ERRORLEVEL% NEQ 0 (
+		echo ERROR: Commit failed. Deployment aborted.
+		popd
+		exit /b 1
+	)
 )
 
 REM Ensure remote 'origin' points to the correct repository
