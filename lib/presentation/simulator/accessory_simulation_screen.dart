@@ -2114,54 +2114,47 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     final displayText = selectedTargetName ?? '옵션 선택';
                     final colorScheme = Theme.of(context).colorScheme;
 
-                    return InputDecorator(
-                      decoration: const InputDecoration(
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 9,
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(4),
+                      onTap: enabled
+                          ? () => _showAutoOptionTargetMenu(
+                                buttonContext,
+                                targetOptionNames,
+                              )
+                          : null,
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 9,
+                          ),
+                          border: OutlineInputBorder(),
                         ),
-                        border: OutlineInputBorder(),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Expanded(
-                            child: Text(
-                              displayText,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: enabled
-                                  ? null
-                                  : TextStyle(
-                                      color: colorScheme.onSurface
-                                          .withAlpha(140),
-                                    ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                displayText,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: enabled
+                                    ? null
+                                    : TextStyle(
+                                        color: colorScheme.onSurface
+                                            .withAlpha(140),
+                                      ),
+                              ),
                             ),
-                          ),
-                          Builder(
-                            builder: (iconContext) {
-                              return InkWell(
-                                borderRadius: BorderRadius.circular(12),
-                                onTap: enabled
-                                    ? () => _showAutoOptionTargetMenu(
-                                          iconContext,
-                                          targetOptionNames,
-                                        )
-                                    : null,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Icon(
-                                    Icons.arrow_drop_down,
-                                    color: enabled
-                                        ? colorScheme.onSurfaceVariant
-                                        : colorScheme.onSurface.withAlpha(110),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
+                            Icon(
+                              Icons.arrow_drop_down,
+                              color: enabled
+                                  ? colorScheme.onSurfaceVariant
+                                  : colorScheme.onSurface.withAlpha(110),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },
