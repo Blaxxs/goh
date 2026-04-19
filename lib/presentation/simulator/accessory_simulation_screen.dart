@@ -2042,7 +2042,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                     onPressed:
                         _isAutoOptionChanging ? null : _startAutoOptionChange,
                     icon: const Icon(Icons.play_arrow_rounded),
-                    label: const Text('자동 시작'),
+                    label: const Text('시작'),
                     style: FilledButton.styleFrom(
                       visualDensity: VisualDensity.compact,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
