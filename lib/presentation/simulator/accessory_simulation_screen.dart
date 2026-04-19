@@ -1192,7 +1192,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             waitForNextHit = false;
           }
         } else if (currentName == targetName) {
-          reachedTarget = true;
           reachedTargetInBatch = true;
           break;
         }
