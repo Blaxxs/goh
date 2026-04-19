@@ -16,6 +16,7 @@ class AccessoryScreenUI extends StatelessWidget {
   final VoidCallback onClearSearch;
   final bool compareMode;
   final List<Accessory> compareList;
+  final bool isDataLoading;
 
   const AccessoryScreenUI({
     super.key,
@@ -32,6 +33,7 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.onClearSearch,
     this.compareMode = false,
     this.compareList = const [],
+    this.isDataLoading = false,
   });
 
   @override
@@ -236,7 +238,18 @@ class AccessoryScreenUI extends StatelessWidget {
 
         // --- 악세사리 리스트 (그리드 뷰) ---
         Expanded(
-          child: filteredAccessories.isEmpty
+          child: isDataLoading
+              ? const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 10),
+                      Text('악세사리 데이터를 불러오는 중...'),
+                    ],
+                  ),
+                )
+              : filteredAccessories.isEmpty
               ? Center(
                   child: Text("검색 결과가 없습니다.",
                       style: TextStyle(
