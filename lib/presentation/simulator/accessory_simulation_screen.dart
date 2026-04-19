@@ -1145,12 +1145,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (index < 0 || index >= _currentOptions.length) {
       return null;
     }
-    return _currentOptions[index].optionName;
+    return _normalizeOptionName(_currentOptions[index].optionName);
   }
 
   List<String> _autoTargetOptionNames() {
     final names = _availableChangeableOptions()
-        .map((option) => option.optionName)
+        .map((option) => _normalizeOptionName(option.optionName))
         .toSet();
 
     if (_autoOptionTargetSlot == 3) {
