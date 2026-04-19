@@ -1072,6 +1072,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         _autoOptionChangeAttempts++;
       }
 
+      _canonicalizeDamageReductionOption(current);
+
       _simulatedState = _simulatedState!.copyWith(currentOptions: current);
       _syncSelectedOptionCount();
     });
@@ -1350,8 +1352,43 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     );
   }
 
+  void _canonicalizeDamageReductionOption(List<AccessoryOption> options) {
+    const legacyName = '모든피해 %감소';
+    const canonicalName = '모든 피해 %감소';
+
+    var hasCanonical = options.any(
+      (option) => _normalizeOptionName(option.optionName) == canonicalName,
+    );
+
+    for (int i = options.length - 1; i >= 0; i--) {
+      final option = options[i];
+      final normalized = _normalizeOptionName(option.optionName);
+      if (normalized != canonicalName) {
+        continue;
+      }
+
+      if (option.optionName == legacyName) {
+        if (hasCanonical) {
+          options.removeAt(i);
+          continue;
+        }
+        options[i] = AccessoryOption(
+          optionName: canonicalName,
+          optionValue: option.optionValue,
+          minNormalValue: option.minNormalValue,
+          maxNormalValue: option.maxNormalValue,
+        );
+        hasCanonical = true;
+      }
+    }
+  }
+
   String _normalizeOptionName(String name) {
-    return name.trim();
+    final trimmed = name.trim();
+    if (trimmed == '모든피해 %감소') {
+      return '모든 피해 %감소';
+    }
+    return trimmed;
   }
 
   (int, int) _resolveOptionRange(AccessoryOption option) {
