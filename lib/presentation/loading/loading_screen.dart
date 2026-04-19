@@ -68,16 +68,33 @@ class _LoadingScreenState extends State<LoadingScreen> {
     }
   }
 
+  bool _shouldOpenAccessoryFromDeepLink() {
+    if (!kIsWeb) {
+      return false;
+    }
+
+    final initialRoute =
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName
+            .trim()
+            .toLowerCase();
+    final fragment = Uri.base.fragment.trim().toLowerCase();
+    final path = Uri.base.path.trim().toLowerCase();
+    final fullUrl = Uri.base.toString().toLowerCase();
+
+    return initialRoute == '/accessory' ||
+        fragment == '/accessory' ||
+        fragment == 'accessory' ||
+        path.endsWith('/accessory') ||
+        fullUrl.contains('#/accessory') ||
+        fullUrl.contains('/accessory');
+  }
+
   void _navigateToMain() {
     if (!_hasNavigated && mounted) {
       _hasNavigated = true;
       Widget destination = const MainScreen();
-      if (kIsWeb) {
-        final initialRoute =
-            WidgetsBinding.instance.platformDispatcher.defaultRouteName;
-        if (initialRoute == '/accessory') {
-          destination = const AccessoryScreen();
-        }
+      if (_shouldOpenAccessoryFromDeepLink()) {
+        destination = const AccessoryScreen();
       }
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => destination),
