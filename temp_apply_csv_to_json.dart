@@ -93,17 +93,17 @@ void main() {
     return;
   }
 
-  if (root is! Map<String, dynamic> || root['accessories'] is! Map<String, dynamic>) {
+  if (root is! Map || root['accessories'] is! Map) {
     stderr.writeln('JSON_SHAPE_INVALID');
     exitCode = 1;
     return;
   }
 
-  final accessories = root['accessories'] as Map<String, dynamic>;
+  final accessories = (root['accessories'] as Map).cast<String, dynamic>();
 
   final jsonNameSet = <String>{};
   accessories.forEach((_, value) {
-    if (value is Map<String, dynamic>) {
+    if (value is Map) {
       final n = (value['name'] ?? '').toString();
       if (n.isNotEmpty) jsonNameSet.add(n);
     }
@@ -178,7 +178,7 @@ void main() {
 
   final nameToKeys = <String, List<String>>{};
   accessories.forEach((key, value) {
-    if (value is Map<String, dynamic>) {
+    if (value is Map) {
       final n = (value['name'] ?? '').toString();
       if (n.isNotEmpty) {
         nameToKeys.putIfAbsent(n, () => <String>[]).add(key);
@@ -212,9 +212,10 @@ void main() {
 
     final key = nameToKeys[name]!.first;
     final item = accessories[key];
-    if (item is! Map<String, dynamic>) continue;
+    if (item is! Map) continue;
+    final itemMap = item.cast<String, dynamic>();
 
-    final optionsDynamic = item['options'];
+    final optionsDynamic = itemMap['options'];
     if (optionsDynamic is! List || optionsDynamic.isEmpty) {
       skipNoOptions++;
       continue;
@@ -234,7 +235,8 @@ void main() {
 
     for (var i = 0; i < pairCount; i++) {
       final opt = options[i];
-      if (opt is! Map<String, dynamic>) continue;
+      if (opt is! Map) continue;
+      final optMap = opt.cast<String, dynamic>();
 
       final sv = rowsForName[i];
       final stageStr = <String>[];
@@ -242,22 +244,22 @@ void main() {
         stageStr.add(v == null ? '0' : numToStr(v));
       }
 
-      if (options.length <= 3 && opt['optionValue'] != null) {
-        final cur = parseNum(opt['optionValue'].toString());
+      if (options.length <= 3 && optMap['optionValue'] != null) {
+        final cur = parseNum(optMap['optionValue'].toString());
         final s9 = sv.length >= 9 ? sv[8] : null;
         if (cur != null && s9 != null) {
-          opt['optionValue'] = numToStr(cur - s9);
+          optMap['optionValue'] = numToStr(cur - s9);
         }
       }
 
       bonusList.add({
-        'optionName': (opt['optionName'] ?? '').toString(),
+        'optionName': (optMap['optionName'] ?? '').toString(),
         'stageValues': stageStr,
       });
     }
 
     if (bonusList.isNotEmpty) {
-      item['enhancementStageBonus'] = bonusList;
+      itemMap['enhancementStageBonus'] = bonusList;
       updated++;
     }
   }
