@@ -33,16 +33,21 @@ function Get-ColValue($row, [string]$colName) {
 }
 
 $groups = @{}
-$headingCount = @{}
+$blockCount = @{}
 $currentName = ''
+$prevHeaderName = ''
 foreach ($r in $csvRows) {
   $name = (Get-ColValue $r $nameCol)
   if ($name -and $name.Trim() -ne '') { $currentName = $name.Trim() }
   if (-not $currentName) { continue }
 
   if ($name -and $name.Trim() -ne '') {
-    if (-not $headingCount.ContainsKey($currentName)) { $headingCount[$currentName] = 0 }
-    $headingCount[$currentName]++
+    $headerName = $name.Trim()
+    if ($headerName -ne $prevHeaderName) {
+      if (-not $blockCount.ContainsKey($headerName)) { $blockCount[$headerName] = 0 }
+      $blockCount[$headerName]++
+      $prevHeaderName = $headerName
+    }
   }
 
   if (-not $groups.ContainsKey($currentName)) {
@@ -85,7 +90,7 @@ foreach ($n in $groups.Keys) {
     [void]$excludeSet.Add($n)
     continue
   }
-  if ($headingCount.ContainsKey($n) -and $headingCount[$n] -gt 1) {
+  if ($blockCount.ContainsKey($n) -and $blockCount[$n] -gt 1) {
     [void]$excludeSet.Add($n)
     continue
   }
