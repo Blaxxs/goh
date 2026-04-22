@@ -824,20 +824,55 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       random: _random,
     );
 
-    final rolledOptions = result.options
-        .map(
-          (roll) => _buildOptionFromRoll(accessory, roll),
-        )
-        .toList(growable: false);
+    final rolledOptions = <AccessoryOption>[];
+    final rolledGrades = <String>[];
+    for (final roll in result.options) {
+      final source = _findSourceOptionByName(accessory, roll.optionName);
+      final minValue = source?.minNormalValue;
+      final maxValue = source?.maxNormalValue;
+
+      // 제작 시(은모루 규칙)에도 1~2옵을 포함한 각 옵션을 독립 등급으로 추첨한다.
+      final optionGrade = _pickWeightedString(
+        RandomAccessoryRepository.silverMoruGradeProbabilities,
+        _random,
+      );
+      rolledGrades.add(optionGrade);
+
+      if (minValue == null || maxValue == null) {
+        rolledOptions.add(
+          AccessoryOption(
+            optionName: roll.optionName,
+            optionValue: roll.value.toString(),
+            minNormalValue: minValue,
+            maxNormalValue: maxValue,
+          ),
+        );
+        continue;
+      }
+
+      final range = _gradeRange(minValue, maxValue, optionGrade);
+      final rolled = _randInt(_random, range.$1, range.$2);
+      rolledOptions.add(
+        AccessoryOption(
+          optionName: roll.optionName,
+          optionValue: rolled.toString(),
+          minNormalValue: minValue,
+          maxNormalValue: maxValue,
+        ),
+      );
+    }
+
+    final highestGrade =
+        rolledGrades.isEmpty ? result.grade : _highestGrade(rolledGrades);
 
     setState(() {
       _simulatedState = SimulatedAccessoryState(
         accessory: accessory,
         baseOptions: rolledOptions,
         currentOptions: List<AccessoryOption>.from(rolledOptions),
-        grade: result.grade,
+        grade: highestGrade,
       );
-      _appendCraftLog(accessory, rolledOptions, grade: result.grade);
+      _appendCraftLog(accessory, rolledOptions, grade: highestGrade);
       _resetEnhancementState();
       _resetOptionChangeState();
       _resetRemodelState();
@@ -863,19 +898,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (_craftLogs.length > _maxCraftLogCount) {
       _craftLogs.removeRange(_maxCraftLogCount, _craftLogs.length);
     }
-  }
-
-  AccessoryOption _buildOptionFromRoll(
-    Accessory accessory,
-    RandomOptionRoll roll,
-  ) {
-    final source = _findSourceOptionByName(accessory, roll.optionName);
-    return AccessoryOption(
-      optionName: roll.optionName,
-      optionValue: roll.value.toString(),
-      minNormalValue: source?.minNormalValue,
-      maxNormalValue: source?.maxNormalValue,
-    );
   }
 
   AccessoryOption? _findSourceOptionByName(
@@ -1423,12 +1445,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       return;
     }
 
-    final grade = _pickWeightedString(
-      _useGoldMoruForRemodel
-          ? RandomAccessoryRepository.goldMoruGradeProbabilities
-          : RandomAccessoryRepository.silverMoruGradeProbabilities,
-      _random,
-    );
+    final gradeProbabilities = _useGoldMoruForRemodel
+        ? RandomAccessoryRepository.goldMoruGradeProbabilities
+        : RandomAccessoryRepository.silverMoruGradeProbabilities;
+    final rolledGrades = <String>[];
 
     final remodelableCount = min(2, _currentOptions.length);
     final remodeledOptions = List<AccessoryOption>.generate(
@@ -1445,7 +1465,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
           return option;
         }
 
-        final range = _gradeRange(minValue, maxValue, grade);
+        final optionGrade = _pickWeightedString(gradeProbabilities, _random);
+        rolledGrades.add(optionGrade);
+        final range = _gradeRange(minValue, maxValue, optionGrade);
         final rolled = _randInt(_random, range.$1, range.$2);
         return AccessoryOption(
           optionName: option.optionName,
@@ -1456,11 +1478,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       },
       growable: false,
     );
+    final highestGrade = rolledGrades.isEmpty
+        ? _simulatedState?.grade
+        : _highestGrade(rolledGrades);
 
     final baseCount = _baseOptions.length;
     setState(() {
       _simulatedState = _simulatedState!.copyWith(
-        grade: grade,
+        grade: highestGrade,
         baseOptions: remodeledOptions.take(baseCount).toList(growable: false),
         currentOptions: remodeledOptions,
       );
@@ -1504,6 +1529,33 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       if (pick <= 0) return entry.key;
     }
     return weights.keys.last;
+  }
+
+  int _gradeRank(String? grade) {
+    if (grade == RandomAccessoryRepository.gradeBlue) {
+      return 3;
+    }
+    if (grade == RandomAccessoryRepository.gradeGreen) {
+      return 2;
+    }
+    if (grade == RandomAccessoryRepository.gradeYellow) {
+      return 1;
+    }
+    return 0;
+  }
+
+  String _highestGrade(Iterable<String> grades) {
+    String highest = RandomAccessoryRepository.gradeYellow;
+    var highestRank = _gradeRank(highest);
+
+    for (final grade in grades) {
+      final rank = _gradeRank(grade);
+      if (rank > highestRank) {
+        highest = grade;
+        highestRank = rank;
+      }
+    }
+    return highest;
   }
 
   int _randInt(Random rng, int minValue, int maxValue) {
