@@ -99,7 +99,22 @@ void main() {
     return;
   }
 
-  final accessories = (root['accessories'] as Map).cast<String, dynamic>();
+  final rootMap = (root as Map).cast<String, dynamic>();
+  final accessories = (rootMap['accessories'] as Map).cast<String, dynamic>();
+
+  final movedKeys = <String>[];
+  final topKeys = rootMap.keys.toList(growable: false);
+  for (final k in topKeys) {
+    if (k == 'accessories') continue;
+    final v = rootMap[k];
+    if (v is Map && v.containsKey('id') && v.containsKey('options')) {
+      accessories[k] = v;
+      movedKeys.add(k);
+    }
+  }
+  for (final k in movedKeys) {
+    rootMap.remove(k);
+  }
 
   final jsonNameSet = <String>{};
   accessories.forEach((_, value) {
@@ -288,5 +303,6 @@ void main() {
   print('CSV_JSON_NAME_INTERSECTION=$bestInter');
   print('CSV_NAME_SAMPLE=${bestCsvSample.join(' | ')}');
   print('JSON_NAME_SAMPLE=${jsonNameSet.take(10).join(' | ')}');
+  print('MOVED_ROOT_KEYS=${movedKeys.length}');
   print('BACKUP=$backupPath');
 }
