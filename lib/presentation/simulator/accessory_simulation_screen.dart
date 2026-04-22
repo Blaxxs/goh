@@ -826,17 +826,11 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     final rolledOptions = <AccessoryOption>[];
     final rolledGrades = <String>[];
-    for (final roll in result.options) {
+    for (int index = 0; index < result.options.length; index++) {
+      final roll = result.options[index];
       final source = _findSourceOptionByName(accessory, roll.optionName);
       final minValue = source?.minNormalValue;
       final maxValue = source?.maxNormalValue;
-
-      // 제작 시(은모루 규칙)에도 1~2옵을 포함한 각 옵션을 독립 등급으로 추첨한다.
-      final optionGrade = _pickWeightedString(
-        RandomAccessoryRepository.silverMoruGradeProbabilities,
-        _random,
-      );
-      rolledGrades.add(optionGrade);
 
       if (minValue == null || maxValue == null) {
         rolledOptions.add(
@@ -849,6 +843,27 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         );
         continue;
       }
+
+      if (index >= 2) {
+        // 3옵 이상은 등급 구간 분할 없이 해당 옵션의 전체 min~max에서 직접 추첨한다.
+        final rolled = _randInt(_random, minValue, maxValue);
+        rolledOptions.add(
+          AccessoryOption(
+            optionName: roll.optionName,
+            optionValue: rolled.toString(),
+            minNormalValue: minValue,
+            maxNormalValue: maxValue,
+          ),
+        );
+        continue;
+      }
+
+      // 1~2옵은 기존과 동일하게 은모루 등급 확률을 각 옵션별로 독립 추첨한다.
+      final optionGrade = _pickWeightedString(
+        RandomAccessoryRepository.silverMoruGradeProbabilities,
+        _random,
+      );
+      rolledGrades.add(optionGrade);
 
       final range = _gradeRange(minValue, maxValue, optionGrade);
       final rolled = _randInt(_random, range.$1, range.$2);
