@@ -1,6 +1,8 @@
 $ErrorActionPreference = 'Stop'
 
-$csvPath = 'C:\Users\Yul\Downloads\제목 없는 스프레드시트 - 시트1 (1).csv'
+$csvFile = Get-ChildItem -Path 'C:\Users\Yul\Downloads' -Filter '*.csv' -File | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+if (-not $csvFile) { throw 'CSV file not found in Downloads.' }
+$csvPath = $csvFile.FullName
 $jsonPath = 'C:\Users\Yul\Downloads\gohcalculator-default-rtdb-export (4).json'
 
 function Parse-Num([string]$s) {
