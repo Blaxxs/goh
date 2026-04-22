@@ -3,12 +3,6 @@ $ErrorActionPreference = 'Stop'
 $csvPath = 'C:\Users\Yul\Downloads\제목 없는 스프레드시트 - 시트1 (1).csv'
 $jsonPath = 'C:\Users\Yul\Downloads\gohcalculator-default-rtdb-export (4).json'
 
-$excludeNames = @(
-  'T-2','귀족의 증표','나노 머신','레이드 기념 모자','롱 드롭 이어링','명예의 트로피','무자카의 보따리','백호의 팔찌','산타 모자','실버 체인 벨트','앤티크 모노클','연구용 클립보드','이무기 머리띠','이무기 용포장갑','이사장의 만년필','주작의 팔찌','중2병 봉인 안대','진모리 수면 안대','청룡의 팔찌','치의 곰돌이 인형','큐니 미니 선풍기','티타늄 무테 안경','폭발 직전의 콜라','프랑켄슈타인의 실험 약물','현무의 팔찌','화이트 스노글로브','수호신의 축복[미]'
-)
-$excludeSet = New-Object 'System.Collections.Generic.HashSet[string]'
-$excludeNames | ForEach-Object { [void]$excludeSet.Add($_) }
-
 function Parse-Num([string]$s) {
   if ($null -eq $s) { return $null }
   $t = $s.Trim()
@@ -27,24 +21,39 @@ function Num-ToStr([double]$n) {
 }
 
 $csvRows = Import-Csv -Path $csvPath
+$headers = @($csvRows[0].PSObject.Properties.Name)
+$nameCol = $headers[0]
+$descCol = $headers[1]
+$stageCols = @($headers[2..10])
+
+function Get-ColValue($row, [string]$colName) {
+  return ($row.PSObject.Properties[$colName].Value + '')
+}
+
 $groups = @{}
+$headingCount = @{}
 $currentName = ''
 foreach ($r in $csvRows) {
-  $name = $r.'액세서리 이름'
+  $name = (Get-ColValue $r $nameCol)
   if ($name -and $name.Trim() -ne '') { $currentName = $name.Trim() }
   if (-not $currentName) { continue }
+
+  if ($name -and $name.Trim() -ne '') {
+    if (-not $headingCount.ContainsKey($currentName)) { $headingCount[$currentName] = 0 }
+    $headingCount[$currentName]++
+  }
 
   if (-not $groups.ContainsKey($currentName)) {
     $groups[$currentName] = New-Object System.Collections.ArrayList
   }
 
   $stageValues = @()
-  foreach ($k in 1..9) {
-    $stageValues += (Parse-Num ($r."$($k)강"))
+  foreach ($col in $stageCols) {
+    $stageValues += (Parse-Num (Get-ColValue $r $col))
   }
 
   $rowObj = [PSCustomObject]@{
-    description = ($r.'설명' + '').Trim()
+    description = (Get-ColValue $r $descCol).Trim()
     stageValues = $stageValues
   }
   [void]$groups[$currentName].Add($rowObj)
@@ -63,6 +72,21 @@ foreach ($k in $keys) {
     $nameToKeys[$nm] = New-Object System.Collections.ArrayList
   }
   [void]$nameToKeys[$nm].Add($k)
+}
+
+$jsonNameSet = New-Object 'System.Collections.Generic.HashSet[string]'
+$nameToKeys.Keys | ForEach-Object { [void]$jsonNameSet.Add($_) }
+
+$excludeSet = New-Object 'System.Collections.Generic.HashSet[string]'
+foreach ($n in $groups.Keys) {
+  if (-not $jsonNameSet.Contains($n)) {
+    [void]$excludeSet.Add($n)
+    continue
+  }
+  if ($headingCount.ContainsKey($n) -and $headingCount[$n] -gt 1) {
+    [void]$excludeSet.Add($n)
+    continue
+  }
 }
 
 $updated = 0
