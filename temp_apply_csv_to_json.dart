@@ -113,6 +113,8 @@ void main() {
   final candidateEncodings = <Encoding>[utf8, systemEncoding];
   List<CsvRow>? rows;
   var bestInter = -1;
+  var bestCsvUnique = 0;
+  List<String> bestCsvSample = const [];
 
   for (final enc in candidateEncodings) {
     final text = enc.decode(csvBytes);
@@ -138,6 +140,8 @@ void main() {
     if (inter > bestInter) {
       bestInter = inter;
       rows = parsed;
+      bestCsvUnique = csvNames.length;
+      bestCsvSample = csvNames.take(10).toList(growable: false);
     }
   }
 
@@ -277,6 +281,10 @@ void main() {
   print('SKIP_EXCLUDED=$skipExcluded');
   print('SKIP_NOROWS=$skipNoRows');
   print('SKIP_NOOPTIONS=$skipNoOptions');
+  print('JSON_NAME_COUNT=${jsonNameSet.length}');
+  print('CSV_UNIQUE_COUNT=$bestCsvUnique');
   print('CSV_JSON_NAME_INTERSECTION=$bestInter');
+  print('CSV_NAME_SAMPLE=${bestCsvSample.join(' | ')}');
+  print('JSON_NAME_SAMPLE=${jsonNameSet.take(10).join(' | ')}');
   print('BACKUP=$backupPath');
 }
