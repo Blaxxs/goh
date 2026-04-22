@@ -84,21 +84,6 @@ void main() {
     return;
   }
 
-  final csvText = utf8.decode(csvFile.readAsBytesSync(), allowMalformed: true);
-  final rows = parseCsv(csvText);
-  if (rows.length < 2) {
-    stderr.writeln('CSV_EMPTY');
-    exitCode = 1;
-    return;
-  }
-
-  final header = rows.first.cells;
-  if (header.length < 11) {
-    stderr.writeln('CSV_HEADER_TOO_SHORT=${header.length}');
-    exitCode = 1;
-    return;
-  }
-
   dynamic root;
   try {
     root = jsonDecode(utf8.decode(jsonFile.readAsBytesSync()));
@@ -115,6 +100,54 @@ void main() {
   }
 
   final accessories = root['accessories'] as Map<String, dynamic>;
+
+  final jsonNameSet = <String>{};
+  accessories.forEach((_, value) {
+    if (value is Map<String, dynamic>) {
+      final n = (value['name'] ?? '').toString();
+      if (n.isNotEmpty) jsonNameSet.add(n);
+    }
+  });
+
+  final csvBytes = csvFile.readAsBytesSync();
+  final candidateEncodings = <Encoding>[utf8, systemEncoding];
+  List<CsvRow>? rows;
+  var bestInter = -1;
+
+  for (final enc in candidateEncodings) {
+    final text = enc.decode(csvBytes, allowMalformed: true);
+    final parsed = parseCsv(text);
+    if (parsed.length < 2) continue;
+    final header = parsed.first.cells;
+    if (header.length < 11) continue;
+
+    var current = '';
+    final csvNames = <String>{};
+    for (var i = 1; i < parsed.length; i++) {
+      final r = parsed[i].cells;
+      final n = (r.isNotEmpty ? r[0] : '').trim();
+      if (n.isNotEmpty) current = n;
+      if (current.isNotEmpty) csvNames.add(current);
+    }
+
+    var inter = 0;
+    for (final n in csvNames) {
+      if (jsonNameSet.contains(n)) inter++;
+    }
+
+    if (inter > bestInter) {
+      bestInter = inter;
+      rows = parsed;
+    }
+  }
+
+  if (rows == null) {
+    stderr.writeln('CSV_PARSE_FAIL');
+    exitCode = 1;
+    return;
+  }
+
+  final header = rows.first.cells;
 
   final groups = <String, List<List<double?>>>{};
   final blockCount = <String, int>{};
@@ -246,5 +279,6 @@ void main() {
   print('SKIP_EXCLUDED=$skipExcluded');
   print('SKIP_NOROWS=$skipNoRows');
   print('SKIP_NOOPTIONS=$skipNoOptions');
+  print('CSV_JSON_NAME_INTERSECTION=$bestInter');
   print('BACKUP=$backupPath');
 }
