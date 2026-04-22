@@ -115,7 +115,7 @@ void main() {
   var bestInter = -1;
 
   for (final enc in candidateEncodings) {
-    final text = enc.decode(csvBytes, allowMalformed: true);
+    final text = enc.decode(csvBytes);
     final parsed = parseCsv(text);
     if (parsed.length < 2) continue;
     final header = parsed.first.cells;
@@ -146,8 +146,6 @@ void main() {
     exitCode = 1;
     return;
   }
-
-  final header = rows.first.cells;
 
   final groups = <String, List<List<double?>>>{};
   final blockCount = <String, int>{};
