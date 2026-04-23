@@ -29,6 +29,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   final List<Accessory> _compareList = [];
   bool _isAccessoryDataLoading = false;
   Timer? _accessoryReloadTimer;
+  bool _showMaxEnhancementValues = false;
 
   @override
   void initState() {
@@ -127,6 +128,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         return _AccessoryDetailDialog(
           accessory: accessory,
           parentContext: this.context,
+          initialEnhancementLevel: _showMaxEnhancementValues ? 9 : 0,
         );
       },
     );
@@ -263,6 +265,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         compareMode: _compareMode,
         compareList: _compareList,
         onRetryLoad: _ensureAccessoryDataReady,
+        showMaxEnhancementValues: _showMaxEnhancementValues,
+        onShowMaxEnhancementValuesChanged: (value) {
+          setState(() {
+            _showMaxEnhancementValues = value;
+          });
+        },
       ),
     );
   }
@@ -274,6 +282,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
       builder: (_) => _AccessoryCompareDialog(
         a: _compareList[0],
         b: _compareList[1],
+        initialEnhancementLevel: _showMaxEnhancementValues ? 9 : 0,
       ),
     );
   }
