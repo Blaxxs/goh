@@ -1654,7 +1654,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                     o.optionName == baseOption.optionName)
                                 .firstOrNull;
                         final appeared = appearedOption != null;
-                        final rangeOption = appearedOption ?? baseOption;
+                        // 미등장 옵션도 강화 단계 가중치 반영한 범위 표시
+                        final enhancedBaseOption = baseOption != null
+                            ? _applyBonusToOption(
+                                baseOption,
+                                _bonusValueForOptionAt(
+                                    i, baseOption, _currentEnhancementLevel))
+                            : null;
+                        final rangeOption = appearedOption ?? enhancedBaseOption;
                         final minVal = rangeOption?.minNormalValue;
                         final maxVal = rangeOption?.maxNormalValue;
                         final hasRange = minVal != null && maxVal != null;
