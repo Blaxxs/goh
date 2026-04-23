@@ -251,7 +251,21 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
     if (minValue == null || maxValue == null) {
       return option.optionValue;
     }
+    // optionValue가 이미 범위 포함 형태면 그대로 반환
+    if (option.optionValue.contains('(')) {
+      return option.optionValue;
+    }
     return '${option.optionValue} ($minValue~$maxValue)';
+  }
+
+  String _plainOptionValue(AccessoryOption option) {
+    // 괄호 포함 포맷("35 (13~35)")에서 순수 수치("35")만 추출
+    final raw = option.optionValue;
+    final parenIdx = raw.indexOf('(');
+    if (parenIdx > 0) {
+      return raw.substring(0, parenIdx).trim();
+    }
+    return raw;
   }
 
   // Helper to build a single option row
