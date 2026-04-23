@@ -234,6 +234,9 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
     final int goldCost =
         (currentEnhancementLevel < 9 && costs != null) ? costs['gold']! : 0;
     final formatter = NumberFormat('#,##0'); // 포맷터 추가
+    final displayedOptions = isAccessorySelected
+      ? selectedAccessory!.optionsAtEnhancementLevel(currentEnhancementLevel)
+      : const <AccessoryOption>[];
 
     final body = !isAccessorySelected
           ? Center(
@@ -363,6 +366,59 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 8), // 강화 단계 표시 아래 간격 조정 (16 -> 8)
+
+                    if (displayedOptions.isNotEmpty) ...[
+                      Card(
+                        margin: EdgeInsets.zero,
+                        elevation: 2,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                currentEnhancementLevel > 0
+                                    ? '$currentEnhancementLevel강 적용 옵션'
+                                    : '기본 옵션',
+                                style: theme.textTheme.titleSmall?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              ...displayedOptions.map(
+                                (option) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 3),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          option.optionName,
+                                          style: theme.textTheme.bodyMedium,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Text(
+                                        option.optionValue,
+                                        style:
+                                            theme.textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.w700,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
                     // 강화 확률 및 필요 재화 섹션 (Card로 묶음)
                     Card(
