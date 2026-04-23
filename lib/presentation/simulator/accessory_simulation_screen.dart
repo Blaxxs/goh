@@ -1608,7 +1608,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                         children: [
                           const Expanded(child: SizedBox()),
                           SizedBox(
-                            width: 50,
+                            width: 68,
                             child: Text(
                               '수치',
                               textAlign: TextAlign.right,
@@ -1624,7 +1624,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           ),
                           const SizedBox(width: 8),
                           SizedBox(
-                            width: 64,
+                            width: 92,
                             child: Text(
                               '등장 범위',
                               textAlign: TextAlign.right,
@@ -1654,14 +1654,22 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                     o.optionName == baseOption.optionName)
                                 .firstOrNull;
                         final appeared = appearedOption != null;
-                        final minVal = baseOption?.minNormalValue;
-                        final maxVal = baseOption?.maxNormalValue;
+                        final rangeOption = appearedOption ?? baseOption;
+                        final minVal = rangeOption?.minNormalValue;
+                        final maxVal = rangeOption?.maxNormalValue;
                         final hasRange = minVal != null && maxVal != null;
                         // 등장 시 등급 색상
                         final grade = _simulatedState?.grade;
+                        final isFixedAccessory =
+                            accessory?.randomOptionConfig == null;
+                        final highlightValue = appearedOption != null &&
+                            _isMaxRollOption(
+                              appearedOption,
+                              forceHighlight: isFixedAccessory,
+                            );
                         final highlightColor = appeared
                             ? _borderColorForGrade(grade, Theme.of(context))
-                            .withValues(alpha: 0.18)
+                                .withValues(alpha: 0.18)
                             : null;
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 1),
@@ -1695,43 +1703,35 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                 ),
                               ),
                               SizedBox(
-                                width: 50,
-                                child: Text(
+                                width: 68,
+                                child: _buildSummaryValueText(
+                                  context,
                                   appeared
                                       ? _formatOptionValueForSummary(
                                           appearedOption)
                                       : '-',
-                                  textAlign: TextAlign.right,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        fontWeight: appeared
-                                            ? FontWeight.w700
-                                            : FontWeight.normal,
-                                        color: appeared
-                                            ? _borderColorForGrade(
-                                                grade, Theme.of(context))
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .outline,
-                                      ),
+                                  color: highlightValue
+                                      ? Colors.deepPurple.shade700
+                                      : appeared
+                                          ? _borderColorForGrade(
+                                              grade, Theme.of(context))
+                                          : Theme.of(context)
+                                              .colorScheme
+                                              .outline,
+                                  fontWeight: highlightValue || appeared
+                                      ? FontWeight.w700
+                                      : FontWeight.normal,
                                 ),
                               ),
                               const SizedBox(width: 8),
                               SizedBox(
-                                width: 64,
-                                child: Text(
+                                width: 92,
+                                child: _buildSummaryValueText(
+                                  context,
                                   hasRange ? '$minVal~$maxVal' : '-',
-                                  textAlign: TextAlign.right,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.copyWith(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .outline,
-                                      ),
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outline,
                                 ),
                               ),
                             ],
