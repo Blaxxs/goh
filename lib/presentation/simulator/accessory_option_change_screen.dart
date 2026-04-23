@@ -406,18 +406,6 @@ class _AccessoryOptionChangeScreenState
     );
   }
 
-  (int, int) _resolveOptionRange(AccessoryOption option) {
-    final accessory = _selectedAccessory;
-    if (accessory == null) {
-      final parsedValue = int.tryParse(option.optionValue) ?? 1;
-      return (parsedValue, parsedValue);
-    }
-    return AccessoryOptionRollLogic.resolveOptionRange(
-      accessory: accessory,
-      option: option,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return AccessoryOptionChangeScreenUI(

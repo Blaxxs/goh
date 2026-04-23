@@ -1664,7 +1664,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                         final grade = _simulatedState?.grade;
                         final highlightColor = appeared
                             ? _borderColorForGrade(grade, Theme.of(context))
-                                .withOpacity(0.18)
+                            .withValues(alpha: 0.18)
                             : null;
                         return Container(
                           margin: const EdgeInsets.symmetric(vertical: 1),
