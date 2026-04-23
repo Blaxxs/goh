@@ -172,6 +172,10 @@ class AccessoryDataManager {
             if (o.maxNormalValue != null)
               'maxNormalValue': o.maxNormalValue.toString(),
           }).toList(),
+          'enhancementStageBonus': a.enhancementStageBonuses.map((bonus) => {
+            'optionName': bonus.optionName,
+            'stageValues': bonus.stageValues,
+          }).toList(),
           'randomOptionConfig': a.randomOptionConfig == null ? null : {
             'minOptionCount': a.randomOptionConfig!.minOptionCount,
             'maxOptionCount': a.randomOptionConfig!.maxOptionCount,

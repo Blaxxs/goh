@@ -19,6 +19,8 @@ class AccessoryScreenUI extends StatelessWidget {
   final bool isDataLoading;
   final bool hasSourceData;
   final VoidCallback? onRetryLoad;
+  final bool showMaxEnhancementValues;
+  final ValueChanged<bool> onShowMaxEnhancementValuesChanged;
 
   const AccessoryScreenUI({
     super.key,
@@ -38,6 +40,8 @@ class AccessoryScreenUI extends StatelessWidget {
     this.isDataLoading = false,
     this.hasSourceData = true,
     this.onRetryLoad,
+    required this.showMaxEnhancementValues,
+    required this.onShowMaxEnhancementValuesChanged,
   });
 
   @override
@@ -85,6 +89,21 @@ class AccessoryScreenUI extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          '풀강 수치로 보기',
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                      ),
+                      Switch.adaptive(
+                        value: showMaxEnhancementValues,
+                        onChanged: onShowMaxEnhancementValuesChanged,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   // --- 검색 + 필터 (토글 옆 작은 검색창 + 부위 칩) ---
                   Row(
                     children: [
