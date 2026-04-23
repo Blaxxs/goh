@@ -19,6 +19,13 @@ const _autoEnhanceBatchSize = 15;
 const _maxCraftLogCount = 80;
 const _lastSelectedAccessoryIdKey = 'accessory_sim_last_selected_id';
 
+// 3/4옵 강화 증가 수치(옵션명 무관, 슬롯 고정).
+// 사용자가 전달해 줄 실제 값으로 교체하면 바로 반영됩니다.
+const Map<int, List<int>> _fixedStageBonusBySlot = {
+  3: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+  4: [0, 0, 0, 0, 0, 0, 0, 0, 0],
+};
+
 enum AccessorySimulationMode {
   craft,
   enhance,
@@ -358,6 +365,89 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   List<AccessoryOption> get _baseOptions =>
       _simulatedState?.baseOptions ?? const [];
+
+  List<AccessoryOption> get _displayedOptionsForCurrentEnhancement {
+    final state = _simulatedState;
+    if (state == null) {
+      return const <AccessoryOption>[];
+    }
+
+    final level = _currentEnhancementLevel;
+    if (level <= 0) {
+      return List<AccessoryOption>.from(state.currentOptions);
+    }
+
+    return List<AccessoryOption>.generate(
+      state.currentOptions.length,
+      (index) {
+        final option = state.currentOptions[index];
+        final bonus = _bonusValueForOptionAt(index, option, level);
+        return _applyBonusToOption(option, bonus);
+      },
+      growable: false,
+    );
+  }
+
+  int _bonusValueForOptionAt(
+    int index,
+    AccessoryOption option,
+    int enhancementLevel,
+  ) {
+    // 3/4옵은 옵션명과 무관하게 슬롯 고정 수치 적용
+    if (index == 2 || index == 3) {
+      final stageValues = _fixedStageBonusBySlot[index + 1];
+      if (stageValues == null || stageValues.isEmpty) {
+        return 0;
+      }
+      final stageIndex = enhancementLevel - 1;
+      if (stageIndex < 0) {
+        return 0;
+      }
+      if (stageIndex < stageValues.length) {
+        return stageValues[stageIndex];
+      }
+      return stageValues.last;
+    }
+
+    final bonuses = _simulatedState?.accessory.enhancementStageBonuses ??
+        const <AccessoryEnhancementStageBonus>[];
+    final normalizedOptionName = _normalizeBonusOptionName(option.optionName);
+
+    for (final bonus in bonuses) {
+      if (_normalizeBonusOptionName(bonus.optionName) == normalizedOptionName) {
+        return int.tryParse(bonus.valueAtLevel(enhancementLevel)) ?? 0;
+      }
+    }
+
+    return 0;
+  }
+
+  AccessoryOption _applyBonusToOption(AccessoryOption option, int bonusValue) {
+    if (bonusValue == 0) {
+      return option;
+    }
+
+    if (option.minNormalValue != null && option.maxNormalValue != null) {
+      final minValue = option.minNormalValue! + bonusValue;
+      final maxValue = option.maxNormalValue! + bonusValue;
+      return option.copyWith(
+        minNormalValue: minValue,
+        maxNormalValue: maxValue,
+        optionValue: '$minValue~$maxValue',
+      );
+    }
+
+    final baseValue = int.tryParse(option.optionValue);
+    if (baseValue != null) {
+      return option.copyWith(optionValue: (baseValue + bonusValue).toString());
+    }
+
+    return option;
+  }
+
+  String _normalizeBonusOptionName(String name) {
+    return name.replaceAll(RegExp(r'\s+'), '').trim();
+  }
 
   Map<String, int> get _currentEnhancementCosts {
     final costs = _selectedOptionCount == 1
@@ -1655,7 +1745,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildTopAccessorySelector(BuildContext context) {
     final accessory = _selectedAccessory;
     final displayOptions = _simulatedState?.accessory.id == accessory?.id
-        ? _currentOptions
+      ? (_selectedMode == AccessorySimulationMode.enhance
+        ? _displayedOptionsForCurrentEnhancement
+        : _currentOptions)
         : (accessory?.options ?? const <AccessoryOption>[]);
     // 행 수는 원본 옵션 수로 고정 (제작 결과 옵션 수 변화에도 레이아웃 유지)
     final fixedRowCount = accessory?.options.length ?? displayOptions.length;
@@ -1964,6 +2056,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return AccessoryEnhancementScreenUI(
       embedded: true,
       selectedAccessory: _simulatedState?.accessory,
+      displayedOptionsOverride: _displayedOptionsForCurrentEnhancement,
       onSelectAccessoryPressed: () => _selectAccessory(context),
       currentEnhancementLevel: _currentEnhancementLevel,
       onCurrentEnhancementLevelChanged: (value) {
@@ -2558,6 +2651,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildSimulatedAccessoryCard(BuildContext context) {
     final state = _simulatedState!;
     final borderColor = _borderColorForGrade(state.grade, Theme.of(context));
+    final optionsToShow = _selectedMode == AccessorySimulationMode.enhance
+        ? _displayedOptionsForCurrentEnhancement
+        : state.currentOptions;
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -2580,7 +2676,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ...state.currentOptions.map(
+                  ...optionsToShow.map(
                     (option) => _buildCompactOptionLine(context, option),
                   ),
                 ],
