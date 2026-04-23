@@ -325,11 +325,30 @@ class Accessory {
             i is Map ? Map<String, dynamic>.from(i) : {}))
         .toList();
 
-    var enhancementStageBonusList = json['enhancementStageBonus'] as List? ?? [];
+    final rawEnhancementStageBonus = json['enhancementStageBonus'];
+    final List<dynamic> enhancementStageBonusList;
+    if (rawEnhancementStageBonus is List) {
+      enhancementStageBonusList = rawEnhancementStageBonus;
+    } else if (rawEnhancementStageBonus is Map) {
+      final indexed = <int, dynamic>{};
+      rawEnhancementStageBonus.forEach((key, value) {
+        final parsedKey = int.tryParse(key.toString());
+        if (parsedKey != null) {
+          indexed[parsedKey] = value;
+        }
+      });
+      final sortedKeys = indexed.keys.toList()..sort();
+      enhancementStageBonusList =
+          sortedKeys.map((key) => indexed[key]).whereType<dynamic>().toList();
+    } else {
+      enhancementStageBonusList = const [];
+    }
+
     List<AccessoryEnhancementStageBonus> enhancementStageBonuses =
-      enhancementStageBonusList
-        .map((i) => AccessoryEnhancementStageBonus.fromJson(i))
-        .toList();
+        enhancementStageBonusList
+            .map((i) => AccessoryEnhancementStageBonus.fromJson(i))
+            .where((bonus) => bonus.optionName.isNotEmpty)
+            .toList();
 
     var setOptionsList = json['setOptions'] as List? ?? [];
     List<AccessorySetOption> setOptions = setOptionsList
