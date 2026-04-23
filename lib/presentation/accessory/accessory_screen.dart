@@ -319,6 +319,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
       _stageIndexMap; // 각 세트 옵션의 현재 단계 인덱스 저장 (setId -> stageIndex)
   // 공통 단계 인덱스 (세트 옵션이 2개일 때 통합 제어에 사용)
   int _sharedStageIndex = 0;
+  late int _enhancementLevel;
 
   void _openLinkedAccessoryDetail(String accessoryIdOrName) {
     final query = accessoryIdOrName.trim();
@@ -341,6 +342,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
         return _AccessoryDetailDialog(
           accessory: target!,
           parentContext: widget.parentContext,
+          initialEnhancementLevel: widget.initialEnhancementLevel,
         );
       },
     );
@@ -351,6 +353,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
     super.initState();
     // 각 세트 옵션별로 초기 단계 (0단계)를 설정합니다.
     _stageIndexMap = {};
+    _enhancementLevel = widget.initialEnhancementLevel.clamp(0, 9);
     for (var setOption in widget.accessory.setOptions) {
       _stageIndexMap[setOption.setId] = 0;
     }
