@@ -427,6 +427,17 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       return option;
     }
 
+    // optionValue가 단일 정수인 경우 (랜덤 제작 결과 포함) → 현재 값에 보너스 더하기
+    final baseValue = int.tryParse(option.optionValue);
+    if (baseValue != null) {
+      return option.copyWith(
+        optionValue: (baseValue + bonusValue).toString(),
+        minNormalValue: option.minNormalValue != null ? option.minNormalValue! + bonusValue : null,
+        maxNormalValue: option.maxNormalValue != null ? option.maxNormalValue! + bonusValue : null,
+      );
+    }
+
+    // optionValue가 범위 형태("min~max")인 경우만 범위로 표시
     if (option.minNormalValue != null && option.maxNormalValue != null) {
       final minValue = option.minNormalValue! + bonusValue;
       final maxValue = option.maxNormalValue! + bonusValue;
@@ -435,11 +446,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         maxNormalValue: maxValue,
         optionValue: '$minValue~$maxValue',
       );
-    }
-
-    final baseValue = int.tryParse(option.optionValue);
-    if (baseValue != null) {
-      return option.copyWith(optionValue: (baseValue + bonusValue).toString());
     }
 
     return option;
