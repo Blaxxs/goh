@@ -2669,7 +2669,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   Widget _buildOptionValueWidget(BuildContext context, AccessoryOption option) {
-    final isMaxRoll = _isMaxRollOption(option);
+    final isFixedAccessory =
+        _simulatedState?.accessory.randomOptionConfig == null;
+    final isMaxRoll = _isMaxRollOption(
+      option,
+      forceHighlight: isFixedAccessory,
+    );
     final text = option.optionValue;
     final baseStyle = Theme.of(context).textTheme.bodyMedium;
     final baseFontSize = baseStyle?.fontSize ?? 14;
@@ -2720,7 +2725,35 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return option.optionValue;
   }
 
-  bool _isMaxRollOption(AccessoryOption option) {
+  Widget _buildSummaryValueText(
+    BuildContext context,
+    String text, {
+    Color? color,
+    FontWeight? fontWeight,
+  }) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerRight,
+        child: Text(
+          text,
+          maxLines: 1,
+          softWrap: false,
+          textAlign: TextAlign.right,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: color,
+                fontWeight: fontWeight,
+              ),
+        ),
+      ),
+    );
+  }
+
+  bool _isMaxRollOption(AccessoryOption option, {bool forceHighlight = false}) {
+    if (forceHighlight) {
+      return true;
+    }
     final maxValue = option.maxNormalValue;
     final currentValue = int.tryParse(option.optionValue);
     return maxValue != null && currentValue != null && currentValue == maxValue;
