@@ -8,6 +8,7 @@ import '../../core/constants/box_constants.dart'; // AppScreen enum을 위해 �
 
 class AccessoryEnhancementScreenUI extends StatelessWidget {
   final Accessory? selectedAccessory;
+  final List<AccessoryOption>? displayedOptionsOverride;
   final VoidCallback onSelectAccessoryPressed;
   final int currentEnhancementLevel;
   final ValueChanged<int?> onCurrentEnhancementLevelChanged;
@@ -37,6 +38,7 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
   const AccessoryEnhancementScreenUI({
     super.key,
     this.selectedAccessory,
+    this.displayedOptionsOverride,
     required this.onSelectAccessoryPressed,
     required this.currentEnhancementLevel,
     required this.onCurrentEnhancementLevelChanged,
@@ -235,7 +237,8 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
         (currentEnhancementLevel < 9 && costs != null) ? costs['gold']! : 0;
     final formatter = NumberFormat('#,##0'); // 포맷터 추가
     final displayedOptions = isAccessorySelected
-      ? selectedAccessory!.optionsAtEnhancementLevel(currentEnhancementLevel)
+      ? (displayedOptionsOverride ??
+          selectedAccessory!.optionsAtEnhancementLevel(currentEnhancementLevel))
       : const <AccessoryOption>[];
 
     final body = !isAccessorySelected
