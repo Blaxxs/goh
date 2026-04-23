@@ -29,6 +29,72 @@ class AccessoryOption {
       maxNormalValue: parsedMax,
     );
   }
+
+  AccessoryOption copyWith({
+    String? optionName,
+    String? optionValue,
+    int? minNormalValue,
+    int? maxNormalValue,
+  }) {
+    return AccessoryOption(
+      optionName: optionName ?? this.optionName,
+      optionValue: optionValue ?? this.optionValue,
+      minNormalValue: minNormalValue ?? this.minNormalValue,
+      maxNormalValue: maxNormalValue ?? this.maxNormalValue,
+    );
+  }
+}
+
+class AccessoryEnhancementStageBonus {
+  final String optionName;
+  final List<String> stageValues;
+
+  const AccessoryEnhancementStageBonus({
+    required this.optionName,
+    required this.stageValues,
+  });
+
+  factory AccessoryEnhancementStageBonus.fromJson(dynamic json) {
+    final jsonMap = json is Map ? Map<String, dynamic>.from(json) : {};
+    final rawStageValues = jsonMap['stageValues'];
+    final stageValues = <String>[];
+
+    if (rawStageValues is List) {
+      for (final value in rawStageValues) {
+        stageValues.add(value?.toString() ?? '');
+      }
+    } else if (rawStageValues is Map) {
+      final indexed = <int, String>{};
+      rawStageValues.forEach((key, value) {
+        final index = int.tryParse(key.toString());
+        if (index != null) {
+          indexed[index] = value?.toString() ?? '';
+        }
+      });
+
+      final sortedKeys = indexed.keys.toList()..sort();
+      for (final key in sortedKeys) {
+        stageValues.add(indexed[key] ?? '');
+      }
+    }
+
+    return AccessoryEnhancementStageBonus(
+      optionName: jsonMap['optionName']?.toString() ?? '',
+      stageValues: stageValues,
+    );
+  }
+
+  String valueAtLevel(int enhancementLevel) {
+    if (enhancementLevel <= 0 || stageValues.isEmpty) {
+      return '0';
+    }
+
+    final index = enhancementLevel - 1;
+    if (index < stageValues.length) {
+      return stageValues[index];
+    }
+    return stageValues.last;
+  }
 }
 
 class AccessoryRandomOptionRange {
@@ -214,6 +280,7 @@ class Accessory {
   final String part;
   final String restrictions;
   final List<AccessoryOption> options;
+  final List<AccessoryEnhancementStageBonus> enhancementStageBonuses;
   final List<AccessorySetOption> setOptions;
   final AccessoryRandomOptionConfig? randomOptionConfig;
 
@@ -224,6 +291,7 @@ class Accessory {
     required this.part,
     required this.restrictions,
     required this.options,
+    this.enhancementStageBonuses = const [],
     this.setOptions = const [],
     this.randomOptionConfig,
   });
@@ -257,6 +325,12 @@ class Accessory {
             i is Map ? Map<String, dynamic>.from(i) : {}))
         .toList();
 
+    var enhancementStageBonusList = json['enhancementStageBonus'] as List? ?? [];
+    List<AccessoryEnhancementStageBonus> enhancementStageBonuses =
+      enhancementStageBonusList
+        .map((i) => AccessoryEnhancementStageBonus.fromJson(i))
+        .toList();
+
     var setOptionsList = json['setOptions'] as List? ?? [];
     List<AccessorySetOption> setOptions = setOptionsList
         .map((i) => AccessorySetOption.fromJson(i))
@@ -274,8 +348,75 @@ class Accessory {
       part: json['part']?.toString() ?? '',
       restrictions: json['restrictions']?.toString() ?? '',
       options: options,
+      enhancementStageBonuses: enhancementStageBonuses,
       setOptions: setOptions,
       randomOptionConfig: randomOptionConfig,
     );
+  }
+
+  bool get hasEnhancementStageBonuses => enhancementStageBonuses.isNotEmpty;
+
+  List<AccessoryOption> optionsAtEnhancementLevel(int enhancementLevel) {
+    if (enhancementLevel <= 0 || enhancementStageBonuses.isEmpty) {
+      return options;
+    }
+
+    return options
+        .map((option) => _applyEnhancementBonus(option, enhancementLevel))
+        .toList(growable: false);
+  }
+
+  AccessoryOption _applyEnhancementBonus(
+    AccessoryOption option,
+    int enhancementLevel,
+  ) {
+    final normalizedOptionName = _normalizeOptionName(option.optionName);
+    AccessoryEnhancementStageBonus? matchedBonus;
+
+    for (final bonus in enhancementStageBonuses) {
+      if (_normalizeOptionName(bonus.optionName) == normalizedOptionName) {
+        matchedBonus = bonus;
+        break;
+      }
+    }
+
+    if (matchedBonus == null) {
+      return option;
+    }
+
+    final bonusValue = num.tryParse(matchedBonus.valueAtLevel(enhancementLevel));
+    if (bonusValue == null || bonusValue == 0) {
+      return option;
+    }
+
+    if (option.minNormalValue != null && option.maxNormalValue != null) {
+      final minValue = option.minNormalValue! + bonusValue.toInt();
+      final maxValue = option.maxNormalValue! + bonusValue.toInt();
+      return option.copyWith(
+        minNormalValue: minValue,
+        maxNormalValue: maxValue,
+        optionValue: '${_formatNumber(minValue)}~${_formatNumber(maxValue)}',
+      );
+    }
+
+    final baseValue = num.tryParse(option.optionValue);
+    if (baseValue != null) {
+      return option.copyWith(
+        optionValue: _formatNumber(baseValue + bonusValue),
+      );
+    }
+
+    return option;
+  }
+
+  String _normalizeOptionName(String value) {
+    return value.replaceAll(RegExp(r'\s+'), '').trim();
+  }
+
+  String _formatNumber(num value) {
+    if (value is int || value == value.roundToDouble()) {
+      return value.round().toString();
+    }
+    return value.toString();
   }
 }
