@@ -247,13 +247,20 @@ class AccessoryOptionRollLogic {
     required int slotIndex,
     required int enhancementLevel,
   }) {
-    if (enhancementLevel <= 0) {
+    if (enhancementLevel < 0) {
       return 0;
     }
 
     final normalizedOptionName = normalizeOptionName(option.optionName);
     for (final bonus in accessory.enhancementStageBonuses) {
       if (normalizeOptionName(bonus.optionName) == normalizedOptionName) {
+        if (accessory.randomOptionConfig == null &&
+            (slotIndex == 2 || slotIndex == 3)) {
+          return _fixedOptionReverseBonus(
+            bonusValues: bonus.stageValues,
+            enhancementLevel: enhancementLevel,
+          );
+        }
         return int.tryParse(bonus.valueAtLevel(enhancementLevel)) ?? 0;
       }
     }
@@ -266,6 +273,12 @@ class AccessoryOptionRollLogic {
       if (normalizeOptionName(entry.key) != normalizedOptionName) {
         continue;
       }
+      if (accessory.randomOptionConfig == null) {
+        return _fixedOptionReverseBonus(
+          bonusValues: entry.value.map((value) => value.toString()).toList(),
+          enhancementLevel: enhancementLevel,
+        );
+      }
       final stageIndex = enhancementLevel - 1;
       if (stageIndex < 0) {
         return 0;
@@ -277,6 +290,30 @@ class AccessoryOptionRollLogic {
     }
 
     return 0;
+  }
+
+  static int _fixedOptionReverseBonus({
+    required List<String> bonusValues,
+    required int enhancementLevel,
+  }) {
+    if (bonusValues.isEmpty) {
+      return 0;
+    }
+
+    final parsedValues = bonusValues
+        .map((value) => int.tryParse(value) ?? 0)
+        .toList(growable: false);
+
+    if (enhancementLevel >= parsedValues.length) {
+      return 0;
+    }
+
+    final reverseIndex = parsedValues.length - enhancementLevel - 1;
+    if (reverseIndex < 0 || reverseIndex >= parsedValues.length) {
+      return 0;
+    }
+
+    return -parsedValues[reverseIndex];
   }
 
   static AccessoryOption rollOptionValue({

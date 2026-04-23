@@ -224,9 +224,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     final level = _currentEnhancementLevel;
-    if (level <= 0) {
-      return List<AccessoryOption>.from(state.currentOptions);
-    }
 
     return List<AccessoryOption>.generate(
       state.currentOptions.length,
