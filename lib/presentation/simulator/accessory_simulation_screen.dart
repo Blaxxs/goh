@@ -11,6 +11,7 @@ import '../../core/constants/box_constants.dart';
 import '../../core/constants/random_accessory_constants.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../data/models/accessory.dart';
+import '../../domain/logic/accessory_option_roll_logic.dart';
 import 'accessory_enhancement_screen_ui.dart';
 
 const _silverRemodelGoldCost = 20000;
@@ -18,13 +19,6 @@ const _goldRemodelGoldCost = 3000;
 const _autoEnhanceBatchSize = 15;
 const _maxCraftLogCount = 80;
 const _lastSelectedAccessoryIdKey = 'accessory_sim_last_selected_id';
-
-// 3/4옵 강화 증가 수치(옵션명 무관, 슬롯 고정).
-// 사용자가 전달해 줄 실제 값으로 교체하면 바로 반영됩니다.
-const Map<int, List<int>> _fixedStageBonusBySlot = {
-  3: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  4: [0, 0, 0, 0, 0, 0, 0, 0, 0],
-};
 
 enum AccessorySimulationMode {
   craft,
@@ -109,151 +103,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     '스페셜 특급 보조제',
   ];
 
-  final List<AccessoryOption> _defaultChangeableOptions = [
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.attackPowerFlat,
-      optionValue: '2000',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.hpFlat,
-      optionValue: '10000',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.critDamageFlat,
-      optionValue: '55',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.critChanceFlat,
-      optionValue: '47',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.critResistFlat,
-      optionValue: '47',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.accuracyFlat,
-      optionValue: '55',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.evasionFlat,
-      optionValue: '45',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.activeSkillDmgPercent,
-      optionValue: '70',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.activeSkillDmgTakenReducePercent,
-      optionValue: '70',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.basicAtkDmgPercent,
-      optionValue: '70',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.basicAtkDmgTakenReducePercent,
-      optionValue: '70',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.dotDmgPercent,
-      optionValue: '70',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.dotDmgTakenReducePercent,
-      optionValue: '70',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.allBadEffectResistPercent,
-      optionValue: '55',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.summonAtkFlat,
-      optionValue: '2500',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.rabbitMaxHpChancePercent,
-      optionValue: '100',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.counterAttackChancePercent,
-      optionValue: '27',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.spaceTravelReturnChancePercent,
-      optionValue: '100',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.hpRegenPerTurn,
-      optionValue: '6500',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.allDmgTakenReducePercent,
-      optionValue: '32',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.miniGameSkillDmgPercent,
-      optionValue: '70',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.recoveryEffectPercent,
-      optionValue: '24',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.skillCooldownIncreaseResistPercent,
-      optionValue: '55',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.atkPercent,
-      optionValue: '19',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.defenseFlat,
-      optionValue: '10000',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.hpPercent,
-      optionValue: '19',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.penetrationResistPercent,
-      optionValue: '19',
-    ),
-    const AccessoryOption(
-      optionName: AccessoryOptionNames.penetrationChancePercent,
-      optionValue: '19',
-    ),
-  ];
-
-  static const Map<String, List<int>> _randomOptionValueRangeTable = {
-    AccessoryOptionNames.attackPowerFlat: [300, 1500],
-    AccessoryOptionNames.hpFlat: [2000, 5000],
-    AccessoryOptionNames.critDamageFlat: [10, 35],
-    AccessoryOptionNames.critChanceFlat: [10, 30],
-    AccessoryOptionNames.critResistFlat: [10, 30],
-    AccessoryOptionNames.accuracyFlat: [10, 35],
-    AccessoryOptionNames.evasionFlat: [5, 25],
-    AccessoryOptionNames.activeSkillDmgPercent: [10, 35],
-    AccessoryOptionNames.activeSkillDmgTakenReducePercent: [10, 35],
-    AccessoryOptionNames.basicAtkDmgPercent: [10, 35],
-    AccessoryOptionNames.basicAtkDmgTakenReducePercent: [10, 35],
-    AccessoryOptionNames.dotDmgPercent: [10, 35],
-    AccessoryOptionNames.dotDmgTakenReducePercent: [10, 35],
-    AccessoryOptionNames.allBadEffectResistPercent: [10, 35],
-    AccessoryOptionNames.summonAtkFlat: [500, 2000],
-    AccessoryOptionNames.rabbitMaxHpChancePercent: [30, 50],
-    AccessoryOptionNames.counterAttackChancePercent: [3, 10],
-    AccessoryOptionNames.spaceTravelReturnChancePercent: [30, 50],
-    AccessoryOptionNames.hpRegenPerTurn: [1000, 3000],
-    AccessoryOptionNames.allDmgTakenReducePercent: [3, 15],
-    AccessoryOptionNames.miniGameSkillDmgPercent: [10, 35],
-    AccessoryOptionNames.recoveryEffectPercent: [5, 15],
-    AccessoryOptionNames.skillCooldownIncreaseResistPercent: [5, 20],
-    AccessoryOptionNames.atkPercent: [3, 10],
-    AccessoryOptionNames.defenseFlat: [2000, 5000],
-    AccessoryOptionNames.hpPercent: [3, 10],
-    AccessoryOptionNames.penetrationResistPercent: [2, 10],
-    AccessoryOptionNames.penetrationChancePercent: [2, 10],
-  };
+  final List<AccessoryOption> _defaultChangeableOptions =
+      AccessoryOptionRollLogic.defaultChangeableOptions;
 
   Accessory? _selectedAccessory;
   AccessorySimulationMode _selectedMode = AccessorySimulationMode.craft;
@@ -393,33 +244,16 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     AccessoryOption option,
     int enhancementLevel,
   ) {
-    // 3/4옵은 옵션명과 무관하게 슬롯 고정 수치 적용
-    if (index == 2 || index == 3) {
-      final stageValues = _fixedStageBonusBySlot[index + 1];
-      if (stageValues == null || stageValues.isEmpty) {
-        return 0;
-      }
-      final stageIndex = enhancementLevel - 1;
-      if (stageIndex < 0) {
-        return 0;
-      }
-      if (stageIndex < stageValues.length) {
-        return stageValues[stageIndex];
-      }
-      return stageValues.last;
+    final accessory = _simulatedState?.accessory;
+    if (accessory == null) {
+      return 0;
     }
-
-    final bonuses = _simulatedState?.accessory.enhancementStageBonuses ??
-        const <AccessoryEnhancementStageBonus>[];
-    final normalizedOptionName = _normalizeBonusOptionName(option.optionName);
-
-    for (final bonus in bonuses) {
-      if (_normalizeBonusOptionName(bonus.optionName) == normalizedOptionName) {
-        return int.tryParse(bonus.valueAtLevel(enhancementLevel)) ?? 0;
-      }
-    }
-
-    return 0;
+    return AccessoryOptionRollLogic.enhancementBonusForOption(
+      accessory: accessory,
+      option: option,
+      slotIndex: index,
+      enhancementLevel: enhancementLevel,
+    );
   }
 
   AccessoryOption _applyBonusToOption(AccessoryOption option, int bonusValue) {
@@ -449,10 +283,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     return option;
-  }
-
-  String _normalizeBonusOptionName(String name) {
-    return name.replaceAll(RegExp(r'\s+'), '').trim();
   }
 
   Map<String, int> get _currentEnhancementCosts {
@@ -941,16 +771,28 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       }
 
       if (index >= 2) {
-        // 3옵 이상은 등급 구간 분할 없이 해당 옵션의 전체 min~max에서 직접 추첨한다.
-        final rolled = _randInt(_random, minValue, maxValue);
-        rolledOptions.add(
-          AccessoryOption(
-            optionName: roll.optionName,
-            optionValue: rolled.toString(),
-            minNormalValue: minValue,
-            maxNormalValue: maxValue,
-          ),
+        final excludedNames = rolledOptions
+            .take(2)
+            .map((option) => _normalizeOptionName(option.optionName))
+            .toSet();
+        final weightedPool = _availableChangeableOptions()
+            .where((option) =>
+                !excludedNames.contains(_normalizeOptionName(option.optionName)))
+            .toList(growable: false);
+        final templatePool =
+            weightedPool.isEmpty ? _availableChangeableOptions() : weightedPool;
+        final pickedTemplate = AccessoryOptionRollLogic.pickWeightedTemplate(
+          pool: templatePool,
+          random: _random,
         );
+        final rolledOption =
+            AccessoryOptionRollLogic.rollOptionValueWithSilverMoru(
+          accessory: accessory,
+          source: pickedTemplate,
+          random: _random,
+        );
+        rolledOptions.add(rolledOption);
+        rolledGrades.add(result.grade);
         continue;
       }
 
@@ -1403,22 +1245,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   int _getOptionWeight(String optionName) {
-    if (optionName == AccessoryOptionNames.rabbitMaxHpChancePercent ||
-        optionName == AccessoryOptionNames.spaceTravelReturnChancePercent ||
-        optionName == AccessoryOptionNames.hpRegenPerTurn) {
-      return 5;
-    }
-
-    if (optionName.contains('%') ||
-        optionName == AccessoryOptionNames.critChanceFlat ||
-        optionName == AccessoryOptionNames.critDamageFlat ||
-        optionName == AccessoryOptionNames.critResistFlat ||
-        optionName == AccessoryOptionNames.accuracyFlat ||
-        optionName == AccessoryOptionNames.evasionFlat) {
-      return 40;
-    }
-
-    return 100;
+    return AccessoryOptionRollLogic.optionWeight(optionName);
   }
 
   AccessoryOption _generateRandomOption({
@@ -1458,28 +1285,18 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     for (final option in pool) {
       randomValue -= _getOptionWeight(option.optionName);
       if (randomValue < 0) {
-        final (minValue, maxValue) = _resolveOptionRange(option);
-        final optionValue = accessory.randomOptionConfig == null
-            ? maxValue
-            : _randInt(_random, minValue, maxValue);
-        return AccessoryOption(
-          optionName: option.optionName,
-          optionValue: optionValue.toString(),
-          minNormalValue: minValue,
-          maxNormalValue: maxValue,
+        return AccessoryOptionRollLogic.rollOptionValue(
+          accessory: accessory,
+          source: option,
+          random: _random,
         );
       }
     }
     final fallback = pool.last;
-    final (minValue, maxValue) = _resolveOptionRange(fallback);
-    final optionValue = accessory.randomOptionConfig == null
-        ? maxValue
-        : _randInt(_random, minValue, maxValue);
-    return AccessoryOption(
-      optionName: fallback.optionName,
-      optionValue: optionValue.toString(),
-      minNormalValue: minValue,
-      maxNormalValue: maxValue,
+    return AccessoryOptionRollLogic.rollOptionValue(
+      accessory: accessory,
+      source: fallback,
+      random: _random,
     );
   }
 
@@ -1518,28 +1335,19 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   String _normalizeOptionName(String name) {
-    final trimmed = name.trim();
-    if (trimmed == '모든피해 %감소') {
-      return '모든 피해 %감소';
-    }
-    return trimmed;
+    return AccessoryOptionRollLogic.normalizeOptionName(name);
   }
 
   (int, int) _resolveOptionRange(AccessoryOption option) {
-    final isRandomAccessory = _selectedAccessory?.randomOptionConfig != null;
-    if (isRandomAccessory) {
-      final tableRange = _randomOptionValueRangeTable[option.optionName];
-      if (tableRange != null && tableRange.length == 2) {
-        return (tableRange[0], tableRange[1]);
-      }
+    final accessory = _selectedAccessory;
+    if (accessory == null) {
+      final parsedValue = int.tryParse(option.optionValue) ?? 1;
+      return (parsedValue, parsedValue);
     }
-
-    final parsedValue = int.tryParse(option.optionValue) ?? 1;
-    final rawMin = option.minNormalValue ?? max(1, (parsedValue * 0.6).round());
-    final rawMax = option.maxNormalValue ?? parsedValue;
-    final minValue = min(rawMin, rawMax);
-    final maxValue = max(rawMin, rawMax);
-    return (minValue, maxValue);
+    return AccessoryOptionRollLogic.resolveOptionRange(
+      accessory: accessory,
+      option: option,
+    );
   }
 
   void _performRemodel() {
@@ -1751,9 +1559,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildTopAccessorySelector(BuildContext context) {
     final accessory = _selectedAccessory;
     final displayOptions = _simulatedState?.accessory.id == accessory?.id
-      ? (_selectedMode == AccessorySimulationMode.enhance
         ? _displayedOptionsForCurrentEnhancement
-        : _currentOptions)
         : (accessory?.options ?? const <AccessoryOption>[]);
     // 행 수는 원본 옵션 수로 고정 (제작 결과 옵션 수 변화에도 레이아웃 유지)
     final fixedRowCount = accessory?.options.length ?? displayOptions.length;
@@ -2473,7 +2279,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     if (isFilled) {
       optionName = _currentOptions[index].optionName;
-      optionValue = _formatOptionValueWithRange(_currentOptions[index]);
+      optionValue = _formatOptionValueWithRange(
+        _displayedOptionsForCurrentEnhancement[index],
+      );
       optionColor =
           useFixedSlotStyle ? Colors.grey : theme.textTheme.bodyLarge?.color;
 
@@ -2657,9 +2465,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   Widget _buildSimulatedAccessoryCard(BuildContext context) {
     final state = _simulatedState!;
     final borderColor = _borderColorForGrade(state.grade, Theme.of(context));
-    final optionsToShow = _selectedMode == AccessorySimulationMode.enhance
-        ? _displayedOptionsForCurrentEnhancement
-        : state.currentOptions;
+    final optionsToShow = _displayedOptionsForCurrentEnhancement;
 
     return Card(
       shape: RoundedRectangleBorder(

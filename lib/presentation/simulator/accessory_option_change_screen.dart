@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart'; // AccessoryOptionNames 사용
+import '../../domain/logic/accessory_option_roll_logic.dart';
 import 'accessory_option_change_screen_ui.dart';
 
 // Define the actions a user can take
@@ -37,111 +38,8 @@ class _AccessoryOptionChangeScreenState
   int _totalRainbowAnvilsConsumed = 0; // 무지개 모루
   int _total9EnhanceAccessoriesConsumed = 0; // 3옵 9강 악세
 
-  // 시뮬레이션용 변경 가능한 옵션 목록 (실제 게임 옵션으로 대체 필요)
-  // 3~4 옵션 목록으로 업데이트
-  final List<AccessoryOption> _possibleChangeableOptions = [
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.attackPowerFlat, optionValue: '2000'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.hpFlat, optionValue: '10000'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.critDamageFlat, optionValue: '55'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.critChanceFlat, optionValue: '47'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.critResistFlat, optionValue: '47'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.accuracyFlat, optionValue: '55'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.evasionFlat, optionValue: '45'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.activeSkillDmgPercent,
-        optionValue: '70'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.activeSkillDmgTakenReducePercent,
-        optionValue: '70'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.basicAtkDmgPercent, optionValue: '70'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.basicAtkDmgTakenReducePercent,
-        optionValue: '70'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.dotDmgPercent, optionValue: '70'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.dotDmgTakenReducePercent,
-        optionValue: '70'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.allBadEffectResistPercent,
-        optionValue: '55'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.summonAtkFlat, optionValue: '2500'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.rabbitMaxHpChancePercent,
-        optionValue: '100'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.counterAttackChancePercent,
-        optionValue: '27'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.spaceTravelReturnChancePercent,
-        optionValue: '100'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.hpRegenPerTurn, optionValue: '6500'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.allDmgTakenReducePercent,
-        optionValue: '32'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.miniGameSkillDmgPercent,
-        optionValue: '70'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.recoveryEffectPercent,
-        optionValue: '24'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.skillCooldownIncreaseResistPercent,
-        optionValue: '55'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.atkPercent, optionValue: '19'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.defenseFlat, optionValue: '10000'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.hpPercent, optionValue: '19'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.penetrationResistPercent,
-        optionValue: '19'),
-    const AccessoryOption(
-        optionName: AccessoryOptionNames.penetrationChancePercent,
-        optionValue: '19'),
-  ];
-
-  static const Map<String, List<int>> _randomOptionValueRangeTable = {
-    AccessoryOptionNames.attackPowerFlat: [300, 1500],
-    AccessoryOptionNames.hpFlat: [2000, 5000],
-    AccessoryOptionNames.critDamageFlat: [10, 35],
-    AccessoryOptionNames.critChanceFlat: [10, 30],
-    AccessoryOptionNames.critResistFlat: [10, 30],
-    AccessoryOptionNames.accuracyFlat: [10, 35],
-    AccessoryOptionNames.evasionFlat: [5, 25],
-    AccessoryOptionNames.activeSkillDmgPercent: [10, 35],
-    AccessoryOptionNames.activeSkillDmgTakenReducePercent: [10, 35],
-    AccessoryOptionNames.basicAtkDmgPercent: [10, 35],
-    AccessoryOptionNames.basicAtkDmgTakenReducePercent: [10, 35],
-    AccessoryOptionNames.dotDmgPercent: [10, 35],
-    AccessoryOptionNames.dotDmgTakenReducePercent: [10, 35],
-    AccessoryOptionNames.allBadEffectResistPercent: [10, 35],
-    AccessoryOptionNames.summonAtkFlat: [500, 2000],
-    AccessoryOptionNames.rabbitMaxHpChancePercent: [30, 50],
-    AccessoryOptionNames.counterAttackChancePercent: [3, 10],
-    AccessoryOptionNames.spaceTravelReturnChancePercent: [30, 50],
-    AccessoryOptionNames.hpRegenPerTurn: [1000, 3000],
-    AccessoryOptionNames.allDmgTakenReducePercent: [3, 15],
-    AccessoryOptionNames.miniGameSkillDmgPercent: [10, 35],
-    AccessoryOptionNames.recoveryEffectPercent: [5, 15],
-    AccessoryOptionNames.skillCooldownIncreaseResistPercent: [5, 20],
-    AccessoryOptionNames.atkPercent: [3, 10],
-    AccessoryOptionNames.defenseFlat: [2000, 5000],
-    AccessoryOptionNames.hpPercent: [3, 10],
-    AccessoryOptionNames.penetrationResistPercent: [2, 10],
-    AccessoryOptionNames.penetrationChancePercent: [2, 10],
-  };
+    final List<AccessoryOption> _possibleChangeableOptions =
+      AccessoryOptionRollLogic.defaultChangeableOptions;
 
   @override
   void initState() {
@@ -426,26 +324,7 @@ class _AccessoryOptionChangeScreenState
 
   // 옵션별 등장 가중치 반환 (높을수록 잘 나옴)
   int _getOptionWeight(String optionName) {
-    // 1. 희귀 옵션 (매우 낮은 확률)
-    if (optionName == AccessoryOptionNames.rabbitMaxHpChancePercent ||
-        optionName == AccessoryOptionNames.spaceTravelReturnChancePercent ||
-        optionName == AccessoryOptionNames.hpRegenPerTurn) {
-      return 5;
-    }
-
-    // 2. 고급 옵션 (% 수치, 관통, 저항 등 - 낮은 확률)
-    if (optionName.contains('%') ||
-        optionName == AccessoryOptionNames.critChanceFlat ||
-        optionName == AccessoryOptionNames.critDamageFlat ||
-        optionName == AccessoryOptionNames.critResistFlat ||
-        optionName == AccessoryOptionNames.accuracyFlat ||
-        optionName == AccessoryOptionNames.evasionFlat) {
-      return 40;
-    }
-
-    // 3. 일반 옵션 (깡스탯 - 높은 확률)
-    // 공격력 증가, 체력 증가, 방어력 증가 등
-    return 100;
+    return AccessoryOptionRollLogic.optionWeight(optionName);
   }
 
   // 랜덤 옵션을 생성하는 헬퍼 함수 (실제 게임 로직에 따라 구현 필요)
@@ -516,35 +395,27 @@ class _AccessoryOptionChangeScreenState
   }
 
   AccessoryOption _rollOptionValue(AccessoryOption source, Random random) {
-    final (minValue, maxValue) = _resolveOptionRange(source);
-    final isFixedAccessory = _selectedAccessory?.randomOptionConfig == null;
-    final value = isFixedAccessory
-        ? maxValue
-        : minValue + random.nextInt(maxValue - minValue + 1);
-
-    return AccessoryOption(
-      optionName: source.optionName,
-      optionValue: value.toString(),
-      minNormalValue: minValue,
-      maxNormalValue: maxValue,
+    final accessory = _selectedAccessory;
+    if (accessory == null) {
+      return source;
+    }
+    return AccessoryOptionRollLogic.rollOptionValue(
+      accessory: accessory,
+      source: source,
+      random: random,
     );
   }
 
   (int, int) _resolveOptionRange(AccessoryOption option) {
-    final isRandomAccessory = _selectedAccessory?.randomOptionConfig != null;
-    if (isRandomAccessory) {
-      final tableRange = _randomOptionValueRangeTable[option.optionName];
-      if (tableRange != null && tableRange.length == 2) {
-        return (tableRange[0], tableRange[1]);
-      }
+    final accessory = _selectedAccessory;
+    if (accessory == null) {
+      final parsedValue = int.tryParse(option.optionValue) ?? 1;
+      return (parsedValue, parsedValue);
     }
-
-    final parsedValue = int.tryParse(option.optionValue) ?? 1;
-    final rawMin = option.minNormalValue ?? (parsedValue * 0.6).round();
-    final rawMax = option.maxNormalValue ?? parsedValue;
-    final minValue = rawMin < 1 ? 1 : (rawMin <= rawMax ? rawMin : rawMax);
-    final maxValue = rawMax >= minValue ? rawMax : minValue;
-    return (minValue, maxValue);
+    return AccessoryOptionRollLogic.resolveOptionRange(
+      accessory: accessory,
+      option: option,
+    );
   }
 
   @override
