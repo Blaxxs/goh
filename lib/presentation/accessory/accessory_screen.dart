@@ -851,8 +851,13 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 class _AccessoryCompareDialog extends StatelessWidget {
   final Accessory a;
   final Accessory b;
+  final int initialEnhancementLevel;
 
-  const _AccessoryCompareDialog({required this.a, required this.b});
+  const _AccessoryCompareDialog({
+    required this.a,
+    required this.b,
+    required this.initialEnhancementLevel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -860,16 +865,18 @@ class _AccessoryCompareDialog extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     // 두 악세사리의 모든 옵션 이름 합집합
+    final resolvedAOptions = a.optionsAtEnhancementLevel(initialEnhancementLevel);
+    final resolvedBOptions = b.optionsAtEnhancementLevel(initialEnhancementLevel);
     final allOptionNames = <String>{
-      ...a.options.map((o) => o.optionName),
-      ...b.options.map((o) => o.optionName),
+      ...resolvedAOptions.map((o) => o.optionName),
+      ...resolvedBOptions.map((o) => o.optionName),
     }.toList();
 
     Map<String, String> aMap = {
-      for (var o in a.options) o.optionName: o.optionValue
+      for (var o in resolvedAOptions) o.optionName: o.optionValue
     };
     Map<String, String> bMap = {
-      for (var o in b.options) o.optionName: o.optionValue
+      for (var o in resolvedBOptions) o.optionName: o.optionValue
     };
 
     return AlertDialog(
@@ -891,6 +898,17 @@ class _AccessoryCompareDialog extends StatelessWidget {
                   _buildHeader(context, b),
                 ],
               ),
+              if (initialEnhancementLevel > 0)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(
+                    '$initialEnhancementLevel강 적용 수치',
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.hintColor,
+                    ),
+                  ),
+                ),
               const Divider(height: 16),
               // 기본 정보 비교
               _buildCompareRow(context, '부위', a.part, b.part, isDark),
