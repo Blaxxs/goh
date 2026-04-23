@@ -335,7 +335,9 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
         // Option exists
         final option = widget.currentOptions[i];
         optionName = option.optionName;
-        optionValue = _formatOptionValueWithRange(option);
+        optionValue = isRandomAccessory
+            ? _formatOptionValueWithRange(option)
+            : option.optionValue;
         optionTextColor = theme.textTheme.bodyLarge?.color;
 
         // Determine if this slot is a base option slot from the original accessory
