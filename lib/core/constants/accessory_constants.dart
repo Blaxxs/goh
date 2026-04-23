@@ -65,9 +65,23 @@ class AccessoryDataManager {
       
       if (cachedAccessoriesJson != null && cachedPartsJson != null) {
         final List<dynamic> accessoriesJson = jsonDecode(cachedAccessoriesJson);
-        allAccessories = accessoriesJson
-            .map((json) => Accessory.fromJson(json as Map<String, dynamic>))
-            .toList();
+        final loadedFromCache = <Accessory>[];
+        for (final item in accessoriesJson) {
+          try {
+            final itemMap = item is Map
+                ? Map<String, dynamic>.from(item)
+                : <String, dynamic>{};
+            if (itemMap.isEmpty) {
+              continue;
+            }
+            loadedFromCache.add(Accessory.fromJson(itemMap));
+          } catch (e) {
+            if (kDebugMode) {
+              print('[AccessoryDataManager] Skipped invalid cached accessory item: $e');
+            }
+          }
+        }
+        allAccessories = loadedFromCache;
         
         final List<dynamic> partsJson = jsonDecode(cachedPartsJson);
         accessoryParts = List<String>.from(partsJson);
@@ -107,22 +121,48 @@ class AccessoryDataManager {
       final DataSnapshot snapshot = await ref.get();
 
       if (snapshot.exists && snapshot.value != null) {
-        final Map<String, dynamic> data =
-            Map<String, dynamic>.from(snapshot.value as Map);
+        final rawData = snapshot.value;
+        final Map<String, dynamic> data;
+        if (rawData is Map) {
+          data = Map<String, dynamic>.from(rawData);
+        } else if (rawData is List) {
+          data = <String, dynamic>{};
+          for (var i = 0; i < rawData.length; i++) {
+            final value = rawData[i];
+            if (value != null) {
+              data[i.toString()] = value;
+            }
+          }
+        } else {
+          if (kDebugMode) {
+            print('[AccessoryDataManager] Unexpected /accessories type: ${rawData.runtimeType}');
+          }
+          return;
+        }
         final List<Accessory> loadedAccessories = [];
         final Set<String> parts = <String>{};
 
         data.forEach((key, value) {
-          final accessoryData = Map<String, dynamic>.from(value as Map);
+          try {
+            if (value is! Map) {
+              return;
+            }
 
-          // Use the Firebase key as the ID. This ensures the ID is always present
-          // and matches the image name in Firebase Storage.
-          accessoryData['id'] = key;
+            final accessoryData = Map<String, dynamic>.from(value);
 
-          final accessory = Accessory.fromJson(accessoryData);
-          loadedAccessories.add(accessory);
-          if (accessory.part.isNotEmpty) {
-            parts.add(accessory.part);
+            // Use the Firebase key as the ID. This ensures the ID is always present
+            // and matches the image name in Firebase Storage.
+            accessoryData['id'] = key;
+
+            final accessory = Accessory.fromJson(accessoryData);
+            loadedAccessories.add(accessory);
+            if (accessory.part.isNotEmpty) {
+              parts.add(accessory.part);
+            }
+          } catch (e) {
+            if (kDebugMode) {
+              print('[AccessoryDataManager] Skipped invalid firebase accessory "$key": $e');
+            }
           }
         });
 
