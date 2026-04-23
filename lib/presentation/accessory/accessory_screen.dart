@@ -361,6 +361,9 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final displayedOptions =
+        widget.accessory.optionsAtEnhancementLevel(_enhancementLevel);
+
     return AlertDialog(
       title: Text(widget.accessory.name,
           style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -385,9 +388,39 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
             _buildDetailRow('부위', widget.accessory.part),
             _buildDetailRow('착용 제한', widget.accessory.restrictions),
             const Divider(),
+            if (widget.accessory.hasEnhancementStageBonuses) ...[
+              Row(
+                children: [
+                  const Text('강화 단계',
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Spacer(),
+                  Text('$_enhancementLevel강',
+                      style: Theme.of(context).textTheme.bodySmall),
+                ],
+              ),
+              Slider(
+                value: _enhancementLevel.toDouble(),
+                min: 0,
+                max: 9,
+                divisions: 9,
+                label: '$_enhancementLevel강',
+                onChanged: (value) {
+                  setState(() {
+                    _enhancementLevel = value.round();
+                  });
+                },
+              ),
+            ] else
+              Text(
+                '강화 단계별 수치 정보 없음',
+                style: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: Theme.of(context).hintColor),
+              ),
             const Text('기본 옵션', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
-            ...widget.accessory.options.map((option) => Padding(
+            ...displayedOptions.map((option) => Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
                   child: Text('${option.optionName}: ${option.optionValue}'),
                 )),
