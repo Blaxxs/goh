@@ -302,10 +302,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 class _AccessoryDetailDialog extends StatefulWidget {
   final Accessory accessory;
   final BuildContext parentContext;
+  final int initialEnhancementLevel;
 
   const _AccessoryDetailDialog({
     required this.accessory,
     required this.parentContext,
+    required this.initialEnhancementLevel,
   });
 
   @override
