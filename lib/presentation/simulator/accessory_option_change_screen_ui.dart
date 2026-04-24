@@ -361,18 +361,14 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
           // This is a base option slot (1st, 2nd, or 3rd if accessory has 3 base options)
           final baseOption = widget.selectedAccessory.options[i];
           optionName = baseOption.optionName;
-          optionValue = isRandomAccessory
-              ? _formatOptionValueWithRange(baseOption)
-              : _plainOptionValue(baseOption);
+          optionValue = _plainOptionValue(baseOption);
           optionTextColor =
               Colors.grey; // Base options are greyed out and fixed
           onTapOptionArea = null; // Cannot tap to change/expand base options
         } else {
           // This slot is not a base option slot, but it currently has an option (meaning it was expanded/changed)
           optionName = option.optionName;
-          optionValue = isRandomAccessory
-              ? _formatOptionValueWithRange(option)
-              : _plainOptionValue(option);
+          optionValue = _plainOptionValue(option);
           optionTextColor = theme.textTheme.bodyLarge
               ?.color; // Regular color for changeable options
 
