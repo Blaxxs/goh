@@ -2283,7 +2283,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     if (isFilled) {
       optionName = _currentOptions[index].optionName;
-      optionValue = _formatOptionValueWithRange(
+      optionValue = _numericOnlyOptionValue(
         _displayedOptionsForCurrentEnhancement[index],
       );
       optionColor =
