@@ -2283,8 +2283,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     if (isFilled) {
       optionName = _currentOptions[index].optionName;
-      optionValue = _numericOnlyOptionValue(
+      optionValue = _optionChangeDisplayValue(
         _displayedOptionsForCurrentEnhancement[index],
+        showRange: isRandomAccessory,
       );
       optionColor =
           useFixedSlotStyle ? Colors.grey : theme.textTheme.bodyLarge?.color;
@@ -2722,6 +2723,26 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     }
 
     return raw;
+  }
+
+  String _optionChangeDisplayValue(
+    AccessoryOption option, {
+    required bool showRange,
+  }) {
+    if (!showRange) {
+      return _numericOnlyOptionValue(option);
+    }
+
+    final minValue = option.minNormalValue;
+    final maxValue = option.maxNormalValue;
+    if (minValue == null || maxValue == null) {
+      return _numericOnlyOptionValue(option);
+    }
+
+    if (option.optionValue == '$minValue~$maxValue') {
+      return option.optionValue;
+    }
+    return '${_numericOnlyOptionValue(option)} ($minValue~$maxValue)';
   }
 
   String _formatOptionValueForSummary(AccessoryOption option) {
