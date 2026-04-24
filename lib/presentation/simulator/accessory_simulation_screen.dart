@@ -2682,7 +2682,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       option,
       forceHighlight: isFixedAccessory,
     );
-    final text = option.optionValue;
+    final text = _numericOnlyOptionValue(option);
     final baseStyle = Theme.of(context).textTheme.bodyMedium;
     final baseFontSize = baseStyle?.fontSize ?? 14;
     return SizedBox(
@@ -2706,6 +2706,22 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
         ),
       ),
     );
+  }
+
+  String _numericOnlyOptionValue(AccessoryOption option) {
+    final raw = option.optionValue.trim();
+
+    final parenIndex = raw.indexOf('(');
+    if (parenIndex > 0) {
+      return raw.substring(0, parenIndex).trim();
+    }
+
+    final tildeIndex = raw.indexOf('~');
+    if (tildeIndex > 0) {
+      return raw.substring(0, tildeIndex).trim();
+    }
+
+    return raw;
   }
 
   String _formatOptionValueWithRange(AccessoryOption option) {
