@@ -2724,18 +2724,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return raw;
   }
 
-  String _formatOptionValueWithRange(AccessoryOption option) {
-    final minValue = option.minNormalValue;
-    final maxValue = option.maxNormalValue;
-    if (minValue == null || maxValue == null) {
-      return option.optionValue;
-    }
-    if (option.optionValue == '$minValue~$maxValue') {
-      return option.optionValue;
-    }
-    return '${option.optionValue} ($minValue~$maxValue)';
-  }
-
   String _formatOptionValueForSummary(AccessoryOption option) {
     final minValue = option.minNormalValue;
     final maxValue = option.maxNormalValue;
