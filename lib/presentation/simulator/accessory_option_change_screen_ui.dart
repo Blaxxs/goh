@@ -296,8 +296,12 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
                     ),
                     if (optionValue != null && optionValue.isNotEmpty)
                       Text(
-                        // Option value takes only its content width
-                        optionValue,
+                        // 범위 포맷 "38 (30~50)" → "38" 강제 제거
+                        optionValue.contains('(')
+                            ? optionValue
+                                .substring(0, optionValue.indexOf('('))
+                                .trim()
+                            : optionValue,
                         style: theme.textTheme.bodyLarge
                             ?.copyWith(color: optionTextColor),
                         textAlign: TextAlign.right,
