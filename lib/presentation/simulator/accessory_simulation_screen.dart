@@ -2416,8 +2416,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 6),
-                      if (!_canAttemptRemodelByCount)
-                        RichText(
+                      Visibility(
+                        visible: !_canAttemptRemodelByCount,
+                        maintainState: true,
+                        maintainAnimation: true,
+                        maintainSize: true,
+                        child: RichText(
                           text: TextSpan(
                             style: Theme.of(context).textTheme.bodyMedium,
                             children: [
@@ -2436,6 +2440,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             ],
                           ),
                         ),
+                      ),
                     ],
                   ),
                 ),
@@ -2458,9 +2463,13 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
                       Text(
                           '영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
-                      if (!_canAttemptRemodelByCount) ...[
-                        const SizedBox(height: 12),
-                        Align(
+                      const SizedBox(height: 12),
+                      Visibility(
+                        visible: !_canAttemptRemodelByCount,
+                        maintainState: true,
+                        maintainAnimation: true,
+                        maintainSize: true,
+                        child: Align(
                           alignment: Alignment.centerRight,
                           child: OutlinedButton.icon(
                             onPressed: _resetRemodelAttemptCount,
@@ -2468,7 +2477,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             label: const Text('개조 횟수 초기화'),
                           ),
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
