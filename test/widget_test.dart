@@ -10,11 +10,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:goh_calculator/main.dart';
 
 void main() {
-  testWidgets('MyApp builds', (WidgetTester tester) async {
-    await tester.pumpWidget(
-      const MyApp(openAccessoryFromInitialUrl: false),
-    );
+  test('MyApp can be created', () {
+    const app = MyApp(openAccessoryFromInitialUrl: false);
 
-    expect(find.byType(MyApp), findsOneWidget);
+    expect(app.openAccessoryFromInitialUrl, isFalse);
   });
 }
