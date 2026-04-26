@@ -184,8 +184,8 @@ class AccessoryOptionRollLogic {
 
   static String normalizeOptionName(String name) {
     final trimmed = name.trim();
-    if (trimmed == '모든피해 %감소') {
-      return '모든 피해 %감소';
+    if (trimmed == '모든 피해 %감소') {
+      return '모든피해 %감소';
     }
     return trimmed;
   }
