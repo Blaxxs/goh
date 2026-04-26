@@ -169,6 +169,9 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     if (normalized == '관통확률저항증가') {
       aliases.addAll({'관저'});
     }
+    if (normalized == '관통확률증가') {
+      aliases.addAll({'관증'});
+    }
     if (normalized == '체력증가') {
       aliases.addAll({'체증'});
     }
@@ -177,6 +180,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     }
     if (normalized == '미니게임스킬피해증가') {
       aliases.addAll({'미겜증'});
+    }
+    if (normalized == '스킬쿨타임증가저항증가') {
+      aliases.addAll({'스쿨저'});
+    }
+    if (normalized == '크리티컬데미지증가') {
+      aliases.addAll({'크뎀', '크뎀증'});
     }
 
     return aliases;
