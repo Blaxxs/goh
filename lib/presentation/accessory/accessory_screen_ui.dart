@@ -566,7 +566,7 @@ class _AnimatedAccessorySearchFieldState
           customBorder: _expanded ? null : const CircleBorder(),
           onTap: _expand,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: _expanded ? 8 : 10),
+            padding: EdgeInsets.symmetric(horizontal: _expanded ? 8 : 0),
             child: _expanded
                 ? Row(
                     children: [
