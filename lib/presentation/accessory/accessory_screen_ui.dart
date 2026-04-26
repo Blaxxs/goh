@@ -551,8 +551,9 @@ class _AnimatedAccessorySearchFieldState
         color: _expanded
             ? colorScheme.surface
             : colorScheme.surface.withValues(alpha: 0.65),
-        shape: _expanded ? BoxShape.rectangle : BoxShape.circle,
-        borderRadius: _expanded ? BorderRadius.circular(18) : null,
+        // AnimatedContainer에서 shape<->borderRadius 전환 시 assert가 발생할 수 있어
+        // 항상 rectangle + 고정 라운드(18)로 유지한다. 36x36에서는 원형으로 보인다.
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: _expanded
               ? colorScheme.primary
