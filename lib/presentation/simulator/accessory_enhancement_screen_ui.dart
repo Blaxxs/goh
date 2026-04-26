@@ -370,191 +370,150 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
                     ),
                     const SizedBox(height: 8), // 강화 단계 표시 아래 간격 조정 (16 -> 8)
 
-                    if (displayedOptions.isNotEmpty) ...[
-                      Card(
-                        margin: EdgeInsets.zero,
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                currentEnhancementLevel > 0
-                                    ? '$currentEnhancementLevel강 적용 옵션'
-                                    : '기본 옵션',
-                                style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              ...displayedOptions.map(
-                                (option) => Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 3),
-                                  child: Row(
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Card(
+                            margin: EdgeInsets.zero,
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                children: [
+                                  RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      style: theme.textTheme.titleMedium,
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                            text: '성공: ',
+                                            style: TextStyle(
+                                                color: Colors.green[700])),
+                                        TextSpan(
+                                            text: successText,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green[700])),
+                                        const TextSpan(text: ' / '),
+                                        TextSpan(
+                                            text: '유지: ',
+                                            style: TextStyle(
+                                                color: Colors.orange[700])),
+                                        TextSpan(
+                                            text: failNoChangeText,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.orange[700])),
+                                        if (finalDowngradeChance > 0) ...[
+                                          const TextSpan(text: ' / '),
+                                          TextSpan(
+                                              text: '하락: ',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.red[700])),
+                                          TextSpan(
+                                              text: downgradeText,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.red[700])),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Column(
                                     children: [
-                                      Expanded(
-                                        child: Text(
-                                          option.optionName,
-                                          style: theme.textTheme.bodyMedium,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
                                       Text(
-                                        option.optionValue,
-                                        style:
-                                            theme.textTheme.bodyMedium?.copyWith(
-                                          fontWeight: FontWeight.w700,
-                                          color: theme.colorScheme.primary,
-                                        ),
+                                        '필요 숫돌이: ${formatter.format(stoneCost)}',
+                                        style: theme.textTheme.titleMedium,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        '필요 골드: ${formatter.format(goldCost)}',
+                                        style: theme.textTheme.titleMedium,
+                                        textAlign: TextAlign.center,
                                       ),
                                     ],
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-
-                    // 강화 확률 및 필요 재화 섹션 (Card로 묶음)
-                    Card(
-                      margin: EdgeInsets.zero, // 부모 Padding이 있으므로 Card 자체 마진은 0
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          children: [
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                style: theme.textTheme.titleMedium,
-                                children: <TextSpan>[
-                                  TextSpan(
-                                      text: '성공: ',
-                                      style:
-                                          TextStyle(color: Colors.green[700])),
-                                  TextSpan(
-                                      text: successText,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.green[700])),
-                                  const TextSpan(text: ' / '),
-                                  TextSpan(
-                                      text: '유지: ',
-                                      style:
-                                          TextStyle(color: Colors.orange[700])),
-                                  TextSpan(
-                                      text: failNoChangeText,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.orange[700])),
-                                  if (finalDowngradeChance > 0) ...[
-                                    // 하락 확률이 0보다 클 때만 표시
-                                    const TextSpan(text: ' / '),
-                                    TextSpan(
-                                        text: '하락: ',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red[700])),
-                                    TextSpan(
-                                        text: downgradeText,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.red[700])),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Text('필요 숫돌이: ${formatter.format(stoneCost)}',
-                                    style: theme.textTheme.titleMedium),
-                                Text('필요 골드: ${formatter.format(goldCost)}',
-                                    style: theme.textTheme.titleMedium),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16), // 확률/재화 카드 아래 간격 조정 (24 -> 16)
-
-                    // 강화 통계 표시
-                    if (isAccessorySelected) ...[
-                      Card(
-                        margin: EdgeInsets.zero,
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Card(
+                            margin: EdgeInsets.zero,
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  _buildStatisticItem(
-                                      theme, '시도', attemptCount.toString(),
-                                      suffix: '회'),
-                                  _buildStatisticItem(
-                                      theme, '성공', successCount.toString(),
-                                      suffix: '회',
-                                      valueColor: Colors.green[700]),
-                                  _buildStatisticItem(
-                                      theme, '유지', failKeepCount.toString(),
-                                      suffix: '회',
-                                      valueColor: Colors.orange[700]),
-                                  _buildStatisticItem(theme, '하락',
-                                      failDowngradeCount.toString(),
-                                      suffix: '회', valueColor: Colors.red[700]),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Text('누적 소모 재화',
-                                  style: theme.textTheme.titleSmall
-                                      ?.copyWith(fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  Text(
-                                      '숫돌이: ${formatter.format(totalConsumedStones)}',
-                                      style: theme.textTheme.bodyMedium),
-                                  Text(
-                                      '골드: ${formatter.format(totalConsumedGold)}',
-                                      style: theme.textTheme.bodyMedium),
-                                  InkWell(
-                                    onTap: () => _showConsumedAidsDialog(
-                                        context, theme, consumedAidsCount),
-                                    child: Text(
-                                        '보조제: ${formatter.format(consumedAidsCount.values.fold(0, (sum, count) => sum + count))}',
-                                        style: theme.textTheme.bodyMedium
-                                            ?.copyWith(
-                                          color: theme.colorScheme.secondary,
-                                        )),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _buildStatisticItem(
+                                          theme, '시도', attemptCount.toString(),
+                                          suffix: '회'),
+                                      _buildStatisticItem(
+                                          theme, '성공', successCount.toString(),
+                                          suffix: '회',
+                                          valueColor: Colors.green[700]),
+                                      _buildStatisticItem(
+                                          theme, '유지', failKeepCount.toString(),
+                                          suffix: '회',
+                                          valueColor: Colors.orange[700]),
+                                      _buildStatisticItem(
+                                          theme,
+                                          '하락',
+                                          failDowngradeCount.toString(),
+                                          suffix: '회',
+                                          valueColor: Colors.red[700]),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text('누적 소모 재화',
+                                      style: theme.textTheme.titleSmall
+                                          ?.copyWith(fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 8),
+                                  Column(
+                                    children: [
+                                      Text(
+                                          '숫돌이: ${formatter.format(totalConsumedStones)}',
+                                          style: theme.textTheme.bodyMedium),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                          '골드: ${formatter.format(totalConsumedGold)}',
+                                          style: theme.textTheme.bodyMedium),
+                                      const SizedBox(height: 4),
+                                      InkWell(
+                                        onTap: () => _showConsumedAidsDialog(
+                                            context, theme, consumedAidsCount),
+                                        child: Text(
+                                            '보조제: ${formatter.format(consumedAidsCount.values.fold(0, (sum, count) => sum + count))}',
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
+                                              color: theme.colorScheme.secondary,
+                                            )),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 16), // 통계 카드 아래 간격 조정 (24 -> 16)
-                    ],
+                      ],
+                    ),
+                    const SizedBox(height: 16),
 
                     // 옵션 갯수 선택 UI는 악세사리 이름 옆으로 이동됨
 
