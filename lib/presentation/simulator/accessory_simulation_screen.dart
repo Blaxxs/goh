@@ -2384,94 +2384,105 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('개조', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 8),
-                SegmentedButton<bool>(
-                  segments: const [
-                    ButtonSegment<bool>(value: false, label: Text('은모루')),
-                    ButtonSegment<bool>(value: true, label: Text('금모루')),
-                  ],
-                  selected: {_useGoldMoruForRemodel},
-                  onSelectionChanged: (value) {
-                    setState(() {
-                      _useGoldMoruForRemodel = value.first;
-                    });
-                  },
-                ),
-                const SizedBox(height: 8),
-                _buildSimpleCostCard(_currentRemodelCost),
-                const SizedBox(height: 6),
-                Text(
-                  '개조 횟수: $_remodelAttemptCount/15',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 6),
-                if (!_canAttemptRemodelByCount)
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: OutlinedButton.icon(
-                      onPressed: _resetRemodelAttemptCount,
-                      icon: const Icon(Icons.refresh_rounded),
-                      label: const Text('개조 횟수 초기화'),
-                    ),
-                  ),
-                if (!_canAttemptRemodelByCount)
-                  RichText(
-                    text: TextSpan(
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      children: [
-                        const TextSpan(text: '개조가 '),
-                        TextSpan(
-                          text: '불가능',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.red,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('개조', style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 8),
+                      SegmentedButton<bool>(
+                        segments: const [
+                          ButtonSegment<bool>(value: false, label: Text('은모루')),
+                          ButtonSegment<bool>(value: true, label: Text('금모루')),
+                        ],
+                        selected: {_useGoldMoruForRemodel},
+                        onSelectionChanged: (value) {
+                          setState(() {
+                            _useGoldMoruForRemodel = value.first;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _buildSimpleCostCard(_currentRemodelCost),
+                      const SizedBox(height: 6),
+                      Text(
+                        '개조 횟수: $_remodelAttemptCount/15',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 6),
+                      if (!_canAttemptRemodelByCount)
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: OutlinedButton.icon(
+                            onPressed: _resetRemodelAttemptCount,
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: const Text('개조 횟수 초기화'),
+                          ),
                         ),
-                        const TextSpan(text: ' 합니다.'),
-                      ],
-                    ),
-                  ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: FilledButton.icon(
-                    onPressed:
-                        _canAttemptRemodelByCount ? _performRemodel : null,
-                    icon: const Icon(Icons.build_circle_outlined),
-                    label: const Text('개조 실행'),
+                      if (!_canAttemptRemodelByCount)
+                        RichText(
+                          text: TextSpan(
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            children: [
+                              const TextSpan(text: '개조가 '),
+                              TextSpan(
+                                text: '불가능',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const TextSpan(text: ' 합니다.'),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed:
+                              _canAttemptRemodelByCount ? _performRemodel : null,
+                          icon: const Icon(Icons.build_circle_outlined),
+                          label: const Text('개조 실행'),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
-        const SizedBox(height: 12),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('누적 소모', style: Theme.of(context).textTheme.titleSmall),
-                const SizedBox(height: 8),
-                Text(
-                    '개조 횟수: ${_numberFormat.format(_totalRemodelAttemptCount)}회'),
-                Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
-                Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
-                Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
-                Text(
-                    '영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
-              ],
+            const SizedBox(width: 12),
+            Expanded(
+              child: Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('누적 소모', style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 8),
+                      Text(
+                          '개조 횟수: ${_numberFormat.format(_totalRemodelAttemptCount)}회'),
+                      Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
+                      Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
+                      Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
+                      Text(
+                          '영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ],
     );
