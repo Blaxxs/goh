@@ -538,19 +538,20 @@ class _AnimatedAccessorySearchFieldState
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final collapsedWidth = 92.0;
+    final collapsedSize = 36.0;
     final expandedWidth = MediaQuery.of(context).size.width < 420 ? 188.0 : 232.0;
 
     return AnimatedContainer(
       duration: _animationDuration,
       curve: Curves.easeOutCubic,
-      width: _expanded ? expandedWidth : collapsedWidth,
-      height: 36,
+      width: _expanded ? expandedWidth : collapsedSize,
+      height: collapsedSize,
       decoration: BoxDecoration(
         color: _expanded
             ? colorScheme.surface
             : colorScheme.surface.withValues(alpha: 0.65),
-        borderRadius: BorderRadius.circular(18),
+        shape: _expanded ? BoxShape.rectangle : BoxShape.circle,
+        borderRadius: _expanded ? BorderRadius.circular(18) : null,
         border: Border.all(
           color: _expanded
               ? colorScheme.primary
@@ -561,7 +562,8 @@ class _AnimatedAccessorySearchFieldState
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: _expanded ? BorderRadius.circular(18) : null,
+          customBorder: _expanded ? null : const CircleBorder(),
           onTap: _expand,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: _expanded ? 8 : 10),
