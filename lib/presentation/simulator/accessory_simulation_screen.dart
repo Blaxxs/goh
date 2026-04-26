@@ -2436,16 +2436,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                             ],
                           ),
                         ),
-                      const SizedBox(height: 12),
-                      Align(
-                        alignment: Alignment.center,
-                        child: FilledButton.icon(
-                          onPressed:
-                              _canAttemptRemodelByCount ? _performRemodel : null,
-                          icon: const Icon(Icons.build_circle_outlined),
-                          label: const Text('개조 실행'),
-                        ),
-                      ),
                     ],
                   ),
                 ),
@@ -2485,6 +2475,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
               ),
             ),
           ],
+        ),
+        const SizedBox(height: 12),
+        Center(
+          child: FilledButton.icon(
+            onPressed: _canAttemptRemodelByCount ? _performRemodel : null,
+            icon: const Icon(Icons.build_circle_outlined),
+            label: const Text('개조 실행'),
+          ),
         ),
       ],
     );
