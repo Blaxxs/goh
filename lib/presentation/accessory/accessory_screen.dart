@@ -181,11 +181,32 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     if (normalized == '미니게임스킬피해증가') {
       aliases.addAll({'미겜증'});
     }
+    if (normalized == '지속피해증가') {
+      aliases.addAll({'지피증'});
+    }
+    if (normalized == '모든나쁜효과저항증가') {
+      aliases.addAll({'모나저'});
+    }
     if (normalized == '스킬쿨타임증가저항증가') {
       aliases.addAll({'스쿨저'});
     }
+    if (normalized == '크리티컬증가') {
+      aliases.addAll({'크증'});
+    }
     if (normalized == '크리티컬데미지증가') {
       aliases.addAll({'크뎀', '크뎀증'});
+    }
+    if (normalized == '회피증가') {
+      aliases.addAll({'닷지'});
+    }
+    if (normalized == '명중증가') {
+      aliases.addAll({'힛'});
+    }
+    if (normalized == '매턴체력회복') {
+      aliases.addAll({'매체회'});
+    }
+    if (normalized == '모든피해감소') {
+      aliases.addAll({'모피감'});
     }
 
     return aliases;
