@@ -236,11 +236,6 @@ class AccessoryEnhancementScreenUI extends StatelessWidget {
     final int goldCost =
         (currentEnhancementLevel < 9 && costs != null) ? costs['gold']! : 0;
     final formatter = NumberFormat('#,##0'); // 포맷터 추가
-    final displayedOptions = isAccessorySelected
-      ? (displayedOptionsOverride ??
-          selectedAccessory!.optionsAtEnhancementLevel(currentEnhancementLevel))
-      : const <AccessoryOption>[];
-
     final body = !isAccessorySelected
           ? Center(
               // 악세사리가 선택되지 않았을 때만 Center 사용

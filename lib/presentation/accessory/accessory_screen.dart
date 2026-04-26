@@ -155,6 +155,101 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     return 2;
   }
 
+  String _normalizeSearchText(String value) {
+    return value
+        .toLowerCase()
+        .replaceAll(RegExp(r'\s+'), '')
+        .replaceAll(RegExp(r'[^0-9a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ]'), '');
+  }
+
+  String _extractChoseong(String value) {
+    const choseongList = [
+      'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ',
+      'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+    ];
+
+    final buffer = StringBuffer();
+    for (final rune in value.runes) {
+      if (rune >= 0xAC00 && rune <= 0xD7A3) {
+        final index = ((rune - 0xAC00) ~/ 588);
+        buffer.write(choseongList[index]);
+        continue;
+      }
+
+      final char = String.fromCharCode(rune);
+      if (RegExp(r'[ㄱ-ㅎa-zA-Z0-9]').hasMatch(char)) {
+        buffer.write(char.toLowerCase());
+      }
+    }
+    return buffer.toString();
+  }
+
+  String _tokenInitials(String value) {
+    final tokens = value
+        .split(RegExp(r'\s+'))
+        .map((token) => token.trim())
+        .where((token) => token.isNotEmpty);
+    final buffer = StringBuffer();
+    for (final token in tokens) {
+      final normalized = token.replaceAll(RegExp(r'[^0-9a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ]'), '');
+      if (normalized.isEmpty) {
+        continue;
+      }
+      final firstRune = normalized.runes.first;
+      if (firstRune >= 0xAC00 && firstRune <= 0xD7A3) {
+        buffer.write(_extractChoseong(String.fromCharCode(firstRune)));
+      } else {
+        buffer.write(String.fromCharCode(firstRune).toLowerCase());
+      }
+    }
+    return buffer.toString();
+  }
+
+  bool _matchesSearchQuery(String query, Accessory accessory) {
+    if (query.isEmpty) {
+      return true;
+    }
+
+    final normalizedQuery = _normalizeSearchText(query);
+    final choseongQuery = _extractChoseong(query);
+    final initialsQuery = _tokenInitials(query);
+
+    final searchTargets = <String>[
+      accessory.name,
+      accessory.id,
+      accessory.part,
+      ...accessory.options.expand((option) => [
+            option.optionName,
+            option.optionValue,
+          ]),
+    ];
+
+    for (final target in searchTargets) {
+      final lowerTarget = target.toLowerCase();
+      if (lowerTarget.contains(query)) {
+        return true;
+      }
+
+      final normalizedTarget = _normalizeSearchText(target);
+      if (normalizedQuery.isNotEmpty &&
+          normalizedTarget.contains(normalizedQuery)) {
+        return true;
+      }
+
+      final choseongTarget = _extractChoseong(target);
+      if (choseongQuery.isNotEmpty && choseongTarget.contains(choseongQuery)) {
+        return true;
+      }
+
+      final initialsTarget = _tokenInitials(target);
+      if (initialsQuery.isNotEmpty && initialsTarget.contains(initialsQuery)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     final List<Accessory> accessories = AccessoryDataManager().allAccessories;
@@ -169,11 +264,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     // 필터링 로직을 적용합니다.
     final query = _searchQuery.trim().toLowerCase();
     List<Accessory> displayList = accessories.where((acc) {
-      final bool matchesSearch = query.isEmpty ||
-          acc.name.toLowerCase().contains(query) ||
-          acc.options.any((option) =>
-              option.optionName.toLowerCase().contains(query) ||
-              option.optionValue.toLowerCase().contains(query));
+      final bool matchesSearch = _matchesSearchQuery(query, acc);
 
       final matchesPart = _selectedPartFilter == null ||
           _selectedPartFilter == '전체' ||
