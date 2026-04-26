@@ -2417,15 +2417,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       ),
                       const SizedBox(height: 6),
                       if (!_canAttemptRemodelByCount)
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: OutlinedButton.icon(
-                            onPressed: _resetRemodelAttemptCount,
-                            icon: const Icon(Icons.refresh_rounded),
-                            label: const Text('개조 횟수 초기화'),
-                          ),
-                        ),
-                      if (!_canAttemptRemodelByCount)
                         RichText(
                           text: TextSpan(
                             style: Theme.of(context).textTheme.bodyMedium,
@@ -2446,8 +2437,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           ),
                         ),
                       const SizedBox(height: 12),
-                      SizedBox(
-                        width: double.infinity,
+                      Align(
+                        alignment: Alignment.center,
                         child: FilledButton.icon(
                           onPressed:
                               _canAttemptRemodelByCount ? _performRemodel : null,
@@ -2477,6 +2468,17 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                       Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
                       Text(
                           '영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
+                      if (!_canAttemptRemodelByCount) ...[
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: OutlinedButton.icon(
+                            onPressed: _resetRemodelAttemptCount,
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: const Text('개조 횟수 초기화'),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
