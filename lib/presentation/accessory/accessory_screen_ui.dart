@@ -546,6 +546,7 @@ class _AnimatedAccessorySearchFieldState
       curve: Curves.easeOutCubic,
       width: _expanded ? expandedWidth : collapsedSize,
       height: collapsedSize,
+      clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
         color: _expanded
             ? colorScheme.surface
@@ -567,60 +568,11 @@ class _AnimatedAccessorySearchFieldState
           onTap: _expanded ? null : _expand,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: _expanded ? 8 : 0),
-            child: _expanded
-                ? Row(
-                    children: [
-                      Icon(
-                        Icons.search_rounded,
-                        size: 18,
-                        color: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: TextField(
-                          controller: widget.controller,
-                          focusNode: _focusNode,
-                          onSubmitted: (_) => _submit(),
-                          decoration: const InputDecoration(
-                            hintText: '이름/옵션',
-                            isDense: true,
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.zero,
-                          ),
-                        ),
-                      ),
-                      if (widget.controller.text.isNotEmpty)
-                        GestureDetector(
-                          onTap: widget.onClearSearch,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 4),
-                            child: Icon(
-                              Icons.close_rounded,
-                              size: 18,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                        ),
-                      GestureDetector(
-                        onTap: _submit,
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: colorScheme.primaryContainer,
-                            shape: BoxShape.circle,
-                          ),
-                          alignment: Alignment.center,
-                          child: Icon(
-                            Icons.search_rounded,
-                            size: 16,
-                            color: colorScheme.onPrimaryContainer,
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : Row(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final compact = !_expanded || constraints.maxWidth < 132;
+                if (compact) {
+                  return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
@@ -629,7 +581,63 @@ class _AnimatedAccessorySearchFieldState
                         color: colorScheme.onSurface,
                       ),
                     ],
-                  ),
+                  );
+                }
+
+                return Row(
+                  children: [
+                    Icon(
+                      Icons.search_rounded,
+                      size: 18,
+                      color: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: TextField(
+                        controller: widget.controller,
+                        focusNode: _focusNode,
+                        onSubmitted: (_) => _submit(),
+                        decoration: const InputDecoration(
+                          hintText: '이름/옵션',
+                          isDense: true,
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.zero,
+                        ),
+                      ),
+                    ),
+                    if (widget.controller.text.isNotEmpty)
+                      GestureDetector(
+                        onTap: widget.onClearSearch,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Icon(
+                            Icons.close_rounded,
+                            size: 18,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    GestureDetector(
+                      onTap: _submit,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: colorScheme.primaryContainer,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.search_rounded,
+                          size: 16,
+                          color: colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
