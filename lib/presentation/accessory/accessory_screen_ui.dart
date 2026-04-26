@@ -602,14 +602,13 @@ class _AnimatedAccessorySearchFieldState
                       GestureDetector(
                         onTap: _submit,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 4,
-                          ),
+                          width: 24,
+                          height: 24,
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(12),
+                            shape: BoxShape.circle,
                           ),
+                          alignment: Alignment.center,
                           child: Icon(
                             Icons.search_rounded,
                             size: 16,
