@@ -564,7 +564,7 @@ class _AnimatedAccessorySearchFieldState
         child: InkWell(
           borderRadius: _expanded ? BorderRadius.circular(18) : null,
           customBorder: _expanded ? null : const CircleBorder(),
-          onTap: _expand,
+          onTap: _expanded ? null : _expand,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: _expanded ? 8 : 0),
             child: _expanded
