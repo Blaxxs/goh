@@ -162,47 +162,24 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         .replaceAll(RegExp(r'[^0-9a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ]'), '');
   }
 
-  String _extractChoseong(String value) {
-    const choseongList = [
-      'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ',
-      'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
-    ];
+  Set<String> _searchAliasesForTarget(String target) {
+    final normalized = _normalizeSearchText(target);
+    final aliases = <String>{normalized};
 
-    final buffer = StringBuffer();
-    for (final rune in value.runes) {
-      if (rune >= 0xAC00 && rune <= 0xD7A3) {
-        final index = ((rune - 0xAC00) ~/ 588);
-        buffer.write(choseongList[index]);
-        continue;
-      }
-
-      final char = String.fromCharCode(rune);
-      if (RegExp(r'[ㄱ-ㅎa-zA-Z0-9]').hasMatch(char)) {
-        buffer.write(char.toLowerCase());
-      }
+    if (normalized == '관통확률저항증가') {
+      aliases.addAll({'관저'});
     }
-    return buffer.toString();
-  }
-
-  String _tokenInitials(String value) {
-    final tokens = value
-        .split(RegExp(r'\s+'))
-        .map((token) => token.trim())
-        .where((token) => token.isNotEmpty);
-    final buffer = StringBuffer();
-    for (final token in tokens) {
-      final normalized = token.replaceAll(RegExp(r'[^0-9a-zA-Z가-힣ㄱ-ㅎㅏ-ㅣ]'), '');
-      if (normalized.isEmpty) {
-        continue;
-      }
-      final firstRune = normalized.runes.first;
-      if (firstRune >= 0xAC00 && firstRune <= 0xD7A3) {
-        buffer.write(_extractChoseong(String.fromCharCode(firstRune)));
-      } else {
-        buffer.write(String.fromCharCode(firstRune).toLowerCase());
-      }
+    if (normalized == '체력증가') {
+      aliases.addAll({'체증'});
     }
-    return buffer.toString();
+    if (normalized == '공격스킬피해증가') {
+      aliases.addAll({'스증'});
+    }
+    if (normalized == '미니게임스킬피해증가') {
+      aliases.addAll({'미겜증'});
+    }
+
+    return aliases;
   }
 
   bool _matchesSearchQuery(String query, Accessory accessory) {
@@ -211,8 +188,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     }
 
     final normalizedQuery = _normalizeSearchText(query);
-    final choseongQuery = _extractChoseong(query);
-    final initialsQuery = _tokenInitials(query);
 
     final searchTargets = <String>[
       accessory.name,
@@ -236,14 +211,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         return true;
       }
 
-      final choseongTarget = _extractChoseong(target);
-      if (choseongQuery.isNotEmpty && choseongTarget.contains(choseongQuery)) {
-        return true;
-      }
-
-      final initialsTarget = _tokenInitials(target);
-      if (initialsQuery.isNotEmpty && initialsTarget.contains(initialsQuery)) {
-        return true;
+      if (normalizedQuery.isNotEmpty) {
+        for (final alias in _searchAliasesForTarget(target)) {
+          if (alias.contains(normalizedQuery)) {
+            return true;
+          }
+        }
       }
     }
 
