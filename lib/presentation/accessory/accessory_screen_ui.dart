@@ -14,6 +14,7 @@ class AccessoryScreenUI extends StatelessWidget {
   final Function(BuildContext, Accessory) onAccessoryTap;
   final String currentSearchQuery;
   final VoidCallback onClearSearch;
+  final ValueChanged<String> onSubmitSearch;
   final bool compareMode;
   final List<Accessory> compareList;
   final bool isDataLoading;
@@ -35,6 +36,7 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.onAccessoryTap,
     required this.currentSearchQuery,
     required this.onClearSearch,
+    required this.onSubmitSearch,
     this.compareMode = false,
     this.compareList = const [],
     this.isDataLoading = false,
@@ -229,27 +231,11 @@ class AccessoryScreenUI extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      SizedBox(
-                        width: 108,
-                        child: TextField(
-                          controller: searchController,
-                          decoration: InputDecoration(
-                            hintText: '검색',
-                            prefixIcon: const Icon(Icons.search, size: 18),
-                            isDense: true,
-                            border: const OutlineInputBorder(),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 8,
-                            ),
-                            suffixIcon: currentSearchQuery.isNotEmpty
-                                ? IconButton(
-                                    icon: const Icon(Icons.clear, size: 18),
-                                    onPressed: onClearSearch,
-                                  )
-                                : null,
-                          ),
-                        ),
+                      _AnimatedAccessorySearchField(
+                        controller: searchController,
+                        currentSearchQuery: currentSearchQuery,
+                        onClearSearch: onClearSearch,
+                        onSubmitSearch: onSubmitSearch,
                       ),
                     ],
                   ),
@@ -436,4 +422,190 @@ class AccessoryScreenUI extends StatelessWidget {
     );
   }
 
+}
+
+class _AnimatedAccessorySearchField extends StatefulWidget {
+  final TextEditingController controller;
+  final String currentSearchQuery;
+  final VoidCallback onClearSearch;
+  final ValueChanged<String> onSubmitSearch;
+
+  const _AnimatedAccessorySearchField({
+    required this.controller,
+    required this.currentSearchQuery,
+    required this.onClearSearch,
+    required this.onSubmitSearch,
+  });
+
+  @override
+  State<_AnimatedAccessorySearchField> createState() =>
+      _AnimatedAccessorySearchFieldState();
+}
+
+class _AnimatedAccessorySearchFieldState
+    extends State<_AnimatedAccessorySearchField> {
+  static const _animationDuration = Duration(milliseconds: 220);
+
+  final FocusNode _focusNode = FocusNode();
+  bool _expanded = false;
+  bool _isSubmitting = false;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(_handleTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_handleTextChanged);
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _handleTextChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _expand() async {
+    if (_expanded) {
+      _focusNode.requestFocus();
+      return;
+    }
+    setState(() {
+      _expanded = true;
+    });
+    await Future<void>.delayed(const Duration(milliseconds: 120));
+    if (!mounted) return;
+    _focusNode.requestFocus();
+  }
+
+  Future<void> _submit() async {
+    if (_isSubmitting) return;
+
+    _focusNode.unfocus();
+    setState(() {
+      _expanded = false;
+      _isSubmitting = true;
+    });
+    await Future<void>.delayed(_animationDuration);
+    if (!mounted) return;
+    widget.onSubmitSearch(widget.controller.text);
+    setState(() {
+      _isSubmitting = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final collapsedWidth = 92.0;
+    final expandedWidth = MediaQuery.of(context).size.width < 420 ? 188.0 : 232.0;
+
+    return AnimatedContainer(
+      duration: _animationDuration,
+      curve: Curves.easeOutCubic,
+      width: _expanded ? expandedWidth : collapsedWidth,
+      height: 36,
+      decoration: BoxDecoration(
+        color: _expanded
+            ? colorScheme.surface
+            : colorScheme.surface.withValues(alpha: 0.65),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: _expanded
+              ? colorScheme.primary
+              : colorScheme.onSurface.withValues(alpha: 0.28),
+          width: _expanded ? 1.3 : 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: _expand,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: _expanded ? 8 : 10),
+            child: _expanded
+                ? Row(
+                    children: [
+                      Icon(
+                        Icons.search_rounded,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 6),
+                      Expanded(
+                        child: TextField(
+                          controller: widget.controller,
+                          focusNode: _focusNode,
+                          onSubmitted: (_) => _submit(),
+                          decoration: const InputDecoration(
+                            hintText: '이름/옵션 검색',
+                            isDense: true,
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                        ),
+                      ),
+                      if (widget.controller.text.isNotEmpty)
+                        GestureDetector(
+                          onTap: widget.onClearSearch,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 18,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      GestureDetector(
+                        onTap: _submit,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '검색',
+                            style: theme.textTheme.labelMedium?.copyWith(
+                              color: colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.search_rounded,
+                        size: 18,
+                        color: colorScheme.onSurface,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.currentSearchQuery.isNotEmpty ? '검색중' : '검색',
+                        style: theme.textTheme.labelMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
 }
