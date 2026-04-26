@@ -15,7 +15,7 @@ import '../../domain/logic/accessory_option_roll_logic.dart';
 import 'accessory_enhancement_screen_ui.dart';
 
 const _silverRemodelGoldCost = 20000;
-const _goldRemodelGoldCost = 3000;
+const _goldRemodelGoldCost = 30000;
 const _autoEnhanceBatchSize = 15;
 const _maxCraftLogCount = 80;
 const _lastSelectedAccessoryIdKey = 'accessory_sim_last_selected_id';
