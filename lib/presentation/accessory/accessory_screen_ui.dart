@@ -566,25 +566,24 @@ class _AnimatedAccessorySearchFieldState
           borderRadius: _expanded ? BorderRadius.circular(18) : null,
           customBorder: _expanded ? null : const CircleBorder(),
           onTap: _expanded ? null : _expand,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: _expanded ? 8 : 0),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final compact = !_expanded || constraints.maxWidth < 132;
-                if (compact) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.search_rounded,
-                        size: 18,
-                        color: colorScheme.onSurface,
-                      ),
-                    ],
-                  );
-                }
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              // 애니메이션 경계 프레임(열림 직전/닫힘 직후)에서도 안전하도록
+              // 충분한 폭이 확보되기 전까지는 아이콘-only 레이아웃만 사용.
+              final compact = !_expanded || constraints.maxWidth < 190;
+              if (compact) {
+                return Center(
+                  child: Icon(
+                    Icons.search_rounded,
+                    size: 18,
+                    color: colorScheme.onSurface,
+                  ),
+                );
+              }
 
-                return Row(
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Row(
                   children: [
                     Icon(
                       Icons.search_rounded,
@@ -635,9 +634,9 @@ class _AnimatedAccessorySearchFieldState
                       ),
                     ),
                   ],
-                );
-              },
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),
