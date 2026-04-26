@@ -134,5 +134,5 @@ void main() {
   final out = encoder.convert(root);
   jsonFile.writeAsStringSync(out, encoding: utf8);
 
-  print('ADDED=$addedCount');
+  stdout.writeln('ADDED=$addedCount');
 }

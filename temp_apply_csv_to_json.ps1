@@ -5,7 +5,7 @@ if (-not $csvFile) { throw 'CSV file not found in Downloads.' }
 $csvPath = $csvFile.FullName
 $jsonPath = 'C:\Users\Yul\Downloads\gohcalculator-default-rtdb-export (4).json'
 
-function Parse-Num([string]$s) {
+function ConvertTo-Number([string]$s) {
   if ($null -eq $s) { return $null }
   $t = $s.Trim()
   if ($t -eq '') { return $null }
@@ -17,7 +17,7 @@ function Parse-Num([string]$s) {
   return $null
 }
 
-function Num-ToStr([double]$n) {
+function ConvertTo-InvariantString([double]$n) {
   if ([Math]::Abs($n - [Math]::Round($n)) -lt 1e-9) { return ([int][Math]::Round($n)).ToString() }
   return $n.ToString('0.####', [System.Globalization.CultureInfo]::InvariantCulture)
 }
@@ -56,7 +56,7 @@ foreach ($r in $csvRows) {
 
   $stageValues = @()
   foreach ($col in $stageCols) {
-    $stageValues += (Parse-Num (Get-ColValue $r $col))
+    $stageValues += (ConvertTo-Number (Get-ColValue $r $col))
   }
 
   $rowObj = [PSCustomObject]@{
@@ -129,15 +129,15 @@ foreach ($name in $groups.Keys) {
     $stageStr = @()
 
     foreach ($v in $sv) {
-      if ($null -eq $v) { $stageStr += '0' } else { $stageStr += (Num-ToStr $v) }
+      if ($null -eq $v) { $stageStr += '0' } else { $stageStr += (ConvertTo-InvariantString $v) }
     }
 
     if ($opts.Count -le 3 -and $null -ne $opt.optionValue) {
-      $cur = Parse-Num ($opt.optionValue + '')
+      $cur = ConvertTo-Number ($opt.optionValue + '')
       $s9 = $sv[8]
       if ($null -ne $cur -and $null -ne $s9) {
         $base = $cur - $s9
-        $opt.optionValue = (Num-ToStr $base)
+        $opt.optionValue = (ConvertTo-InvariantString $base)
       }
     }
 

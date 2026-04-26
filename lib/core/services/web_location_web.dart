@@ -1,4 +1,4 @@
-import 'dart:html' as html;
+import 'package:web/web.dart' as web;
 
-String currentHref() => html.window.location.href;
-String currentHash() => html.window.location.hash;
+String currentHref() => web.window.location.href;
+String currentHash() => web.window.location.hash;

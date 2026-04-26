@@ -49,7 +49,7 @@ void main() {
 
   final accessories = (root['accessories'] as Map).cast<String, dynamic>();
 
-  print('---14_ITEMS_STATUS---');
+  stdout.writeln('---14_ITEMS_STATUS---');
   for (final csvName in csvToJsonName.keys) {
     final jsonName = csvToJsonName[csvName]!;
 
@@ -62,12 +62,12 @@ void main() {
     }
 
     if (foundItem == null) {
-      print('$jsonName: NOT_FOUND');
+      stdout.writeln('$jsonName: NOT_FOUND');
       continue;
     }
 
     if (foundItem is! Map) {
-      print('$jsonName: INVALID_TYPE');
+      stdout.writeln('$jsonName: INVALID_TYPE');
       continue;
     }
 
@@ -75,15 +75,15 @@ void main() {
     final options = itemMap['options'];
 
     if (options is! List) {
-      print('$jsonName: NO_OPTIONS');
+      stdout.writeln('$jsonName: NO_OPTIONS');
       continue;
     }
 
-    final optCount = (options as List).length;
+    final optCount = options.length;
     final hasBonus = itemMap.containsKey('enhancementStageBonus') && 
                      (itemMap['enhancementStageBonus'] as dynamic).length > 0;
     
-    print('$jsonName: OPTIONS=$optCount, HAS_BONUS=$hasBonus');
+    stdout.writeln('$jsonName: OPTIONS=$optCount, HAS_BONUS=$hasBonus');
 
     if (optCount <= 3 && hasBonus) {
       final bonus = (itemMap['enhancementStageBonus'] as List).cast<dynamic>();
@@ -91,7 +91,9 @@ void main() {
         final firstBonus = (bonus[0] as Map).cast<String, dynamic>();
         final stageVals = firstBonus['stageValues'];
         if (stageVals is List && stageVals.isNotEmpty) {
-          print('  -> FIXED_OPTION: optCount=$optCount, s9=${stageVals.last}');
+          stdout.writeln(
+            '  -> FIXED_OPTION: optCount=$optCount, s9=${stageVals.last}',
+          );
         }
       }
     }

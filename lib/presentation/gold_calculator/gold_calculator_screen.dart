@@ -170,7 +170,12 @@ class _GoldCalculatorScreenState extends State<GoldCalculatorScreen> {
       buffer.writeln('');
     }
     buffer.writeln('— GOH Calculator 앱에서 공유됨');
-    Share.share(buffer.toString(), subject: 'GOH 골드 효율 계산기 결과');
+    SharePlus.instance.share(
+      ShareParams(
+        text: buffer.toString(),
+        subject: 'GOH 골드 효율 계산기 결과',
+      ),
+    );
   }
 
   // 스테이지 설정 화면으로 이동하는 함수

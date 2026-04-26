@@ -192,5 +192,5 @@ void main() {
   final out = encoder.convert(root);
   jsonFile.writeAsStringSync(out, encoding: utf8);
 
-  print('UPDATED=$updated');
+  stdout.writeln('UPDATED=$updated');
 }

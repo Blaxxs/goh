@@ -386,7 +386,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     );
   }
 
-  // TODO: 세트 빌더 - 추후 재추가 예정
+  // 세트 빌더 - 추후 재추가 예정
   // void _showSetBuilderDialog() {
   //   final accessories = AccessoryDataManager().allAccessories;
   //   if (accessories.isEmpty) return;

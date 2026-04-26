@@ -52,10 +52,10 @@ void main() {
   final out = encoder.convert(root);
   jsonFile.writeAsStringSync(out, encoding: utf8);
 
-  print('NO_BONUS_COUNT=${noBonus.length}');
-  print('HAS_BONUS_COUNT=${hasBonus.length}');
-  print('---NO_BONUS_ITEMS---');
+  stdout.writeln('NO_BONUS_COUNT=${noBonus.length}');
+  stdout.writeln('HAS_BONUS_COUNT=${hasBonus.length}');
+  stdout.writeln('---NO_BONUS_ITEMS---');
   for (final n in noBonus) {
-    print(n);
+    stdout.writeln(n);
   }
 }

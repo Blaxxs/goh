@@ -117,9 +117,9 @@ void main() {
 
     final itemMap = foundItem.cast<String, dynamic>();
     final options = itemMap['options'];
-    if (options is! List || (options as List).isEmpty) continue;
+    if (options is! List || options.isEmpty) continue;
 
-    final optList = (options as List).cast<dynamic>();
+    final optList = options.cast<dynamic>();
 
     // Adjust optionValue for each option
     for (var oi = 0; oi < optList.length && oi < csvRows.length; oi++) {
@@ -138,7 +138,9 @@ void main() {
         if (cur != null) {
           final base = cur - s9;
           optMap['optionValue'] = numToStr(base);
-          print('$jsonName[${optMap['optionName']}]: $cur - $s9 = ${numToStr(base)}');
+          stdout.writeln(
+            '$jsonName[${optMap['optionName']}]: $cur - $s9 = ${numToStr(base)}',
+          );
         }
       }
     }
@@ -150,5 +152,5 @@ void main() {
   final out = encoder.convert(root);
   jsonFile.writeAsStringSync(out, encoding: utf8);
 
-  print('UPDATED_ITEMS=$updated');
+  stdout.writeln('UPDATED_ITEMS=$updated');
 }

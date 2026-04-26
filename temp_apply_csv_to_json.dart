@@ -99,7 +99,7 @@ void main() {
     return;
   }
 
-  final rootMap = (root as Map).cast<String, dynamic>();
+  final rootMap = root.cast<String, dynamic>();
   final accessories = (rootMap['accessories'] as Map).cast<String, dynamic>();
 
   final movedKeys = <String>[];
@@ -173,7 +173,7 @@ void main() {
 
   for (var i = 1; i < rows.length; i++) {
     final r = rows[i].cells;
-    final name = (r.length > 0 ? r[0] : '').trim();
+    final name = (r.isNotEmpty ? r[0] : '').trim();
     if (name.isNotEmpty) {
       currentName = name;
       if (name != prevHeaderName) {
@@ -294,15 +294,15 @@ void main() {
   final out = encoder.convert(root);
   jsonFile.writeAsStringSync(out, encoding: utf8);
 
-  print('UPDATED=$updated');
-  print('SKIP_EXCLUDED=$skipExcluded');
-  print('SKIP_NOROWS=$skipNoRows');
-  print('SKIP_NOOPTIONS=$skipNoOptions');
-  print('JSON_NAME_COUNT=${jsonNameSet.length}');
-  print('CSV_UNIQUE_COUNT=$bestCsvUnique');
-  print('CSV_JSON_NAME_INTERSECTION=$bestInter');
-  print('CSV_NAME_SAMPLE=${bestCsvSample.join(' | ')}');
-  print('JSON_NAME_SAMPLE=${jsonNameSet.take(10).join(' | ')}');
-  print('MOVED_ROOT_KEYS=${movedKeys.length}');
-  print('BACKUP=$backupPath');
+  stdout.writeln('UPDATED=$updated');
+  stdout.writeln('SKIP_EXCLUDED=$skipExcluded');
+  stdout.writeln('SKIP_NOROWS=$skipNoRows');
+  stdout.writeln('SKIP_NOOPTIONS=$skipNoOptions');
+  stdout.writeln('JSON_NAME_COUNT=${jsonNameSet.length}');
+  stdout.writeln('CSV_UNIQUE_COUNT=$bestCsvUnique');
+  stdout.writeln('CSV_JSON_NAME_INTERSECTION=$bestInter');
+  stdout.writeln('CSV_NAME_SAMPLE=${bestCsvSample.join(' | ')}');
+  stdout.writeln('JSON_NAME_SAMPLE=${jsonNameSet.take(10).join(' | ')}');
+  stdout.writeln('MOVED_ROOT_KEYS=${movedKeys.length}');
+  stdout.writeln('BACKUP=$backupPath');
 }
