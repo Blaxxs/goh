@@ -580,7 +580,7 @@ class _AnimatedAccessorySearchFieldState
                           focusNode: _focusNode,
                           onSubmitted: (_) => _submit(),
                           decoration: const InputDecoration(
-                            hintText: '이름/옵션 검색',
+                            hintText: '이름/옵션',
                             isDense: true,
                             border: InputBorder.none,
                             contentPadding: EdgeInsets.zero,
@@ -603,19 +603,17 @@ class _AnimatedAccessorySearchFieldState
                         onTap: _submit,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
+                            horizontal: 6,
                             vertical: 4,
                           ),
                           decoration: BoxDecoration(
                             color: colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
-                            '검색',
-                            style: theme.textTheme.labelMedium?.copyWith(
-                              color: colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w700,
-                            ),
+                          child: Icon(
+                            Icons.search_rounded,
+                            size: 16,
+                            color: colorScheme.onPrimaryContainer,
                           ),
                         ),
                       ),
@@ -628,14 +626,6 @@ class _AnimatedAccessorySearchFieldState
                         Icons.search_rounded,
                         size: 18,
                         color: colorScheme.onSurface,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        widget.currentSearchQuery.isNotEmpty ? '검색중' : '검색',
-                        style: theme.textTheme.labelMedium?.copyWith(
-                          color: colorScheme.onSurface,
-                          fontWeight: FontWeight.w500,
-                        ),
                       ),
                     ],
                   ),
