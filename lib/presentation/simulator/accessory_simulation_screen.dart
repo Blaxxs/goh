@@ -2412,14 +2412,15 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 6),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: OutlinedButton.icon(
-                    onPressed: _resetRemodelAttemptCount,
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: const Text('개조 횟수 초기화'),
+                if (!_canAttemptRemodelByCount)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: OutlinedButton.icon(
+                      onPressed: _resetRemodelAttemptCount,
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: const Text('개조 횟수 초기화'),
+                    ),
                   ),
-                ),
                 if (!_canAttemptRemodelByCount)
                   RichText(
                     text: TextSpan(
