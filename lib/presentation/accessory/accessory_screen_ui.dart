@@ -185,6 +185,42 @@ class AccessoryScreenUI extends StatelessWidget {
                                       : '랜덤옵션',
                                 ),
                               ),
+                                const SizedBox(width: 6),
+                                FilterChip(
+                                label: const Text('세트'),
+                                showCheckmark: false,
+                                selected: selectedOptionTypeFilter == '세트',
+                                selectedColor: colorScheme.primaryContainer,
+                                backgroundColor:
+                                  colorScheme.surface.withValues(alpha: 0.65),
+                                side: BorderSide(
+                                  color: selectedOptionTypeFilter == '세트'
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurface.withValues(alpha: 0.28),
+                                  width:
+                                    selectedOptionTypeFilter == '세트' ? 1.3 : 1,
+                                ),
+                                labelStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                    color: selectedOptionTypeFilter == '세트'
+                                      ? colorScheme.onPrimaryContainer
+                                      : colorScheme.onSurface,
+                                    fontWeight:
+                                      selectedOptionTypeFilter == '세트'
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
+                                visualDensity: VisualDensity.compact,
+                                materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                                onSelected: (_) => onOptionTypeFilterChanged(
+                                  selectedOptionTypeFilter == '세트'
+                                    ? '전체'
+                                    : '세트',
+                                ),
+                                ),
                               const SizedBox(width: 8),
                               ...partFilterOptions
                                   .where((part) => part != '전체')
