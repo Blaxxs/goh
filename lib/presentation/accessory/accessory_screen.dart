@@ -7,6 +7,7 @@ import '../../core/constants/accessory_constants.dart';
 import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/constants/box_constants.dart';
+import '../simulator/accessory_simulation_screen.dart';
 
 class AccessoryScreen extends StatefulWidget {
   final bool isPickerMode;
@@ -34,7 +35,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController.addListener(_onSearchChanged);
     _ensureAccessoryDataReady();
     _startAccessoryRecoveryPolling();
   }
@@ -93,14 +93,13 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void dispose() {
     _accessoryReloadTimer?.cancel();
-    _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     super.dispose();
   }
 
-  void _onSearchChanged() {
+  void _applySearchQuery(String value) {
     setState(() {
-      _searchQuery = _searchController.text;
+      _searchQuery = value.trim();
     });
   }
 
@@ -119,6 +118,9 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   void _clearSearch() {
     _searchController.clear();
+    setState(() {
+      _searchQuery = '';
+    });
   }
 
   void _showAccessoryDetails(BuildContext context, Accessory accessory) {
@@ -262,6 +264,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         },
         currentSearchQuery: _searchQuery,
         onClearSearch: _clearSearch,
+        onSubmitSearch: _applySearchQuery,
         compareMode: _compareMode,
         compareList: _compareList,
         onRetryLoad: _ensureAccessoryDataReady,
@@ -365,8 +368,38 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
         widget.accessory.optionsAtEnhancementLevel(_enhancementLevel);
 
     return AlertDialog(
-      title: Text(widget.accessory.name,
-          style: const TextStyle(fontWeight: FontWeight.bold)),
+      titlePadding: const EdgeInsets.fromLTRB(24, 20, 16, 0),
+      title: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Text(
+              widget.accessory.name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(width: 8),
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(widget.parentContext).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => AccessorySimulationScreen(
+                    initialAccessory: widget.accessory,
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.tune_rounded, size: 16),
+            label: const Text('시뮬레이터'),
+            style: OutlinedButton.styleFrom(
+              visualDensity: VisualDensity.compact,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            ),
+          ),
+        ],
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
