@@ -1307,8 +1307,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   void _canonicalizeDamageReductionOption(List<AccessoryOption> options) {
-    const legacyName = '모든피해 %감소';
-    const canonicalName = '모든 피해 %감소';
+    const legacyName = '모든 피해 %감소';
+    const canonicalName = '모든피해 %감소';
 
     var hasCanonical = options.any(
       (option) => option.optionName.trim() == canonicalName,
