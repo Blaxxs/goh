@@ -1782,6 +1782,14 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Widget _buildModeSelector() {
     return SegmentedButton<AccessorySimulationMode>(
+      showSelectedIcon: false,
+      style: ButtonStyle(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        visualDensity: VisualDensity.compact,
+        padding: WidgetStateProperty.all(
+          const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+        ),
+      ),
       segments: const [
         ButtonSegment<AccessorySimulationMode>(
           value: AccessorySimulationMode.craft,
