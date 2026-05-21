@@ -286,12 +286,15 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
                       MainAxisAlignment.spaceBetween, // Name left, Value right
                   children: [
                     Expanded(
-                      // No flex needed, it will expand to fill remaining space
-                      child: Text(
-                        optionName,
-                        style: theme.textTheme.bodyLarge
-                            ?.copyWith(color: optionTextColor),
-                        softWrap: true, // 줄바꿈 허용
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          optionName,
+                          style: theme.textTheme.bodyLarge
+                              ?.copyWith(color: optionTextColor),
+                          maxLines: 1,
+                        ),
                       ),
                     ),
                     if (optionValue != null && optionValue.isNotEmpty)
