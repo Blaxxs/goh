@@ -99,46 +99,64 @@ class _AccessoryEnhancementScreenState
                         ],
                       ),
                     ),
-                    // 검색창
+                    // 검색 + 부위 필터 칩 (인라인)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: TextField(
-                        onChanged: (v) =>
-                            setSheetState(() => searchQuery = v),
-                        decoration: const InputDecoration(
-                          hintText: '이름 검색',
-                          prefixIcon: Icon(Icons.search, size: 20),
-                          isDense: true,
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 8),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    // 부위 필터 칩
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         children: [
-                          FilterChip(
-                            label: const Text('전체'),
-                            selected: selectedPart == null,
-                            onSelected: (_) =>
-                                setSheetState(() => selectedPart = null),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  FilterChip(
+                                    label: const Text('전체'),
+                                    showCheckmark: false,
+                                    selected: selectedPart == null,
+                                    visualDensity: VisualDensity.compact,
+                                    materialTapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                    onSelected: (_) => setSheetState(
+                                        () => selectedPart = null),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  ...parts.map((p) => Padding(
+                                        padding:
+                                            const EdgeInsets.only(right: 6),
+                                        child: FilterChip(
+                                          label: Text(p),
+                                          showCheckmark: false,
+                                          selected: selectedPart == p,
+                                          visualDensity: VisualDensity.compact,
+                                          materialTapTargetSize:
+                                              MaterialTapTargetSize.shrinkWrap,
+                                          onSelected: (_) => setSheetState(
+                                              () => selectedPart =
+                                                  selectedPart == p
+                                                      ? null
+                                                      : p),
+                                        ),
+                                      )),
+                                ],
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 6),
-                          ...parts.map((p) => Padding(
-                                padding: const EdgeInsets.only(right: 6),
-                                child: FilterChip(
-                                  label: Text(p),
-                                  selected: selectedPart == p,
-                                  onSelected: (_) => setSheetState(
-                                      () => selectedPart =
-                                          selectedPart == p ? null : p),
-                                ),
-                              )),
+                          const SizedBox(width: 8),
+                          SizedBox(
+                            width: 96,
+                            child: TextField(
+                              onChanged: (v) =>
+                                  setSheetState(() => searchQuery = v),
+                              decoration: const InputDecoration(
+                                hintText: '검색',
+                                prefixIcon: Icon(Icons.search, size: 18),
+                                isDense: true,
+                                border: OutlineInputBorder(),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 8),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
