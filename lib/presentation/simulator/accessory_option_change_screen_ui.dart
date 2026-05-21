@@ -308,7 +308,7 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
                         style: theme.textTheme.bodyLarge
                             ?.copyWith(color: optionTextColor),
                         textAlign: TextAlign.right,
-                        softWrap: true, // 줄바꿈 허용
+                        maxLines: 1,
                       ),
                   ],
                 ),
