@@ -596,6 +596,12 @@ class _AnimatedAccessorySearchFieldState
                       child: TextField(
                         controller: widget.controller,
                         focusNode: _focusNode,
+                        onChanged: (v) {
+                          if (mounted) {
+                            setState(() {});
+                            widget.onSubmitSearch(v);
+                          }
+                        },
                         onSubmitted: (_) => _submit(),
                         decoration: const InputDecoration(
                           hintText: '이름/옵션',
