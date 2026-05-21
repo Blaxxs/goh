@@ -546,7 +546,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           ),
                           const SizedBox(width: 8),
                           SizedBox(
-                            width: 108,
+                            width: 96,
                             child: TextField(
                               controller: searchController,
                               onChanged: (v) => setSheetState(
