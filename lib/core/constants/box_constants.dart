@@ -12,6 +12,7 @@ enum AppScreen {
   goldCalculator,
   boxCalculator,
   accessory,
+  spirit,
   journal,
   encyclopedia,
   simulator,
