@@ -230,6 +230,12 @@ class AccessoryScreenUI extends StatelessWidget {
                                 ),
                               ),
                               const SizedBox(width: 8),
+                              Container(
+                                width: 1,
+                                height: 20,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              const SizedBox(width: 8),
                               ...partFilterOptions
                                   .where((part) => part != '전체')
                                   .map((part) {
