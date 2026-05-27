@@ -11,6 +11,7 @@ class MainScreenUI extends StatefulWidget {
   final VoidCallback onCalculatorPressed;
   final VoidCallback onGoldCalculatorPressed;
   final VoidCallback onAccessoryPressed;
+  final VoidCallback onSpiritPressed;
   final VoidCallback onDamageCalculatorPressed;
   final VoidCallback onJournalPressed;
   final VoidCallback onBoxCalculatorPressed;
@@ -28,6 +29,7 @@ class MainScreenUI extends StatefulWidget {
     required this.onCalculatorPressed,
     required this.onGoldCalculatorPressed,
     required this.onAccessoryPressed,
+    required this.onSpiritPressed,
     required this.onDamageCalculatorPressed,
     required this.onJournalPressed,
     required this.onBoxCalculatorPressed,
@@ -62,6 +64,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     '골드 효율 계산기': Icons.paid_rounded,
     '데미지 계산기_ Beta': Icons.flash_on_rounded,
     '악세사리 도감': Icons.diamond_outlined,
+    '스피릿 도감': Icons.auto_awesome_rounded,
     '일지': Icons.calendar_month_rounded,
     '상자 기대값 계산기': Icons.inventory_2_rounded,
     '악세 강화 시뮬': Icons.auto_awesome_rounded,
@@ -93,6 +96,8 @@ class _MainScreenUIState extends State<MainScreenUI> {
         return widget.onDamageCalculatorPressed;
       case 'accessory':
         return widget.onAccessoryPressed;
+      case 'spirit':
+        return widget.onSpiritPressed;
       case 'journal':
         return widget.onJournalPressed;
       case 'box':
@@ -428,6 +433,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
             key: 'accessory',
             text: '악세사리 도감',
             subtitle: '옵션 및 세트 확인',
+          ),
+          const _MenuEntry(
+            key: 'spirit',
+            text: '스피릿 도감',
+            subtitle: '기본 틀',
           ),
           const _MenuEntry(key: 'journal', text: '일지', subtitle: '기록 및 추이 확인'),
           const _MenuEntry(
@@ -857,6 +867,12 @@ class _MainScreenUIState extends State<MainScreenUI> {
                               ? Icons.grid_view_rounded
                               : Icons.grid_on_rounded,
                           onPressed: _showGridModeSheet,
+                        ),
+                        const SizedBox(width: 8),
+                        _buildTopIconButton(
+                          context: context,
+                          icon: Icons.auto_awesome_rounded,
+                          onPressed: widget.onSpiritPressed,
                         ),
                         const SizedBox(width: 8),
                         _buildTopIconButton(
