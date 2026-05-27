@@ -11,6 +11,8 @@ class AccessoryScreenUI extends StatelessWidget {
   final String selectedOptionTypeFilter;
   final List<String> optionTypeFilterOptions;
   final ValueChanged<String?> onOptionTypeFilterChanged;
+  final bool selectedSetOnlyFilter;
+  final ValueChanged<bool> onSetOnlyFilterChanged;
   final Function(BuildContext, Accessory) onAccessoryTap;
   final String currentSearchQuery;
   final VoidCallback onClearSearch;
@@ -33,6 +35,8 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.selectedOptionTypeFilter,
     required this.optionTypeFilterOptions,
     required this.onOptionTypeFilterChanged,
+    required this.selectedSetOnlyFilter,
+    required this.onSetOnlyFilterChanged,
     required this.onAccessoryTap,
     required this.currentSearchQuery,
     required this.onClearSearch,
@@ -185,42 +189,46 @@ class AccessoryScreenUI extends StatelessWidget {
                                       : '랜덤옵션',
                                 ),
                               ),
-                                const SizedBox(width: 6),
-                                FilterChip(
+                              const SizedBox(width: 8),
+                              Container(
+                                width: 1,
+                                height: 20,
+                                color: Theme.of(context).dividerColor,
+                              ),
+                              const SizedBox(width: 8),
+                              FilterChip(
                                 label: const Text('세트'),
                                 showCheckmark: false,
-                                selected: selectedOptionTypeFilter == '세트',
+                                selected: selectedSetOnlyFilter,
                                 selectedColor: colorScheme.primaryContainer,
                                 backgroundColor:
                                   colorScheme.surface.withValues(alpha: 0.65),
                                 side: BorderSide(
-                                  color: selectedOptionTypeFilter == '세트'
+                                  color: selectedSetOnlyFilter
                                     ? colorScheme.primary
                                     : colorScheme.onSurface.withValues(alpha: 0.28),
                                   width:
-                                    selectedOptionTypeFilter == '세트' ? 1.3 : 1,
+                                    selectedSetOnlyFilter ? 1.3 : 1,
                                 ),
                                 labelStyle: Theme.of(context)
                                   .textTheme
                                   .labelMedium
                                   ?.copyWith(
-                                    color: selectedOptionTypeFilter == '세트'
+                                    color: selectedSetOnlyFilter
                                       ? colorScheme.onPrimaryContainer
                                       : colorScheme.onSurface,
                                     fontWeight:
-                                      selectedOptionTypeFilter == '세트'
+                                      selectedSetOnlyFilter
                                         ? FontWeight.w700
                                         : FontWeight.w500,
                                   ),
                                 visualDensity: VisualDensity.compact,
                                 materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,
-                                onSelected: (_) => onOptionTypeFilterChanged(
-                                  selectedOptionTypeFilter == '세트'
-                                    ? '전체'
-                                    : '세트',
+                                onSelected: (_) => onSetOnlyFilterChanged(
+                                  !selectedSetOnlyFilter,
                                 ),
-                                ),
+                              ),
                               const SizedBox(width: 8),
                               ...partFilterOptions
                                   .where((part) => part != '전체')
