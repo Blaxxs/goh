@@ -32,8 +32,9 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
   String? _selectedPartFilter;
   String _selectedOptionTypeFilter = '전체';
+  bool _selectedSetOnlyFilter = false;
   String _searchQuery = "";
-  final List<String> _optionTypeFilterOptions = ['전체', '고정옵션', '랜덤옵션', '세트'];
+  final List<String> _optionTypeFilterOptions = ['전체', '고정옵션', '랜덤옵션'];
 
   // 비교 모드 상태
   bool _compareMode = false;
@@ -123,6 +124,12 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     if (newValue == null) return;
     setState(() {
       _selectedOptionTypeFilter = newValue;
+    });
+  }
+
+  void _handleSetOnlyFilterChanged(bool enabled) {
+    setState(() {
+      _selectedSetOnlyFilter = enabled;
     });
   }
 
@@ -284,13 +291,13 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           acc.part == _selectedPartFilter;
 
       final bool isRandom = acc.randomOptionConfig != null;
-        final bool hasSetOptions = acc.setOptions.isNotEmpty;
+      final bool hasSetOptions = acc.setOptions.isNotEmpty;
       final bool matchesType = _selectedOptionTypeFilter == '전체' ||
           (_selectedOptionTypeFilter == '고정옵션' && !isRandom) ||
-          (_selectedOptionTypeFilter == '랜덤옵션' && isRandom) ||
-          (_selectedOptionTypeFilter == '세트' && hasSetOptions);
+          (_selectedOptionTypeFilter == '랜덤옵션' && isRandom);
+      final bool matchesSet = !_selectedSetOnlyFilter || hasSetOptions;
 
-      return matchesSearch && matchesPart && matchesType;
+      return matchesSearch && matchesPart && matchesType && matchesSet;
     }).toList();
 
     // 기본 정렬: tam 최우선 -> 한자 -> 영문 알파벳 -> 기타, 그룹 내 id 순
@@ -349,6 +356,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         selectedOptionTypeFilter: _selectedOptionTypeFilter,
         optionTypeFilterOptions: _optionTypeFilterOptions,
         onOptionTypeFilterChanged: _handleOptionTypeFilterChanged,
+        selectedSetOnlyFilter: _selectedSetOnlyFilter,
+        onSetOnlyFilterChanged: _handleSetOnlyFilterChanged,
         onAccessoryTap: (ctx, acc) {
           if (widget.isPickerMode) {
             AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
