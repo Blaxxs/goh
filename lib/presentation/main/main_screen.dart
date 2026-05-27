@@ -16,6 +16,7 @@ import '../box_calculator/box_calculator_screen.dart';
 import '../simulator/accessory_simulation_screen.dart';
 import '../simulator/exploration_option_simulation_screen.dart';
 import '../simulator/pouch_simulation_screen.dart';
+import '../spirit/spirit_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -71,6 +72,9 @@ class _MainScreenState extends State<MainScreen> {
       },
       onAccessoryPressed: () async {
         await _openAccessoryScreenWithWarmup();
+      },
+      onSpiritPressed: () {
+        _navigateToScreen(context, const SpiritScreen());
       },
       onDamageCalculatorPressed: () {
         _navigateToScreen(context, const DamageCalculatorScreen());
