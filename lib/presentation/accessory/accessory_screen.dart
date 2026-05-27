@@ -11,7 +11,17 @@ import '../simulator/accessory_simulation_screen.dart';
 
 class AccessoryScreen extends StatefulWidget {
   final bool isPickerMode;
-  const AccessoryScreen({super.key, this.isPickerMode = false});
+  final String collectionTitle;
+  final String pickerTitle;
+  final AppScreen currentScreen;
+
+  const AccessoryScreen({
+    super.key,
+    this.isPickerMode = false,
+    this.collectionTitle = '악세사리 도감',
+    this.pickerTitle = '악세사리 선택',
+    this.currentScreen = AppScreen.accessory,
+  });
 
   @override
   State<AccessoryScreen> createState() => _AccessoryScreenState();
@@ -296,7 +306,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     });
 
     return Scaffold(
-      drawer: const AppDrawer(currentScreen: AppScreen.accessory),
+      drawer: AppDrawer(currentScreen: widget.currentScreen),
       appBar: AppBar(
         leading: Builder(
           builder: (ctx) => IconButton(
@@ -304,7 +314,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: Text(widget.isPickerMode ? '악세사리 선택' : '악세사리 도감'),
+        title: Text(widget.isPickerMode ? widget.pickerTitle : widget.collectionTitle),
         actions: [
           if (!widget.isPickerMode) ...[
             if (_compareMode && _compareList.length == 2)
