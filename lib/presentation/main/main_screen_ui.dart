@@ -434,6 +434,11 @@ class _MainScreenUIState extends State<MainScreenUI> {
             text: '악세사리 도감',
             subtitle: '옵션 및 세트 확인',
           ),
+          const _MenuEntry(
+            key: 'spirit',
+            text: '스피릿 도감',
+            subtitle: '스피릿 정보 확인',
+          ),
           const _MenuEntry(key: 'journal', text: '일지', subtitle: '기록 및 추이 확인'),
           const _MenuEntry(
             key: 'box',
