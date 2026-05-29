@@ -38,12 +38,34 @@ class _SpiritScreenState extends State<SpiritScreen> {
       final parsed = <Map<String, dynamic>>[];
 
       if (raw is Map) {
-        raw.forEach((key, value) {
-          final map = _toSpiritMap(value, key.toString());
+        // Allow either `/spirits/{id}` collection shape or a single-spirit object.
+        if (_isSingleSpiritMap(raw)) {
+          final map = _toSpiritMap(raw, 'spirit');
           if (map != null) {
             parsed.add(map);
           }
-        });
+        } else {
+          dynamic candidateCollection = raw;
+          if (raw['spirits'] is Map || raw['spirits'] is List) {
+            candidateCollection = raw['spirits'];
+          }
+
+          if (candidateCollection is Map) {
+            candidateCollection.forEach((key, value) {
+              final map = _toSpiritMap(value, key.toString());
+              if (map != null) {
+                parsed.add(map);
+              }
+            });
+          } else if (candidateCollection is List) {
+            for (var i = 0; i < candidateCollection.length; i++) {
+              final map = _toSpiritMap(candidateCollection[i], i.toString());
+              if (map != null) {
+                parsed.add(map);
+              }
+            }
+          }
+        }
       } else if (raw is List) {
         for (var i = 0; i < raw.length; i++) {
           final map = _toSpiritMap(raw[i], i.toString());
@@ -83,6 +105,16 @@ class _SpiritScreenState extends State<SpiritScreen> {
     }
   }
 
+  bool _isSingleSpiritMap(Map raw) {
+    final hasTopLevelFields =
+        raw.containsKey('name') ||
+        raw.containsKey('englishName') ||
+        raw.containsKey('imageName') ||
+        raw.containsKey('imageUrl');
+    final hasSkillBlock = raw.containsKey('active') || raw.containsKey('passive');
+    return hasTopLevelFields && hasSkillBlock;
+  }
+
   Map<String, dynamic>? _toSpiritMap(dynamic raw, String fallbackId) {
     if (raw == null) {
       return null;
@@ -105,13 +137,23 @@ class _SpiritScreenState extends State<SpiritScreen> {
 
     final englishName = (map['englishName'] ?? '').toString();
     final explicitId = (map['id'] ?? '').toString();
+    final imageName = (map['imageName'] ?? '').toString();
+    final name = (map['name'] ?? '').toString().trim();
+
+    // Skip nested blocks such as `active` or `passive` when malformed JSON is provided.
+    if (name.isEmpty && englishName.isEmpty && explicitId.isEmpty && imageName.isEmpty) {
+      return null;
+    }
+
     final resolvedId = explicitId.isNotEmpty
         ? explicitId
         : (englishName.isNotEmpty ? englishName : fallbackId);
     map['id'] = resolvedId;
+    if (name.isEmpty) {
+      map['name'] = englishName.isNotEmpty ? englishName : resolvedId;
+    }
 
     final imageUrl = (map['imageUrl'] ?? '').toString();
-    final imageName = (map['imageName'] ?? '').toString();
     if (imageUrl.isEmpty && imageName.isNotEmpty) {
       final encodedName = Uri.encodeComponent(imageName);
       map['imageUrl'] =
@@ -236,6 +278,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
 
                                   return Card(
                                     child: ListTile(
+                                      onTap: () => _showSpiritDetails(spirit),
                                       leading: imageUrl.isEmpty
                                           ? const CircleAvatar(
                                               child: Icon(
@@ -247,6 +290,10 @@ class _SpiritScreenState extends State<SpiritScreen> {
                                                   NetworkImage(imageUrl),
                                             ),
                                       title: Text(name),
+                                      subtitle: Text(
+                                        (spirit['attribute'] ?? spirit['id'] ?? '')
+                                            .toString(),
+                                      ),
                                     ),
                                   );
                                 },
@@ -254,6 +301,55 @@ class _SpiritScreenState extends State<SpiritScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showSpiritDetails(Map<String, dynamic> spirit) {
+    final name = (spirit['name'] ?? '이름 없음').toString();
+    final attribute = (spirit['attribute'] ?? '-').toString();
+    final active = spirit['active'];
+    final passive = spirit['passive'];
+
+    String activeDesc = '-';
+    if (active is Map) {
+      activeDesc = (active['baseDescription'] ?? '-').toString();
+    }
+
+    String passiveDesc = '-';
+    if (passive is Map) {
+      passiveDesc = (passive['baseDescription'] ?? '-').toString();
+    }
+
+    showDialog<void>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(name),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('속성: $attribute'),
+                const SizedBox(height: 10),
+                const Text('액티브'),
+                const SizedBox(height: 4),
+                Text(activeDesc),
+                const SizedBox(height: 10),
+                const Text('패시브'),
+                const SizedBox(height: 4),
+                Text(passiveDesc),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('닫기'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
