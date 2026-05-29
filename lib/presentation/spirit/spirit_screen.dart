@@ -13,9 +13,17 @@ class SpiritScreen extends StatefulWidget {
   State<SpiritScreen> createState() => _SpiritScreenState();
 }
 
+enum _SpiritSearchScope {
+  all,
+  passive,
+  active,
+  name,
+}
+
 class _SpiritScreenState extends State<SpiritScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  _SpiritSearchScope _searchScope = _SpiritSearchScope.all;
   bool _isLoading = true;
   String? _errorMessage;
 
@@ -177,14 +185,9 @@ class _SpiritScreenState extends State<SpiritScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final normalizedQuery = _searchQuery.trim().toLowerCase();
+    final normalizedQuery = _searchQuery.trim();
     final filteredSpirits = _allSpirits.where((spirit) {
-      if (normalizedQuery.isEmpty) {
-        return true;
-      }
-      final name = (spirit['name'] ?? '').toString().toLowerCase();
-      final id = (spirit['id'] ?? '').toString().toLowerCase();
-      return name.contains(normalizedQuery) || id.contains(normalizedQuery);
+      return _matchesSpiritSearch(normalizedQuery, spirit);
     }).toList();
 
     return Scaffold(
@@ -217,7 +220,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
                     });
                   },
                   decoration: const InputDecoration(
-                    hintText: '스피릿 이름/ID 검색',
+                    hintText: '이름/효과/패시브 검색 (예: 크리, 크증, 관저)',
                     prefixIcon: Icon(Icons.search_rounded, size: 20),
                     isDense: true,
                     border: OutlineInputBorder(),
@@ -228,6 +231,20 @@ class _SpiritScreenState extends State<SpiritScreen> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                _buildScopeChip(_SpiritSearchScope.all, '전체 검색'),
+                _buildScopeChip(_SpiritSearchScope.passive, '패시브 검색'),
+                _buildScopeChip(_SpiritSearchScope.active, '효과 검색'),
+                _buildScopeChip(_SpiritSearchScope.name, '이름 검색'),
+              ],
+            ),
+          ),
+          const SizedBox(height: 6),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -351,9 +368,181 @@ class _SpiritScreenState extends State<SpiritScreen> {
     );
   }
 
+  Widget _buildScopeChip(_SpiritSearchScope scope, String label) {
+    return ChoiceChip(
+      label: Text(label),
+      selected: _searchScope == scope,
+      onSelected: (_) {
+        setState(() {
+          _searchScope = scope;
+        });
+      },
+      visualDensity: VisualDensity.compact,
+    );
+  }
+
+  bool _matchesSpiritSearch(String query, Map<String, dynamic> spirit) {
+    if (query.trim().isEmpty) {
+      return true;
+    }
+
+    final normalizedQuery = _normalizeSearchText(query);
+    final expandedQueries = _expandSearchQueries(normalizedQuery);
+
+    final targets = _collectSearchTargetsByScope(spirit);
+    final selectedTargets = switch (_searchScope) {
+      _SpiritSearchScope.all => [
+          ...targets.nameTargets,
+          ...targets.activeTargets,
+          ...targets.passiveTargets,
+        ],
+      _SpiritSearchScope.passive => targets.passiveTargets,
+      _SpiritSearchScope.active => targets.activeTargets,
+      _SpiritSearchScope.name => targets.nameTargets,
+    };
+
+    for (final target in selectedTargets) {
+      final aliases = _searchAliasesForTarget(target);
+      for (final expandedQuery in expandedQueries) {
+        if (expandedQuery.isEmpty) {
+          continue;
+        }
+        for (final alias in aliases) {
+          if (alias.contains(expandedQuery)) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  }
+
+  _SpiritSearchTargets _collectSearchTargetsByScope(Map<String, dynamic> spirit) {
+    final nameTargets = <String>[
+      (spirit['name'] ?? '').toString(),
+      (spirit['englishName'] ?? '').toString(),
+      (spirit['id'] ?? '').toString(),
+      (spirit['attribute'] ?? '').toString(),
+    ];
+
+    final active = spirit['active'] is Map
+        ? Map<String, dynamic>.from(spirit['active'])
+        : <String, dynamic>{};
+    final passive = spirit['passive'] is Map
+        ? Map<String, dynamic>.from(spirit['passive'])
+        : <String, dynamic>{};
+
+    final activeTargets = _collectBlockSearchTargets(active);
+    final passiveTargets = _collectBlockSearchTargets(passive);
+
+    return _SpiritSearchTargets(
+      nameTargets: nameTargets,
+      activeTargets: activeTargets,
+      passiveTargets: passiveTargets,
+    );
+  }
+
+  List<String> _collectBlockSearchTargets(Map<String, dynamic> block) {
+    if (block.isEmpty) {
+      return const [];
+    }
+
+    final targets = <String>[];
+    targets.add((block['baseDescription'] ?? '').toString());
+
+    final applyCharacters = block['applyCharacters'];
+    if (applyCharacters is List) {
+      for (final c in applyCharacters) {
+        targets.add(c.toString());
+      }
+    }
+
+    final valuesByLevel = _normalizeLevelContainer(block['valuesByLevel']);
+    for (final entry in valuesByLevel.entries) {
+      final value = entry.value;
+      if (value is Map) {
+        value.forEach((k, v) {
+          targets.add(k.toString());
+          targets.add(v.toString());
+        });
+      }
+    }
+
+    final extraByLevel = _normalizeLevelContainer(block['extraEffectsByLevel']);
+    for (final value in extraByLevel.values) {
+      if (value is! List) {
+        continue;
+      }
+      for (final effect in value) {
+        if (effect is String) {
+          targets.add(effect);
+        } else if (effect is Map) {
+          targets.add((effect['description'] ?? '').toString());
+          final values = effect['values'];
+          if (values is Map) {
+            values.forEach((k, v) {
+              targets.add(k.toString());
+              targets.add(v.toString());
+            });
+          }
+        }
+      }
+    }
+
+    return targets.where((e) => e.trim().isNotEmpty).toList();
+  }
+
+  String _normalizeSearchText(String value) {
+    return value
+        .toLowerCase()
+        .replaceAll(RegExp(r'\s+'), '')
+        .replaceAll(RegExp(r'[^0-9a-z가-힣]'), '');
+  }
+
+  Set<String> _expandSearchQueries(String normalizedQuery) {
+    final expanded = <String>{normalizedQuery};
+    for (final entry in _searchSynonyms.entries) {
+      final canonical = entry.key;
+      final synonyms = entry.value;
+      if (canonical.contains(normalizedQuery) || synonyms.contains(normalizedQuery)) {
+        expanded.add(canonical);
+        expanded.addAll(synonyms);
+      }
+    }
+    return expanded;
+  }
+
+  Set<String> _searchAliasesForTarget(String target) {
+    final normalized = _normalizeSearchText(target);
+    final aliases = <String>{normalized};
+
+    for (final entry in _searchSynonyms.entries) {
+      final canonical = entry.key;
+      final synonyms = entry.value;
+      if (normalized.contains(canonical) ||
+          synonyms.any((syn) => normalized.contains(syn))) {
+        aliases.add(canonical);
+        aliases.addAll(synonyms);
+      }
+    }
+
+    return aliases;
+  }
+
+  static const Map<String, Set<String>> _searchSynonyms = {
+    '크리티컬증가': {'크리', '크증'},
+    '크리티컬데미지증가': {'크뎀', '크뎀증'},
+    '관통확률저항증가': {'관통저항', '저항', '관저'},
+    '관통저항확률증가': {'관통저항', '저항', '관저'},
+    '명중증가': {'명중', '힛'},
+  };
+
   void _showSpiritDetails(Map<String, dynamic> spirit) {
     final name = (spirit['name'] ?? '이름 없음').toString();
     final attribute = (spirit['attribute'] ?? '-').toString();
+    final imageUrl = (spirit['imageUrl'] ?? '').toString();
+    final fallbackImageUrl = (spirit['fallbackImageUrl'] ?? '').toString();
     final active = spirit['active'] is Map
         ? Map<String, dynamic>.from(spirit['active'])
         : <String, dynamic>{};
@@ -375,14 +564,38 @@ class _SpiritScreenState extends State<SpiritScreen> {
             final passiveTurnText = _resolveSkillTurnsForLevel(passive, selectedLevel);
             final activeExtras = _resolveExtraEffects(active, selectedLevel);
             final passiveExtras = _resolveExtraEffects(passive, selectedLevel);
+            final activeCharacters = _resolveApplyCharacters(active);
+            final passiveCharacters = _resolveApplyCharacters(passive);
 
             return AlertDialog(
-              title: Text(name),
               content: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Center(
+                      child: SizedBox(
+                        width: 120,
+                        height: 120,
+                        child: _SpiritThumbnail(
+                          imageUrl: imageUrl,
+                          fallbackImageUrl:
+                              fallbackImageUrl.isEmpty ? null : fallbackImageUrl,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Center(
+                      child: Text(
+                        name,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     Text('속성: $attribute'),
                     if (hasLevels) ...[
                       const SizedBox(height: 10),
@@ -406,30 +619,24 @@ class _SpiritScreenState extends State<SpiritScreen> {
                         },
                       ),
                     ],
-                    const SizedBox(height: 4),
-                    const Text('액티브'),
-                    if (activeTurnText != null) ...[
-                      const SizedBox(height: 2),
-                      Text(activeTurnText),
-                    ],
-                    const SizedBox(height: 4),
-                    Text(activeDesc),
-                    if (activeExtras.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      ...activeExtras.map((e) => Text('• $e')),
-                    ],
                     const SizedBox(height: 10),
-                    const Text('패시브'),
-                    if (passiveTurnText != null) ...[
-                      const SizedBox(height: 2),
-                      Text(passiveTurnText),
-                    ],
-                    const SizedBox(height: 4),
-                    Text(passiveDesc),
-                    if (passiveExtras.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      ...passiveExtras.map((e) => Text('• $e')),
-                    ],
+                    _buildSkillSection(
+                      context: context,
+                      label: '효과 스킬',
+                      turnText: activeTurnText,
+                      description: activeDesc,
+                      extras: activeExtras,
+                      applyCharacters: activeCharacters,
+                    ),
+                    const SizedBox(height: 10),
+                    _buildSkillSection(
+                      context: context,
+                      label: '패시브 스킬',
+                      turnText: passiveTurnText,
+                      description: passiveDesc,
+                      extras: passiveExtras,
+                      applyCharacters: passiveCharacters,
+                    ),
                   ],
                 ),
               ),
@@ -444,6 +651,69 @@ class _SpiritScreenState extends State<SpiritScreen> {
         );
       },
     );
+  }
+
+  Widget _buildSkillSection({
+    required BuildContext context,
+    required String label,
+    required String description,
+    required List<String> extras,
+    required List<String> applyCharacters,
+    String? turnText,
+  }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.03),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: isDark ? Colors.white24 : Colors.black12,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+              if (turnText != null && turnText.isNotEmpty) ...[
+                const SizedBox(width: 8),
+                Text(turnText),
+              ],
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(description),
+          if (extras.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            ...extras.map((e) => Text('• $e')),
+          ],
+          const SizedBox(height: 8),
+          Text(
+            '적용 캐릭터: ${applyCharacters.isEmpty ? '-' : applyCharacters.join(', ')}',
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.white70 : Colors.black54,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<String> _resolveApplyCharacters(Map<String, dynamic> block) {
+    final raw = block['applyCharacters'];
+    if (raw is! List) {
+      return const [];
+    }
+    return raw.map((e) => e.toString()).where((e) => e.isNotEmpty).toList();
   }
 
   bool _hasLevelData(Map<String, dynamic> block) {
