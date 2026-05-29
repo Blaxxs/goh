@@ -20,6 +20,18 @@ enum _SpiritSearchScope {
   name,
 }
 
+class _SpiritSearchTargets {
+  const _SpiritSearchTargets({
+    required this.nameTargets,
+    required this.activeTargets,
+    required this.passiveTargets,
+  });
+
+  final List<String> nameTargets;
+  final List<String> activeTargets;
+  final List<String> passiveTargets;
+}
+
 class _SpiritScreenState extends State<SpiritScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
