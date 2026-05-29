@@ -70,9 +70,15 @@ class _SpiritScreenState extends State<SpiritScreen> {
       if (!mounted) {
         return;
       }
+      final errorText = e.toString().toLowerCase();
+      final isPermissionDenied =
+          errorText.contains('permission-denied') ||
+          errorText.contains('permission denied');
       setState(() {
         _isLoading = false;
-        _errorMessage = '스피릿 데이터를 불러오지 못했습니다.';
+        _errorMessage = isPermissionDenied
+            ? '스피릿 데이터 읽기 권한이 없습니다.\nRealtime Database rules에서 spirits 읽기를 허용해 주세요.'
+            : '스피릿 데이터를 불러오지 못했습니다.';
       });
     }
   }
