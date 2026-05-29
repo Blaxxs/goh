@@ -158,6 +158,12 @@ class _SpiritScreenState extends State<SpiritScreen> {
       final encodedName = Uri.encodeComponent(imageName);
       map['imageUrl'] =
           'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/spirit%2F$encodedName?alt=media';
+      map['fallbackImageUrl'] =
+          'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/spirits%2F$encodedName?alt=media';
+    } else if (imageUrl.contains('/spirit%2F')) {
+      map['fallbackImageUrl'] = imageUrl.replaceFirst('/spirit%2F', '/spirits%2F');
+    } else if (imageUrl.contains('/spirits%2F')) {
+      map['fallbackImageUrl'] = imageUrl.replaceFirst('/spirits%2F', '/spirit%2F');
     }
 
     return map;
@@ -266,8 +272,15 @@ class _SpiritScreenState extends State<SpiritScreen> {
                           )
                         : filteredSpirits.isEmpty
                             ? const Center(child: Text('검색 결과가 없습니다.'))
-                            : ListView.builder(
+                            : GridView.builder(
                                 padding: const EdgeInsets.all(8),
+                                gridDelegate:
+                                    const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 150,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8,
+                                  childAspectRatio: 0.7,
+                                ),
                                 itemCount: filteredSpirits.length,
                                 itemBuilder: (context, index) {
                                   final spirit = filteredSpirits[index];
@@ -275,24 +288,58 @@ class _SpiritScreenState extends State<SpiritScreen> {
                                       (spirit['name'] ?? '이름 없음').toString();
                                   final imageUrl =
                                       (spirit['imageUrl'] ?? '').toString();
+                                  final fallbackImageUrl =
+                                      (spirit['fallbackImageUrl'] ?? '').toString();
+                                  final isDark =
+                                      Theme.of(context).brightness == Brightness.dark;
 
                                   return Card(
-                                    child: ListTile(
+                                    clipBehavior: Clip.antiAlias,
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: InkWell(
                                       onTap: () => _showSpiritDetails(spirit),
-                                      leading: imageUrl.isEmpty
-                                          ? const CircleAvatar(
-                                              child: Icon(
-                                                Icons.auto_awesome_rounded,
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          Expanded(
+                                            child: Container(
+                                              color: isDark
+                                                  ? Colors.grey[800]
+                                                  : Colors.grey[200],
+                                              padding: const EdgeInsets.all(6),
+                                              child: _SpiritThumbnail(
+                                                imageUrl: imageUrl,
+                                                fallbackImageUrl:
+                                                    fallbackImageUrl.isEmpty
+                                                        ? null
+                                                        : fallbackImageUrl,
                                               ),
-                                            )
-                                          : CircleAvatar(
-                                              backgroundImage:
-                                                  NetworkImage(imageUrl),
                                             ),
-                                      title: Text(name),
-                                      subtitle: Text(
-                                        (spirit['attribute'] ?? spirit['id'] ?? '')
-                                            .toString(),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 6,
+                                              vertical: 6,
+                                            ),
+                                            child: Text(
+                                              name,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: isDark
+                                                    ? Colors.white
+                                                    : Colors.black87,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   );
@@ -348,6 +395,75 @@ class _SpiritScreenState extends State<SpiritScreen> {
               child: const Text('닫기'),
             ),
           ],
+        );
+      },
+    );
+  }
+}
+
+class _SpiritThumbnail extends StatefulWidget {
+  const _SpiritThumbnail({
+    required this.imageUrl,
+    this.fallbackImageUrl,
+  });
+
+  final String imageUrl;
+  final String? fallbackImageUrl;
+
+  @override
+  State<_SpiritThumbnail> createState() => _SpiritThumbnailState();
+}
+
+class _SpiritThumbnailState extends State<_SpiritThumbnail> {
+  bool _useFallback = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = widget.imageUrl.trim();
+    final fallback = widget.fallbackImageUrl?.trim();
+    final currentUrl = _useFallback ? (fallback ?? primary) : primary;
+
+    if (currentUrl.isEmpty) {
+      return const Center(
+        child: Icon(Icons.image_not_supported_outlined, color: Colors.grey),
+      );
+    }
+
+    return Image.network(
+      currentUrl,
+      fit: BoxFit.contain,
+      errorBuilder: (context, error, stackTrace) {
+        if (!_useFallback && fallback != null && fallback.isNotEmpty) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _useFallback = true;
+              });
+            }
+          });
+          return const Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        }
+
+        return const Center(
+          child: Icon(Icons.image_not_supported_outlined, color: Colors.grey),
+        );
+      },
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) {
+          return child;
+        }
+        return const Center(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
         );
       },
     );
