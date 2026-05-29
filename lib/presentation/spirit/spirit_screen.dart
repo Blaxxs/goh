@@ -91,7 +91,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
         if (decoded is! Map) {
           return null;
         }
-        map = Map<String, dynamic>.from(decoded as Map);
+        map = Map<String, dynamic>.from(decoded);
       } catch (_) {
         return null;
       }
