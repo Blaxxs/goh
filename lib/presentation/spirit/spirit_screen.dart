@@ -354,50 +354,215 @@ class _SpiritScreenState extends State<SpiritScreen> {
   void _showSpiritDetails(Map<String, dynamic> spirit) {
     final name = (spirit['name'] ?? '이름 없음').toString();
     final attribute = (spirit['attribute'] ?? '-').toString();
-    final active = spirit['active'];
-    final passive = spirit['passive'];
+    final active = spirit['active'] is Map
+        ? Map<String, dynamic>.from(spirit['active'])
+        : <String, dynamic>{};
+    final passive = spirit['passive'] is Map
+        ? Map<String, dynamic>.from(spirit['passive'])
+        : <String, dynamic>{};
 
-    String activeDesc = '-';
-    if (active is Map) {
-      activeDesc = (active['baseDescription'] ?? '-').toString();
-    }
-
-    String passiveDesc = '-';
-    if (passive is Map) {
-      passiveDesc = (passive['baseDescription'] ?? '-').toString();
-    }
+    final hasLevels = _hasLevelData(active) || _hasLevelData(passive);
 
     showDialog<void>(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(name),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('속성: $attribute'),
-                const SizedBox(height: 10),
-                const Text('액티브'),
-                const SizedBox(height: 4),
-                Text(activeDesc),
-                const SizedBox(height: 10),
-                const Text('패시브'),
-                const SizedBox(height: 4),
-                Text(passiveDesc),
+        int selectedLevel = 1;
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            final activeDesc = _resolveDescriptionForLevel(active, selectedLevel);
+            final passiveDesc = _resolveDescriptionForLevel(passive, selectedLevel);
+            final activeTurnText = _resolveSkillTurnsForLevel(active, selectedLevel);
+            final passiveTurnText = _resolveSkillTurnsForLevel(passive, selectedLevel);
+            final activeExtras = _resolveExtraEffects(active, selectedLevel);
+            final passiveExtras = _resolveExtraEffects(passive, selectedLevel);
+
+            return AlertDialog(
+              title: Text(name),
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('속성: $attribute'),
+                    if (hasLevels) ...[
+                      const SizedBox(height: 10),
+                      Row(
+                        children: [
+                          const Text('강화 단계'),
+                          const SizedBox(width: 8),
+                          Text('$selectedLevel강'),
+                        ],
+                      ),
+                      Slider(
+                        value: selectedLevel.toDouble(),
+                        min: 1,
+                        max: 9,
+                        divisions: 8,
+                        label: '$selectedLevel강',
+                        onChanged: (value) {
+                          setDialogState(() {
+                            selectedLevel = value.round();
+                          });
+                        },
+                      ),
+                    ],
+                    const SizedBox(height: 4),
+                    const Text('액티브'),
+                    if (activeTurnText != null) ...[
+                      const SizedBox(height: 2),
+                      Text(activeTurnText),
+                    ],
+                    const SizedBox(height: 4),
+                    Text(activeDesc),
+                    if (activeExtras.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      ...activeExtras.map((e) => Text('• $e')),
+                    ],
+                    const SizedBox(height: 10),
+                    const Text('패시브'),
+                    if (passiveTurnText != null) ...[
+                      const SizedBox(height: 2),
+                      Text(passiveTurnText),
+                    ],
+                    const SizedBox(height: 4),
+                    Text(passiveDesc),
+                    if (passiveExtras.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      ...passiveExtras.map((e) => Text('• $e')),
+                    ],
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('닫기'),
+                ),
               ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('닫기'),
-            ),
-          ],
+            );
+          },
         );
       },
     );
+  }
+
+  bool _hasLevelData(Map<String, dynamic> block) {
+    final valuesByLevel = block['valuesByLevel'];
+    final turnsByLevel = block['skillTurnsByLevel'];
+    return valuesByLevel is Map || turnsByLevel is Map;
+  }
+
+  String _resolveDescriptionForLevel(Map<String, dynamic> block, int level) {
+    final base = (block['baseDescription'] ?? '-').toString();
+    final valuesByLevel = block['valuesByLevel'];
+    if (valuesByLevel is! Map) {
+      return base;
+    }
+
+    final resolvedValues = _resolveLevelMap(valuesByLevel, level);
+    var output = base;
+    resolvedValues.forEach((key, value) {
+      output = output.replaceAll('{$key}', value.toString());
+    });
+    return output;
+  }
+
+  String? _resolveSkillTurnsForLevel(Map<String, dynamic> block, int level) {
+    final turnsByLevel = block['skillTurnsByLevel'];
+    if (turnsByLevel is! Map) {
+      return null;
+    }
+
+    final value = _resolveLevelValue(turnsByLevel, level);
+    if (value == null) {
+      return null;
+    }
+    return '스킬 턴: $value턴';
+  }
+
+  List<String> _resolveExtraEffects(Map<String, dynamic> block, int level) {
+    final extraByLevel = block['extraEffectsByLevel'];
+    if (extraByLevel is! Map) {
+      return const [];
+    }
+
+    final latestById = <String, String>{};
+    final plainEffects = <String>[];
+
+    for (var lv = 1; lv <= level; lv++) {
+      final key = lv.toString();
+      final levelEffects = extraByLevel[key];
+      if (levelEffects is! List) {
+        continue;
+      }
+
+      for (final raw in levelEffects) {
+        if (raw is String) {
+          plainEffects.add(raw);
+          continue;
+        }
+        if (raw is! Map) {
+          continue;
+        }
+
+        final map = Map<String, dynamic>.from(raw);
+        var desc = (map['description'] ?? '').toString();
+        final values = map['values'];
+        if (values is Map) {
+          values.forEach((k, v) {
+            desc = desc.replaceAll('{${k.toString()}}', v.toString());
+          });
+        }
+
+        if (desc.isEmpty) {
+          continue;
+        }
+
+        final id = (map['id'] ?? '').toString();
+        if (id.isEmpty) {
+          plainEffects.add(desc);
+        } else {
+          latestById[id] = desc;
+        }
+      }
+    }
+
+    return [
+      ...latestById.values,
+      ...plainEffects,
+    ];
+  }
+
+  Map<String, dynamic> _resolveLevelMap(Map valuesByLevel, int level) {
+    final value = _resolveLevelValue(valuesByLevel, level);
+    if (value is Map) {
+      return Map<String, dynamic>.from(value);
+    }
+    return <String, dynamic>{};
+  }
+
+  dynamic _resolveLevelValue(Map valuesByLevel, int level) {
+    final direct = valuesByLevel[level.toString()];
+    if (direct != null) {
+      return direct;
+    }
+
+    int? closest;
+    for (final key in valuesByLevel.keys) {
+      final k = int.tryParse(key.toString());
+      if (k == null || k > level) {
+        continue;
+      }
+      if (closest == null || k > closest!) {
+        closest = k;
+      }
+    }
+
+    if (closest != null) {
+      return valuesByLevel[closest.toString()];
+    }
+
+    return null;
   }
 }
 
