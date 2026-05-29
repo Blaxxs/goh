@@ -553,7 +553,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
       if (k == null || k > level) {
         continue;
       }
-      if (closest == null || k > closest!) {
+      if (closest == null || k > closest) {
         closest = k;
       }
     }
