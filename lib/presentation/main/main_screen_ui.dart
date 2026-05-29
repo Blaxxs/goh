@@ -64,7 +64,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
     '골드 효율 계산기': Icons.paid_rounded,
     '데미지 계산기_ Beta': Icons.flash_on_rounded,
     '악세사리 도감': Icons.diamond_outlined,
-    '스피릿 도감': Icons.auto_awesome_rounded,
+    '스피릿 도감 TEST': Icons.auto_awesome_rounded,
     '일지': Icons.calendar_month_rounded,
     '상자 기대값 계산기': Icons.inventory_2_rounded,
     '악세 강화 시뮬': Icons.auto_awesome_rounded,
@@ -436,7 +436,7 @@ class _MainScreenUIState extends State<MainScreenUI> {
           ),
           const _MenuEntry(
             key: 'spirit',
-            text: '스피릿 도감',
+            text: '스피릿 도감 TEST',
             subtitle: '스피릿 정보 확인',
           ),
           const _MenuEntry(key: 'journal', text: '일지', subtitle: '기록 및 추이 확인'),
