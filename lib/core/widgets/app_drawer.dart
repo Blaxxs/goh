@@ -16,6 +16,7 @@ import '../../presentation/simulator/pouch_simulation_screen.dart'; // 주머니
 import '../../presentation/gold_calculator/gold_calculator_screen.dart'; // 골드 계산기 화면 import
 import '../../presentation/damage_calculator/damage_calculator_screen.dart'; // 데미지 계산기 import
 import '../../presentation/stage_settings/settings_screen.dart'; // SettingsScreen import
+import '../../presentation/spirit/spirit_screen.dart';
 
 class AppDrawer extends StatelessWidget {
   final AppScreen currentScreen;
@@ -400,6 +401,24 @@ class AppDrawer extends StatelessWidget {
                     },
                     showDrawerText: showDrawerText,
                     theme: theme, // Pass theme
+                    listItemTextStyle: mainDrawerItemTextStyle,
+                    selectedListItemTextStyle: selectedMainDrawerItemTextStyle,
+                    defaultIconColor: defaultDrawerIconColor,
+                    selectedIconColor: selectedDrawerIconColor,
+                  ),
+                  _buildDrawerListTile(
+                    context,
+                    icon: Icons.auto_awesome_rounded,
+                    text: '스피릿 도감',
+                    selected: currentScreen == AppScreen.spirit,
+                    onTap: () {
+                      navigateFromMain(
+                        const SpiritScreen(),
+                        target: AppScreen.spirit,
+                      );
+                    },
+                    showDrawerText: showDrawerText,
+                    theme: theme,
                     listItemTextStyle: mainDrawerItemTextStyle,
                     selectedListItemTextStyle: selectedMainDrawerItemTextStyle,
                     defaultIconColor: defaultDrawerIconColor,
