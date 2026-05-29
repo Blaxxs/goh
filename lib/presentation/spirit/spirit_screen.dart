@@ -462,7 +462,8 @@ class _SpiritScreenState extends State<SpiritScreen> {
     final resolvedValues = _resolveLevelMap(valuesByLevel, level);
     var output = base;
     resolvedValues.forEach((key, value) {
-      output = output.replaceAll('{$key}', value.toString());
+      final keyText = key.toString();
+      output = output.replaceAll('{$keyText}', value.toString());
     });
     return output;
   }
@@ -536,18 +537,26 @@ class _SpiritScreenState extends State<SpiritScreen> {
   Map<String, dynamic> _resolveLevelMap(Map valuesByLevel, int level) {
     final value = _resolveLevelValue(valuesByLevel, level);
     if (value is Map) {
-      return Map<String, dynamic>.from(value);
+      final result = <String, dynamic>{};
+      value.forEach((k, v) {
+        result[k.toString()] = v;
+      });
+      return result;
     }
     return <String, dynamic>{};
   }
 
   dynamic _resolveLevelValue(Map valuesByLevel, int level) {
-    final direct = valuesByLevel[level.toString()];
-    if (direct != null) {
-      return direct;
+    // Direct hit for either String or int key.
+    if (valuesByLevel.containsKey(level.toString())) {
+      return valuesByLevel[level.toString()];
+    }
+    if (valuesByLevel.containsKey(level)) {
+      return valuesByLevel[level];
     }
 
     int? closest;
+    dynamic closestKey;
     for (final key in valuesByLevel.keys) {
       final k = int.tryParse(key.toString());
       if (k == null || k > level) {
@@ -555,11 +564,12 @@ class _SpiritScreenState extends State<SpiritScreen> {
       }
       if (closest == null || k > closest) {
         closest = k;
+        closestKey = key;
       }
     }
 
-    if (closest != null) {
-      return valuesByLevel[closest.toString()];
+    if (closestKey != null) {
+      return valuesByLevel[closestKey];
     }
 
     return null;
