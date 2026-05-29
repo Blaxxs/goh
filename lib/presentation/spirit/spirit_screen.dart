@@ -211,7 +211,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: const Text('스피릿 도감'),
+        title: const Text('스피릿 도감 TEST'),
       ),
       body: Column(
         children: [
