@@ -447,15 +447,15 @@ class _SpiritScreenState extends State<SpiritScreen> {
   }
 
   bool _hasLevelData(Map<String, dynamic> block) {
-    final valuesByLevel = block['valuesByLevel'];
-    final turnsByLevel = block['skillTurnsByLevel'];
-    return valuesByLevel is Map || turnsByLevel is Map;
+    final valuesByLevel = _normalizeLevelContainer(block['valuesByLevel']);
+    final turnsByLevel = _normalizeLevelContainer(block['skillTurnsByLevel']);
+    return valuesByLevel.isNotEmpty || turnsByLevel.isNotEmpty;
   }
 
   String _resolveDescriptionForLevel(Map<String, dynamic> block, int level) {
     final base = (block['baseDescription'] ?? '-').toString();
-    final valuesByLevel = block['valuesByLevel'];
-    if (valuesByLevel is! Map) {
+    final valuesByLevel = _normalizeLevelContainer(block['valuesByLevel']);
+    if (valuesByLevel.isEmpty) {
       return base;
     }
 
@@ -469,8 +469,8 @@ class _SpiritScreenState extends State<SpiritScreen> {
   }
 
   String? _resolveSkillTurnsForLevel(Map<String, dynamic> block, int level) {
-    final turnsByLevel = block['skillTurnsByLevel'];
-    if (turnsByLevel is! Map) {
+    final turnsByLevel = _normalizeLevelContainer(block['skillTurnsByLevel']);
+    if (turnsByLevel.isEmpty) {
       return null;
     }
 
@@ -482,8 +482,8 @@ class _SpiritScreenState extends State<SpiritScreen> {
   }
 
   List<String> _resolveExtraEffects(Map<String, dynamic> block, int level) {
-    final extraByLevel = block['extraEffectsByLevel'];
-    if (extraByLevel is! Map) {
+    final extraByLevel = _normalizeLevelContainer(block['extraEffectsByLevel']);
+    if (extraByLevel.isEmpty) {
       return const [];
     }
 
@@ -573,6 +573,30 @@ class _SpiritScreenState extends State<SpiritScreen> {
     }
 
     return null;
+  }
+
+  Map<String, dynamic> _normalizeLevelContainer(dynamic raw) {
+    if (raw is Map) {
+      final result = <String, dynamic>{};
+      raw.forEach((k, v) {
+        result[k.toString()] = v;
+      });
+      return result;
+    }
+
+    if (raw is List) {
+      final result = <String, dynamic>{};
+      for (var i = 0; i < raw.length; i++) {
+        final value = raw[i];
+        if (value == null) {
+          continue;
+        }
+        result[i.toString()] = value;
+      }
+      return result;
+    }
+
+    return <String, dynamic>{};
   }
 }
 
