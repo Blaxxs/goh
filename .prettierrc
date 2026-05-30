@@ -1,5 +1,1 @@
-{
-  "objectWrap": "collapse",
-  "bracketSpacing": true,
-  "printWidth": 1000
-}
+{ "objectWrap": "collapse", "bracketSpacing": true, "printWidth": 1000 }
