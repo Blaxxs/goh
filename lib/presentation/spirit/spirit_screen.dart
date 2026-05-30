@@ -463,11 +463,27 @@ class _SpiritScreenState extends State<SpiritScreen> {
     final targets = <String>[];
     targets.add((block['baseDescription'] ?? '').toString());
 
+    final skillType = block['skillType'];
+    if (skillType != null) {
+      targets.add(skillType.toString());
+    }
+
     final applyCharacters = block['applyCharacters'];
     if (applyCharacters is List) {
       for (final c in applyCharacters) {
         targets.add(c.toString());
       }
+    }
+
+    final fixedTurns = block['skillTurns'];
+    if (fixedTurns != null) {
+      targets.add(fixedTurns.toString());
+      targets.add('턴');
+    }
+
+    final turnsByLevel = _normalizeLevelContainer(block['skillTurnsByLevel']);
+    for (final value in turnsByLevel.values) {
+      targets.add(value.toString());
     }
 
     final valuesByLevel = _normalizeLevelContainer(block['valuesByLevel']);
@@ -751,6 +767,13 @@ class _SpiritScreenState extends State<SpiritScreen> {
   }
 
   String? _resolveSkillTurnsForLevel(Map<String, dynamic> block, int level) {
+    // 1) Fixed turn field: "skillTurns": 4
+    final fixedTurns = block['skillTurns'];
+    if (fixedTurns != null && fixedTurns.toString().trim().isNotEmpty) {
+      return '스킬 턴: ${fixedTurns.toString()}턴';
+    }
+
+    // 2) Variable turn field: "skillTurnsByLevel": {"1": 5, ...}
     final turnsByLevel = _normalizeLevelContainer(block['skillTurnsByLevel']);
     if (turnsByLevel.isEmpty) {
       return null;
