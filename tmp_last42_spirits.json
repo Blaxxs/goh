@@ -1,0 +1,43 @@
+{
+  "AwakeningOfTheGreatSageEqualToHeaven": {
+    "setStart": "Screenshot_20260531-014929.png",
+    "setEnd": "Screenshot_20260531-014952.png",
+    "name": "제천대성의 각성",
+    "englishName": "AwakeningOfTheGreatSageEqualToHeaven",
+    "imageName": "AwakeningOfTheGreatSageEqualToHeaven.png",
+    "attribute": "빛",
+    "active": {
+      "skillType": "R스킬",
+      "skillTurns": 3,
+      "applyCharacters": [],
+      "baseDescription": "적 전체에게 공격력 {damage}% 빛속성 관통 공격하고 추가적으로 {stunChance}% 확률로 맞은 적을 {stunTurns}턴 기절시킨다{counterEffect}",
+      "valuesByLevel": {
+        "1": {"damage": 710, "stunChance": 50, "stunTurns": 2, "counterEffect": ""},
+        "2": {"damage": 720, "stunChance": 50, "stunTurns": 2, "counterEffect": ""},
+        "3": {"damage": 730, "stunChance": 50, "stunTurns": 2, "counterEffect": ""},
+        "4": {"damage": 740, "stunChance": 50, "stunTurns": 2, "counterEffect": ""},
+        "5": {"damage": 750, "stunChance": 50, "stunTurns": 2, "counterEffect": ""},
+        "6": {"damage": 760, "stunChance": 50, "stunTurns": 2, "counterEffect": " 추가로 아군 뒷열 우선 2명은 적에게 맞았을 때 50% 확률로 피해를 90% 적게 받고 공격력의 600%로 반격한다. 단, 반격 스킬을 가진 아군은 반격 확률이 상승한다. (반격은 관통 공격스킬 판정)", "allyCount": 2, "counterTriggerChance": 50, "damageReduction": 90, "counterDamage": 600},
+        "7": {"damage": 770, "stunChance": 50, "stunTurns": 2, "counterEffect": " 추가로 아군 뒷열 우선 2명은 적에게 맞았을 때 50% 확률로 피해를 90% 적게 받고 공격력의 700%로 반격한다. 단, 반격 스킬을 가진 아군은 반격 확률이 상승한다. (반격은 관통 공격스킬 판정)", "allyCount": 2, "counterTriggerChance": 50, "damageReduction": 90, "counterDamage": 700},
+        "8": {"damage": 780, "stunChance": 50, "stunTurns": 2, "counterEffect": " 추가로 아군 뒷열 우선 2명은 적에게 맞았을 때 50% 확률로 피해를 90% 적게 받고 공격력의 800%로 반격한다. 단, 반격 스킬을 가진 아군은 반격 확률이 상승한다. (반격은 관통 공격스킬 판정)", "allyCount": 2, "counterTriggerChance": 50, "damageReduction": 90, "counterDamage": 800},
+        "9": {"damage": 800, "stunChance": 50, "stunTurns": 2, "counterEffect": " 추가로 아군 뒷열 우선 2명은 적에게 맞았을 때 50% 확률로 피해를 90% 적게 받고 공격력의 900%로 반격한다. 단, 반격 스킬을 가진 아군은 반격 확률이 상승한다. (반격은 관통 공격스킬 판정)", "allyCount": 2, "counterTriggerChance": 50, "damageReduction": 90, "counterDamage": 900}
+      }
+    },
+    "passive": {
+      "skillType": "패시브",
+      "applyCharacters": [],
+      "baseDescription": "빛속성 캐릭터의 크리티컬과 명중 {value} 증가",
+      "valuesByLevel": {
+        "1": {"value": 2},
+        "2": {"value": 4},
+        "3": {"value": 6},
+        "4": {"value": 10},
+        "5": {"value": 14},
+        "6": {"value": 18},
+        "7": {"value": 22},
+        "8": {"value": 26},
+        "9": {"value": 30}
+      }
+    }
+  }
+}
