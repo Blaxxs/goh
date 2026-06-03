@@ -593,7 +593,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
         if (expandedToken.isEmpty) {
           continue;
         }
-        if (alias.contains(expandedToken) || expandedToken.contains(alias)) {
+        if (alias.contains(expandedToken)) {
           return true;
         }
       }
