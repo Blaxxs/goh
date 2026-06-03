@@ -109,6 +109,14 @@ class AccessoryScreenUI extends StatelessWidget {
                   TextField(
                     controller: searchController,
                     onChanged: onSubmitSearch,
+                    style: const TextStyle(
+                      fontFamily: 'NanumGothic',
+                    ),
+                    strutStyle: const StrutStyle(
+                      fontFamily: 'NanumGothic',
+                      height: 1.25,
+                      forceStrutHeight: true,
+                    ),
                     decoration: const InputDecoration(
                       hintText: '이름/옵션 검색 (예: 크리, 크뎀, 관저)',
                       prefixIcon: Icon(Icons.search_rounded, size: 20),
