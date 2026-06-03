@@ -384,7 +384,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
                         contentPadding:
                             EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                       ),
-                  ),
+                    ),
                   ],
                 ),
               ),
