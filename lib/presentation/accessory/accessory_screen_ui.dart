@@ -111,9 +111,21 @@ class AccessoryScreenUI extends StatelessWidget {
                     onChanged: onSubmitSearch,
                     style: const TextStyle(
                       fontFamily: 'NanumGothic',
+                      fontFamilyFallback: [
+                        'Malgun Gothic',
+                        'Apple SD Gothic Neo',
+                        'Noto Sans KR',
+                        'sans-serif',
+                      ],
                     ),
                     strutStyle: const StrutStyle(
                       fontFamily: 'NanumGothic',
+                      fontFamilyFallback: [
+                        'Malgun Gothic',
+                        'Apple SD Gothic Neo',
+                        'Noto Sans KR',
+                        'sans-serif',
+                      ],
                       height: 1.25,
                       forceStrutHeight: true,
                     ),
