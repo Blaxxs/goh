@@ -702,6 +702,16 @@ class _SpiritScreenState extends State<SpiritScreen> {
 
   Set<String> _expandSearchToken(String normalizedToken) {
     final expanded = <String>{normalizedToken};
+
+    if (normalizedToken.contains('관통') && normalizedToken.contains('저항')) {
+      expanded.addAll({
+        '관저',
+        '관통확률저항',
+        '관통확률저항증가',
+        '관통저항확률증가',
+      });
+    }
+
     for (final entry in _searchSynonyms.entries) {
       final canonical = entry.key;
       final synonyms = entry.value;
@@ -720,6 +730,15 @@ class _SpiritScreenState extends State<SpiritScreen> {
     final aliases = <String>{normalized};
 
     _addCombinedPhraseAliases(normalized, aliases);
+
+    if (normalized.contains('관통') && normalized.contains('저항')) {
+      aliases.addAll({
+        '관저',
+        '관통확률저항',
+        '관통확률저항증가',
+        '관통저항확률증가',
+      });
+    }
 
     for (final entry in _searchSynonyms.entries) {
       final canonical = entry.key;
