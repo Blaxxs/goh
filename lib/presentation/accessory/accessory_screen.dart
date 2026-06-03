@@ -314,7 +314,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: Text(widget.isPickerMode ? widget.pickerTitle : widget.collectionTitle),
+        title: Text(
+            widget.isPickerMode ? widget.pickerTitle : widget.collectionTitle),
         actions: [
           if (!widget.isPickerMode) ...[
             if (_compareMode && _compareList.length == 2)
@@ -654,52 +655,49 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       .asMap()
                                       .entries
                                       .map((entry) {
-                                        final imageIndex = entry.key;
-                                        final imageUrl = entry.value;
-                                        final linkedAccessory = imageIndex <
-                                                setOption
-                                                    .requiredAccessories.length
-                                            ? setOption
-                                                .requiredAccessories[imageIndex]
-                                            : '';
+                                    final imageIndex = entry.key;
+                                    final imageUrl = entry.value;
+                                    final linkedAccessory = imageIndex <
+                                            setOption.requiredAccessories.length
+                                        ? setOption
+                                            .requiredAccessories[imageIndex]
+                                        : '';
 
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          child: InkWell(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            onTap: linkedAccessory.isEmpty
-                                                ? null
-                                                : () => _openLinkedAccessoryDetail(
-                                                    linkedAccessory),
-                                            child: SizedBox(
-                                              width: 72,
-                                              height: 72,
-                                              child: CachedNetworkImage(
-                                                imageUrl: imageUrl,
-                                                width: 64,
-                                                height: 64,
-                                                fit: BoxFit.contain,
-                                                placeholder: (context, url) =>
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(10),
+                                        onTap: linkedAccessory.isEmpty
+                                            ? null
+                                            : () => _openLinkedAccessoryDetail(
+                                                linkedAccessory),
+                                        child: SizedBox(
+                                          width: 72,
+                                          height: 72,
+                                          child: CachedNetworkImage(
+                                            imageUrl: imageUrl,
+                                            width: 64,
+                                            height: 64,
+                                            fit: BoxFit.contain,
+                                            placeholder: (context, url) =>
+                                                const Center(
+                                                    child:
+                                                        CircularProgressIndicator()),
+                                            errorWidget:
+                                                (context, url, error) =>
                                                     const Center(
-                                                        child:
-                                                            CircularProgressIndicator()),
-                                                errorWidget:
-                                                    (context, url, error) =>
-                                                        const Center(
-                                                  child: Icon(
-                                                    Icons.broken_image,
-                                                    size: 28,
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
+                                              child: Icon(
+                                                Icons.broken_image,
+                                                size: 28,
+                                                color: Colors.grey,
                                               ),
                                             ),
                                           ),
-                                        );
-                                      })
-                                      .toList(),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
                             ),
@@ -708,8 +706,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
                           // 효과들을 '효과 : 수치' 형식으로 나열 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
-                            final currentValue =
-                                _resolveSparseStageValue(effect, currentStageIndex);
+                            final currentValue = _resolveSparseStageValue(
+                                effect, currentStageIndex);
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 4.0),
@@ -799,54 +797,51 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       .asMap()
                                       .entries
                                       .map((entry) {
-                                        final imageIndex = entry.key;
-                                        final imageUrl = entry.value;
-                                        final linkedAccessory = imageIndex <
-                                                setOption
-                                                    .requiredAccessories.length
-                                            ? setOption
-                                                .requiredAccessories[imageIndex]
-                                            : '';
+                                    final imageIndex = entry.key;
+                                    final imageUrl = entry.value;
+                                    final linkedAccessory = imageIndex <
+                                            setOption.requiredAccessories.length
+                                        ? setOption
+                                            .requiredAccessories[imageIndex]
+                                        : '';
 
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8.0),
-                                          child: InkWell(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            onTap: linkedAccessory.isEmpty
-                                                ? null
-                                                : () => _openLinkedAccessoryDetail(
-                                                    linkedAccessory),
-                                            child: SizedBox(
-                                              width: 72,
-                                              height: 72,
-                                              child: Center(
-                                                child: CachedNetworkImage(
-                                                  imageUrl: imageUrl,
-                                                  width: 64,
-                                                  height: 64,
-                                                  fit: BoxFit.contain,
-                                                  placeholder: (context, url) =>
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: InkWell(
+                                        borderRadius: BorderRadius.circular(10),
+                                        onTap: linkedAccessory.isEmpty
+                                            ? null
+                                            : () => _openLinkedAccessoryDetail(
+                                                linkedAccessory),
+                                        child: SizedBox(
+                                          width: 72,
+                                          height: 72,
+                                          child: Center(
+                                            child: CachedNetworkImage(
+                                              imageUrl: imageUrl,
+                                              width: 64,
+                                              height: 64,
+                                              fit: BoxFit.contain,
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                      child:
+                                                          CircularProgressIndicator()),
+                                              errorWidget:
+                                                  (context, url, error) =>
                                                       const Center(
-                                                          child:
-                                                              CircularProgressIndicator()),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          const Center(
-                                                    child: Icon(
-                                                      Icons.broken_image,
-                                                      size: 28,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
+                                                child: Icon(
+                                                  Icons.broken_image,
+                                                  size: 28,
+                                                  color: Colors.grey,
                                                 ),
                                               ),
                                             ),
                                           ),
-                                        );
-                                      })
-                                      .toList(),
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
                                 ),
                               ),
                             )
@@ -855,8 +850,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           const SizedBox(height: 10),
                           // 세트 효과들 (명칭/값 분리하여 가독성 향상)
                           ...setOption.effects.map((effect) {
-                            final currentValue =
-                                _resolveSparseStageValue(effect, currentStageIndex);
+                            final currentValue = _resolveSparseStageValue(
+                                effect, currentStageIndex);
                             return Padding(
                               padding:
                                   const EdgeInsets.symmetric(vertical: 4.0),
@@ -975,8 +970,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
       ..sort();
 
     if (availableStages.isNotEmpty) {
-      final fallbackValue =
-          effect.stageValues[availableStages.last.toString()];
+      final fallbackValue = effect.stageValues[availableStages.last.toString()];
       if (fallbackValue != null && fallbackValue.isNotEmpty) {
         return fallbackValue;
       }
@@ -1004,8 +998,10 @@ class _AccessoryCompareDialog extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     // 두 악세사리의 모든 옵션 이름 합집합
-    final resolvedAOptions = a.optionsAtEnhancementLevel(initialEnhancementLevel);
-    final resolvedBOptions = b.optionsAtEnhancementLevel(initialEnhancementLevel);
+    final resolvedAOptions =
+        a.optionsAtEnhancementLevel(initialEnhancementLevel);
+    final resolvedBOptions =
+        b.optionsAtEnhancementLevel(initialEnhancementLevel);
     final allOptionNames = <String>{
       ...resolvedAOptions.map((o) => o.optionName),
       ...resolvedBOptions.map((o) => o.optionName),

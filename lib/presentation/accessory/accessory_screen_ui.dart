@@ -138,16 +138,17 @@ class AccessoryScreenUI extends StatelessWidget {
                                 : colorScheme.onSurface.withValues(alpha: 0.28),
                             width: selectedOptionTypeFilter == '고정옵션' ? 1.3 : 1,
                           ),
-                          labelStyle:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: selectedOptionTypeFilter == '고정옵션'
-                                        ? colorScheme.onPrimaryContainer
-                                        : colorScheme.onSurface,
-                                    fontWeight:
-                                        selectedOptionTypeFilter == '고정옵션'
-                                            ? FontWeight.w700
-                                            : FontWeight.w500,
-                                  ),
+                          labelStyle: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(
+                                color: selectedOptionTypeFilter == '고정옵션'
+                                    ? colorScheme.onPrimaryContainer
+                                    : colorScheme.onSurface,
+                                fontWeight: selectedOptionTypeFilter == '고정옵션'
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
                           visualDensity: VisualDensity.compact,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
@@ -168,16 +169,17 @@ class AccessoryScreenUI extends StatelessWidget {
                                 : colorScheme.onSurface.withValues(alpha: 0.28),
                             width: selectedOptionTypeFilter == '랜덤옵션' ? 1.3 : 1,
                           ),
-                          labelStyle:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: selectedOptionTypeFilter == '랜덤옵션'
-                                        ? colorScheme.onPrimaryContainer
-                                        : colorScheme.onSurface,
-                                    fontWeight:
-                                        selectedOptionTypeFilter == '랜덤옵션'
-                                            ? FontWeight.w700
-                                            : FontWeight.w500,
-                                  ),
+                          labelStyle: Theme.of(context)
+                              .textTheme
+                              .labelMedium
+                              ?.copyWith(
+                                color: selectedOptionTypeFilter == '랜덤옵션'
+                                    ? colorScheme.onPrimaryContainer
+                                    : colorScheme.onSurface,
+                                fontWeight: selectedOptionTypeFilter == '랜덤옵션'
+                                    ? FontWeight.w700
+                                    : FontWeight.w500,
+                              ),
                           visualDensity: VisualDensity.compact,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
@@ -237,8 +239,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                     color: selected
                                         ? colorScheme.onPrimaryContainer
                                         : colorScheme.onSurface,
-                                    fontWeight:
-                                        selected ? FontWeight.w700 : FontWeight.w500,
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
                                   ),
                               visualDensity: VisualDensity.compact,
                               materialTapTargetSize:
