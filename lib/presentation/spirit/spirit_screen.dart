@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/box_constants.dart';
 import '../../core/widgets/app_drawer.dart';
@@ -34,6 +35,8 @@ class _SpiritSearchTargets {
 
 class _SpiritScreenState extends State<SpiritScreen> {
   static const Duration _cacheTtl = Duration(minutes: 10);
+  static const String _diskCacheDataKey = 'spirit_cache_data_v1';
+  static const String _diskCacheUpdatedAtKey = 'spirit_cache_updated_at_v1';
   static List<Map<String, dynamic>>? _spiritsCache;
   static DateTime? _spiritsCacheUpdatedAt;
 
@@ -48,8 +51,21 @@ class _SpiritScreenState extends State<SpiritScreen> {
   @override
   void initState() {
     super.initState();
+    _initializeSpirits();
+  }
+
+  Future<void> _initializeSpirits() async {
     _restoreFromCache();
-    _loadSpirits(forceNetwork: !_hasFreshCache);
+
+    if (!_hasFreshCache) {
+      await _restoreFromDiskCache();
+    }
+
+    if (!mounted) {
+      return;
+    }
+
+    await _loadSpirits(forceNetwork: !_hasFreshCache);
   }
 
   bool get _hasFreshCache {
@@ -72,6 +88,67 @@ class _SpiritScreenState extends State<SpiritScreen> {
       ..addAll(cached.map((e) => Map<String, dynamic>.from(e)));
     _isLoading = false;
     _errorMessage = null;
+  }
+
+  Future<void> _restoreFromDiskCache() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final rawJson = prefs.getString(_diskCacheDataKey);
+      final updatedAtMillis = prefs.getInt(_diskCacheUpdatedAtKey);
+
+      if (rawJson == null || rawJson.isEmpty) {
+        return;
+      }
+
+      final decoded = jsonDecode(rawJson);
+      if (decoded is! List) {
+        return;
+      }
+
+      final cached = <Map<String, dynamic>>[];
+      for (final item in decoded) {
+        if (item is Map) {
+          cached.add(Map<String, dynamic>.from(item));
+        }
+      }
+
+      if (cached.isEmpty) {
+        return;
+      }
+
+      _spiritsCache = cached;
+      _spiritsCacheUpdatedAt = updatedAtMillis != null
+          ? DateTime.fromMillisecondsSinceEpoch(updatedAtMillis)
+          : DateTime.now();
+
+      if (!mounted) {
+        return;
+      }
+
+      setState(() {
+        _allSpirits
+          ..clear()
+          ..addAll(cached.map((e) => Map<String, dynamic>.from(e)));
+        _isLoading = false;
+        _errorMessage = null;
+      });
+    } catch (_) {
+      // 디스크 캐시 로드 실패 시 네트워크 로딩으로 계속 진행.
+    }
+  }
+
+  Future<void> _saveDiskCache(List<Map<String, dynamic>> parsed) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final serialized = jsonEncode(parsed);
+      await prefs.setString(_diskCacheDataKey, serialized);
+      await prefs.setInt(
+        _diskCacheUpdatedAtKey,
+        (_spiritsCacheUpdatedAt ?? DateTime.now()).millisecondsSinceEpoch,
+      );
+    } catch (_) {
+      // 디스크 캐시 저장 실패는 무시하고 UI 동작은 유지.
+    }
   }
 
   Future<void> _loadSpirits({bool forceNetwork = true}) async {
@@ -141,6 +218,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
 
       _spiritsCache = parsed.map((e) => Map<String, dynamic>.from(e)).toList();
       _spiritsCacheUpdatedAt = DateTime.now();
+      _saveDiskCache(_spiritsCache!);
 
       setState(() {
         _allSpirits
@@ -154,8 +232,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
         return;
       }
       final errorText = e.toString().toLowerCase();
-      final isPermissionDenied =
-          errorText.contains('permission-denied') ||
+      final isPermissionDenied = errorText.contains('permission-denied') ||
           errorText.contains('permission denied');
       setState(() {
         _isLoading = false;
@@ -167,12 +244,12 @@ class _SpiritScreenState extends State<SpiritScreen> {
   }
 
   bool _isSingleSpiritMap(Map raw) {
-    final hasTopLevelFields =
-        raw.containsKey('name') ||
+    final hasTopLevelFields = raw.containsKey('name') ||
         raw.containsKey('englishName') ||
         raw.containsKey('imageName') ||
         raw.containsKey('imageUrl');
-    final hasSkillBlock = raw.containsKey('active') || raw.containsKey('passive');
+    final hasSkillBlock =
+        raw.containsKey('active') || raw.containsKey('passive');
     return hasTopLevelFields && hasSkillBlock;
   }
 
@@ -202,7 +279,10 @@ class _SpiritScreenState extends State<SpiritScreen> {
     final name = (map['name'] ?? '').toString().trim();
 
     // Skip nested blocks such as `active` or `passive` when malformed JSON is provided.
-    if (name.isEmpty && englishName.isEmpty && explicitId.isEmpty && imageName.isEmpty) {
+    if (name.isEmpty &&
+        englishName.isEmpty &&
+        explicitId.isEmpty &&
+        imageName.isEmpty) {
       return null;
     }
 
@@ -222,9 +302,11 @@ class _SpiritScreenState extends State<SpiritScreen> {
       map['fallbackImageUrl'] =
           'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/spirits%2F$encodedName?alt=media';
     } else if (imageUrl.contains('/spirit%2F')) {
-      map['fallbackImageUrl'] = imageUrl.replaceFirst('/spirit%2F', '/spirits%2F');
+      map['fallbackImageUrl'] =
+          imageUrl.replaceFirst('/spirit%2F', '/spirits%2F');
     } else if (imageUrl.contains('/spirits%2F')) {
-      map['fallbackImageUrl'] = imageUrl.replaceFirst('/spirits%2F', '/spirit%2F');
+      map['fallbackImageUrl'] =
+          imageUrl.replaceFirst('/spirits%2F', '/spirit%2F');
     }
 
     return map;
@@ -355,9 +437,10 @@ class _SpiritScreenState extends State<SpiritScreen> {
                                   final imageUrl =
                                       (spirit['imageUrl'] ?? '').toString();
                                   final fallbackImageUrl =
-                                      (spirit['fallbackImageUrl'] ?? '').toString();
-                                  final isDark =
-                                      Theme.of(context).brightness == Brightness.dark;
+                                      (spirit['fallbackImageUrl'] ?? '')
+                                          .toString();
+                                  final isDark = Theme.of(context).brightness ==
+                                      Brightness.dark;
 
                                   return Card(
                                     clipBehavior: Clip.antiAlias,
@@ -467,7 +550,8 @@ class _SpiritScreenState extends State<SpiritScreen> {
     return false;
   }
 
-  _SpiritSearchTargets _collectSearchTargetsByScope(Map<String, dynamic> spirit) {
+  _SpiritSearchTargets _collectSearchTargetsByScope(
+      Map<String, dynamic> spirit) {
     final nameTargets = <String>[
       (spirit['name'] ?? '').toString(),
       (spirit['englishName'] ?? '').toString(),
@@ -570,7 +654,8 @@ class _SpiritScreenState extends State<SpiritScreen> {
     for (final entry in _searchSynonyms.entries) {
       final canonical = entry.key;
       final synonyms = entry.value;
-      if (canonical.contains(normalizedQuery) || synonyms.contains(normalizedQuery)) {
+      if (canonical.contains(normalizedQuery) ||
+          synonyms.contains(normalizedQuery)) {
         expanded.add(canonical);
         expanded.addAll(synonyms);
       }
@@ -623,10 +708,14 @@ class _SpiritScreenState extends State<SpiritScreen> {
         int selectedLevel = 1;
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            final activeDesc = _resolveDescriptionForLevel(active, selectedLevel);
-            final passiveDesc = _resolveDescriptionForLevel(passive, selectedLevel);
-            final activeTurnText = _resolveSkillTurnsForLevel(active, selectedLevel);
-            final passiveTurnText = _resolveSkillTurnsForLevel(passive, selectedLevel);
+            final activeDesc =
+                _resolveDescriptionForLevel(active, selectedLevel);
+            final passiveDesc =
+                _resolveDescriptionForLevel(passive, selectedLevel);
+            final activeTurnText =
+                _resolveSkillTurnsForLevel(active, selectedLevel);
+            final passiveTurnText =
+                _resolveSkillTurnsForLevel(passive, selectedLevel);
             final activeExtras = _resolveExtraEffects(active, selectedLevel);
             final passiveExtras = _resolveExtraEffects(passive, selectedLevel);
             final activeCharacters = _resolveApplyCharacters(active);
@@ -644,8 +733,9 @@ class _SpiritScreenState extends State<SpiritScreen> {
                         height: 120,
                         child: _SpiritThumbnail(
                           imageUrl: imageUrl,
-                          fallbackImageUrl:
-                              fallbackImageUrl.isEmpty ? null : fallbackImageUrl,
+                          fallbackImageUrl: fallbackImageUrl.isEmpty
+                              ? null
+                              : fallbackImageUrl,
                         ),
                       ),
                     ),
