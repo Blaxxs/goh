@@ -128,9 +128,11 @@ class AccessoryScreenUI extends StatelessWidget {
                                 side: BorderSide(
                                   color: selectedOptionTypeFilter == '고정옵션'
                                       ? colorScheme.primary
-                                      : colorScheme.onSurface.withValues(alpha: 0.28),
-                                  width:
-                                      selectedOptionTypeFilter == '고정옵션' ? 1.3 : 1,
+                                      : colorScheme.onSurface
+                                          .withValues(alpha: 0.28),
+                                  width: selectedOptionTypeFilter == '고정옵션'
+                                      ? 1.3
+                                      : 1,
                                 ),
                                 labelStyle: Theme.of(context)
                                     .textTheme
@@ -164,9 +166,11 @@ class AccessoryScreenUI extends StatelessWidget {
                                 side: BorderSide(
                                   color: selectedOptionTypeFilter == '랜덤옵션'
                                       ? colorScheme.primary
-                                      : colorScheme.onSurface.withValues(alpha: 0.28),
-                                  width:
-                                      selectedOptionTypeFilter == '랜덤옵션' ? 1.3 : 1,
+                                      : colorScheme.onSurface
+                                          .withValues(alpha: 0.28),
+                                  width: selectedOptionTypeFilter == '랜덤옵션'
+                                      ? 1.3
+                                      : 1,
                                 ),
                                 labelStyle: Theme.of(context)
                                     .textTheme
@@ -202,29 +206,28 @@ class AccessoryScreenUI extends StatelessWidget {
                                 selected: selectedSetOnlyFilter,
                                 selectedColor: colorScheme.primaryContainer,
                                 backgroundColor:
-                                  colorScheme.surface.withValues(alpha: 0.65),
+                                    colorScheme.surface.withValues(alpha: 0.65),
                                 side: BorderSide(
                                   color: selectedSetOnlyFilter
-                                    ? colorScheme.primary
-                                    : colorScheme.onSurface.withValues(alpha: 0.28),
-                                  width:
-                                    selectedSetOnlyFilter ? 1.3 : 1,
+                                      ? colorScheme.primary
+                                      : colorScheme.onSurface
+                                          .withValues(alpha: 0.28),
+                                  width: selectedSetOnlyFilter ? 1.3 : 1,
                                 ),
                                 labelStyle: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(
-                                    color: selectedSetOnlyFilter
-                                      ? colorScheme.onPrimaryContainer
-                                      : colorScheme.onSurface,
-                                    fontWeight:
-                                      selectedSetOnlyFilter
-                                        ? FontWeight.w700
-                                        : FontWeight.w500,
-                                  ),
+                                    .textTheme
+                                    .labelMedium
+                                    ?.copyWith(
+                                      color: selectedSetOnlyFilter
+                                          ? colorScheme.onPrimaryContainer
+                                          : colorScheme.onSurface,
+                                      fontWeight: selectedSetOnlyFilter
+                                          ? FontWeight.w700
+                                          : FontWeight.w500,
+                                    ),
                                 visualDensity: VisualDensity.compact,
                                 materialTapTargetSize:
-                                  MaterialTapTargetSize.shrinkWrap,
+                                    MaterialTapTargetSize.shrinkWrap,
                                 onSelected: (_) => onSetOnlyFilterChanged(
                                   !selectedSetOnlyFilter,
                                 ),
@@ -329,149 +332,157 @@ class AccessoryScreenUI extends StatelessWidget {
                         ],
                       ),
                     )
-              : filteredAccessories.isEmpty
-              ? Center(
-                  child: Text("검색 결과가 없습니다.",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: isDark ? Colors.white70 : Colors.black54,
-                      )))
-              : GridView.builder(
-                  padding: const EdgeInsets.all(8.0),
-                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 150, // 각 아이템의 최대 너비
-                    crossAxisSpacing: 8.0,
-                    mainAxisSpacing: 8.0,
-                    childAspectRatio: 0.7, // 아이템 비율 조정
-                  ),
-                  itemCount: filteredAccessories.length,
-                  itemBuilder: (context, index) {
-                    final accessory = filteredAccessories[index];
-                    final isSelected =
-                        compareMode && compareList.contains(accessory);
+                  : filteredAccessories.isEmpty
+                      ? Center(
+                          child: Text("검색 결과가 없습니다.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: isDark ? Colors.white70 : Colors.black54,
+                              )))
+                      : GridView.builder(
+                          padding: const EdgeInsets.all(8.0),
+                          gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 150, // 각 아이템의 최대 너비
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
+                            childAspectRatio: 0.7, // 아이템 비율 조정
+                          ),
+                          itemCount: filteredAccessories.length,
+                          itemBuilder: (context, index) {
+                            final accessory = filteredAccessories[index];
+                            final isSelected =
+                                compareMode && compareList.contains(accessory);
 
-                    return GestureDetector(
-                      onTap: () => onAccessoryTap(context, accessory),
-                      child: Stack(
-                        children: [
-                          Card(
-                            clipBehavior: Clip.antiAlias, // 이미지가 카드의 경계를 넘지 않도록
-                            elevation: isSelected ? 4 : 2,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              side: isSelected
-                                  ? BorderSide(
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                      width: 2.5,
-                                    )
-                                  : BorderSide.none,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                // 1. 이미지 영역
-                                Expanded(
-                                  child: Container(
-                                    color: isDark
-                                        ? Colors.grey[800]
-                                        : Colors.grey[200],
-                                    padding: const EdgeInsets.all(6.0),
-                                    child: CachedNetworkImage(
-                                      imageUrl: accessory.imageUrl,
-                                      fit: BoxFit.contain,
-                                      memCacheWidth: 256,
-                                      memCacheHeight: 256,
-                                      maxWidthDiskCache: 256,
-                                      maxHeightDiskCache: 256,
-                                      fadeInDuration: Duration.zero,
-                                      fadeOutDuration: Duration.zero,
-                                      placeholder: (context, url) =>
-                                          const Center(
-                                        child: SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: CircularProgressIndicator(
-                                              strokeWidth: 2.5),
+                            return GestureDetector(
+                              onTap: () => onAccessoryTap(context, accessory),
+                              child: Stack(
+                                children: [
+                                  Card(
+                                    clipBehavior:
+                                        Clip.antiAlias, // 이미지가 카드의 경계를 넘지 않도록
+                                    elevation: isSelected ? 4 : 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: isSelected
+                                          ? BorderSide(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              width: 2.5,
+                                            )
+                                          : BorderSide.none,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        // 1. 이미지 영역
+                                        Expanded(
+                                          child: Container(
+                                            color: isDark
+                                                ? Colors.grey[800]
+                                                : Colors.grey[200],
+                                            padding: const EdgeInsets.all(6.0),
+                                            child: CachedNetworkImage(
+                                              imageUrl: accessory.imageUrl,
+                                              fit: BoxFit.contain,
+                                              memCacheWidth: 256,
+                                              memCacheHeight: 256,
+                                              maxWidthDiskCache: 256,
+                                              maxHeightDiskCache: 256,
+                                              fadeInDuration: Duration.zero,
+                                              fadeOutDuration: Duration.zero,
+                                              placeholder: (context, url) =>
+                                                  const Center(
+                                                child: SizedBox(
+                                                  width: 24,
+                                                  height: 24,
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                          strokeWidth: 2.5),
+                                                ),
+                                              ),
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      const Icon(
+                                                Icons
+                                                    .image_not_supported_outlined,
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      errorWidget: (context, url, error) =>
-                                          const Icon(
-                                        Icons.image_not_supported_outlined,
-                                        color: Colors.grey,
-                                      ),
+                                        // 2. 텍스트 정보 영역
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 6.0, vertical: 4.0),
+                                          child: Column(
+                                            children: [
+                                              Text(
+                                                accessory.name,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: isDark
+                                                      ? Colors.white
+                                                      : Colors.black87,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 1),
+                                              Text(
+                                                accessory.part,
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  color: isDark
+                                                      ? Colors.white70
+                                                      : Colors.grey[700],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                                // 2. 텍스트 정보 영역
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 6.0, vertical: 4.0),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        accessory.name,
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: isDark
-                                              ? Colors.white
-                                              : Colors.black87,
+                                  if (compareMode)
+                                    Positioned(
+                                      top: 4,
+                                      right: 4,
+                                      child: Container(
+                                        width: 20,
+                                        height: 20,
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                              : Colors.black26,
+                                          shape: BoxShape.circle,
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                        child: isSelected
+                                            ? Icon(
+                                                Icons.check_rounded,
+                                                size: 13,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onPrimary,
+                                              )
+                                            : null,
                                       ),
-                                      const SizedBox(height: 1),
-                                      Text(
-                                        accessory.part,
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          color: isDark
-                                              ? Colors.white70
-                                              : Colors.grey[700],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (compareMode)
-                            Positioned(
-                              top: 4,
-                              right: 4,
-                              child: Container(
-                                width: 20,
-                                height: 20,
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Colors.black26,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: isSelected
-                                    ? Icon(
-                                        Icons.check_rounded,
-                                        size: 13,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
-                                      )
-                                    : null,
+                                    ),
+                                ],
                               ),
-                            ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                            );
+                          },
+                        ),
         ),
       ],
     );
   }
-
 }
 
 class _AnimatedAccessorySearchField extends StatefulWidget {
@@ -560,7 +571,8 @@ class _AnimatedAccessorySearchFieldState
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final collapsedSize = 36.0;
-    final expandedWidth = MediaQuery.of(context).size.width < 420 ? 188.0 : 232.0;
+    final expandedWidth =
+        MediaQuery.of(context).size.width < 420 ? 188.0 : 232.0;
 
     return AnimatedContainer(
       duration: _animationDuration,
