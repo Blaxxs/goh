@@ -409,7 +409,7 @@ class AppDrawer extends StatelessWidget {
                   _buildDrawerListTile(
                     context,
                     icon: Icons.auto_awesome_rounded,
-                    text: '스피릿 도감 TEST',
+                    text: '스피릿 도감',
                     selected: currentScreen == AppScreen.spirit,
                     onTap: () {
                       navigateFromMain(

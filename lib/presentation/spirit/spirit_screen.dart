@@ -334,7 +334,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
             onPressed: () => Scaffold.of(ctx).openDrawer(),
           ),
         ),
-        title: const Text('스피릿 도감 TEST'),
+        title: const Text('스피릿 도감'),
       ),
       body: Column(
         children: [
@@ -683,9 +683,13 @@ class _SpiritScreenState extends State<SpiritScreen> {
   static const Map<String, Set<String>> _searchSynonyms = {
     '크리티컬증가': {'크리', '크증'},
     '크리티컬데미지증가': {'크뎀', '크뎀증'},
-    '관통확률저항증가': {'관통저항', '저항', '관저'},
-    '관통저항확률증가': {'관통저항', '저항', '관저'},
+    '크리티컬저항': {'크저', '저항'},
     '명중증가': {'명중', '힛'},
+    '회피증가': {'회피', '닷지'},
+    '모든나쁜효과저항': {'모나저', '모저', '나저'},
+    '관통확률증가': {'관증'},
+    '관통확률저항증가': {'관저'},
+    '관통저항확률증가': {'관저'},
   };
 
   void _showSpiritDetails(Map<String, dynamic> spirit) {
