@@ -667,6 +667,8 @@ class _SpiritScreenState extends State<SpiritScreen> {
     final normalized = _normalizeSearchText(target);
     final aliases = <String>{normalized};
 
+    _addCombinedPhraseAliases(normalized, aliases);
+
     for (final entry in _searchSynonyms.entries) {
       final canonical = entry.key;
       final synonyms = entry.value;
@@ -680,12 +682,23 @@ class _SpiritScreenState extends State<SpiritScreen> {
     return aliases;
   }
 
+  void _addCombinedPhraseAliases(String normalized, Set<String> aliases) {
+    if (normalized.contains('명중') && normalized.contains('감소')) {
+      aliases.addAll({'명중감소', '힛감소'});
+    }
+    if (normalized.contains('회피') && normalized.contains('감소')) {
+      aliases.addAll({'회피감소', '닷지감소'});
+    }
+  }
+
   static const Map<String, Set<String>> _searchSynonyms = {
     '크리티컬증가': {'크리', '크증'},
     '크리티컬데미지증가': {'크뎀', '크뎀증'},
     '크리티컬저항': {'크저', '저항'},
     '명중증가': {'명중', '힛'},
+    '명중감소': {'힛감소'},
     '회피증가': {'회피', '닷지'},
+    '회피감소': {'닷지감소'},
     '모든나쁜효과저항': {'모나저', '모저', '나저'},
     '관통확률증가': {'관증'},
     '관통확률저항증가': {'관저'},
