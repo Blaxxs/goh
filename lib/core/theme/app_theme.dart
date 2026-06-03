@@ -3,6 +3,14 @@ import 'package:flutter/material.dart';
 class AppTheme {
   const AppTheme._();
 
+  static const List<String> _koreanFontFallback = [
+    'Malgun Gothic',
+    'Apple SD Gothic Neo',
+    'Noto Sans KR',
+    'Nanum Gothic',
+    'sans-serif',
+  ];
+
   static ThemeData buildTheme({
     required Brightness brightness,
     required double fontSizeMultiplier,
@@ -67,6 +75,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       fontFamily: 'NanumGothic',
+      fontFamilyFallback: _koreanFontFallback,
       brightness: brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: scaffoldBackground,
