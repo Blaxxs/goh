@@ -676,20 +676,6 @@ class _SpiritScreenState extends State<SpiritScreen> {
         .replaceAll(RegExp(r'[^0-9a-z가-힣]'), '');
   }
 
-  Set<String> _expandSearchQueries(String normalizedQuery) {
-    final expanded = <String>{normalizedQuery};
-    for (final entry in _searchSynonyms.entries) {
-      final canonical = entry.key;
-      final synonyms = entry.value;
-      if (canonical.contains(normalizedQuery) ||
-          synonyms.contains(normalizedQuery)) {
-        expanded.add(canonical);
-        expanded.addAll(synonyms);
-      }
-    }
-    return expanded;
-  }
-
   Set<String> _expandSearchToken(String normalizedToken) {
     final expanded = <String>{normalizedToken};
     for (final entry in _searchSynonyms.entries) {
