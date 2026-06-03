@@ -33,6 +33,10 @@ class _SpiritSearchTargets {
 }
 
 class _SpiritScreenState extends State<SpiritScreen> {
+  static const Duration _cacheTtl = Duration(minutes: 10);
+  static List<Map<String, dynamic>>? _spiritsCache;
+  static DateTime? _spiritsCacheUpdatedAt;
+
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   _SpiritSearchScope _searchScope = _SpiritSearchScope.all;
@@ -44,10 +48,44 @@ class _SpiritScreenState extends State<SpiritScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSpirits();
+    _restoreFromCache();
+    _loadSpirits(forceNetwork: !_hasFreshCache);
   }
 
-  Future<void> _loadSpirits() async {
+  bool get _hasFreshCache {
+    final cached = _spiritsCache;
+    final updatedAt = _spiritsCacheUpdatedAt;
+    if (cached == null || cached.isEmpty || updatedAt == null) {
+      return false;
+    }
+    return DateTime.now().difference(updatedAt) <= _cacheTtl;
+  }
+
+  void _restoreFromCache() {
+    final cached = _spiritsCache;
+    if (cached == null || cached.isEmpty) {
+      return;
+    }
+
+    _allSpirits
+      ..clear()
+      ..addAll(cached.map((e) => Map<String, dynamic>.from(e)));
+    _isLoading = false;
+    _errorMessage = null;
+  }
+
+  Future<void> _loadSpirits({bool forceNetwork = true}) async {
+    if (!forceNetwork && _hasFreshCache) {
+      return;
+    }
+
+    if (mounted && _allSpirits.isEmpty) {
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+    }
+
     try {
       final snapshot = await FirebaseDatabase.instance.ref('spirits').get();
       if (!mounted) {
@@ -100,6 +138,9 @@ class _SpiritScreenState extends State<SpiritScreen> {
         final bName = (b['name'] ?? '').toString();
         return aName.compareTo(bName);
       });
+
+      _spiritsCache = parsed.map((e) => Map<String, dynamic>.from(e)).toList();
+      _spiritsCacheUpdatedAt = DateTime.now();
 
       setState(() {
         _allSpirits
@@ -275,11 +316,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
                               const SizedBox(height: 12),
                               ElevatedButton(
                                 onPressed: () {
-                                  setState(() {
-                                    _isLoading = true;
-                                    _errorMessage = null;
-                                  });
-                                  _loadSpirits();
+                                  _loadSpirits(forceNetwork: true);
                                 },
                                 child: const Text('다시 시도'),
                               ),
