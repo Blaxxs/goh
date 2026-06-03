@@ -29,6 +29,7 @@ class AccessoryScreen extends StatefulWidget {
 
 class _AccessoryScreenState extends State<AccessoryScreen> {
   final TextEditingController _searchController = TextEditingController();
+  static const Duration _searchDebounceDelay = Duration(milliseconds: 150);
 
   String? _selectedPartFilter;
   String _selectedOptionTypeFilter = '전체';
@@ -41,6 +42,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   final List<Accessory> _compareList = [];
   bool _isAccessoryDataLoading = false;
   Timer? _accessoryReloadTimer;
+  Timer? _searchDebounceTimer;
   bool _showMaxEnhancementValues = false;
 
   @override
@@ -104,13 +106,25 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   @override
   void dispose() {
     _accessoryReloadTimer?.cancel();
+    _searchDebounceTimer?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   void _applySearchQuery(String value) {
-    setState(() {
-      _searchQuery = value.trim();
+    final composingRange = _searchController.value.composing;
+    if (composingRange.isValid && !composingRange.isCollapsed) {
+      return;
+    }
+
+    _searchDebounceTimer?.cancel();
+    _searchDebounceTimer = Timer(_searchDebounceDelay, () {
+      if (!mounted) return;
+      final nextQuery = _searchController.text.trim();
+      if (_searchQuery == nextQuery) return;
+      setState(() {
+        _searchQuery = nextQuery;
+      });
     });
   }
 
