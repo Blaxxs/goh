@@ -722,8 +722,8 @@ class _SpiritScreenState extends State<SpiritScreen> {
     for (final entry in _searchSynonyms.entries) {
       final canonical = entry.key;
       final synonyms = entry.value;
-      final isMatched = canonical == normalizedToken ||
-          synonyms.contains(normalizedToken);
+      final isMatched =
+          canonical == normalizedToken || synonyms.contains(normalizedToken);
       if (isMatched) {
         expanded.add(canonical);
         expanded.addAll(synonyms);
