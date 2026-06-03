@@ -14,8 +14,6 @@ class AccessoryScreenUI extends StatelessWidget {
   final bool selectedSetOnlyFilter;
   final ValueChanged<bool> onSetOnlyFilterChanged;
   final Function(BuildContext, Accessory) onAccessoryTap;
-  final String currentSearchQuery;
-  final VoidCallback onClearSearch;
   final ValueChanged<String> onSubmitSearch;
   final bool compareMode;
   final List<Accessory> compareList;
@@ -38,8 +36,6 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.selectedSetOnlyFilter,
     required this.onSetOnlyFilterChanged,
     required this.onAccessoryTap,
-    required this.currentSearchQuery,
-    required this.onClearSearch,
     required this.onSubmitSearch,
     this.compareMode = false,
     this.compareList = const [],
@@ -110,187 +106,150 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // --- 검색 + 필터 (토글 옆 작은 검색창 + 부위 칩) ---
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              FilterChip(
-                                label: const Text('고정옵션'),
-                                showCheckmark: false,
-                                selected: selectedOptionTypeFilter == '고정옵션',
-                                selectedColor: colorScheme.primaryContainer,
-                                backgroundColor:
-                                    colorScheme.surface.withValues(alpha: 0.65),
-                                side: BorderSide(
-                                  color: selectedOptionTypeFilter == '고정옵션'
-                                      ? colorScheme.primary
-                                      : colorScheme.onSurface
-                                          .withValues(alpha: 0.28),
-                                  width: selectedOptionTypeFilter == '고정옵션'
-                                      ? 1.3
-                                      : 1,
-                                ),
-                                labelStyle: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
-                                    ?.copyWith(
-                                      color: selectedOptionTypeFilter == '고정옵션'
-                                          ? colorScheme.onPrimaryContainer
-                                          : colorScheme.onSurface,
-                                      fontWeight:
-                                          selectedOptionTypeFilter == '고정옵션'
-                                              ? FontWeight.w700
-                                              : FontWeight.w500,
-                                    ),
-                                visualDensity: VisualDensity.compact,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                onSelected: (_) => onOptionTypeFilterChanged(
-                                  selectedOptionTypeFilter == '고정옵션'
-                                      ? '전체'
-                                      : '고정옵션',
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              FilterChip(
-                                label: const Text('랜덤옵션'),
-                                showCheckmark: false,
-                                selected: selectedOptionTypeFilter == '랜덤옵션',
-                                selectedColor: colorScheme.primaryContainer,
-                                backgroundColor:
-                                    colorScheme.surface.withValues(alpha: 0.65),
-                                side: BorderSide(
-                                  color: selectedOptionTypeFilter == '랜덤옵션'
-                                      ? colorScheme.primary
-                                      : colorScheme.onSurface
-                                          .withValues(alpha: 0.28),
-                                  width: selectedOptionTypeFilter == '랜덤옵션'
-                                      ? 1.3
-                                      : 1,
-                                ),
-                                labelStyle: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
-                                    ?.copyWith(
-                                      color: selectedOptionTypeFilter == '랜덤옵션'
-                                          ? colorScheme.onPrimaryContainer
-                                          : colorScheme.onSurface,
-                                      fontWeight:
-                                          selectedOptionTypeFilter == '랜덤옵션'
-                                              ? FontWeight.w700
-                                              : FontWeight.w500,
-                                    ),
-                                visualDensity: VisualDensity.compact,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                onSelected: (_) => onOptionTypeFilterChanged(
-                                  selectedOptionTypeFilter == '랜덤옵션'
-                                      ? '전체'
-                                      : '랜덤옵션',
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                width: 1,
-                                height: 20,
-                                color: Theme.of(context).dividerColor,
-                              ),
-                              const SizedBox(width: 8),
-                              FilterChip(
-                                label: const Text('세트'),
-                                showCheckmark: false,
-                                selected: selectedSetOnlyFilter,
-                                selectedColor: colorScheme.primaryContainer,
-                                backgroundColor:
-                                    colorScheme.surface.withValues(alpha: 0.65),
-                                side: BorderSide(
-                                  color: selectedSetOnlyFilter
-                                      ? colorScheme.primary
-                                      : colorScheme.onSurface
-                                          .withValues(alpha: 0.28),
-                                  width: selectedSetOnlyFilter ? 1.3 : 1,
-                                ),
-                                labelStyle: Theme.of(context)
-                                    .textTheme
-                                    .labelMedium
-                                    ?.copyWith(
-                                      color: selectedSetOnlyFilter
-                                          ? colorScheme.onPrimaryContainer
-                                          : colorScheme.onSurface,
-                                      fontWeight: selectedSetOnlyFilter
-                                          ? FontWeight.w700
-                                          : FontWeight.w500,
-                                    ),
-                                visualDensity: VisualDensity.compact,
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                onSelected: (_) => onSetOnlyFilterChanged(
-                                  !selectedSetOnlyFilter,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Container(
-                                width: 1,
-                                height: 20,
-                                color: Theme.of(context).dividerColor,
-                              ),
-                              const SizedBox(width: 8),
-                              ...partFilterOptions
-                                  .where((part) => part != '전체')
-                                  .map((part) {
-                                final selected = selectedPartFilter == part;
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 6),
-                                  child: FilterChip(
-                                    label: Text(part),
-                                    showCheckmark: false,
-                                    selected: selected,
-                                    selectedColor: colorScheme.primaryContainer,
-                                    backgroundColor: colorScheme.surface
-                                        .withValues(alpha: 0.65),
-                                    side: BorderSide(
-                                      color: selected
-                                          ? colorScheme.primary
-                                          : colorScheme.onSurface
-                                              .withValues(alpha: 0.28),
-                                      width: selected ? 1.3 : 1,
-                                    ),
-                                    labelStyle: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium
-                                        ?.copyWith(
-                                          color: selected
-                                              ? colorScheme.onPrimaryContainer
-                                              : colorScheme.onSurface,
-                                          fontWeight: selected
-                                              ? FontWeight.w700
-                                              : FontWeight.w500,
-                                        ),
-                                    visualDensity: VisualDensity.compact,
-                                    materialTapTargetSize:
-                                        MaterialTapTargetSize.shrinkWrap,
-                                    onSelected: (_) => onPartFilterChanged(
-                                      selected ? null : part,
-                                    ),
+                  TextField(
+                    controller: searchController,
+                    onChanged: onSubmitSearch,
+                    decoration: const InputDecoration(
+                      hintText: '이름/옵션 검색 (예: 크리, 크뎀, 관저)',
+                      prefixIcon: Icon(Icons.search_rounded, size: 20),
+                      isDense: true,
+                      border: OutlineInputBorder(),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        FilterChip(
+                          label: const Text('고정옵션'),
+                          showCheckmark: false,
+                          selected: selectedOptionTypeFilter == '고정옵션',
+                          selectedColor: colorScheme.primaryContainer,
+                          backgroundColor:
+                              colorScheme.surface.withValues(alpha: 0.65),
+                          side: BorderSide(
+                            color: selectedOptionTypeFilter == '고정옵션'
+                                ? colorScheme.primary
+                                : colorScheme.onSurface.withValues(alpha: 0.28),
+                            width: selectedOptionTypeFilter == '고정옵션' ? 1.3 : 1,
+                          ),
+                          labelStyle:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: selectedOptionTypeFilter == '고정옵션'
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurface,
+                                    fontWeight:
+                                        selectedOptionTypeFilter == '고정옵션'
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
                                   ),
-                                );
-                              }),
-                            ],
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          onSelected: (_) => onOptionTypeFilterChanged(
+                            selectedOptionTypeFilter == '고정옵션' ? '전체' : '고정옵션',
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      _AnimatedAccessorySearchField(
-                        controller: searchController,
-                        currentSearchQuery: currentSearchQuery,
-                        onClearSearch: onClearSearch,
-                        onSubmitSearch: onSubmitSearch,
-                      ),
-                    ],
+                        FilterChip(
+                          label: const Text('랜덤옵션'),
+                          showCheckmark: false,
+                          selected: selectedOptionTypeFilter == '랜덤옵션',
+                          selectedColor: colorScheme.primaryContainer,
+                          backgroundColor:
+                              colorScheme.surface.withValues(alpha: 0.65),
+                          side: BorderSide(
+                            color: selectedOptionTypeFilter == '랜덤옵션'
+                                ? colorScheme.primary
+                                : colorScheme.onSurface.withValues(alpha: 0.28),
+                            width: selectedOptionTypeFilter == '랜덤옵션' ? 1.3 : 1,
+                          ),
+                          labelStyle:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: selectedOptionTypeFilter == '랜덤옵션'
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurface,
+                                    fontWeight:
+                                        selectedOptionTypeFilter == '랜덤옵션'
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
+                                  ),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          onSelected: (_) => onOptionTypeFilterChanged(
+                            selectedOptionTypeFilter == '랜덤옵션' ? '전체' : '랜덤옵션',
+                          ),
+                        ),
+                        FilterChip(
+                          label: const Text('세트'),
+                          showCheckmark: false,
+                          selected: selectedSetOnlyFilter,
+                          selectedColor: colorScheme.primaryContainer,
+                          backgroundColor:
+                              colorScheme.surface.withValues(alpha: 0.65),
+                          side: BorderSide(
+                            color: selectedSetOnlyFilter
+                                ? colorScheme.primary
+                                : colorScheme.onSurface.withValues(alpha: 0.28),
+                            width: selectedSetOnlyFilter ? 1.3 : 1,
+                          ),
+                          labelStyle:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: selectedSetOnlyFilter
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurface,
+                                    fontWeight: selectedSetOnlyFilter
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
+                          visualDensity: VisualDensity.compact,
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          onSelected: (_) =>
+                              onSetOnlyFilterChanged(!selectedSetOnlyFilter),
+                        ),
+                        ...partFilterOptions.where((part) => part != '전체').map(
+                          (part) {
+                            final selected = selectedPartFilter == part;
+                            return FilterChip(
+                              label: Text(part),
+                              showCheckmark: false,
+                              selected: selected,
+                              selectedColor: colorScheme.primaryContainer,
+                              backgroundColor:
+                                  colorScheme.surface.withValues(alpha: 0.65),
+                              side: BorderSide(
+                                color: selected
+                                    ? colorScheme.primary
+                                    : colorScheme.onSurface
+                                        .withValues(alpha: 0.28),
+                                width: selected ? 1.3 : 1,
+                              ),
+                              labelStyle: Theme.of(context)
+                                  .textTheme
+                                  .labelMedium
+                                  ?.copyWith(
+                                    color: selected
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurface,
+                                    fontWeight:
+                                        selected ? FontWeight.w700 : FontWeight.w500,
+                                  ),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                              onSelected: (_) =>
+                                  onPartFilterChanged(selected ? null : part),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -481,206 +440,6 @@ class AccessoryScreenUI extends StatelessWidget {
                         ),
         ),
       ],
-    );
-  }
-}
-
-class _AnimatedAccessorySearchField extends StatefulWidget {
-  final TextEditingController controller;
-  final String currentSearchQuery;
-  final VoidCallback onClearSearch;
-  final ValueChanged<String> onSubmitSearch;
-
-  const _AnimatedAccessorySearchField({
-    required this.controller,
-    required this.currentSearchQuery,
-    required this.onClearSearch,
-    required this.onSubmitSearch,
-  });
-
-  @override
-  State<_AnimatedAccessorySearchField> createState() =>
-      _AnimatedAccessorySearchFieldState();
-}
-
-class _AnimatedAccessorySearchFieldState
-    extends State<_AnimatedAccessorySearchField> {
-  static const _animationDuration = Duration(milliseconds: 220);
-
-  final FocusNode _focusNode = FocusNode();
-  bool _expanded = false;
-  bool _isSubmitting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    widget.controller.addListener(_handleTextChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.controller.removeListener(_handleTextChanged);
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  void _handleTextChanged() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
-
-  Future<void> _expand() async {
-    if (_expanded) {
-      _focusNode.requestFocus();
-      return;
-    }
-    setState(() {
-      _expanded = true;
-    });
-    // TextField가 트리에 붙은 뒤 포커스를 요청해야 Android에서 키보드가 안정적으로 열린다.
-    await WidgetsBinding.instance.endOfFrame;
-    await Future<void>.delayed(const Duration(milliseconds: 60));
-    if (!mounted) return;
-    _focusNode.requestFocus();
-    if (!_focusNode.hasFocus) {
-      await Future<void>.delayed(const Duration(milliseconds: 60));
-      if (!mounted) return;
-      _focusNode.requestFocus();
-    }
-  }
-
-  Future<void> _submit() async {
-    if (_isSubmitting) return;
-
-    _focusNode.unfocus();
-    setState(() {
-      _expanded = false;
-      _isSubmitting = true;
-    });
-    await Future<void>.delayed(_animationDuration);
-    if (!mounted) return;
-    widget.onSubmitSearch(widget.controller.text);
-    setState(() {
-      _isSubmitting = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final collapsedSize = 36.0;
-    final expandedWidth =
-        MediaQuery.of(context).size.width < 420 ? 188.0 : 232.0;
-
-    return AnimatedContainer(
-      duration: _animationDuration,
-      curve: Curves.easeOutCubic,
-      width: _expanded ? expandedWidth : collapsedSize,
-      height: collapsedSize,
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        color: _expanded
-            ? colorScheme.surface
-            : colorScheme.surface.withValues(alpha: 0.65),
-        // AnimatedContainer에서 shape<->borderRadius 전환 시 assert가 발생할 수 있어
-        // 항상 rectangle + 고정 라운드(18)로 유지한다. 36x36에서는 원형으로 보인다.
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: _expanded
-              ? colorScheme.primary
-              : colorScheme.onSurface.withValues(alpha: 0.28),
-          width: _expanded ? 1.3 : 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: _expanded ? BorderRadius.circular(18) : null,
-          customBorder: _expanded ? null : const CircleBorder(),
-          onTap: _expanded ? null : _expand,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              // 애니메이션 경계 프레임(열림 직전/닫힘 직후)에서도 안전하도록
-              // 충분한 폭이 확보되기 전까지는 아이콘-only 레이아웃만 사용.
-              // 188px(소형 기기)에서도 TextField가 렌더링되도록 임계값을 낮춘다.
-              final compact = !_expanded || constraints.maxWidth < 150;
-              if (compact) {
-                return Center(
-                  child: Icon(
-                    Icons.search_rounded,
-                    size: 18,
-                    color: colorScheme.onSurface,
-                  ),
-                );
-              }
-
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.search_rounded,
-                      size: 18,
-                      color: colorScheme.primary,
-                    ),
-                    const SizedBox(width: 6),
-                    Expanded(
-                      child: TextField(
-                        controller: widget.controller,
-                        focusNode: _focusNode,
-                        onChanged: (v) {
-                          if (mounted) {
-                            setState(() {});
-                            widget.onSubmitSearch(v);
-                          }
-                        },
-                        onSubmitted: (_) => _submit(),
-                        decoration: const InputDecoration(
-                          hintText: '이름/옵션',
-                          isDense: true,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.zero,
-                        ),
-                      ),
-                    ),
-                    if (widget.controller.text.isNotEmpty)
-                      GestureDetector(
-                        onTap: widget.onClearSearch,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(
-                            Icons.close_rounded,
-                            size: 18,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                      ),
-                    GestureDetector(
-                      onTap: _submit,
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: colorScheme.primaryContainer,
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Icons.search_rounded,
-                          size: 16,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ),
     );
   }
 }

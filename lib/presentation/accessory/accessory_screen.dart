@@ -133,13 +133,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     });
   }
 
-  void _clearSearch() {
-    _searchController.clear();
-    setState(() {
-      _searchQuery = '';
-    });
-  }
-
   void _showAccessoryDetails(BuildContext context, Accessory accessory) {
     showDialog(
       context: context,
@@ -377,8 +370,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
             _showAccessoryDetails(ctx, acc);
           }
         },
-        currentSearchQuery: _searchQuery,
-        onClearSearch: _clearSearch,
         onSubmitSearch: _applySearchQuery,
         compareMode: _compareMode,
         compareList: _compareList,
