@@ -43,7 +43,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   bool _isAccessoryDataLoading = false;
   Timer? _accessoryReloadTimer;
   Timer? _searchDebounceTimer;
-  bool _showMaxEnhancementValues = false;
+  bool _showMaxEnhancementValues = true;
 
   @override
   void initState() {
