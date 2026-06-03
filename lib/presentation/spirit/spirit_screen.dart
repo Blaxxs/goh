@@ -518,8 +518,10 @@ class _SpiritScreenState extends State<SpiritScreen> {
       return true;
     }
 
-    final normalizedQuery = _normalizeSearchText(query);
-    final expandedQueries = _expandSearchQueries(normalizedQuery);
+    final queryTokens = _tokenizeSearchQuery(query);
+    if (queryTokens.isEmpty) {
+      return true;
+    }
 
     final targets = _collectSearchTargetsByScope(spirit);
     final selectedTargets = switch (_searchScope) {
@@ -535,18 +537,43 @@ class _SpiritScreenState extends State<SpiritScreen> {
 
     for (final target in selectedTargets) {
       final aliases = _searchAliasesForTarget(target);
-      for (final expandedQuery in expandedQueries) {
-        if (expandedQuery.isEmpty) {
-          continue;
-        }
-        for (final alias in aliases) {
-          if (alias.contains(expandedQuery)) {
-            return true;
-          }
-        }
+      if (_matchesAllQueryTokens(queryTokens, aliases)) {
+        return true;
       }
     }
 
+    return false;
+  }
+
+  List<String> _tokenizeSearchQuery(String query) {
+    return query
+        .split(RegExp(r'\s+'))
+        .map(_normalizeSearchText)
+        .where((token) => token.isNotEmpty)
+        .toList();
+  }
+
+  bool _matchesAllQueryTokens(List<String> queryTokens, Set<String> aliases) {
+    for (final token in queryTokens) {
+      if (!_matchesAnyAliasToken(token, aliases)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _matchesAnyAliasToken(String token, Set<String> aliases) {
+    final expandedTokens = _expandSearchToken(token);
+    for (final alias in aliases) {
+      for (final expandedToken in expandedTokens) {
+        if (expandedToken.isEmpty) {
+          continue;
+        }
+        if (alias.contains(expandedToken) || expandedToken.contains(alias)) {
+          return true;
+        }
+      }
+    }
     return false;
   }
 
@@ -656,6 +683,23 @@ class _SpiritScreenState extends State<SpiritScreen> {
       final synonyms = entry.value;
       if (canonical.contains(normalizedQuery) ||
           synonyms.contains(normalizedQuery)) {
+        expanded.add(canonical);
+        expanded.addAll(synonyms);
+      }
+    }
+    return expanded;
+  }
+
+  Set<String> _expandSearchToken(String normalizedToken) {
+    final expanded = <String>{normalizedToken};
+    for (final entry in _searchSynonyms.entries) {
+      final canonical = entry.key;
+      final synonyms = entry.value;
+      final isMatched = canonical.contains(normalizedToken) ||
+          normalizedToken.contains(canonical) ||
+          synonyms.any((syn) =>
+              syn.contains(normalizedToken) || normalizedToken.contains(syn));
+      if (isMatched) {
         expanded.add(canonical);
         expanded.addAll(synonyms);
       }
