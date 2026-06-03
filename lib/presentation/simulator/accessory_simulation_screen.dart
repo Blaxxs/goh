@@ -15,7 +15,7 @@ import '../../domain/logic/accessory_option_roll_logic.dart';
 import 'accessory_enhancement_screen_ui.dart';
 
 const _silverRemodelGoldCost = 20000;
-const _goldRemodelGoldCost = 30000;
+const _goldRemodelGoldCost = 3000;
 const _autoEnhanceBatchSize = 15;
 const _maxCraftLogCount = 80;
 const _lastSelectedAccessoryIdKey = 'accessory_sim_last_selected_id';
@@ -80,12 +80,7 @@ class CraftedAccessoryLogEntry {
 const _noValue = Object();
 
 class AccessorySimulationScreen extends StatefulWidget {
-  final Accessory? initialAccessory;
-
-  const AccessorySimulationScreen({
-    super.key,
-    this.initialAccessory,
-  });
+  const AccessorySimulationScreen({super.key});
 
   @override
   State<AccessorySimulationScreen> createState() =>
@@ -158,15 +153,11 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   void initState() {
     super.initState();
     final allAccessories = AccessoryDataManager().allAccessories;
-    if (widget.initialAccessory != null) {
-      _selectedAccessory = widget.initialAccessory;
-    } else if (allAccessories.isNotEmpty) {
+    if (allAccessories.isNotEmpty) {
       _selectedAccessory = allAccessories.first;
     }
     _syncSelectedOptionCount();
-    if (widget.initialAccessory == null) {
-      _loadLastSelectedAccessory();
-    }
+    _loadLastSelectedAccessory();
   }
 
   Future<void> _loadLastSelectedAccessory() async {
@@ -272,8 +263,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     if (baseValue != null) {
       return option.copyWith(
         optionValue: (baseValue + bonusValue).toString(),
-        minNormalValue: option.minNormalValue != null ? option.minNormalValue! + bonusValue : null,
-        maxNormalValue: option.maxNormalValue != null ? option.maxNormalValue! + bonusValue : null,
+        minNormalValue: option.minNormalValue != null
+            ? option.minNormalValue! + bonusValue
+            : null,
+        maxNormalValue: option.maxNormalValue != null
+            ? option.maxNormalValue! + bonusValue
+            : null,
       );
     }
 
@@ -546,7 +541,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           ),
                           const SizedBox(width: 8),
                           SizedBox(
-                            width: 96,
+                            width: 108,
                             child: TextField(
                               controller: searchController,
                               onChanged: (v) => setSheetState(
@@ -782,8 +777,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
             .map((option) => _normalizeOptionName(option.optionName))
             .toSet();
         final weightedPool = _availableChangeableOptions()
-            .where((option) =>
-                !excludedNames.contains(_normalizeOptionName(option.optionName)))
+            .where((option) => !excludedNames
+                .contains(_normalizeOptionName(option.optionName)))
             .toList(growable: false);
         final templatePool =
             weightedPool.isEmpty ? _availableChangeableOptions() : weightedPool;
@@ -1307,8 +1302,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   }
 
   void _canonicalizeDamageReductionOption(List<AccessoryOption> options) {
-    const legacyName = '모든 피해 %감소';
-    const canonicalName = '모든피해 %감소';
+    const legacyName = '모든피해 %감소';
+    const canonicalName = '모든 피해 %감소';
 
     var hasCanonical = options.any(
       (option) => option.optionName.trim() == canonicalName,
@@ -1670,7 +1665,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                 _bonusValueForOptionAt(
                                     i, baseOption, _currentEnhancementLevel))
                             : null;
-                        final rangeOption = appearedOption ?? enhancedBaseOption;
+                        final rangeOption =
+                            appearedOption ?? enhancedBaseOption;
                         final minVal = rangeOption?.minNormalValue;
                         final maxVal = rangeOption?.maxNormalValue;
                         final hasRange = minVal != null && maxVal != null;
@@ -1745,9 +1741,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                 child: _buildSummaryValueText(
                                   context,
                                   hasRange ? '$minVal~$maxVal' : '-',
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outline,
+                                  color: Theme.of(context).colorScheme.outline,
                                 ),
                               ),
                             ],
@@ -1782,14 +1776,6 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
   Widget _buildModeSelector() {
     return SegmentedButton<AccessorySimulationMode>(
-      showSelectedIcon: false,
-      style: ButtonStyle(
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        visualDensity: VisualDensity.compact,
-        padding: WidgetStateProperty.all(
-          const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        ),
-      ),
       segments: const [
         ButtonSegment<AccessorySimulationMode>(
           value: AccessorySimulationMode.craft,
@@ -2300,9 +2286,8 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
 
     if (isFilled) {
       optionName = _currentOptions[index].optionName;
-      optionValue = _optionChangeDisplayValue(
+      optionValue = _formatOptionValueWithRange(
         _displayedOptionsForCurrentEnhancement[index],
-        showRange: isRandomAccessory,
       );
       optionColor =
           useFixedSlotStyle ? Colors.grey : theme.textTheme.bodyLarge?.color;
@@ -2392,113 +2377,92 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('개조', style: Theme.of(context).textTheme.titleSmall),
-                      const SizedBox(height: 8),
-                      SegmentedButton<bool>(
-                        segments: const [
-                          ButtonSegment<bool>(value: false, label: Text('은모루')),
-                          ButtonSegment<bool>(value: true, label: Text('금모루')),
-                        ],
-                        selected: {_useGoldMoruForRemodel},
-                        onSelectionChanged: (value) {
-                          setState(() {
-                            _useGoldMoruForRemodel = value.first;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      _buildSimpleCostCard(_currentRemodelCost),
-                      const SizedBox(height: 6),
-                      Text(
-                        '개조 횟수: $_remodelAttemptCount/15',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 6),
-                      Visibility(
-                        visible: !_canAttemptRemodelByCount,
-                        maintainState: true,
-                        maintainAnimation: true,
-                        maintainSize: true,
-                        child: RichText(
-                          text: TextSpan(
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            children: [
-                              const TextSpan(text: '개조가 '),
-                              TextSpan(
-                                text: '불가능',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const TextSpan(text: ' 합니다.'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('개조', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 8),
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment<bool>(value: false, label: Text('은모루')),
+                    ButtonSegment<bool>(value: true, label: Text('금모루')),
+                  ],
+                  selected: {_useGoldMoruForRemodel},
+                  onSelectionChanged: (value) {
+                    setState(() {
+                      _useGoldMoruForRemodel = value.first;
+                    });
+                  },
+                ),
+                const SizedBox(height: 8),
+                _buildSimpleCostCard(_currentRemodelCost),
+                const SizedBox(height: 6),
+                Text(
+                  '개조 횟수: $_remodelAttemptCount/15',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: OutlinedButton.icon(
+                    onPressed: _resetRemodelAttemptCount,
+                    icon: const Icon(Icons.refresh_rounded),
+                    label: const Text('개조 횟수 초기화'),
                   ),
                 ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('누적 소모', style: Theme.of(context).textTheme.titleSmall),
-                      const SizedBox(height: 8),
-                      Text(
-                          '개조 횟수: ${_numberFormat.format(_totalRemodelAttemptCount)}회'),
-                      Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
-                      Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
-                      Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
-                      Text(
-                          '영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
-                      const SizedBox(height: 12),
-                      Visibility(
-                        visible: !_canAttemptRemodelByCount,
-                        maintainState: true,
-                        maintainAnimation: true,
-                        maintainSize: true,
-                        child: Align(
-                          alignment: Alignment.centerRight,
-                          child: OutlinedButton.icon(
-                            onPressed: _resetRemodelAttemptCount,
-                            icon: const Icon(Icons.refresh_rounded),
-                            label: const Text('개조 횟수 초기화'),
-                          ),
+                if (!_canAttemptRemodelByCount)
+                  RichText(
+                    text: TextSpan(
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      children: [
+                        const TextSpan(text: '개조가 '),
+                        TextSpan(
+                          text: '불가능',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
-                      ),
-                    ],
+                        const TextSpan(text: ' 합니다.'),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed:
+                        _canAttemptRemodelByCount ? _performRemodel : null,
+                    icon: const Icon(Icons.build_circle_outlined),
+                    label: const Text('개조 실행'),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
         const SizedBox(height: 12),
-        Center(
-          child: FilledButton.icon(
-            onPressed: _canAttemptRemodelByCount ? _performRemodel : null,
-            icon: const Icon(Icons.build_circle_outlined),
-            label: const Text('개조 실행'),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('누적 소모', style: Theme.of(context).textTheme.titleSmall),
+                const SizedBox(height: 8),
+                Text(
+                    '개조 횟수: ${_numberFormat.format(_totalRemodelAttemptCount)}회'),
+                Text('은모루: ${_numberFormat.format(_silverMoruConsumed)}개'),
+                Text('금모루: ${_numberFormat.format(_goldMoruConsumed)}개'),
+                Text('골드: ${_numberFormat.format(_totalRemodelGoldConsumed)}'),
+                Text(
+                    '영혼석: ${_numberFormat.format(_totalRemodelSoulStonesConsumed)}개'),
+              ],
+            ),
           ),
         ),
       ],
@@ -2721,7 +2685,7 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
       option,
       forceHighlight: isFixedAccessory,
     );
-    final text = _numericOnlyOptionValue(option);
+    final text = option.optionValue;
     final baseStyle = Theme.of(context).textTheme.bodyMedium;
     final baseFontSize = baseStyle?.fontSize ?? 14;
     return SizedBox(
@@ -2747,40 +2711,16 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
     );
   }
 
-  String _numericOnlyOptionValue(AccessoryOption option) {
-    final raw = option.optionValue.trim();
-
-    final parenIndex = raw.indexOf('(');
-    if (parenIndex > 0) {
-      return raw.substring(0, parenIndex).trim();
-    }
-
-    final tildeIndex = raw.indexOf('~');
-    if (tildeIndex > 0) {
-      return raw.substring(0, tildeIndex).trim();
-    }
-
-    return raw;
-  }
-
-  String _optionChangeDisplayValue(
-    AccessoryOption option, {
-    required bool showRange,
-  }) {
-    if (!showRange) {
-      return _numericOnlyOptionValue(option);
-    }
-
+  String _formatOptionValueWithRange(AccessoryOption option) {
     final minValue = option.minNormalValue;
     final maxValue = option.maxNormalValue;
     if (minValue == null || maxValue == null) {
-      return _numericOnlyOptionValue(option);
+      return option.optionValue;
     }
-
     if (option.optionValue == '$minValue~$maxValue') {
       return option.optionValue;
     }
-    return '${_numericOnlyOptionValue(option)} ($minValue~$maxValue)';
+    return '${option.optionValue} ($minValue~$maxValue)';
   }
 
   String _formatOptionValueForSummary(AccessoryOption option) {

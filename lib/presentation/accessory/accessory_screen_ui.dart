@@ -527,9 +527,16 @@ class _AnimatedAccessorySearchFieldState
     setState(() {
       _expanded = true;
     });
-    await Future<void>.delayed(const Duration(milliseconds: 120));
+    // TextField가 트리에 붙은 뒤 포커스를 요청해야 Android에서 키보드가 안정적으로 열린다.
+    await WidgetsBinding.instance.endOfFrame;
+    await Future<void>.delayed(const Duration(milliseconds: 60));
     if (!mounted) return;
     _focusNode.requestFocus();
+    if (!_focusNode.hasFocus) {
+      await Future<void>.delayed(const Duration(milliseconds: 60));
+      if (!mounted) return;
+      _focusNode.requestFocus();
+    }
   }
 
   Future<void> _submit() async {
@@ -585,7 +592,8 @@ class _AnimatedAccessorySearchFieldState
             builder: (context, constraints) {
               // 애니메이션 경계 프레임(열림 직전/닫힘 직후)에서도 안전하도록
               // 충분한 폭이 확보되기 전까지는 아이콘-only 레이아웃만 사용.
-              final compact = !_expanded || constraints.maxWidth < 190;
+              // 188px(소형 기기)에서도 TextField가 렌더링되도록 임계값을 낮춘다.
+              final compact = !_expanded || constraints.maxWidth < 150;
               if (compact) {
                 return Center(
                   child: Icon(

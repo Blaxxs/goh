@@ -245,6 +245,19 @@ class _OptionsListWidget extends StatefulWidget {
 }
 
 class _OptionsListWidgetState extends State<_OptionsListWidget> {
+  String _formatOptionValueWithRange(AccessoryOption option) {
+    final minValue = option.minNormalValue;
+    final maxValue = option.maxNormalValue;
+    if (minValue == null || maxValue == null) {
+      return option.optionValue;
+    }
+    // optionValue가 이미 범위 포함 형태면 그대로 반환
+    if (option.optionValue.contains('(')) {
+      return option.optionValue;
+    }
+    return '${option.optionValue} ($minValue~$maxValue)';
+  }
+
   String _plainOptionValue(AccessoryOption option) {
     // 괄호 포함 포맷("35 (13~35)")에서 순수 수치("35")만 추출
     final raw = option.optionValue;
@@ -286,29 +299,22 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
                       MainAxisAlignment.spaceBetween, // Name left, Value right
                   children: [
                     Expanded(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          optionName,
-                          style: theme.textTheme.bodyLarge
-                              ?.copyWith(color: optionTextColor),
-                          maxLines: 1,
-                        ),
+                      // No flex needed, it will expand to fill remaining space
+                      child: Text(
+                        optionName,
+                        style: theme.textTheme.bodyLarge
+                            ?.copyWith(color: optionTextColor),
+                        softWrap: true, // 줄바꿈 허용
                       ),
                     ),
                     if (optionValue != null && optionValue.isNotEmpty)
                       Text(
-                        // 범위 포맷 "38 (30~50)" → "38" 강제 제거
-                        optionValue.contains('(')
-                            ? optionValue
-                                .substring(0, optionValue.indexOf('('))
-                                .trim()
-                            : optionValue,
+                        // Option value takes only its content width
+                        optionValue,
                         style: theme.textTheme.bodyLarge
                             ?.copyWith(color: optionTextColor),
                         textAlign: TextAlign.right,
-                        maxLines: 1,
+                        softWrap: true, // 줄바꿈 허용
                       ),
                   ],
                 ),
@@ -343,7 +349,9 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
         // Option exists
         final option = widget.currentOptions[i];
         optionName = option.optionName;
-        optionValue = _plainOptionValue(option);
+        optionValue = isRandomAccessory
+            ? _formatOptionValueWithRange(option)
+            : _plainOptionValue(option);
         optionTextColor = theme.textTheme.bodyLarge?.color;
 
         // Determine if this slot is a base option slot from the original accessory
@@ -355,14 +363,18 @@ class _OptionsListWidgetState extends State<_OptionsListWidget> {
           // This is a base option slot (1st, 2nd, or 3rd if accessory has 3 base options)
           final baseOption = widget.selectedAccessory.options[i];
           optionName = baseOption.optionName;
-          optionValue = _plainOptionValue(baseOption);
+          optionValue = isRandomAccessory
+              ? _formatOptionValueWithRange(baseOption)
+              : _plainOptionValue(baseOption);
           optionTextColor =
               Colors.grey; // Base options are greyed out and fixed
           onTapOptionArea = null; // Cannot tap to change/expand base options
         } else {
           // This slot is not a base option slot, but it currently has an option (meaning it was expanded/changed)
           optionName = option.optionName;
-          optionValue = _plainOptionValue(option);
+          optionValue = isRandomAccessory
+              ? _formatOptionValueWithRange(option)
+              : _plainOptionValue(option);
           optionTextColor = theme.textTheme.bodyLarge
               ?.color; // Regular color for changeable options
 
