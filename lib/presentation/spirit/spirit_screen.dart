@@ -45,6 +45,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
   _SpiritSearchScope _searchScope = _SpiritSearchScope.all;
   bool _isLoading = true;
   String? _errorMessage;
+  bool _showMaxSpiritValues = true;
 
   final List<Map<String, dynamic>> _allSpirits = [];
 
@@ -347,21 +348,44 @@ class _SpiritScreenState extends State<SpiritScreen> {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                  },
-                  decoration: const InputDecoration(
-                    hintText: '이름/효과/패시브 검색 (예: 크리, 크증, 관저)',
-                    prefixIcon: Icon(Icons.search_rounded, size: 20),
-                    isDense: true,
-                    border: OutlineInputBorder(),
-                    contentPadding:
-                        EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '풀강 수치로 보기',
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                        Switch.adaptive(
+                          value: _showMaxSpiritValues,
+                          onChanged: (value) {
+                            setState(() {
+                              _showMaxSpiritValues = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        setState(() {
+                          _searchQuery = value;
+                        });
+                      },
+                      decoration: const InputDecoration(
+                        hintText: '이름/효과/패시브 검색 (예: 크리, 크증, 관저)',
+                        prefixIcon: Icon(Icons.search_rounded, size: 20),
+                        isDense: true,
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                      ),
                   ),
+                  ],
                 ),
               ),
             ),
@@ -752,7 +776,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
     showDialog<void>(
       context: context,
       builder: (context) {
-        int selectedLevel = 1;
+        int selectedLevel = _showMaxSpiritValues ? 9 : 1;
         return StatefulBuilder(
           builder: (context, setDialogState) {
             final activeDesc =
