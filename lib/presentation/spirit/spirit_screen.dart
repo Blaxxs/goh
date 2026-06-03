@@ -640,11 +640,10 @@ class _SpiritScreenState extends State<SpiritScreen> {
       targets.add(skillType.toString());
     }
 
-    final applyCharacters = block['applyCharacters'];
-    if (applyCharacters is List) {
-      for (final c in applyCharacters) {
-        targets.add(c.toString());
-      }
+    for (final character in _normalizeCharacterTargets(
+      block['applyCharacters'] ?? block['applyCharacter'],
+    )) {
+      targets.add(character);
     }
 
     final fixedTurns = block['skillTurns'];
@@ -966,11 +965,40 @@ class _SpiritScreenState extends State<SpiritScreen> {
   }
 
   List<String> _resolveApplyCharacters(Map<String, dynamic> block) {
-    final raw = block['applyCharacters'];
-    if (raw is! List) {
+    return _normalizeCharacterTargets(
+      block['applyCharacters'] ?? block['applyCharacter'],
+    );
+  }
+
+  List<String> _normalizeCharacterTargets(dynamic raw) {
+    if (raw == null) {
       return const [];
     }
-    return raw.map((e) => e.toString()).where((e) => e.isNotEmpty).toList();
+
+    if (raw is List) {
+      return raw
+          .map((e) => e.toString().trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+
+    if (raw is Map) {
+      return raw.values
+          .map((e) => e.toString().trim())
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+
+    final text = raw.toString().trim();
+    if (text.isEmpty) {
+      return const [];
+    }
+
+    return text
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
   }
 
   bool _hasLevelData(Map<String, dynamic> block) {
