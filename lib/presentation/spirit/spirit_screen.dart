@@ -777,6 +777,7 @@ class _SpiritScreenState extends State<SpiritScreen> {
 
   static const Map<String, Set<String>> _searchSynonyms = {
     '크리티컬증가': {'크리', '크증'},
+    '크리티컬데미지': {'크뎀'},
     '크리티컬데미지증가': {'크뎀', '크뎀증'},
     '크리티컬저항': {'크저'},
     '명중증가': {'명중', '힛'},
