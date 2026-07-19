@@ -80,7 +80,12 @@ class CraftedAccessoryLogEntry {
 const _noValue = Object();
 
 class AccessorySimulationScreen extends StatefulWidget {
-  const AccessorySimulationScreen({super.key});
+  final Accessory? initialAccessory;
+
+  const AccessorySimulationScreen({
+    super.key,
+    this.initialAccessory,
+  });
 
   @override
   State<AccessorySimulationScreen> createState() =>
@@ -153,7 +158,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
   void initState() {
     super.initState();
     final allAccessories = AccessoryDataManager().allAccessories;
-    if (allAccessories.isNotEmpty) {
+    final initial = widget.initialAccessory;
+    if (initial != null) {
+      _selectedAccessory = initial;
+    } else if (allAccessories.isNotEmpty) {
       _selectedAccessory = allAccessories.first;
     }
     _syncSelectedOptionCount();
