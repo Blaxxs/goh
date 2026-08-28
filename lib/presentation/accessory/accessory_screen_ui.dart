@@ -56,60 +56,58 @@ class AccessoryScreenUI extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Column(
-        children: [
-          if (compareMode)
-            Container(
-              margin: const EdgeInsets.fromLTRB(10, 4, 10, 0),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(18),
-                gradient: LinearGradient(
-                  colors: isDark
-                      ? [
-                          const Color(0xFF7CA4FF).withAlpha(90),
-                          const Color(0xFF6F79FF).withAlpha(90),
-                        ]
-                      : [
-                          const Color(0xFF8AB5FF).withAlpha(180),
-                          const Color(0xFF7EA7FF).withAlpha(180),
-                        ],
-                ),
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.compare_rounded,
-                    size: 16,
-                    color: Colors.white,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      compareList.isEmpty
-                          ? '비교할 악세사리를 최대 2개 선택하세요'
-                          : compareList.length == 1
-                              ? '${compareList[0].name} 선택됨 · 하나 더 선택하세요'
-                              : '${compareList[0].name} vs ${compareList[1].name}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
+    return Column(
+      children: [
+        if (compareMode)
+          Container(
+            margin: const EdgeInsets.fromLTRB(10, 4, 10, 0),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              gradient: LinearGradient(
+                colors: isDark
+                    ? [
+                        const Color(0xFF7CA4FF).withAlpha(90),
+                        const Color(0xFF6F79FF).withAlpha(90),
+                      ]
+                    : [
+                        const Color(0xFF8AB5FF).withAlpha(180),
+                        const Color(0xFF7EA7FF).withAlpha(180),
+                      ],
               ),
             ),
-          Padding(
-            padding: const EdgeInsets.all(6.0),
-            child: GlassPanel(
-              padding: const EdgeInsets.all(12.0),
-              borderRadius: BorderRadius.circular(22),
-              child: Column(
-                children: [
+            child: Row(
+              children: [
+                Icon(
+                  Icons.compare_rounded,
+                  size: 16,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    compareList.isEmpty
+                        ? '비교할 악세사리를 최대 2개 선택하세요'
+                        : compareList.length == 1
+                            ? '${compareList[0].name} 선택됨 · 하나 더 선택하세요'
+                            : '${compareList[0].name} vs ${compareList[1].name}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: GlassPanel(
+            padding: const EdgeInsets.all(12.0),
+            borderRadius: BorderRadius.circular(22),
+            child: Column(
+              children: [
                 Row(
                   children: [
                     Expanded(
@@ -271,6 +269,7 @@ class AccessoryScreenUI extends StatelessWidget {
             ),
           ),
         ),
+        const SizedBox(height: 6),
         Expanded(
           child: Container(
             margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
