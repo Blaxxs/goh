@@ -849,6 +849,25 @@ class _MainScreenUIState extends State<MainScreenUI> {
                         else
                           const Spacer(),
                         const SizedBox(width: 10),
+                        ValueListenableBuilder<ThemeMode>(
+                          valueListenable: SettingsService.instance.themeModeNotifier,
+                          builder: (context, themeMode, _) {
+                            final isDark = themeMode == ThemeMode.dark;
+                            return _buildTopIconButton(
+                              context: context,
+                              icon: isDark
+                                  ? Icons.dark_mode_outlined
+                                  : Icons.light_mode_outlined,
+                              onPressed: () {
+                                final nextSettings = SettingsService
+                                    .instance.appSettings
+                                    .copyWith(isDarkModeEnabled: !isDark);
+                                SettingsService.instance.saveAppSettings(nextSettings);
+                              },
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 8),
                         _buildTopIconButton(
                           context: context,
                           icon: _isEditMode

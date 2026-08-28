@@ -18,17 +18,17 @@ bool _shouldOpenAccessoryFromInitialUrl() {
     return false;
   }
 
-  final initialRoute =
-      WidgetsBinding.instance.platformDispatcher.defaultRouteName
-          .trim()
-          .toLowerCase();
+  final initialRoute = WidgetsBinding
+      .instance.platformDispatcher.defaultRouteName
+      .trim()
+      .toLowerCase();
   final fragment = Uri.base.fragment.trim().toLowerCase();
   final path = Uri.base.path.trim().toLowerCase();
   final fullUrl = Uri.base.toString().toLowerCase();
-    final openQuery =
+  final openQuery =
       Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
-    final rawHref = web_location.currentHref().trim().toLowerCase();
-    final rawHash = web_location.currentHash().trim().toLowerCase();
+  final rawHref = web_location.currentHref().trim().toLowerCase();
+  final rawHash = web_location.currentHash().trim().toLowerCase();
 
   return initialRoute == '/accessory' ||
       openQuery == 'accessory' ||
@@ -65,53 +65,6 @@ void main() async {
       debugPrint('Date formatting init error: $e');
     }
   });
-}
-
-class _AppThemeToggle extends StatelessWidget {
-  const _AppThemeToggle();
-
-  @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
-      valueListenable: SettingsService.instance.themeModeNotifier,
-      builder: (context, themeMode, _) {
-        final enabled = themeMode == ThemeMode.dark;
-
-        return SafeArea(
-          child: Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
-              child: IconButton(
-                onPressed: () {
-                  final nextSettings = SettingsService.instance.appSettings.copyWith(
-                    isDarkModeEnabled: !enabled,
-                  );
-                  SettingsService.instance.saveAppSettings(nextSettings);
-                },
-                icon: Icon(
-                  enabled ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
-                  size: 20,
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(200),
-                ),
-                style: IconButton.styleFrom(
-                  backgroundColor: Theme.of(context).colorScheme.surface.withAlpha(180),
-                  foregroundColor: Theme.of(context).colorScheme.onSurface,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                  fixedSize: const Size(38, 38),
-                  side: BorderSide(
-                    color: Theme.of(context).colorScheme.outline.withAlpha(60),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 }
 
 class MyApp extends StatelessWidget {
@@ -167,16 +120,7 @@ class MyApp extends StatelessWidget {
                     data: mediaQuery.copyWith(
                       textScaler: TextScaler.linear(currentFontSizeMultiplier),
                     ),
-                    child: Stack(
-                      children: [
-                        child,
-                        const Positioned(
-                          top: 0,
-                          right: 0,
-                          child: _AppThemeToggle(),
-                        ),
-                      ],
-                    ),
+                    child: child,
                   ),
                 );
               },
