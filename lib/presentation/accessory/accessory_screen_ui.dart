@@ -151,26 +151,18 @@ class AccessoryScreenUI extends StatelessWidget {
                         (
                           '고정옵션',
                           selectedOptionTypeFilter == '고정옵션',
-                          selectedOptionTypeFilter == '고정옵션'
-                              ? '고정옵션'
-                              : '전체',
                         ),
                         (
                           '랜덤옵션',
                           selectedOptionTypeFilter == '랜덤옵션',
-                          selectedOptionTypeFilter == '랜덤옵션'
-                              ? '랜덤옵션'
-                              : '전체',
                         ),
                         (
                           '세트',
                           selectedSetOnlyFilter,
-                          selectedSetOnlyFilter ? '세트' : '전체',
                         ),
                       ].map((item) {
                         final label = item.$1;
                         final selected = item.$2;
-                        final nextValue = item.$3;
                         return Theme(
                           data: Theme.of(context).copyWith(
                             splashColor: Colors.transparent,
