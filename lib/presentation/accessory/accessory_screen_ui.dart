@@ -92,9 +92,9 @@ class AccessoryScreenUI extends StatelessWidget {
                             ? '${compareList[0].name} 선택됨 · 하나 더 선택하세요'
                             : '${compareList[0].name} vs ${compareList[1].name}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                    ),
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -143,21 +143,23 @@ class AccessoryScreenUI extends StatelessWidget {
                         showCheckmark: false,
                         selected: selectedOptionTypeFilter == '고정옵션',
                         selectedColor: colorScheme.primaryContainer,
-                        backgroundColor: colorScheme.surface.withValues(alpha: 0.65),
+                        backgroundColor:
+                            colorScheme.surface.withValues(alpha: 0.65),
                         side: BorderSide(
                           color: selectedOptionTypeFilter == '고정옵션'
                               ? colorScheme.primary
                               : colorScheme.onSurface.withValues(alpha: 0.28),
                           width: selectedOptionTypeFilter == '고정옵션' ? 1.3 : 1,
                         ),
-                        labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: selectedOptionTypeFilter == '고정옵션'
-                              ? colorScheme.onPrimaryContainer
-                              : colorScheme.onSurface,
-                          fontWeight: selectedOptionTypeFilter == '고정옵션'
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                        ),
+                        labelStyle:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  color: selectedOptionTypeFilter == '고정옵션'
+                                      ? colorScheme.onPrimaryContainer
+                                      : colorScheme.onSurface,
+                                  fontWeight: selectedOptionTypeFilter == '고정옵션'
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                ),
                         visualDensity: VisualDensity.compact,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         onSelected: (_) => onOptionTypeFilterChanged(
@@ -169,21 +171,23 @@ class AccessoryScreenUI extends StatelessWidget {
                         showCheckmark: false,
                         selected: selectedOptionTypeFilter == '랜덤옵션',
                         selectedColor: colorScheme.primaryContainer,
-                        backgroundColor: colorScheme.surface.withValues(alpha: 0.65),
+                        backgroundColor:
+                            colorScheme.surface.withValues(alpha: 0.65),
                         side: BorderSide(
                           color: selectedOptionTypeFilter == '랜덤옵션'
                               ? colorScheme.primary
                               : colorScheme.onSurface.withValues(alpha: 0.28),
                           width: selectedOptionTypeFilter == '랜덤옵션' ? 1.3 : 1,
                         ),
-                        labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: selectedOptionTypeFilter == '랜덤옵션'
-                              ? colorScheme.onPrimaryContainer
-                              : colorScheme.onSurface,
-                          fontWeight: selectedOptionTypeFilter == '랜덤옵션'
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                        ),
+                        labelStyle:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  color: selectedOptionTypeFilter == '랜덤옵션'
+                                      ? colorScheme.onPrimaryContainer
+                                      : colorScheme.onSurface,
+                                  fontWeight: selectedOptionTypeFilter == '랜덤옵션'
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                ),
                         visualDensity: VisualDensity.compact,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         onSelected: (_) => onOptionTypeFilterChanged(
@@ -195,48 +199,59 @@ class AccessoryScreenUI extends StatelessWidget {
                         showCheckmark: false,
                         selected: selectedSetOnlyFilter,
                         selectedColor: colorScheme.primaryContainer,
-                        backgroundColor: colorScheme.surface.withValues(alpha: 0.65),
+                        backgroundColor:
+                            colorScheme.surface.withValues(alpha: 0.65),
                         side: BorderSide(
                           color: selectedSetOnlyFilter
                               ? colorScheme.primary
                               : colorScheme.onSurface.withValues(alpha: 0.28),
                           width: selectedSetOnlyFilter ? 1.3 : 1,
                         ),
-                        labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                          color: selectedSetOnlyFilter
-                              ? colorScheme.onPrimaryContainer
-                              : colorScheme.onSurface,
-                          fontWeight: selectedSetOnlyFilter
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                        ),
+                        labelStyle:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  color: selectedSetOnlyFilter
+                                      ? colorScheme.onPrimaryContainer
+                                      : colorScheme.onSurface,
+                                  fontWeight: selectedSetOnlyFilter
+                                      ? FontWeight.w700
+                                      : FontWeight.w500,
+                                ),
                         visualDensity: VisualDensity.compact,
                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        onSelected: (_) => onSetOnlyFilterChanged(!selectedSetOnlyFilter),
+                        onSelected: (_) =>
+                            onSetOnlyFilterChanged(!selectedSetOnlyFilter),
                       ),
-                      ...partFilterOptions.where((part) => part != '전체').map((part) {
+                      ...partFilterOptions
+                          .where((part) => part != '전체')
+                          .map((part) {
                         final selected = selectedPartFilter == part;
                         return FilterChip(
                           label: Text(part),
                           showCheckmark: false,
                           selected: selected,
                           selectedColor: colorScheme.primaryContainer,
-                          backgroundColor: colorScheme.surface.withValues(alpha: 0.65),
+                          backgroundColor:
+                              colorScheme.surface.withValues(alpha: 0.65),
                           side: BorderSide(
                             color: selected
                                 ? colorScheme.primary
                                 : colorScheme.onSurface.withValues(alpha: 0.28),
                             width: selected ? 1.3 : 1,
                           ),
-                          labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: selected
-                                ? colorScheme.onPrimaryContainer
-                                : colorScheme.onSurface,
-                            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                          ),
+                          labelStyle:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: selected
+                                        ? colorScheme.onPrimaryContainer
+                                        : colorScheme.onSurface,
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w500,
+                                  ),
                           visualDensity: VisualDensity.compact,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          onSelected: (_) => onPartFilterChanged(selected ? null : part),
+                          materialTapTargetSize:
+                              MaterialTapTargetSize.shrinkWrap,
+                          onSelected: (_) =>
+                              onPartFilterChanged(selected ? null : part),
                         );
                       }),
                     ],
@@ -326,8 +341,8 @@ class AccessoryScreenUI extends StatelessWidget {
                             itemCount: filteredAccessories.length,
                             itemBuilder: (context, index) {
                               final accessory = filteredAccessories[index];
-                              final isSelected =
-                                  compareMode && compareList.contains(accessory);
+                              final isSelected = compareMode &&
+                                  compareList.contains(accessory);
 
                               return GestureDetector(
                                 onTap: () => onAccessoryTap(context, accessory),
@@ -351,7 +366,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                         ),
                                         border: Border.all(
                                           color: isSelected
-                                              ? colorScheme.primary.withAlpha(180)
+                                              ? colorScheme.primary
+                                                  .withAlpha(180)
                                               : isDark
                                                   ? Colors.white.withAlpha(20)
                                                   : Colors.white.withAlpha(160),
@@ -362,7 +378,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                             color: (isDark
                                                     ? Colors.black
                                                     : const Color(0xFF8FA7C5))
-                                                .withAlpha(isSelected ? 54 : 28),
+                                                .withAlpha(
+                                                    isSelected ? 54 : 28),
                                             blurRadius: isSelected ? 18 : 10,
                                             offset: const Offset(0, 8),
                                           ),
@@ -371,14 +388,16 @@ class AccessoryScreenUI extends StatelessWidget {
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(18),
                                         child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
                                           children: [
                                             Expanded(
                                               child: Container(
                                                 color: isDark
                                                     ? Colors.grey[850]
                                                     : Colors.grey[200],
-                                                padding: const EdgeInsets.all(6.0),
+                                                padding:
+                                                    const EdgeInsets.all(6.0),
                                                 child: CachedNetworkImage(
                                                   imageUrl: accessory.imageUrl,
                                                   fit: BoxFit.contain,
@@ -387,27 +406,32 @@ class AccessoryScreenUI extends StatelessWidget {
                                                   maxWidthDiskCache: 256,
                                                   maxHeightDiskCache: 256,
                                                   fadeInDuration: Duration.zero,
-                                                  fadeOutDuration: Duration.zero,
+                                                  fadeOutDuration:
+                                                      Duration.zero,
                                                   placeholder: (context, url) =>
                                                       const Center(
                                                     child: SizedBox(
                                                       width: 24,
                                                       height: 24,
-                                                      child: CircularProgressIndicator(
+                                                      child:
+                                                          CircularProgressIndicator(
                                                         strokeWidth: 2.5,
                                                       ),
                                                     ),
                                                   ),
-                                                  errorWidget: (context, url, error) =>
-                                                      const Icon(
-                                                    Icons.image_not_supported_outlined,
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                          const Icon(
+                                                    Icons
+                                                        .image_not_supported_outlined,
                                                     color: Colors.grey,
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             Padding(
-                                              padding: const EdgeInsets.symmetric(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                 horizontal: 6.0,
                                                 vertical: 4.0,
                                               ),
@@ -418,13 +442,15 @@ class AccessoryScreenUI extends StatelessWidget {
                                                     textAlign: TextAlign.center,
                                                     style: TextStyle(
                                                       fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
+                                                      fontWeight:
+                                                          FontWeight.bold,
                                                       color: isDark
                                                           ? Colors.white
                                                           : Colors.black87,
                                                     ),
                                                     maxLines: 1,
-                                                    overflow: TextOverflow.ellipsis,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                   ),
                                                   const SizedBox(height: 1),
                                                   Text(
@@ -452,7 +478,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                           height: 20,
                                           decoration: BoxDecoration(
                                             color: isSelected
-                                                ? Theme.of(context).colorScheme.primary
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
                                                 : Colors.black26,
                                             shape: BoxShape.circle,
                                           ),
