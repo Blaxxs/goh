@@ -336,7 +336,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
     return Scaffold(
       drawer: AppDrawer(currentScreen: widget.currentScreen),
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
