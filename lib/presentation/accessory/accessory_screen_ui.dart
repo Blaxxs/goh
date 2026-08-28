@@ -494,9 +494,10 @@ class AccessoryScreenUI extends StatelessWidget {
                               );
                             },
                           ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }
+
