@@ -3,8 +3,9 @@
   "configurations": [
     {
       "name": "goh_calculator (Chrome)",
-      "type": "flutter",
+      "type": "dart",
       "request": "launch",
+      "debuggerType": "flutter",
       "program": "lib/main.dart",
       "deviceId": "chrome",
       "cwd": "${workspaceFolder}",
