@@ -85,25 +85,11 @@ class AccessoryScreenUI extends StatelessWidget {
           ),
         Padding(
           padding: const EdgeInsets.all(6.0),
-          child: Card(
-            elevation: 0,
-            color: isDark
-                ? Colors.white.withAlpha(18)
-                : Colors.white.withAlpha(210),
-            shadowColor: Colors.black.withAlpha(18),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(
-                color: isDark
-                    ? Colors.white.withAlpha(32)
-                    : colorScheme.primary.withAlpha(40),
-                width: 1.1,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
+          child: GlassPanel(
+            padding: const EdgeInsets.all(12.0),
+            borderRadius: BorderRadius.circular(24),
+            child: Column(
+              children: [
                   Row(
                     children: [
                       Expanded(
@@ -271,7 +257,32 @@ class AccessoryScreenUI extends StatelessWidget {
 
         // --- 악세사리 리스트 (그리드 뷰) ---
         Expanded(
-          child: isDataLoading
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(8, 0, 8, 8),
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(24),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: isDark
+                    ? [
+                        Colors.white.withAlpha(8),
+                        Colors.white.withAlpha(4),
+                      ]
+                    : [
+                        Colors.white.withAlpha(110),
+                        Colors.white.withAlpha(80),
+                      ],
+              ),
+              border: Border.all(
+                color: isDark
+                    ? Colors.white.withAlpha(18)
+                    : colorScheme.primary.withAlpha(24),
+                width: 1,
+              ),
+            ),
+            child: isDataLoading
               ? const Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
