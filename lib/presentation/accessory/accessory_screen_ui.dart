@@ -325,109 +325,114 @@ class AccessoryScreenUI extends StatelessWidget {
                               ),
                             ),
                           )
-                        : GridView.builder(
-                            padding: const EdgeInsets.all(8.0),
-                            gridDelegate:
-                                const SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent: 150,
-                              crossAxisSpacing: 8.0,
-                              mainAxisSpacing: 8.0,
-                              childAspectRatio: 0.72,
-                            ),
-                            itemCount: filteredAccessories.length,
-                            itemBuilder: (context, index) {
+                        : LayoutBuilder(
+                            builder: (context, constraints) {
+                              final crossAxisCount =
+                                  constraints.maxWidth >= 520 ? 4 : 3;
+
+                              return GridView.builder(
+                                padding: const EdgeInsets.all(8.0),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: crossAxisCount,
+                                  crossAxisSpacing: 8.0,
+                                  mainAxisSpacing: 8.0,
+                                  childAspectRatio: 0.72,
+                                ),
+                                itemCount: filteredAccessories.length,
+                                itemBuilder: (context, index) {
                               final accessory = filteredAccessories[index];
                               final isSelected = compareMode &&
                                   compareList.contains(accessory);
 
-                              return GestureDetector(
-                                onTap: () => onAccessoryTap(context, accessory),
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(18),
-                                        color: isDark
-                                            ? const Color(0xFF0F1720)
-                                                .withAlpha(200)
-                                            : const Color(0xF7FFFFFF),
-                                        border: Border.all(
-                                          color: isSelected
-                                              ? colorScheme.primary
-                                                  .withAlpha(150)
-                                              : isDark
-                                                  ? Colors.white.withAlpha(12)
-                                                  : Colors.black.withAlpha(10),
-                                          width: isSelected ? 1.8 : 1,
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: (isDark
-                                                    ? Colors.black
-                                                    : const Color(0xFFB2BED1))
-                                                .withAlpha(
-                                                    isSelected ? 44 : 20),
-                                            blurRadius: isSelected ? 14 : 8,
-                                            offset: const Offset(0, 6),
+                                  return GestureDetector(
+                                    onTap: () => onAccessoryTap(context, accessory),
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(18),
+                                            color: isDark
+                                                ? const Color(0xFF0F1720)
+                                                    .withAlpha(200)
+                                                : const Color(0xF7FFFFFF),
+                                            border: Border.all(
+                                              color: isSelected
+                                                  ? colorScheme.primary
+                                                      .withAlpha(150)
+                                                  : isDark
+                                                      ? Colors.white.withAlpha(12)
+                                                      : Colors.black.withAlpha(10),
+                                              width: isSelected ? 1.8 : 1,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: (isDark
+                                                        ? Colors.black
+                                                        : const Color(0xFFB2BED1))
+                                                    .withAlpha(
+                                                        isSelected ? 44 : 20),
+                                                blurRadius: isSelected ? 14 : 8,
+                                                offset: const Offset(0, 6),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(18),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            Expanded(
-                                              child: Container(
-                                                color: isDark
-                                                    ? Colors.grey[850]
-                                                    : Colors.grey[200],
-                                                padding:
-                                                    const EdgeInsets.all(6.0),
-                                                child: CachedNetworkImage(
-                                                  imageUrl: accessory.imageUrl,
-                                                  fit: BoxFit.contain,
-                                                  memCacheWidth: 256,
-                                                  memCacheHeight: 256,
-                                                  maxWidthDiskCache: 256,
-                                                  maxHeightDiskCache: 256,
-                                                  fadeInDuration: Duration.zero,
-                                                  fadeOutDuration:
-                                                      Duration.zero,
-                                                  placeholder: (context, url) =>
-                                                      const Center(
-                                                    child: SizedBox(
-                                                      width: 24,
-                                                      height: 24,
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        strokeWidth: 2.5,
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(18),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                Expanded(
+                                                  child: Container(
+                                                    color: isDark
+                                                        ? Colors.grey[850]
+                                                        : Colors.grey[200],
+                                                    padding:
+                                                        const EdgeInsets.all(6.0),
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: accessory.imageUrl,
+                                                      fit: BoxFit.contain,
+                                                      memCacheWidth: 256,
+                                                      memCacheHeight: 256,
+                                                      maxWidthDiskCache: 256,
+                                                      maxHeightDiskCache: 256,
+                                                      fadeInDuration: Duration.zero,
+                                                      fadeOutDuration:
+                                                          Duration.zero,
+                                                      placeholder: (context, url) =>
+                                                          const Center(
+                                                        child: SizedBox(
+                                                          width: 24,
+                                                          height: 24,
+                                                          child:
+                                                              CircularProgressIndicator(
+                                                            strokeWidth: 2.5,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      errorWidget:
+                                                          (context, url, error) =>
+                                                              const Icon(
+                                                        Icons
+                                                            .image_not_supported_outlined,
+                                                        color: Colors.grey,
                                                       ),
                                                     ),
                                                   ),
-                                                  errorWidget:
-                                                      (context, url, error) =>
-                                                          const Icon(
-                                                    Icons
-                                                        .image_not_supported_outlined,
-                                                    color: Colors.grey,
-                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 6.0,
-                                                vertical: 4.0,
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  Text(
-                                                    accessory.name,
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                    horizontal: 6.0,
+                                                    vertical: 4.0,
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Text(
+                                                        accessory.name,
+                                                        textAlign: TextAlign.center,
+                                                        style: TextStyle(
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.bold,

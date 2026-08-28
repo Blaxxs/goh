@@ -515,12 +515,14 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 24),
       child: GlassPanel(
         padding: EdgeInsets.zero,
         borderRadius: BorderRadius.circular(28),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width < 360 ? 320 : 360,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
