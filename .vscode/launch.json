@@ -1,10 +1,14 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "goh_calculator",
-            "request": "launch",
-            "type": "dart"
-        }       
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "goh_calculator (Chrome)",
+      "type": "flutter",
+      "request": "launch",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal"
+    }
+  ]
 }
