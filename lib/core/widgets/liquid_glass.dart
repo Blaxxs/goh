@@ -18,8 +18,8 @@ class AppGradientBackground extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: isDark
-              ? const [Color(0xFF07111F), Color(0xFF0E1A30), Color(0xFF08192A)]
-              : const [Color(0xFFF7FAFF), Color(0xFFEAF2FF), Color(0xFFF9FCFF)],
+              ? const [Color(0xFF060B14), Color(0xFF101A2B), Color(0xFF0B1524)]
+              : const [Color(0xFFF5F8FF), Color(0xFFF0F5FF), Color(0xFFF9FBFF)],
         ),
       ),
       child: Stack(
@@ -76,23 +76,17 @@ class GlassPanel extends StatelessWidget {
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
     final Color backgroundStart = isDark
-      ? Colors.white.withAlpha(18)
-      : Color.alphaBlend(
-        colorScheme.primary.withAlpha(18),
-        Colors.white.withAlpha(214),
-        );
+      ? const Color(0x1AFFFFFF)
+      : const Color(0xCCFFFFFF);
     final Color backgroundEnd = isDark
-      ? Colors.white.withAlpha(8)
-      : Color.alphaBlend(
-        colorScheme.surfaceTint.withAlpha(10),
-        Colors.white.withAlpha(192),
-        );
+      ? const Color(0x0DFFFFFF)
+      : const Color(0xE5F1F8FF);
     final borderColor = isDark
-      ? Colors.white.withAlpha(34)
-      : colorScheme.outline.withAlpha(120);
+      ? Colors.white.withAlpha(20)
+      : Colors.white.withAlpha(140);
     final shadowColor = isDark
-        ? Colors.black.withAlpha(45)
-      : const Color(0xFF7F9BC0).withAlpha(96);
+        ? Colors.black.withAlpha(36)
+      : const Color(0xFFB7C8DD).withAlpha(82);
 
     final content = Container(
       padding: padding,
@@ -106,12 +100,12 @@ class GlassPanel extends StatelessWidget {
             backgroundEnd,
           ],
         ),
-        border: Border.all(color: borderColor, width: 1.1),
+        border: Border.all(color: borderColor, width: 1),
         boxShadow: [
           BoxShadow(
             color: shadowColor,
-            blurRadius: 24,
-            offset: const Offset(0, 12),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
@@ -121,7 +115,7 @@ class GlassPanel extends StatelessWidget {
     return ClipRRect(
       borderRadius: borderRadius,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
         child: Material(
           color: Colors.transparent,
           child: onTap == null
