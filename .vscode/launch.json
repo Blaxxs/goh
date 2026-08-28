@@ -9,7 +9,7 @@
       "program": "lib/main.dart",
       "deviceId": "chrome",
       "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal"
+      "console": "terminal"
     }
   ]
 }
