@@ -177,7 +177,8 @@ class SetOptionEffect {
     }
 
     if (kDebugMode && stageValues.isEmpty && stageValuesJson != null) {
-      debugPrint('[SetOptionEffect] WARNING: stageValues is empty after parsing. Raw data: $stageValuesJson');
+      debugPrint(
+          '[SetOptionEffect] WARNING: stageValues is empty after parsing. Raw data: $stageValuesJson');
     }
 
     return SetOptionEffect(
@@ -239,7 +240,8 @@ class AccessorySetOption {
       debugPrint('[SetOpt] setId: ${jsonMap['setId']}');
       debugPrint('[SetOpt] setName: ${jsonMap['setName']}');
       debugPrint('[SetOpt] requiredImgList raw data: $requiredImgList');
-      debugPrint('[SetOpt] requiredImgList type: ${requiredImgList.runtimeType}');
+      debugPrint(
+          '[SetOpt] requiredImgList type: ${requiredImgList.runtimeType}');
       requiredImgList.asMap().forEach((idx, item) {
         debugPrint('[SetOpt] [$idx] type: ${item.runtimeType}, value: $item');
       });
@@ -258,14 +260,17 @@ class AccessorySetOption {
 
       // 이미 확장자가 포함되어 있는 경우(예: christmas_bell.png), 중복 확장자 추가를 피합니다.
       // 확장자 판단은 간단히 마지막에 "."이 있고 1-5글자 알파벳이 따라오는 형태로 처리합니다.
-      final bool hasExtension = RegExp(r"\.[a-zA-Z0-9]{1,5}(\?|$)").hasMatch(imageId);
+      final bool hasExtension =
+          RegExp(r"\.[a-zA-Z0-9]{1,5}(\?|$)").hasMatch(imageId);
 
       // Firebase Storage URL로 변환 (accessories 폴더에 있다고 가정)
       final encodedId = Uri.encodeComponent(imageId);
       final filename = hasExtension ? encodedId : '$encodedId.png';
-      final generatedUrl = 'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$filename?alt=media';
+      final generatedUrl =
+          'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$filename?alt=media';
       if (kDebugMode) {
-        debugPrint('[SetOpt] Generated URL for "$imageId": $generatedUrl (hasExtension=$hasExtension)');
+        debugPrint(
+            '[SetOpt] Generated URL for "$imageId": $generatedUrl (hasExtension=$hasExtension)');
       }
       return generatedUrl;
     }).toList();
@@ -280,9 +285,7 @@ class AccessorySetOption {
       setName: jsonMap['setName']?.toString() ?? '',
       requiredAccessories: requiredAccList.map((e) => e.toString()).toList(),
       requiredAccessoryImages: processedImages,
-      effects: effectsList
-          .map((e) => SetOptionEffect.fromJson(e))
-          .toList(),
+      effects: effectsList.map((e) => SetOptionEffect.fromJson(e)).toList(),
     );
   }
 }
@@ -317,7 +320,8 @@ class Accessory {
     // 파일이 accessories 폴더 안에 있다면 아래와 같이 조합됩니다.
     // final String autoImageUrl = 'assets/images/accessories/$id.png';
     final String encodedId = Uri.encodeComponent(id);
-    final String autoImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media";
+    final String autoImageUrl =
+        "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedId.png?alt=media";
 
     final rawImageUrl = json['imageUrl']?.toString() ?? '';
     final rawImagePath = json['imagePath']?.toString() ?? '';
@@ -330,7 +334,8 @@ class Accessory {
       final hasExtension = RegExp(r"\.[a-zA-Z0-9]{1,5}$").hasMatch(imageName);
       final filename = hasExtension ? imageName : '$imageName.png';
       final encodedFilename = Uri.encodeComponent(filename);
-      resolvedImageUrl = "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedFilename?alt=media";
+      resolvedImageUrl =
+          "https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/accessories%2F$encodedFilename?alt=media";
     }
 
     var optionsList = json['options'] as List? ?? [];
@@ -365,9 +370,8 @@ class Accessory {
             .toList();
 
     var setOptionsList = json['setOptions'] as List? ?? [];
-    List<AccessorySetOption> setOptions = setOptionsList
-        .map((i) => AccessorySetOption.fromJson(i))
-        .toList();
+    List<AccessorySetOption> setOptions =
+        setOptionsList.map((i) => AccessorySetOption.fromJson(i)).toList();
 
     final randomOptionConfigJson = json['randomOptionConfig'];
     final randomOptionConfig = randomOptionConfigJson == null
@@ -417,7 +421,8 @@ class Accessory {
       return option;
     }
 
-    final bonusValue = num.tryParse(matchedBonus.valueAtLevel(enhancementLevel));
+    final bonusValue =
+        num.tryParse(matchedBonus.valueAtLevel(enhancementLevel));
     if (bonusValue == null || bonusValue == 0) {
       return option;
     }

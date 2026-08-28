@@ -741,8 +741,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                         const SizedBox(height: 12),
                         if (widget.accessory.setOptions.length == 2) ...[
                           Builder(builder: (context) {
-                            final sharedMaxStage = widget
-                                .accessory.setOptions
+                            final sharedMaxStage = widget.accessory.setOptions
                                 .map((s) => s.maxStage)
                                 .fold<int>(
                                     0, (prev, cur) => cur > prev ? cur : prev);
@@ -757,8 +756,9 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       .toDouble(),
                                   min: 0,
                                   max: sharedMaxStage.toDouble(),
-                                  divisions:
-                                      sharedMaxStage > 0 ? sharedMaxStage : null,
+                                  divisions: sharedMaxStage > 0
+                                      ? sharedMaxStage
+                                      : null,
                                   label: '$_sharedStageIndex단계',
                                   onChanged: sharedMaxStage > 0
                                       ? (value) {
@@ -1103,9 +1103,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       onChanged: setOption.maxStage > 0
                                           ? (value) {
                                               setState(() {
-                                                _stageIndexMap[
-                                                        setOption.setId] =
-                                                    value.round();
+                                                _stageIndexMap[setOption
+                                                    .setId] = value.round();
                                               });
                                             }
                                           : null,
