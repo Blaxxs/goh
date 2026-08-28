@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../main/main_screen.dart'; // MainScreen으로 이동하기 위함
 import '../accessory/accessory_screen.dart';
+import '../spirit/spirit_screen.dart';
 import '../../core/services/settings_service.dart'; // 설정 로딩을 위함
 import '../../core/services/web_location.dart' as web_location;
 import '../../core/constants/accessory_constants.dart';
@@ -13,9 +14,11 @@ class LoadingScreen extends StatefulWidget {
   const LoadingScreen({
     super.key,
     this.openAccessoryFromInitialUrl = false,
+    this.openSpiritFromInitialUrl = false,
   });
 
   final bool openAccessoryFromInitialUrl;
+  final bool openSpiritFromInitialUrl;
 
   @override
   State<LoadingScreen> createState() => _LoadingScreenState();
@@ -107,12 +110,47 @@ class _LoadingScreenState extends State<LoadingScreen> {
       rawHref.contains('#/accessory');
   }
 
+  bool _shouldOpenSpiritFromDeepLink() {
+    if (widget.openSpiritFromInitialUrl) {
+      return true;
+    }
+
+    if (!kIsWeb) {
+      return false;
+    }
+
+    final initialRoute =
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName
+            .trim()
+            .toLowerCase();
+    final fragment = Uri.base.fragment.trim().toLowerCase();
+    final path = Uri.base.path.trim().toLowerCase();
+    final fullUrl = Uri.base.toString().toLowerCase();
+    final openQuery =
+      Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
+    final rawHref = web_location.currentHref().trim().toLowerCase();
+    final rawHash = web_location.currentHash().trim().toLowerCase();
+
+    return initialRoute == '/spirit' ||
+      openQuery == 'spirit' ||
+        fragment == '/spirit' ||
+        fragment == 'spirit' ||
+        path.endsWith('/spirit') ||
+        fullUrl.contains('#/spirit') ||
+      fullUrl.contains('/spirit') ||
+      rawHash == '#/spirit' ||
+      rawHash == '#spirit' ||
+      rawHref.contains('#/spirit');
+  }
+
   void _navigateToMain() {
     if (!_hasNavigated && mounted) {
       _hasNavigated = true;
       Widget destination = const MainScreen();
       if (_shouldOpenAccessoryFromDeepLink()) {
         destination = const AccessoryScreen();
+      } else if (_shouldOpenSpiritFromDeepLink()) {
+        destination = const SpiritScreen();
       }
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => destination),
