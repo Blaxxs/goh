@@ -8,6 +8,7 @@ import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
 import '../../core/widgets/liquid_glass.dart';
 import '../../core/constants/box_constants.dart';
+import '../../core/services/settings_service.dart';
 import '../simulator/accessory_simulation_screen.dart';
 
 class AccessoryScreen extends StatefulWidget {
@@ -350,6 +351,40 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
             widget.isPickerMode ? widget.pickerTitle : widget.collectionTitle),
         actions: [
           if (!widget.isPickerMode) ...[
+            ValueListenableBuilder<ThemeMode>(
+              valueListenable: SettingsService.instance.themeModeNotifier,
+              builder: (context, themeMode, _) {
+                final isDark = themeMode == ThemeMode.dark;
+                return IconButton(
+                  tooltip: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
+                  onPressed: () {
+                    final nextSettings = SettingsService
+                        .instance.appSettings
+                        .copyWith(isDarkModeEnabled: !isDark);
+                    SettingsService.instance.saveAppSettings(nextSettings);
+                  },
+                  icon: Icon(
+                    isDark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+                  ),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Theme.of(context)
+                        .colorScheme
+                        .surface
+                        .withAlpha(180),
+                    foregroundColor: Theme.of(context).colorScheme.onSurface,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    side: BorderSide(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline
+                          .withAlpha(56),
+                    ),
+                  ),
+                );
+              },
+            ),
             if (_compareMode && _compareList.length == 2)
               TextButton.icon(
                 onPressed: _showCompareDialog,
