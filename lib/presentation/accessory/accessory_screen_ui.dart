@@ -15,6 +15,7 @@ class AccessoryScreenUI extends StatelessWidget {
   final ValueChanged<bool> onSetOnlyFilterChanged;
   final Function(BuildContext, Accessory) onAccessoryTap;
   final ValueChanged<String> onSubmitSearch;
+  final ValueChanged<String> onSearchSubmitted;
   final bool compareMode;
   final List<Accessory> compareList;
   final bool isDataLoading;
@@ -37,6 +38,7 @@ class AccessoryScreenUI extends StatelessWidget {
     required this.onSetOnlyFilterChanged,
     required this.onAccessoryTap,
     required this.onSubmitSearch,
+    required this.onSearchSubmitted,
     this.compareMode = false,
     this.compareList = const [],
     this.isDataLoading = false,
@@ -109,8 +111,8 @@ class AccessoryScreenUI extends StatelessWidget {
                   TextField(
                     controller: searchController,
                     onChanged: onSubmitSearch,
-                    onSubmitted: onSubmitSearch,
-                    onEditingComplete: () => onSubmitSearch(searchController.text),
+                    onSubmitted: onSearchSubmitted,
+                    onEditingComplete: () => onSearchSubmitted(searchController.text),
                     textInputAction: TextInputAction.search,
                     keyboardType: TextInputType.text,
                     style: const TextStyle(

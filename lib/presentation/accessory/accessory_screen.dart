@@ -133,7 +133,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     });
   }
 
-  void _submitSearchImmediately(String value) {
+  void _submitSearchNow(String value) {
     _searchDebounceTimer?.cancel();
     _commitSearchQuery(value);
   }
@@ -396,6 +396,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           }
         },
         onSubmitSearch: _applySearchQuery,
+        onSearchSubmitted: _submitSearchNow,
         compareMode: _compareMode,
         compareList: _compareList,
         onRetryLoad: _ensureAccessoryDataReady,
