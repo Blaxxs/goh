@@ -346,12 +346,14 @@ class AccessoryScreenUI extends StatelessWidget {
                                       compareList.contains(accessory);
 
                                   return GestureDetector(
-                                    onTap: () => onAccessoryTap(context, accessory),
+                                    onTap: () =>
+                                        onAccessoryTap(context, accessory),
                                     child: Stack(
                                       children: [
                                         Container(
                                           decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(18),
+                                            borderRadius:
+                                                BorderRadius.circular(18),
                                             color: isDark
                                                 ? const Color(0xFF0F1720)
                                                     .withAlpha(200)
@@ -361,15 +363,18 @@ class AccessoryScreenUI extends StatelessWidget {
                                                   ? colorScheme.primary
                                                       .withAlpha(150)
                                                   : isDark
-                                                      ? Colors.white.withAlpha(12)
-                                                      : Colors.black.withAlpha(10),
+                                                      ? Colors.white
+                                                          .withAlpha(12)
+                                                      : Colors.black
+                                                          .withAlpha(10),
                                               width: isSelected ? 1.8 : 1,
                                             ),
                                             boxShadow: [
                                               BoxShadow(
                                                 color: (isDark
                                                         ? Colors.black
-                                                        : const Color(0xFFB2BED1))
+                                                        : const Color(
+                                                            0xFFB2BED1))
                                                     .withAlpha(
                                                         isSelected ? 44 : 20),
                                                 blurRadius: isSelected ? 14 : 8,
@@ -378,7 +383,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                             ],
                                           ),
                                           child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(18),
+                                            borderRadius:
+                                                BorderRadius.circular(18),
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.stretch,
@@ -389,19 +395,23 @@ class AccessoryScreenUI extends StatelessWidget {
                                                         ? Colors.grey[850]
                                                         : Colors.grey[200],
                                                     padding:
-                                                        const EdgeInsets.all(6.0),
+                                                        const EdgeInsets.all(
+                                                            6.0),
                                                     child: CachedNetworkImage(
-                                                      imageUrl: accessory.imageUrl,
+                                                      imageUrl:
+                                                          accessory.imageUrl,
                                                       fit: BoxFit.contain,
                                                       memCacheWidth: 256,
                                                       memCacheHeight: 256,
                                                       maxWidthDiskCache: 256,
                                                       maxHeightDiskCache: 256,
-                                                      fadeInDuration: Duration.zero,
+                                                      fadeInDuration:
+                                                          Duration.zero,
                                                       fadeOutDuration:
                                                           Duration.zero,
-                                                      placeholder: (context, url) =>
-                                                          const Center(
+                                                      placeholder:
+                                                          (context, url) =>
+                                                              const Center(
                                                         child: SizedBox(
                                                           width: 24,
                                                           height: 24,
@@ -411,9 +421,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                                           ),
                                                         ),
                                                       ),
-                                                      errorWidget:
-                                                          (context, url, error) =>
-                                                              const Icon(
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          const Icon(
                                                         Icons
                                                             .image_not_supported_outlined,
                                                         color: Colors.grey,
@@ -422,8 +432,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                                   ),
                                                 ),
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
                                                     horizontal: 6.0,
                                                     vertical: 4.0,
                                                   ),
@@ -431,7 +441,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                                     children: [
                                                       Text(
                                                         accessory.name,
-                                                        textAlign: TextAlign.center,
+                                                        textAlign:
+                                                            TextAlign.center,
                                                         style: TextStyle(
                                                           fontSize: 12,
                                                           fontWeight:
@@ -441,8 +452,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                                               : Colors.black87,
                                                         ),
                                                         maxLines: 1,
-                                                        overflow:
-                                                            TextOverflow.ellipsis,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                       ),
                                                       const SizedBox(height: 1),
                                                       Text(
@@ -451,7 +462,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                                           fontSize: 10,
                                                           color: isDark
                                                               ? Colors.white70
-                                                              : Colors.grey[700],
+                                                              : Colors
+                                                                  .grey[700],
                                                         ),
                                                       ),
                                                     ],
@@ -500,4 +512,3 @@ class AccessoryScreenUI extends StatelessWidget {
     );
   }
 }
-

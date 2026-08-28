@@ -534,10 +534,11 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                     Expanded(
                       child: Text(
                         widget.accessory.name,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: -0.2,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.2,
+                                ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -588,7 +589,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                         ),
                         errorWidget: (context, url, error) => const SizedBox(
                           height: 150,
-                          child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                          child: Icon(Icons.broken_image,
+                              size: 80, color: Colors.grey),
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -625,11 +627,13 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                               .bodySmall
                               ?.copyWith(color: Theme.of(context).hintColor),
                         ),
-                      const Text('기본 옵션', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const Text('기본 옵션',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       const SizedBox(height: 8),
                       ...displayedOptions.map((option) => Padding(
                             padding: const EdgeInsets.symmetric(vertical: 2.0),
-                            child: Text('${option.optionName}: ${option.optionValue}'),
+                            child: Text(
+                                '${option.optionName}: ${option.optionValue}'),
                           )),
                       if (widget.accessory.setOptions.isNotEmpty) ...[
                         const SizedBox(height: 16),
@@ -638,7 +642,9 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           '세트 옵션 : ${widget.accessory.setOptions.map((s) => s.setName).join(' / ')}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: isDark ? const Color(0xFFFFB38A) : Colors.deepOrange,
+                            color: isDark
+                                ? const Color(0xFFFFB38A)
+                                : Colors.deepOrange,
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -660,7 +666,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                   const SizedBox(height: 4),
                                   const Text('단계값 표시',
                                       style: TextStyle(
-                                          fontSize: 12, color: Colors.transparent)),
+                                          fontSize: 12,
+                                          color: Colors.transparent)),
                                 ],
                               ),
                               IconButton(
@@ -675,11 +682,14 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           ...widget.accessory.setOptions.map((setOption) {
                             int currentStageIndex = _sharedStageIndex;
                             final theme = Theme.of(context);
-                            final bool setIsDark = theme.brightness == Brightness.dark;
-                            final cardColor =
-                                setIsDark ? const Color(0xFF121A25) : const Color(0xFFFDF0E7);
-                            final borderColor =
-                                setIsDark ? Colors.white.withAlpha(16) : Colors.orange.withAlpha(90);
+                            final bool setIsDark =
+                                theme.brightness == Brightness.dark;
+                            final cardColor = setIsDark
+                                ? const Color(0xFF121A25)
+                                : const Color(0xFFFDF0E7);
+                            final borderColor = setIsDark
+                                ? Colors.white.withAlpha(16)
+                                : Colors.orange.withAlpha(90);
 
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12.0),
@@ -698,9 +708,11 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700,
                                             fontSize: 14,
-                                            color: theme.colorScheme.onSurface)),
+                                            color:
+                                                theme.colorScheme.onSurface)),
                                     const SizedBox(height: 8),
-                                    if (setOption.requiredAccessoryImages.isNotEmpty)
+                                    if (setOption
+                                        .requiredAccessoryImages.isNotEmpty)
                                       Container(
                                         width: double.infinity,
                                         height: 92,
@@ -708,21 +720,36 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: setOption.requiredAccessoryImages.asMap().entries.map((entry) {
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: setOption
+                                                .requiredAccessoryImages
+                                                .asMap()
+                                                .entries
+                                                .map((entry) {
                                               final imageIndex = entry.key;
                                               final imageUrl = entry.value;
-                                              final linkedAccessory = imageIndex < setOption.requiredAccessories.length
-                                                  ? setOption.requiredAccessories[imageIndex]
+                                              final linkedAccessory = imageIndex <
+                                                      setOption
+                                                          .requiredAccessories
+                                                          .length
+                                                  ? setOption
+                                                          .requiredAccessories[
+                                                      imageIndex]
                                                   : '';
 
                                               return Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
                                                 child: InkWell(
-                                                  borderRadius: BorderRadius.circular(10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                   onTap: linkedAccessory.isEmpty
                                                       ? null
-                                                      : () => _openLinkedAccessoryDetail(linkedAccessory),
+                                                      : () =>
+                                                          _openLinkedAccessoryDetail(
+                                                              linkedAccessory),
                                                   child: SizedBox(
                                                     width: 72,
                                                     height: 72,
@@ -731,9 +758,14 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                       width: 64,
                                                       height: 64,
                                                       fit: BoxFit.contain,
-                                                      placeholder: (context, url) => const Center(
-                                                          child: CircularProgressIndicator()),
-                                                      errorWidget: (context, url, error) => const Center(
+                                                      placeholder: (context,
+                                                              url) =>
+                                                          const Center(
+                                                              child:
+                                                                  CircularProgressIndicator()),
+                                                      errorWidget: (context,
+                                                              url, error) =>
+                                                          const Center(
                                                         child: Icon(
                                                           Icons.broken_image,
                                                           size: 28,
@@ -750,34 +782,47 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       ),
                                     const SizedBox(height: 10),
                                     ...setOption.effects.map((effect) {
-                                      final currentValue = _resolveSparseStageValue(effect, currentStageIndex);
+                                      final currentValue =
+                                          _resolveSparseStageValue(
+                                              effect, currentStageIndex);
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 4.0),
                                         child: Row(
                                           children: [
                                             Expanded(
                                               child: Text(
                                                 effect.optionName,
                                                 style: TextStyle(
-                                                  color: theme.colorScheme.onSurface.withAlpha((0.9 * 255).round()),
+                                                  color: theme
+                                                      .colorScheme.onSurface
+                                                      .withAlpha(
+                                                          (0.9 * 255).round()),
                                                   fontSize: 13,
                                                 ),
                                               ),
                                             ),
                                             const SizedBox(width: 8),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
                                               decoration: BoxDecoration(
                                                 color: setIsDark
                                                     ? Colors.white12
-                                                    : theme.colorScheme.primary.withAlpha((0.12 * 255).round()),
-                                                borderRadius: BorderRadius.circular(6),
+                                                    : theme.colorScheme.primary
+                                                        .withAlpha((0.12 * 255)
+                                                            .round()),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
                                               child: Text(
                                                 currentValue,
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w700,
-                                                  color: theme.colorScheme.primary,
+                                                  color:
+                                                      theme.colorScheme.primary,
                                                   fontSize: 13,
                                                 ),
                                               ),
@@ -793,13 +838,17 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                           }),
                         ] else ...[
                           ...widget.accessory.setOptions.map((setOption) {
-                            int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
+                            int currentStageIndex =
+                                _stageIndexMap[setOption.setId] ?? 0;
                             final theme = Theme.of(context);
-                            final bool setIsDark = theme.brightness == Brightness.dark;
-                            final cardColor =
-                                setIsDark ? const Color(0xFF121A25) : const Color(0xFFFDF0E7);
-                            final borderColor =
-                                setIsDark ? Colors.white.withAlpha(16) : Colors.orange.withAlpha(90);
+                            final bool setIsDark =
+                                theme.brightness == Brightness.dark;
+                            final cardColor = setIsDark
+                                ? const Color(0xFF121A25)
+                                : const Color(0xFFFDF0E7);
+                            final borderColor = setIsDark
+                                ? Colors.white.withAlpha(16)
+                                : Colors.orange.withAlpha(90);
 
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12.0),
@@ -817,9 +866,11 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700,
                                             fontSize: 14,
-                                            color: theme.colorScheme.onSurface)),
+                                            color:
+                                                theme.colorScheme.onSurface)),
                                     const SizedBox(height: 8),
-                                    if (setOption.requiredAccessoryImages.isNotEmpty)
+                                    if (setOption
+                                        .requiredAccessoryImages.isNotEmpty)
                                       Container(
                                         width: double.infinity,
                                         height: 92,
@@ -827,21 +878,36 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
                                           child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: setOption.requiredAccessoryImages.asMap().entries.map((entry) {
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: setOption
+                                                .requiredAccessoryImages
+                                                .asMap()
+                                                .entries
+                                                .map((entry) {
                                               final imageIndex = entry.key;
                                               final imageUrl = entry.value;
-                                              final linkedAccessory = imageIndex < setOption.requiredAccessories.length
-                                                  ? setOption.requiredAccessories[imageIndex]
+                                              final linkedAccessory = imageIndex <
+                                                      setOption
+                                                          .requiredAccessories
+                                                          .length
+                                                  ? setOption
+                                                          .requiredAccessories[
+                                                      imageIndex]
                                                   : '';
 
                                               return Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8.0),
                                                 child: InkWell(
-                                                  borderRadius: BorderRadius.circular(10),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10),
                                                   onTap: linkedAccessory.isEmpty
                                                       ? null
-                                                      : () => _openLinkedAccessoryDetail(linkedAccessory),
+                                                      : () =>
+                                                          _openLinkedAccessoryDetail(
+                                                              linkedAccessory),
                                                   child: SizedBox(
                                                     width: 72,
                                                     height: 72,
@@ -851,9 +917,14 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                         width: 64,
                                                         height: 64,
                                                         fit: BoxFit.contain,
-                                                        placeholder: (context, url) => const Center(
-                                                            child: CircularProgressIndicator()),
-                                                        errorWidget: (context, url, error) => const Center(
+                                                        placeholder: (context,
+                                                                url) =>
+                                                            const Center(
+                                                                child:
+                                                                    CircularProgressIndicator()),
+                                                        errorWidget: (context,
+                                                                url, error) =>
+                                                            const Center(
                                                           child: Icon(
                                                             Icons.broken_image,
                                                             size: 28,
@@ -873,34 +944,47 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       const SizedBox.shrink(),
                                     const SizedBox(height: 10),
                                     ...setOption.effects.map((effect) {
-                                      final currentValue = _resolveSparseStageValue(effect, currentStageIndex);
+                                      final currentValue =
+                                          _resolveSparseStageValue(
+                                              effect, currentStageIndex);
                                       return Padding(
-                                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 4.0),
                                         child: Row(
                                           children: [
                                             Expanded(
                                               child: Text(
                                                 effect.optionName,
                                                 style: TextStyle(
-                                                  color: theme.colorScheme.onSurface.withAlpha((0.9 * 255).round()),
+                                                  color: theme
+                                                      .colorScheme.onSurface
+                                                      .withAlpha(
+                                                          (0.9 * 255).round()),
                                                   fontSize: 13,
                                                 ),
                                               ),
                                             ),
                                             const SizedBox(width: 8),
                                             Container(
-                                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
                                               decoration: BoxDecoration(
                                                 color: setIsDark
                                                     ? Colors.white12
-                                                    : theme.colorScheme.primary.withAlpha((0.12 * 255).round()),
-                                                borderRadius: BorderRadius.circular(6),
+                                                    : theme.colorScheme.primary
+                                                        .withAlpha((0.12 * 255)
+                                                            .round()),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
                                               child: Text(
                                                 currentValue,
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w700,
-                                                  color: theme.colorScheme.primary,
+                                                  color:
+                                                      theme.colorScheme.primary,
                                                   fontSize: 13,
                                                 ),
                                               ),
@@ -911,25 +995,32 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     }),
                                     const SizedBox(height: 8),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         IconButton(
                                           onPressed: currentStageIndex > 0
                                               ? () {
                                                   setState(() {
-                                                    _stageIndexMap[setOption.setId] = currentStageIndex - 1;
+                                                    _stageIndexMap[
+                                                            setOption.setId] =
+                                                        currentStageIndex - 1;
                                                   });
                                                 }
                                               : null,
                                           icon: const Icon(Icons.arrow_left),
                                         ),
                                         Text('$currentStageIndex단계',
-                                            style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey)),
                                         IconButton(
                                           onPressed: currentStageIndex < 18
                                               ? () {
                                                   setState(() {
-                                                    _stageIndexMap[setOption.setId] = currentStageIndex + 1;
+                                                    _stageIndexMap[
+                                                            setOption.setId] =
+                                                        currentStageIndex + 1;
                                                   });
                                                 }
                                               : null,
