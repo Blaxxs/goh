@@ -143,20 +143,17 @@ class _AccessoryEnhancementScreenState
                           const SizedBox(width: 8),
                           SizedBox(
                             width: 96,
-                            child: TextField(
+                            child: SearchTextField(
+                              hintText: '검색',
                               onChanged: (v) =>
                                   setSheetState(() => searchQuery = v),
                               onSubmitted: (v) =>
                                   setSheetState(() => searchQuery = v.trim()),
                               textInputAction: TextInputAction.search,
-                              decoration: const InputDecoration(
-                                hintText: '검색',
-                                prefixIcon: Icon(Icons.search, size: 18),
-                                isDense: true,
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 8),
-                              ),
+                              prefixIcon: Icons.search,
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 8),
+                              width: 96,
                             ),
                           ),
                         ],

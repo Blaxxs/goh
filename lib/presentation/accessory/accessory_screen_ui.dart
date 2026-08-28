@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart'; // 패키지 import 필수
+import '../../core/widgets/search_text_field.dart';
 import '../../data/models/accessory.dart';
 
 class AccessoryScreenUI extends StatelessWidget {
@@ -108,42 +109,13 @@ class AccessoryScreenUI extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  TextField(
+                  SearchTextField(
                     controller: searchController,
+                    hintText: '이름/옵션 검색 (예: 크리, 크뎀, 관저)',
                     onChanged: onSubmitSearch,
                     onSubmitted: onSearchSubmitted,
-                    onEditingComplete: () =>
-                        onSearchSubmitted(searchController.text),
                     textInputAction: TextInputAction.search,
                     keyboardType: TextInputType.text,
-                    style: const TextStyle(
-                      fontFamily: 'NanumGothic',
-                      fontFamilyFallback: [
-                        'Malgun Gothic',
-                        'Apple SD Gothic Neo',
-                        'Noto Sans KR',
-                        'sans-serif',
-                      ],
-                    ),
-                    strutStyle: const StrutStyle(
-                      fontFamily: 'NanumGothic',
-                      fontFamilyFallback: [
-                        'Malgun Gothic',
-                        'Apple SD Gothic Neo',
-                        'Noto Sans KR',
-                        'sans-serif',
-                      ],
-                      height: 1.25,
-                      forceStrutHeight: true,
-                    ),
-                    decoration: const InputDecoration(
-                      hintText: '이름/옵션 검색 (예: 크리, 크뎀, 관저)',
-                      prefixIcon: Icon(Icons.search_rounded, size: 20),
-                      isDense: true,
-                      border: OutlineInputBorder(),
-                      contentPadding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    ),
                   ),
                   const SizedBox(height: 10),
                   Align(

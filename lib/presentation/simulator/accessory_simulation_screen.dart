@@ -550,8 +550,9 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                           const SizedBox(width: 8),
                           SizedBox(
                             width: 108,
-                            child: TextField(
+                            child: SearchTextField(
                               controller: searchController,
+                              hintText: '검색',
                               onChanged: (v) => setSheetState(
                                 () => _accessoryPickerSearchQuery = v,
                               ),
@@ -559,16 +560,12 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                                 () => _accessoryPickerSearchQuery = v.trim(),
                               ),
                               textInputAction: TextInputAction.search,
-                              decoration: const InputDecoration(
-                                hintText: '검색',
-                                prefixIcon: Icon(Icons.search, size: 18),
-                                isDense: true,
-                                border: OutlineInputBorder(),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 8,
-                                ),
+                              prefixIcon: Icons.search,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 8,
                               ),
+                              width: 108,
                             ),
                           ),
                         ],

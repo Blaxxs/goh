@@ -369,8 +369,9 @@ class _SpiritScreenState extends State<SpiritScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    TextField(
+                    SearchTextField(
                       controller: _searchController,
+                      hintText: '이름/효과/패시브 검색 (예: 크리, 크증, 관저)',
                       onChanged: (value) {
                         setState(() {
                           _searchQuery = value;
@@ -382,14 +383,6 @@ class _SpiritScreenState extends State<SpiritScreen> {
                         });
                       },
                       textInputAction: TextInputAction.search,
-                      decoration: const InputDecoration(
-                        hintText: '이름/효과/패시브 검색 (예: 크리, 크증, 관저)',
-                        prefixIcon: Icon(Icons.search_rounded, size: 20),
-                        isDense: true,
-                        border: OutlineInputBorder(),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                      ),
                     ),
                   ],
                 ),
