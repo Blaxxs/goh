@@ -555,6 +555,10 @@ class _AccessorySimulationScreenState extends State<AccessorySimulationScreen> {
                               onChanged: (v) => setSheetState(
                                 () => _accessoryPickerSearchQuery = v,
                               ),
+                              onSubmitted: (v) => setSheetState(
+                                () => _accessoryPickerSearchQuery = v.trim(),
+                              ),
+                              textInputAction: TextInputAction.search,
                               decoration: const InputDecoration(
                                 hintText: '검색',
                                 prefixIcon: Icon(Icons.search, size: 18),

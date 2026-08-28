@@ -376,6 +376,12 @@ class _SpiritScreenState extends State<SpiritScreen> {
                           _searchQuery = value;
                         });
                       },
+                      onSubmitted: (value) {
+                        setState(() {
+                          _searchQuery = value.trim();
+                        });
+                      },
+                      textInputAction: TextInputAction.search,
                       decoration: const InputDecoration(
                         hintText: '이름/효과/패시브 검색 (예: 크리, 크증, 관저)',
                         prefixIcon: Icon(Icons.search_rounded, size: 20),

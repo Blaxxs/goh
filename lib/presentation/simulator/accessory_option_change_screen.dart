@@ -150,6 +150,9 @@ class _AccessoryOptionChangeScreenState
                             child: TextField(
                               onChanged: (v) =>
                                   setSheetState(() => searchQuery = v),
+                              onSubmitted: (v) =>
+                                  setSheetState(() => searchQuery = v.trim()),
+                              textInputAction: TextInputAction.search,
                               decoration: const InputDecoration(
                                 hintText: '검색',
                                 prefixIcon: Icon(Icons.search, size: 18),
