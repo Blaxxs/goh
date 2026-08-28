@@ -59,9 +59,11 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
       final PackageInfo packageInfo = await PackageInfo.fromPlatform();
       final versionText = packageInfo.version.trim();
       final buildText = packageInfo.buildNumber.trim();
-      final resolvedVersion =
-          versionText.isEmpty ? '버전 정보를 가져올 수 없습니다.' :
-          buildText.isEmpty ? versionText : '$versionText ($buildText)';
+      final resolvedVersion = versionText.isEmpty
+          ? '버전 정보를 가져올 수 없습니다.'
+          : buildText.isEmpty
+              ? versionText
+              : '$versionText ($buildText)';
 
       if (mounted) {
         setState(() {
@@ -105,11 +107,11 @@ class _AppSettingsScreenState extends State<AppSettingsScreen> {
   Widget build(BuildContext context) {
     // 여기서 UI 위젯인 AppSettingsScreenUI를 사용합니다.
     return AppSettingsScreenUI(
-        isDarkModeEnabled: _isDarkModeEnabled,
-        onDarkModeChanged: _handleDarkModeChange,
-        currentFontSizeMultiplier: _fontSizeMultiplier,
-        onFontSizeMultiplierChanged: _handleFontSizeChange,
-        appVersion: _appVersion, // 로드된 앱 버전 정보를 UI 위젯에 전달
-      );
+      isDarkModeEnabled: _isDarkModeEnabled,
+      onDarkModeChanged: _handleDarkModeChange,
+      currentFontSizeMultiplier: _fontSizeMultiplier,
+      onFontSizeMultiplierChanged: _handleFontSizeChange,
+      appVersion: _appVersion, // 로드된 앱 버전 정보를 UI 위젯에 전달
+    );
   }
 }
