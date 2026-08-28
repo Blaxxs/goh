@@ -341,9 +341,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                 ),
                                 itemCount: filteredAccessories.length,
                                 itemBuilder: (context, index) {
-                              final accessory = filteredAccessories[index];
-                              final isSelected = compareMode &&
-                                  compareList.contains(accessory);
+                                  final accessory = filteredAccessories[index];
+                                  final isSelected = compareMode &&
+                                      compareList.contains(accessory);
 
                                   return GestureDetector(
                                     onTap: () => onAccessoryTap(context, accessory),
@@ -433,68 +433,72 @@ class AccessoryScreenUI extends StatelessWidget {
                                                         accessory.name,
                                                         textAlign: TextAlign.center,
                                                         style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: isDark
-                                                          ? Colors.white
-                                                          : Colors.black87,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: isDark
+                                                              ? Colors.white
+                                                              : Colors.black87,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow:
+                                                            TextOverflow.ellipsis,
+                                                      ),
+                                                      const SizedBox(height: 1),
+                                                      Text(
+                                                        accessory.part,
+                                                        style: TextStyle(
+                                                          fontSize: 10,
+                                                          color: isDark
+                                                              ? Colors.white70
+                                                              : Colors.grey[700],
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                  const SizedBox(height: 1),
-                                                  Text(
-                                                    accessory.part,
-                                                    style: TextStyle(
-                                                      fontSize: 10,
-                                                      color: isDark
-                                                          ? Colors.white70
-                                                          : Colors.grey[700],
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    if (compareMode)
-                                      Positioned(
-                                        top: 6,
-                                        right: 6,
-                                        child: Container(
-                                          width: 20,
-                                          height: 20,
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                : Colors.black26,
-                                            shape: BoxShape.circle,
                                           ),
-                                          child: isSelected
-                                              ? Icon(
-                                                  Icons.check_rounded,
-                                                  size: 13,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onPrimary,
-                                                )
-                                              : null,
                                         ),
-                                      ),
-                                  ],
-                                ),
+                                        if (compareMode)
+                                          Positioned(
+                                            top: 6,
+                                            right: 6,
+                                            child: Container(
+                                              width: 20,
+                                              height: 20,
+                                              decoration: BoxDecoration(
+                                                color: isSelected
+                                                    ? Theme.of(context)
+                                                        .colorScheme
+                                                        .primary
+                                                    : Colors.black26,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              child: isSelected
+                                                  ? Icon(
+                                                      Icons.check_rounded,
+                                                      size: 13,
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .onPrimary,
+                                                    )
+                                                  : null,
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               );
                             },
                           ),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        );
+      }
+    }
   }
 }
