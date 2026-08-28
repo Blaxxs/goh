@@ -731,35 +731,44 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                         ),
                         const SizedBox(height: 12),
                         if (widget.accessory.setOptions.length == 2) ...[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              IconButton(
-                                onPressed: _sharedStageIndex > 0
-                                    ? () => setState(() => _sharedStageIndex--)
-                                    : null,
-                                icon: const Icon(Icons.arrow_left),
-                              ),
-                              Column(
-                                children: [
-                                  Text('$_sharedStageIndex단계',
-                                      style: const TextStyle(
-                                          fontSize: 12, color: Colors.grey)),
-                                  const SizedBox(height: 4),
-                                  const Text('단계값 표시',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.transparent)),
-                                ],
-                              ),
-                              IconButton(
-                                onPressed: _sharedStageIndex < 18
-                                    ? () => setState(() => _sharedStageIndex++)
-                                    : null,
-                                icon: const Icon(Icons.arrow_right),
-                              ),
-                            ],
-                          ),
+                          Builder(builder: (context) {
+                            final sharedMaxStage = widget
+                                .accessory.setOptions
+                                .map((s) => s.maxStage)
+                                .fold<int>(
+                                    0, (prev, cur) => cur > prev ? cur : prev);
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                IconButton(
+                                  onPressed: _sharedStageIndex > 0
+                                      ? () =>
+                                          setState(() => _sharedStageIndex--)
+                                      : null,
+                                  icon: const Icon(Icons.arrow_left),
+                                ),
+                                Column(
+                                  children: [
+                                    Text('$_sharedStageIndex단계',
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.grey)),
+                                    const SizedBox(height: 4),
+                                    const Text('단계값 표시',
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.transparent)),
+                                  ],
+                                ),
+                                IconButton(
+                                  onPressed: _sharedStageIndex < sharedMaxStage
+                                      ? () =>
+                                          setState(() => _sharedStageIndex++)
+                                      : null,
+                                  icon: const Icon(Icons.arrow_right),
+                                ),
+                              ],
+                            );
+                          }),
                           const SizedBox(height: 8),
                           ...widget.accessory.setOptions.map((setOption) {
                             int currentStageIndex = _sharedStageIndex;
@@ -1097,7 +1106,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                 fontSize: 12,
                                                 color: Colors.grey)),
                                         IconButton(
-                                          onPressed: currentStageIndex < 18
+                                          onPressed: currentStageIndex <
+                                                  setOption.maxStage
                                               ? () {
                                                   setState(() {
                                                     _stageIndexMap[
