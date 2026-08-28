@@ -1087,40 +1087,28 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                       );
                                     }),
                                     const SizedBox(height: 8),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        IconButton(
-                                          onPressed: currentStageIndex > 0
-                                              ? () {
-                                                  setState(() {
-                                                    _stageIndexMap[
-                                                            setOption.setId] =
-                                                        currentStageIndex - 1;
-                                                  });
-                                                }
-                                              : null,
-                                          icon: const Icon(Icons.arrow_left),
-                                        ),
-                                        Text('$currentStageIndex단계',
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey)),
-                                        IconButton(
-                                          onPressed: currentStageIndex <
-                                                  setOption.maxStage
-                                              ? () {
-                                                  setState(() {
-                                                    _stageIndexMap[
-                                                            setOption.setId] =
-                                                        currentStageIndex + 1;
-                                                  });
-                                                }
-                                              : null,
-                                          icon: const Icon(Icons.arrow_right),
-                                        ),
-                                      ],
+                                    Text('$currentStageIndex단계',
+                                        style: const TextStyle(
+                                            fontSize: 12, color: Colors.grey)),
+                                    Slider(
+                                      value: currentStageIndex
+                                          .clamp(0, setOption.maxStage)
+                                          .toDouble(),
+                                      min: 0,
+                                      max: setOption.maxStage.toDouble(),
+                                      divisions: setOption.maxStage > 0
+                                          ? setOption.maxStage
+                                          : null,
+                                      label: '$currentStageIndex단계',
+                                      onChanged: setOption.maxStage > 0
+                                          ? (value) {
+                                              setState(() {
+                                                _stageIndexMap[
+                                                        setOption.setId] =
+                                                    value.round();
+                                              });
+                                            }
+                                          : null,
                                     ),
                                   ],
                                 ),
