@@ -515,13 +515,13 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
 
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 24),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
       child: GlassPanel(
         padding: EdgeInsets.zero,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(24),
         child: ConstrainedBox(
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width < 360 ? 320 : 360,
+            maxWidth: MediaQuery.of(context).size.width < 360 ? 300 : 320,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -692,14 +692,14 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                 : Colors.orange.withAlpha(90);
 
                             return Padding(
-                              padding: const EdgeInsets.only(bottom: 12.0),
+                              padding: const EdgeInsets.only(bottom: 10.0),
                               child: Container(
                                 width: double.infinity,
-                                padding: const EdgeInsets.all(12.0),
+                                padding: const EdgeInsets.all(10.0),
                                 decoration: BoxDecoration(
                                   color: cardColor,
                                   border: Border.all(color: borderColor),
-                                  borderRadius: BorderRadius.circular(14),
+                                  borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -707,15 +707,15 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                     Text(setOption.setName,
                                         style: TextStyle(
                                             fontWeight: FontWeight.w700,
-                                            fontSize: 14,
+                                            fontSize: 13,
                                             color:
                                                 theme.colorScheme.onSurface)),
-                                    const SizedBox(height: 8),
+                                    const SizedBox(height: 6),
                                     if (setOption
                                         .requiredAccessoryImages.isNotEmpty)
                                       Container(
                                         width: double.infinity,
-                                        height: 92,
+                                        height: 78,
                                         alignment: Alignment.center,
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.horizontal,
@@ -741,22 +741,22 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                               return Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 8.0),
+                                                        horizontal: 6.0),
                                                 child: InkWell(
                                                   borderRadius:
-                                                      BorderRadius.circular(10),
+                                                      BorderRadius.circular(8),
                                                   onTap: linkedAccessory.isEmpty
                                                       ? null
                                                       : () =>
                                                           _openLinkedAccessoryDetail(
                                                               linkedAccessory),
                                                   child: SizedBox(
-                                                    width: 72,
-                                                    height: 72,
+                                                    width: 60,
+                                                    height: 60,
                                                     child: CachedNetworkImage(
                                                       imageUrl: imageUrl,
-                                                      width: 64,
-                                                      height: 64,
+                                                      width: 54,
+                                                      height: 54,
                                                       fit: BoxFit.contain,
                                                       placeholder: (context,
                                                               url) =>
@@ -768,7 +768,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                           const Center(
                                                         child: Icon(
                                                           Icons.broken_image,
-                                                          size: 28,
+                                                          size: 24,
                                                           color: Colors.grey,
                                                         ),
                                                       ),
@@ -780,14 +780,14 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                           ),
                                         ),
                                       ),
-                                    const SizedBox(height: 10),
+                                    const SizedBox(height: 8),
                                     ...setOption.effects.map((effect) {
                                       final currentValue =
                                           _resolveSparseStageValue(
                                               effect, currentStageIndex);
                                       return Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 4.0),
+                                            vertical: 3.0),
                                         child: Row(
                                           children: [
                                             Expanded(
@@ -798,7 +798,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                       .colorScheme.onSurface
                                                       .withAlpha(
                                                           (0.9 * 255).round()),
-                                                  fontSize: 13,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                             ),
@@ -806,8 +806,8 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                             Container(
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 8.0),
+                                                      vertical: 3.0,
+                                                      horizontal: 7.0),
                                               decoration: BoxDecoration(
                                                 color: setIsDark
                                                     ? Colors.white12
@@ -823,7 +823,7 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
                                                   fontWeight: FontWeight.w700,
                                                   color:
                                                       theme.colorScheme.primary,
-                                                  fontSize: 13,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                             ),
