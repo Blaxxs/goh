@@ -75,7 +75,8 @@ class _AccessoryEnhancementScreenState
               final matchesSearch = searchQuery.isEmpty ||
                   a.name.toLowerCase().contains(searchQuery.toLowerCase());
               return matchesPart && matchesSearch;
-            }).toList()..sort((a, b) => a.name.compareTo(b.name));
+            }).toList()
+              ..sort((a, b) => a.name.compareTo(b.name));
 
             return DraggableScrollableSheet(
               expand: false,
@@ -130,11 +131,9 @@ class _AccessoryEnhancementScreenState
                                           visualDensity: VisualDensity.compact,
                                           materialTapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
-                                          onSelected: (_) => setSheetState(
-                                              () => selectedPart =
-                                                  selectedPart == p
-                                                      ? null
-                                                      : p),
+                                          onSelected: (_) => setSheetState(() =>
+                                              selectedPart =
+                                                  selectedPart == p ? null : p),
                                         ),
                                       )),
                                 ],
@@ -238,9 +237,8 @@ class _AccessoryEnhancementScreenState
                                       const SizedBox(height: 4),
                                       Text(
                                         acc.name,
-                                        style: Theme.of(ctx)
-                                            .textTheme
-                                            .labelSmall,
+                                        style:
+                                            Theme.of(ctx).textTheme.labelSmall,
                                         textAlign: TextAlign.center,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -455,8 +453,7 @@ class _AccessoryEnhancementScreenState
         break; // 루프 종료
       }
 
-      await Future.delayed(
-          const Duration(milliseconds: 1)); // 다음 강화 시도 전 짧은 지연
+      await Future.delayed(const Duration(milliseconds: 1)); // 다음 강화 시도 전 짧은 지연
     }
     // 루프가 끝나면 (중지 버튼, 목표 달성 등) isAutoEnhancing 상태를 false로 변경
     if (mounted) {
@@ -471,7 +468,7 @@ class _AccessoryEnhancementScreenState
         "[AccessoryEnhancementScreen] Building UI. Selected Accessory: ${_selectedAccessory?.name ?? 'None'}");
 
     return AccessoryEnhancementScreenUI(
-        selectedAccessory: _selectedAccessory,
+      selectedAccessory: _selectedAccessory,
       onSelectAccessoryPressed: () => _selectAccessory(context),
       currentEnhancementLevel: _currentEnhancementLevel,
       onCurrentEnhancementLevelChanged: (int? newValue) {
@@ -544,13 +541,13 @@ class _AccessoryEnhancementScreenState
       totalConsumedGold: _totalConsumedGold,
       onResetScreenPressed: _resetScreenState, // 리셋 콜백 전달
       selectedOptionCount: _selectedOptionCount,
-        onOptionCountChanged: (int? newValue) {
+      onOptionCountChanged: (int? newValue) {
         if (newValue != null && mounted) {
           setState(() {
             _selectedOptionCount = newValue;
           });
         }
       },
-      );
+    );
   }
 }

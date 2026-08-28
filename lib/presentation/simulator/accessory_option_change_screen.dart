@@ -38,7 +38,7 @@ class _AccessoryOptionChangeScreenState
   int _totalRainbowAnvilsConsumed = 0; // 무지개 모루
   int _total9EnhanceAccessoriesConsumed = 0; // 3옵 9강 악세
 
-    final List<AccessoryOption> _possibleChangeableOptions =
+  final List<AccessoryOption> _possibleChangeableOptions =
       AccessoryOptionRollLogic.defaultChangeableOptions;
 
   @override
@@ -133,11 +133,9 @@ class _AccessoryOptionChangeScreenState
                                           visualDensity: VisualDensity.compact,
                                           materialTapTargetSize:
                                               MaterialTapTargetSize.shrinkWrap,
-                                          onSelected: (_) => setSheetState(
-                                              () => selectedPart =
-                                                  selectedPart == p
-                                                      ? null
-                                                      : p),
+                                          onSelected: (_) => setSheetState(() =>
+                                              selectedPart =
+                                                  selectedPart == p ? null : p),
                                         ),
                                       )),
                                 ],
@@ -237,9 +235,8 @@ class _AccessoryOptionChangeScreenState
                                       const SizedBox(height: 4),
                                       Text(
                                         acc.name,
-                                        style: Theme.of(ctx)
-                                            .textTheme
-                                            .labelSmall,
+                                        style:
+                                            Theme.of(ctx).textTheme.labelSmall,
                                         textAlign: TextAlign.center,
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
@@ -432,16 +429,16 @@ class _AccessoryOptionChangeScreenState
   @override
   Widget build(BuildContext context) {
     return AccessoryOptionChangeScreenUI(
-        selectedAccessory: _selectedAccessory,
-        currentOptions: _currentOptions,
-        selectedAction: _selectedAction,
-        onSelectAccessoryPressed: () => _selectAccessory(context),
-        onResetScreenPressed: _resetScreenState,
-        onActionSelected: _handleActionSelected,
-        totalSoulStonesConsumed: _totalSoulStonesConsumed,
-        totalGrindstonesConsumed: _totalGrindstonesConsumed,
-        totalRainbowAnvilsConsumed: _totalRainbowAnvilsConsumed,
-        total9EnhanceAccessoriesConsumed: _total9EnhanceAccessoriesConsumed,
-      );
+      selectedAccessory: _selectedAccessory,
+      currentOptions: _currentOptions,
+      selectedAction: _selectedAction,
+      onSelectAccessoryPressed: () => _selectAccessory(context),
+      onResetScreenPressed: _resetScreenState,
+      onActionSelected: _handleActionSelected,
+      totalSoulStonesConsumed: _totalSoulStonesConsumed,
+      totalGrindstonesConsumed: _totalGrindstonesConsumed,
+      totalRainbowAnvilsConsumed: _totalRainbowAnvilsConsumed,
+      total9EnhanceAccessoriesConsumed: _total9EnhanceAccessoriesConsumed,
+    );
   }
 }
