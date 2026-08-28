@@ -203,6 +203,20 @@ class AccessorySetOption {
     required this.effects,
   });
 
+  // 세트 옵션 데이터에 정의된 실제 최대 단계 (효과별로 18단계 또는 27단계 등 다를 수 있음)
+  int get maxStage {
+    var max = 0;
+    for (final effect in effects) {
+      for (final key in effect.stageValues.keys) {
+        final stage = int.tryParse(key);
+        if (stage != null && stage > max) {
+          max = stage;
+        }
+      }
+    }
+    return max;
+  }
+
   factory AccessorySetOption.fromJson(dynamic json) {
     if (json == null) {
       return AccessorySetOption(
