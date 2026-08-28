@@ -19,7 +19,7 @@ class AppSettings {
   final String? homeMenuLayoutJson; // 홈 화면 버튼 배치/숨김/즐겨찾기 저장
 
   AppSettings({
-    this.isDarkModeEnabled = false,
+    this.isDarkModeEnabled = true,
     this.fontSizeMultiplier = 1.0, // 기본값 1.0 (100%)
     this.hideUnconfiguredStagesInCalculator = false, // 기본값 false (모두 표시)
     this.hideUnconfiguredStagesInGoldCalculator = false, // 기본값 false
@@ -56,7 +56,7 @@ class AppSettings {
         (e) => e.toString() == dayString,
         orElse: () => StartingDayOfWeek.sunday);
     return AppSettings(
-      isDarkModeEnabled: json['isDarkModeEnabled'] as bool? ?? false,
+      isDarkModeEnabled: json['isDarkModeEnabled'] as bool? ?? true,
       fontSizeMultiplier:
           (json['fontSizeMultiplier'] as num?)?.toDouble() ?? 1.0,
       hideUnconfiguredStagesInCalculator:
@@ -284,7 +284,7 @@ class SettingsService {
   Map<DateTime, List<JournalEntry>> _journalEntries = {}; // 일지 데이터 저장 맵 추가
 
   // --- 테마 및 글꼴 크기 관리를 위한 ValueNotifier 추가 ---
-  ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.light);
+  ValueNotifier<ThemeMode> themeModeNotifier = ValueNotifier(ThemeMode.dark);
   ValueNotifier<double> fontSizeNotifier =
       ValueNotifier(1.0); // 글꼴 크기 배율 notifier 추가
   ValueNotifier<StartingDayOfWeek> startingDayOfWeekNotifier =
