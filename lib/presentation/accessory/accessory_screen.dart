@@ -358,28 +358,25 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                 return IconButton(
                   tooltip: isDark ? '라이트 모드로 전환' : '다크 모드로 전환',
                   onPressed: () {
-                    final nextSettings = SettingsService
-                        .instance.appSettings
+                    final nextSettings = SettingsService.instance.appSettings
                         .copyWith(isDarkModeEnabled: !isDark);
                     SettingsService.instance.saveAppSettings(nextSettings);
                   },
                   icon: Icon(
-                    isDark ? Icons.dark_mode_outlined : Icons.light_mode_outlined,
+                    isDark
+                        ? Icons.dark_mode_outlined
+                        : Icons.light_mode_outlined,
                   ),
                   style: IconButton.styleFrom(
-                    backgroundColor: Theme.of(context)
-                        .colorScheme
-                        .surface
-                        .withAlpha(180),
+                    backgroundColor:
+                        Theme.of(context).colorScheme.surface.withAlpha(180),
                     foregroundColor: Theme.of(context).colorScheme.onSurface,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
                     side: BorderSide(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withAlpha(56),
+                      color:
+                          Theme.of(context).colorScheme.outline.withAlpha(56),
                     ),
                   ),
                 );
