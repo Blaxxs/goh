@@ -45,7 +45,7 @@ class AppSettings {
               this.hideUnconfiguredStagesInGoldCalculator, // 새 파라미터 사용
       startingDayOfWeek: startingDayOfWeek ??
           this.startingDayOfWeek, // startingDayOfWeek 파라미터를 올바르게 사용
-        homeMenuLayoutJson: homeMenuLayoutJson ?? this.homeMenuLayoutJson,
+      homeMenuLayoutJson: homeMenuLayoutJson ?? this.homeMenuLayoutJson,
     );
   }
 
