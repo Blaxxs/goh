@@ -112,7 +112,8 @@ class AccessoryScreenUI extends StatelessWidget {
                     controller: searchController,
                     onChanged: onSubmitSearch,
                     onSubmitted: onSearchSubmitted,
-                    onEditingComplete: () => onSearchSubmitted(searchController.text),
+                    onEditingComplete: () =>
+                        onSearchSubmitted(searchController.text),
                     textInputAction: TextInputAction.search,
                     keyboardType: TextInputType.text,
                     style: const TextStyle(
