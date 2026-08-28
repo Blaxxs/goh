@@ -73,7 +73,6 @@ class GlassPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
     final Color backgroundStart = isDark
       ? const Color(0x1AFFFFFF)
