@@ -162,6 +162,7 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           accessory: accessory,
           parentContext: this.context,
           initialEnhancementLevel: _showMaxEnhancementValues ? 9 : 0,
+          showMaxSetOptionValues: _showMaxEnhancementValues,
         );
       },
     );
@@ -532,11 +533,13 @@ class _AccessoryDetailDialog extends StatefulWidget {
   final Accessory accessory;
   final BuildContext parentContext;
   final int initialEnhancementLevel;
+  final bool showMaxSetOptionValues;
 
   const _AccessoryDetailDialog({
     required this.accessory,
     required this.parentContext,
     required this.initialEnhancementLevel,
+    this.showMaxSetOptionValues = false,
   });
 
   @override
@@ -584,7 +587,13 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
     _stageIndexMap = {};
     _enhancementLevel = widget.initialEnhancementLevel.clamp(0, 9);
     for (var setOption in widget.accessory.setOptions) {
-      _stageIndexMap[setOption.setId] = 0;
+      _stageIndexMap[setOption.setId] =
+          widget.showMaxSetOptionValues ? setOption.maxStage : 0;
+    }
+    if (widget.showMaxSetOptionValues) {
+      _sharedStageIndex = widget.accessory.setOptions
+          .map((s) => s.maxStage)
+          .fold<int>(0, (prev, cur) => cur > prev ? cur : prev);
     }
   }
 
