@@ -511,472 +511,455 @@ class _AccessoryDetailDialogState extends State<_AccessoryDetailDialog> {
     final displayedOptions =
         widget.accessory.optionsAtEnhancementLevel(_enhancementLevel);
 
-    return AlertDialog(
-      titlePadding: const EdgeInsets.fromLTRB(24, 20, 16, 0),
-      title: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Text(
-              widget.accessory.name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(width: 8),
-          OutlinedButton.icon(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(widget.parentContext).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => AccessorySimulationScreen(
-                    initialAccessory: widget.accessory,
-                  ),
-                ),
-              );
-            },
-            icon: const Icon(Icons.tune_rounded, size: 16),
-            label: const Text('시뮬레이터'),
-            style: OutlinedButton.styleFrom(
-              visualDensity: VisualDensity.compact,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            ),
-          ),
-        ],
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CachedNetworkImage(
-              imageUrl: widget.accessory.imageUrl,
-              height: 150,
-              fit: BoxFit.contain,
-              placeholder: (context, url) => const SizedBox(
-                height: 150,
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              errorWidget: (context, url, error) => const SizedBox(
-                height: 150,
-                child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildDetailRow('부위', widget.accessory.part),
-            _buildDetailRow('착용 제한', widget.accessory.restrictions),
-            const Divider(),
-            if (widget.accessory.hasEnhancementStageBonuses) ...[
-              Row(
-                children: [
-                  const Text('강화 단계',
-                      style: TextStyle(fontWeight: FontWeight.bold)),
-                  const Spacer(),
-                  Text('$_enhancementLevel강',
-                      style: Theme.of(context).textTheme.bodySmall),
-                ],
-              ),
-              Slider(
-                value: _enhancementLevel.toDouble(),
-                min: 0,
-                max: 9,
-                divisions: 9,
-                label: '$_enhancementLevel강',
-                onChanged: (value) {
-                  setState(() {
-                    _enhancementLevel = value.round();
-                  });
-                },
-              ),
-            ] else
-              Text(
-                '강화 단계별 수치 정보 없음',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Theme.of(context).hintColor),
-              ),
-            const Text('기본 옵션', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            ...displayedOptions.map((option) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 2.0),
-                  child: Text('${option.optionName}: ${option.optionValue}'),
-                )),
-            // 세트 옵션 표시
-            if (widget.accessory.setOptions.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              const Divider(),
-              Text(
-                '세트 옵션 : ${widget.accessory.setOptions.map((s) => s.setName).join(' / ')}',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: Colors.deepOrange),
-              ),
-              const SizedBox(height: 12),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-              // 두 개의 세트 옵션이 있는 경우, 상하(수직) 배치 및 단계 컨트롤 통합
-              if (widget.accessory.setOptions.length == 2) ...[
-                // 통합 단계 컨트롤
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+      child: GlassPanel(
+        padding: EdgeInsets.zero,
+        borderRadius: BorderRadius.circular(28),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 18, 16, 12),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      onPressed: _sharedStageIndex > 0
-                          ? () => setState(() => _sharedStageIndex--)
-                          : null,
-                      icon: const Icon(Icons.arrow_left),
+                    Expanded(
+                      child: Text(
+                        widget.accessory.name,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: -0.2,
+                        ),
+                      ),
                     ),
-                    Column(
-                      children: [
-                        Text('$_sharedStageIndex단계',
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey)),
-                        const SizedBox(height: 4),
-                        Text('단계값 표시',
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.transparent)),
-                      ],
-                    ),
-                    IconButton(
-                      onPressed: _sharedStageIndex < 18
-                          ? () => setState(() => _sharedStageIndex++)
-                          : null,
-                      icon: const Icon(Icons.arrow_right),
+                    const SizedBox(width: 8),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(widget.parentContext).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => AccessorySimulationScreen(
+                              initialAccessory: widget.accessory,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.tune_rounded, size: 16),
+                      label: const Text('시뮬레이터'),
+                      style: OutlinedButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        side: BorderSide(
+                          color: isDark
+                              ? Colors.white.withAlpha(30)
+                              : Colors.black.withAlpha(20),
+                        ),
+                        foregroundColor: isDark ? Colors.white : Colors.black87,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-
-                // 두 세트를 위아래로 각각 컨테이너에 렌더
-                ...widget.accessory.setOptions.map((setOption) {
-                  // 공유 인덱스 사용
-                  int currentStageIndex = _sharedStageIndex;
-
-                  final theme = Theme.of(context);
-                  final bool isDark = theme.brightness == Brightness.dark;
-                  final cardColor =
-                      isDark ? Colors.grey[850] : Colors.orange[50];
-                  final borderColor =
-                      isDark ? Colors.grey[700] : Colors.orange[300];
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12.0),
-                      decoration: BoxDecoration(
-                        color: cardColor,
-                        border: Border.all(color: borderColor!),
-                        borderRadius: BorderRadius.circular(8),
+              ),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CachedNetworkImage(
+                        imageUrl: widget.accessory.imageUrl,
+                        height: 150,
+                        fit: BoxFit.contain,
+                        placeholder: (context, url) => const SizedBox(
+                          height: 150,
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                        errorWidget: (context, url, error) => const SizedBox(
+                          height: 150,
+                          child: Icon(Icons.broken_image, size: 80, color: Colors.grey),
+                        ),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 세트 이름(각 컨테이너 상단)
-                          Text(setOption.setName,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: theme.colorScheme.onSurface)),
-                          const SizedBox(height: 8),
-
-                          // 이미지
-                          if (setOption.requiredAccessoryImages.isNotEmpty)
-                            Container(
-                              width: double.infinity,
-                              height: 92,
-                              alignment: Alignment.center,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: setOption.requiredAccessoryImages
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    final imageIndex = entry.key;
-                                    final imageUrl = entry.value;
-                                    final linkedAccessory = imageIndex <
-                                            setOption.requiredAccessories.length
-                                        ? setOption
-                                            .requiredAccessories[imageIndex]
-                                        : '';
-
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(10),
-                                        onTap: linkedAccessory.isEmpty
-                                            ? null
-                                            : () => _openLinkedAccessoryDetail(
-                                                linkedAccessory),
-                                        child: SizedBox(
-                                          width: 72,
-                                          height: 72,
-                                          child: CachedNetworkImage(
-                                            imageUrl: imageUrl,
-                                            width: 64,
-                                            height: 64,
-                                            fit: BoxFit.contain,
-                                            placeholder: (context, url) =>
-                                                const Center(
-                                                    child:
-                                                        CircularProgressIndicator()),
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    const Center(
-                                              child: Icon(
-                                                Icons.broken_image,
-                                                size: 28,
-                                                color: Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ),
-
-                          const SizedBox(height: 10),
-
-                          // 효과들을 '효과 : 수치' 형식으로 나열 (명칭/값 분리하여 가독성 향상)
-                          ...setOption.effects.map((effect) {
-                            final currentValue = _resolveSparseStageValue(
-                                effect, currentStageIndex);
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      effect.optionName,
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurface
-                                            .withAlpha((0.9 * 255).round()),
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 4.0, horizontal: 8.0),
-                                    decoration: BoxDecoration(
-                                      color: isDark
-                                          ? Colors.white12
-                                          : theme.colorScheme.primary
-                                              .withAlpha((0.12 * 255).round()),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      currentValue,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: theme.colorScheme.primary,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-              ] else ...[
-                // 세트 옵션이 1개 혹은 3개 이상일 때 기존 방식(각 세트별 개별 단계 컨트롤 유지)
-                ...widget.accessory.setOptions.map((setOption) {
-                  int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
-
-                  final theme = Theme.of(context);
-                  final bool isDark = theme.brightness == Brightness.dark;
-                  final cardColor =
-                      isDark ? Colors.grey[850] : Colors.orange[50];
-                  final borderColor =
-                      isDark ? Colors.grey[700] : Colors.orange[300];
-
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: Container(
-                      padding: const EdgeInsets.all(12.0),
-                      decoration: BoxDecoration(
-                        color: cardColor,
-                        border: Border.all(color: borderColor!),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // 세트 이름
-                          Text(setOption.setName,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: theme.colorScheme.onSurface)),
-                          const SizedBox(height: 8),
-                          // 필요한 악세사리 이미지들 (가로 스크롤, 화면 전체 가운데 정렬)
-                          if (setOption.requiredAccessoryImages.isNotEmpty)
-                            Container(
-                              width: double.infinity,
-                              height: 92,
-                              alignment: Alignment.center,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: setOption.requiredAccessoryImages
-                                      .asMap()
-                                      .entries
-                                      .map((entry) {
-                                    final imageIndex = entry.key;
-                                    final imageUrl = entry.value;
-                                    final linkedAccessory = imageIndex <
-                                            setOption.requiredAccessories.length
-                                        ? setOption
-                                            .requiredAccessories[imageIndex]
-                                        : '';
-
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8.0),
-                                      child: InkWell(
-                                        borderRadius: BorderRadius.circular(10),
-                                        onTap: linkedAccessory.isEmpty
-                                            ? null
-                                            : () => _openLinkedAccessoryDetail(
-                                                linkedAccessory),
-                                        child: SizedBox(
-                                          width: 72,
-                                          height: 72,
-                                          child: Center(
-                                            child: CachedNetworkImage(
-                                              imageUrl: imageUrl,
-                                              width: 64,
-                                              height: 64,
-                                              fit: BoxFit.contain,
-                                              placeholder: (context, url) =>
-                                                  const Center(
-                                                      child:
-                                                          CircularProgressIndicator()),
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      const Center(
-                                                child: Icon(
-                                                  Icons.broken_image,
-                                                  size: 28,
-                                                  color: Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            )
-                          else
-                            const SizedBox.shrink(),
-                          const SizedBox(height: 10),
-                          // 세트 효과들 (명칭/값 분리하여 가독성 향상)
-                          ...setOption.effects.map((effect) {
-                            final currentValue = _resolveSparseStageValue(
-                                effect, currentStageIndex);
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 4.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      effect.optionName,
-                                      style: TextStyle(
-                                        color: theme.colorScheme.onSurface
-                                            .withAlpha((0.9 * 255).round()),
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 4.0, horizontal: 8.0),
-                                    decoration: BoxDecoration(
-                                      color: isDark
-                                          ? Colors.white12
-                                          : theme.colorScheme.primary
-                                              .withAlpha((0.12 * 255).round()),
-                                      borderRadius: BorderRadius.circular(6),
-                                    ),
-                                    child: Text(
-                                      currentValue,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: theme.colorScheme.primary,
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-
-                          const SizedBox(height: 8),
-                          // 개별 단계 컨트롤
+                      const SizedBox(height: 16),
+                      _buildDetailRow('부위', widget.accessory.part),
+                      _buildDetailRow('착용 제한', widget.accessory.restrictions),
+                      const Divider(),
+                      if (widget.accessory.hasEnhancementStageBonuses) ...[
+                        Row(
+                          children: [
+                            const Text('강화 단계',
+                                style: TextStyle(fontWeight: FontWeight.bold)),
+                            const Spacer(),
+                            Text('$_enhancementLevel강',
+                                style: Theme.of(context).textTheme.bodySmall),
+                          ],
+                        ),
+                        Slider(
+                          value: _enhancementLevel.toDouble(),
+                          min: 0,
+                          max: 9,
+                          divisions: 9,
+                          label: '$_enhancementLevel강',
+                          onChanged: (value) {
+                            setState(() {
+                              _enhancementLevel = value.round();
+                            });
+                          },
+                        ),
+                      ] else
+                        Text(
+                          '강화 단계별 수치 정보 없음',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: Theme.of(context).hintColor),
+                        ),
+                      const Text('기본 옵션', style: TextStyle(fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 8),
+                      ...displayedOptions.map((option) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2.0),
+                            child: Text('${option.optionName}: ${option.optionValue}'),
+                          )),
+                      if (widget.accessory.setOptions.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        const Divider(),
+                        Text(
+                          '세트 옵션 : ${widget.accessory.setOptions.map((s) => s.setName).join(' / ')}',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? const Color(0xFFFFB38A) : Colors.deepOrange,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        if (widget.accessory.setOptions.length == 2) ...[
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(
-                                onPressed: currentStageIndex > 0
-                                    ? () {
-                                        setState(() {
-                                          _stageIndexMap[setOption.setId] =
-                                              currentStageIndex - 1;
-                                        });
-                                      }
+                                onPressed: _sharedStageIndex > 0
+                                    ? () => setState(() => _sharedStageIndex--)
                                     : null,
                                 icon: const Icon(Icons.arrow_left),
                               ),
-                              Text('$currentStageIndex단계',
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.grey)),
+                              Column(
+                                children: [
+                                  Text('$_sharedStageIndex단계',
+                                      style: const TextStyle(
+                                          fontSize: 12, color: Colors.grey)),
+                                  const SizedBox(height: 4),
+                                  const Text('단계값 표시',
+                                      style: TextStyle(
+                                          fontSize: 12, color: Colors.transparent)),
+                                ],
+                              ),
                               IconButton(
-                                onPressed: currentStageIndex < 18
-                                    ? () {
-                                        setState(() {
-                                          _stageIndexMap[setOption.setId] =
-                                              currentStageIndex + 1;
-                                        });
-                                      }
+                                onPressed: _sharedStageIndex < 18
+                                    ? () => setState(() => _sharedStageIndex++)
                                     : null,
                                 icon: const Icon(Icons.arrow_right),
                               ),
                             ],
                           ),
+                          const SizedBox(height: 8),
+                          ...widget.accessory.setOptions.map((setOption) {
+                            int currentStageIndex = _sharedStageIndex;
+                            final theme = Theme.of(context);
+                            final bool setIsDark = theme.brightness == Brightness.dark;
+                            final cardColor =
+                                setIsDark ? const Color(0xFF121A25) : const Color(0xFFFDF0E7);
+                            final borderColor =
+                                setIsDark ? Colors.white.withAlpha(16) : Colors.orange.withAlpha(90);
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(12.0),
+                                decoration: BoxDecoration(
+                                  color: cardColor,
+                                  border: Border.all(color: borderColor),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(setOption.setName,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                            color: theme.colorScheme.onSurface)),
+                                    const SizedBox(height: 8),
+                                    if (setOption.requiredAccessoryImages.isNotEmpty)
+                                      Container(
+                                        width: double.infinity,
+                                        height: 92,
+                                        alignment: Alignment.center,
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: setOption.requiredAccessoryImages.asMap().entries.map((entry) {
+                                              final imageIndex = entry.key;
+                                              final imageUrl = entry.value;
+                                              final linkedAccessory = imageIndex < setOption.requiredAccessories.length
+                                                  ? setOption.requiredAccessories[imageIndex]
+                                                  : '';
+
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                child: InkWell(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  onTap: linkedAccessory.isEmpty
+                                                      ? null
+                                                      : () => _openLinkedAccessoryDetail(linkedAccessory),
+                                                  child: SizedBox(
+                                                    width: 72,
+                                                    height: 72,
+                                                    child: CachedNetworkImage(
+                                                      imageUrl: imageUrl,
+                                                      width: 64,
+                                                      height: 64,
+                                                      fit: BoxFit.contain,
+                                                      placeholder: (context, url) => const Center(
+                                                          child: CircularProgressIndicator()),
+                                                      errorWidget: (context, url, error) => const Center(
+                                                        child: Icon(
+                                                          Icons.broken_image,
+                                                          size: 28,
+                                                          color: Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      ),
+                                    const SizedBox(height: 10),
+                                    ...setOption.effects.map((effect) {
+                                      final currentValue = _resolveSparseStageValue(effect, currentStageIndex);
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                effect.optionName,
+                                                style: TextStyle(
+                                                  color: theme.colorScheme.onSurface.withAlpha((0.9 * 255).round()),
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                              decoration: BoxDecoration(
+                                                color: setIsDark
+                                                    ? Colors.white12
+                                                    : theme.colorScheme.primary.withAlpha((0.12 * 255).round()),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                currentValue,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: theme.colorScheme.primary,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
+                        ] else ...[
+                          ...widget.accessory.setOptions.map((setOption) {
+                            int currentStageIndex = _stageIndexMap[setOption.setId] ?? 0;
+                            final theme = Theme.of(context);
+                            final bool setIsDark = theme.brightness == Brightness.dark;
+                            final cardColor =
+                                setIsDark ? const Color(0xFF121A25) : const Color(0xFFFDF0E7);
+                            final borderColor =
+                                setIsDark ? Colors.white.withAlpha(16) : Colors.orange.withAlpha(90);
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(12.0),
+                                decoration: BoxDecoration(
+                                  color: cardColor,
+                                  border: Border.all(color: borderColor),
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(setOption.setName,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 14,
+                                            color: theme.colorScheme.onSurface)),
+                                    const SizedBox(height: 8),
+                                    if (setOption.requiredAccessoryImages.isNotEmpty)
+                                      Container(
+                                        width: double.infinity,
+                                        height: 92,
+                                        alignment: Alignment.center,
+                                        child: SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: setOption.requiredAccessoryImages.asMap().entries.map((entry) {
+                                              final imageIndex = entry.key;
+                                              final imageUrl = entry.value;
+                                              final linkedAccessory = imageIndex < setOption.requiredAccessories.length
+                                                  ? setOption.requiredAccessories[imageIndex]
+                                                  : '';
+
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                child: InkWell(
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  onTap: linkedAccessory.isEmpty
+                                                      ? null
+                                                      : () => _openLinkedAccessoryDetail(linkedAccessory),
+                                                  child: SizedBox(
+                                                    width: 72,
+                                                    height: 72,
+                                                    child: Center(
+                                                      child: CachedNetworkImage(
+                                                        imageUrl: imageUrl,
+                                                        width: 64,
+                                                        height: 64,
+                                                        fit: BoxFit.contain,
+                                                        placeholder: (context, url) => const Center(
+                                                            child: CircularProgressIndicator()),
+                                                        errorWidget: (context, url, error) => const Center(
+                                                          child: Icon(
+                                                            Icons.broken_image,
+                                                            size: 28,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                          ),
+                                        ),
+                                      )
+                                    else
+                                      const SizedBox.shrink(),
+                                    const SizedBox(height: 10),
+                                    ...setOption.effects.map((effect) {
+                                      final currentValue = _resolveSparseStageValue(effect, currentStageIndex);
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                effect.optionName,
+                                                style: TextStyle(
+                                                  color: theme.colorScheme.onSurface.withAlpha((0.9 * 255).round()),
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+                                              decoration: BoxDecoration(
+                                                color: setIsDark
+                                                    ? Colors.white12
+                                                    : theme.colorScheme.primary.withAlpha((0.12 * 255).round()),
+                                                borderRadius: BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                currentValue,
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: theme.colorScheme.primary,
+                                                  fontSize: 13,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          onPressed: currentStageIndex > 0
+                                              ? () {
+                                                  setState(() {
+                                                    _stageIndexMap[setOption.setId] = currentStageIndex - 1;
+                                                  });
+                                                }
+                                              : null,
+                                          icon: const Icon(Icons.arrow_left),
+                                        ),
+                                        Text('$currentStageIndex단계',
+                                            style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                        IconButton(
+                                          onPressed: currentStageIndex < 18
+                                              ? () {
+                                                  setState(() {
+                                                    _stageIndexMap[setOption.setId] = currentStageIndex + 1;
+                                                  });
+                                                }
+                                              : null,
+                                          icon: const Icon(Icons.arrow_right),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }),
                         ],
-                      ),
-                    ),
-                  );
-                }),
-              ],
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('닫기'),
+                  ),
+                ),
+              ),
             ],
-          ],
+          ),
         ),
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('닫기'),
-        ),
-      ],
     );
   }
 
