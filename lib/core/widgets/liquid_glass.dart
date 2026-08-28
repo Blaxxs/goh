@@ -74,18 +74,15 @@ class GlassPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final Color backgroundStart = isDark
-      ? const Color(0x1AFFFFFF)
-      : const Color(0xCCFFFFFF);
-    final Color backgroundEnd = isDark
-      ? const Color(0x0DFFFFFF)
-      : const Color(0xE5F1F8FF);
-    final borderColor = isDark
-      ? Colors.white.withAlpha(20)
-      : Colors.white.withAlpha(140);
+    final Color backgroundStart =
+        isDark ? const Color(0x1AFFFFFF) : const Color(0xCCFFFFFF);
+    final Color backgroundEnd =
+        isDark ? const Color(0x0DFFFFFF) : const Color(0xE5F1F8FF);
+    final borderColor =
+        isDark ? Colors.white.withAlpha(20) : Colors.white.withAlpha(140);
     final shadowColor = isDark
         ? Colors.black.withAlpha(36)
-      : const Color(0xFFB7C8DD).withAlpha(82);
+        : const Color(0xFFB7C8DD).withAlpha(82);
 
     final content = Container(
       padding: padding,

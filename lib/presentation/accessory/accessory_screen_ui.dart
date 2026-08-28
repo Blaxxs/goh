@@ -136,7 +136,8 @@ class AccessoryScreenUI extends StatelessWidget {
                   onSubmitted: onSearchSubmitted,
                   textInputAction: TextInputAction.search,
                   keyboardType: TextInputType.text,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 const SizedBox(height: 10),
                 Align(
@@ -193,9 +194,15 @@ class AccessoryScreenUI extends StatelessWidget {
                                 .labelMedium
                                 ?.copyWith(
                                   color: selected
-                                      ? (isDark ? Colors.white : const Color(0xFF1E3A8A))
-                                      : (isDark ? Colors.white70 : Colors.black87),
-                                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                                      ? (isDark
+                                          ? Colors.white
+                                          : const Color(0xFF1E3A8A))
+                                      : (isDark
+                                          ? Colors.white70
+                                          : Colors.black87),
+                                  fontWeight: selected
+                                      ? FontWeight.w700
+                                      : FontWeight.w600,
                                 ),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(999),
@@ -226,16 +233,24 @@ class AccessoryScreenUI extends StatelessWidget {
                               : const Color(0xBFFFFFFF),
                           side: BorderSide(
                             color: selected
-                                ? (isDark ? Colors.white.withAlpha(32) : const Color(0xFFB8D3FF))
+                                ? (isDark
+                                    ? Colors.white.withAlpha(32)
+                                    : const Color(0xFFB8D3FF))
                                 : Colors.transparent,
                             width: 1,
                           ),
                           labelStyle:
                               Theme.of(context).textTheme.labelMedium?.copyWith(
                                     color: selected
-                                        ? (isDark ? Colors.white : const Color(0xFF1E3A8A))
-                                        : (isDark ? Colors.white70 : Colors.black87),
-                                    fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+                                        ? (isDark
+                                            ? Colors.white
+                                            : const Color(0xFF1E3A8A))
+                                        : (isDark
+                                            ? Colors.white70
+                                            : Colors.black87),
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
                                   ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(999),
@@ -333,11 +348,13 @@ class AccessoryScreenUI extends StatelessWidget {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(18),
                                         color: isDark
-                                            ? const Color(0xFF0F1720).withAlpha(200)
+                                            ? const Color(0xFF0F1720)
+                                                .withAlpha(200)
                                             : const Color(0xF7FFFFFF),
                                         border: Border.all(
                                           color: isSelected
-                                              ? colorScheme.primary.withAlpha(150)
+                                              ? colorScheme.primary
+                                                  .withAlpha(150)
                                               : isDark
                                                   ? Colors.white.withAlpha(12)
                                                   : Colors.black.withAlpha(10),
@@ -348,7 +365,8 @@ class AccessoryScreenUI extends StatelessWidget {
                                             color: (isDark
                                                     ? Colors.black
                                                     : const Color(0xFFB2BED1))
-                                                .withAlpha(isSelected ? 44 : 20),
+                                                .withAlpha(
+                                                    isSelected ? 44 : 20),
                                             blurRadius: isSelected ? 14 : 8,
                                             offset: const Offset(0, 6),
                                           ),
