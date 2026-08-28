@@ -166,25 +166,48 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
     return Scaffold(
       drawer: const AppDrawer(currentScreen: AppScreen.goldCalculator),
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Colors.transparent,
+        toolbarHeight: 46,
+        titleSpacing: 8,
         title: FittedBox(
-          // AppBar 제목이 길어질 경우 축소되도록 FittedBox 추가
           fit: BoxFit.scaleDown,
           child: Text(
             '골드 효율 계산기',
-            style: titleStyle?.copyWith(
-              fontSize: (titleStyle.fontSize ?? 20) + 2.0,
-            ),
+            style: (titleStyle ?? Theme.of(context).appBarTheme.titleTextStyle)
+                ?.copyWith(
+                  fontSize: (titleStyle?.fontSize ?? 18) + 2.0,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.2,
+                ),
           ),
         ),
         actions: [
           if (onSharePressed != null)
             IconButton(
-              icon: const Icon(Icons.share),
+              icon: const Icon(Icons.share_rounded, size: 18),
               tooltip: '결과 공유',
               onPressed: onSharePressed,
+              style: IconButton.styleFrom(
+                minimumSize: const Size(34, 34),
+                fixedSize: const Size(34, 34),
+                padding: EdgeInsets.zero,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surface.withAlpha(160),
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outline.withAlpha(52),
+                ),
+              ),
             ),
         ],
-      ), // AppBar 닫는 괄호
+      ),
       body: SafeArea(
         child: Stack(
           children: [

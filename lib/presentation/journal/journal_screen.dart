@@ -182,13 +182,41 @@ class _JournalScreenState extends State<JournalScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context); // 테마 가져오기
     return Scaffold(
-        appBar: AppBar(
-        title: const Text('일지'),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Colors.transparent,
+        toolbarHeight: 46,
+        titleSpacing: 8,
+        title: const Text(
+          '일지',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.2,
+          ),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings_outlined),
+            icon: const Icon(Icons.settings_outlined, size: 18),
             tooltip: '캘린더 설정',
             onPressed: _showCalendarSettingsDialog,
+            style: IconButton.styleFrom(
+              minimumSize: const Size(34, 34),
+              fixedSize: const Size(34, 34),
+              padding: EdgeInsets.zero,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surface.withAlpha(160),
+              foregroundColor: Theme.of(context).colorScheme.onSurface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outline.withAlpha(52),
+              ),
+            ),
           ),
         ],
       ),
