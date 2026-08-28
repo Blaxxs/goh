@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/box_constants.dart';
@@ -10,6 +12,57 @@ import '../../core/widgets/search_text_field.dart';
 
 class SpiritScreen extends StatefulWidget {
   const SpiritScreen({super.key});
+
+  static Future<void> warmupImageCache({required int limit}) async {
+    if (limit <= 0) {
+      return;
+    }
+
+    try {
+      final snapshot = await FirebaseDatabase.instance.ref('spirits').get();
+      final imageUrls = <String>{};
+      _collectImageUrls(snapshot.value, imageUrls);
+
+      const batchSize = 8;
+      final urls = imageUrls.take(limit).toList();
+      for (var index = 0; index < urls.length; index += batchSize) {
+        final batch = urls.skip(index).take(batchSize);
+        await Future.wait(batch.map((url) async {
+          try {
+            await DefaultCacheManager().downloadFile(url);
+          } catch (_) {
+            // Warm-up 실패 시 화면 진입 후 일반 이미지 로딩으로 재시도한다.
+          }
+        }));
+      }
+    } catch (_) {
+      // 스피릿 데이터 로드 실패는 메인 화면 진입을 막지 않는다.
+    }
+  }
+
+  static void _collectImageUrls(dynamic value, Set<String> imageUrls) {
+    if (value is Map) {
+      final imageUrl = value['imageUrl']?.toString().trim() ?? '';
+      if (imageUrl.isNotEmpty) {
+        imageUrls.add(imageUrl);
+      } else {
+        final imageName = value['imageName']?.toString().trim() ?? '';
+        if (imageName.isNotEmpty) {
+          final encodedName = Uri.encodeComponent(imageName);
+          imageUrls.add(
+            'https://firebasestorage.googleapis.com/v0/b/gohcalculator.firebasestorage.app/o/spirit%2F$encodedName?alt=media',
+          );
+        }
+      }
+      for (final child in value.values) {
+        _collectImageUrls(child, imageUrls);
+      }
+    } else if (value is List) {
+      for (final child in value) {
+        _collectImageUrls(child, imageUrls);
+      }
+    }
+  }
 
   @override
   State<SpiritScreen> createState() => _SpiritScreenState();
@@ -1191,10 +1244,17 @@ class _SpiritThumbnailState extends State<_SpiritThumbnail> {
       );
     }
 
-    return Image.network(
-      currentUrl,
+    return CachedNetworkImage(
+      imageUrl: currentUrl,
       fit: BoxFit.contain,
-      errorBuilder: (context, error, stackTrace) {
+      placeholder: (context, url) => const Center(
+        child: SizedBox(
+          width: 24,
+          height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+      ),
+      errorWidget: (context, url, error) {
         if (!_useFallback && fallback != null && fallback.isNotEmpty) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
@@ -1214,18 +1274,6 @@ class _SpiritThumbnailState extends State<_SpiritThumbnail> {
 
         return const Center(
           child: Icon(Icons.image_not_supported_outlined, color: Colors.grey),
-        );
-      },
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) {
-          return child;
-        }
-        return const Center(
-          child: SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ),
         );
       },
     );

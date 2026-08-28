@@ -26,6 +26,7 @@ class LoadingScreen extends StatefulWidget {
 
 class _LoadingScreenState extends State<LoadingScreen> {
   static const int _accessoryImageWarmupCount = 72;
+  static const int _spiritImageWarmupCount = 72;
   late final Future<void> _initializationFuture;
   bool _hasNavigated = false;
 
@@ -50,8 +51,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
       try {
         await AccessoryDataManager().loadAccessories();
         await _warmupAccessoryImageCache();
+        await SpiritScreen.warmupImageCache(limit: _spiritImageWarmupCount);
       } catch (e) {
-        debugPrint('[LoadingScreen] Accessory data load error: $e');
+        debugPrint('[LoadingScreen] Image cache warm-up error: $e');
       }
     });
   }
