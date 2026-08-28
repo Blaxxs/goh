@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SearchTextField extends StatelessWidget {
@@ -32,6 +33,7 @@ class SearchTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final fieldStyle = style ??
         const TextStyle(
           fontFamily: 'NanumGothic',
@@ -56,7 +58,7 @@ class SearchTextField extends StatelessWidget {
           forceStrutHeight: true,
         );
 
-    final body = TextField(
+    final body = CupertinoTextField(
       controller: controller,
       autofocus: autofocus,
       onChanged: onChanged,
@@ -66,15 +68,51 @@ class SearchTextField extends StatelessWidget {
           : null,
       textInputAction: textInputAction ?? TextInputAction.search,
       keyboardType: keyboardType ?? TextInputType.text,
-      style: fieldStyle,
+      style: fieldStyle.copyWith(
+        color: isDark ? CupertinoColors.white : CupertinoColors.black,
+      ),
       strutStyle: fieldStrutStyle,
-      decoration: InputDecoration(
-        hintText: hintText,
-        prefixIcon: Icon(prefixIcon, size: 20),
-        isDense: true,
-        border: const OutlineInputBorder(),
-        contentPadding: contentPadding ??
-            const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      placeholder: hintText,
+      placeholderStyle: TextStyle(
+        color: isDark ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+        fontFamily: 'NanumGothic',
+        fontFamilyFallback: [
+          'Malgun Gothic',
+          'Apple SD Gothic Neo',
+          'Noto Sans KR',
+          'sans-serif',
+        ],
+      ),
+      padding: contentPadding ??
+          const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      prefix: Padding(
+        padding: const EdgeInsets.only(left: 12, right: 6),
+        child: Icon(
+          prefixIcon,
+          size: 18,
+          color: isDark ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+        ),
+      ),
+      decoration: BoxDecoration(
+        color: isDark
+            ? CupertinoColors.systemFill.resolveFrom(context)
+            : CupertinoColors.systemBackground.resolveFrom(context),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isDark
+              ? CupertinoColors.systemGrey4.resolveFrom(context)
+              : CupertinoColors.systemGrey5.resolveFrom(context),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isDark
+                ? CupertinoColors.black.withAlpha(26)
+                : CupertinoColors.systemGrey.withAlpha(16),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
     );
 
