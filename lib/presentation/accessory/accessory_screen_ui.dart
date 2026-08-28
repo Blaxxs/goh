@@ -113,10 +113,7 @@ class AccessoryScreenUI extends StatelessWidget {
                     Expanded(
                       child: Text(
                         '풀강 수치로 보기',
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleSmall
-                            ?.copyWith(
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.w600,
                               letterSpacing: -0.2,
                             ),
@@ -225,7 +222,9 @@ class AccessoryScreenUI extends StatelessWidget {
                           ),
                         );
                       }),
-                      ...partFilterOptions.where((part) => part != '전체').map((part) {
+                      ...partFilterOptions
+                          .where((part) => part != '전체')
+                          .map((part) {
                         final selected = selectedPartFilter == part;
                         return ChoiceChip(
                           label: Text(part),
@@ -256,8 +255,9 @@ class AccessoryScreenUI extends StatelessWidget {
                                         : (isDark
                                             ? Colors.white70
                                             : Colors.black87),
-                                    fontWeight:
-                                        selected ? FontWeight.w700 : FontWeight.w600,
+                                    fontWeight: selected
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
                                   ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(999),

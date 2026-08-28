@@ -74,7 +74,8 @@ class SearchTextField extends StatelessWidget {
       strutStyle: fieldStrutStyle,
       placeholder: hintText,
       placeholderStyle: TextStyle(
-        color: isDark ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+        color:
+            isDark ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
         fontFamily: 'NanumGothic',
         fontFamilyFallback: [
           'Malgun Gothic',
@@ -90,7 +91,8 @@ class SearchTextField extends StatelessWidget {
         child: Icon(
           prefixIcon,
           size: 18,
-          color: isDark ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
+          color:
+              isDark ? CupertinoColors.systemGrey2 : CupertinoColors.systemGrey,
         ),
       ),
       decoration: BoxDecoration(
