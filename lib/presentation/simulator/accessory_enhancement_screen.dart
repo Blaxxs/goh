@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:math'; // Random 사용
 import '../../data/models/accessory.dart'; // Accessory model
 import '../../core/constants/accessory_constants.dart'; // AccessoryDataManager().allAccessories 사용
+import '../../core/widgets/search_text_field.dart';
 import 'accessory_enhancement_screen_ui.dart';
 
 const _autoEnhanceBatchSize = 15;

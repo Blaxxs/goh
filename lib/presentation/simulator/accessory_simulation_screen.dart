@@ -10,6 +10,7 @@ import '../../core/constants/accessory_constants.dart';
 import '../../core/constants/box_constants.dart';
 import '../../core/constants/random_accessory_constants.dart';
 import '../../core/widgets/app_drawer.dart';
+import '../../core/widgets/search_text_field.dart';
 import '../../data/models/accessory.dart';
 import '../../domain/logic/accessory_option_roll_logic.dart';
 import 'accessory_enhancement_screen_ui.dart';

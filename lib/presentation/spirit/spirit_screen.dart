@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/constants/box_constants.dart';
 import '../../core/widgets/app_drawer.dart';
+import '../../core/widgets/search_text_field.dart';
 
 class SpiritScreen extends StatefulWidget {
   const SpiritScreen({super.key});

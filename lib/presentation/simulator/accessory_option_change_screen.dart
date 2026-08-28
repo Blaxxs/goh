@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart'; // AccessoryOptionNames 사용
+import '../../core/widgets/search_text_field.dart';
 import '../../domain/logic/accessory_option_roll_logic.dart';
 import 'accessory_option_change_screen_ui.dart';
 
