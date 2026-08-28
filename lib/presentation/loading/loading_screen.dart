@@ -50,8 +50,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
     Future(() async {
       try {
         await AccessoryDataManager().loadAccessories();
-        await _warmupAccessoryImageCache();
-        await SpiritScreen.warmupImageCache(limit: _spiritImageWarmupCount);
+        await Future.wait([
+          _warmupAccessoryImageCache(),
+          SpiritScreen.warmupImageCache(limit: _spiritImageWarmupCount),
+        ]);
       } catch (e) {
         debugPrint('[LoadingScreen] Image cache warm-up error: $e');
       }
@@ -88,28 +90,28 @@ class _LoadingScreenState extends State<LoadingScreen> {
       return false;
     }
 
-    final initialRoute =
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName
-            .trim()
-            .toLowerCase();
+    final initialRoute = WidgetsBinding
+        .instance.platformDispatcher.defaultRouteName
+        .trim()
+        .toLowerCase();
     final fragment = Uri.base.fragment.trim().toLowerCase();
     final path = Uri.base.path.trim().toLowerCase();
     final fullUrl = Uri.base.toString().toLowerCase();
     final openQuery =
-      Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
+        Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
     final rawHref = web_location.currentHref().trim().toLowerCase();
     final rawHash = web_location.currentHash().trim().toLowerCase();
 
     return initialRoute == '/accessory' ||
-      openQuery == 'accessory' ||
+        openQuery == 'accessory' ||
         fragment == '/accessory' ||
         fragment == 'accessory' ||
         path.endsWith('/accessory') ||
         fullUrl.contains('#/accessory') ||
-      fullUrl.contains('/accessory') ||
-      rawHash == '#/accessory' ||
-      rawHash == '#accessory' ||
-      rawHref.contains('#/accessory');
+        fullUrl.contains('/accessory') ||
+        rawHash == '#/accessory' ||
+        rawHash == '#accessory' ||
+        rawHref.contains('#/accessory');
   }
 
   bool _shouldOpenSpiritFromDeepLink() {
@@ -121,28 +123,28 @@ class _LoadingScreenState extends State<LoadingScreen> {
       return false;
     }
 
-    final initialRoute =
-        WidgetsBinding.instance.platformDispatcher.defaultRouteName
-            .trim()
-            .toLowerCase();
+    final initialRoute = WidgetsBinding
+        .instance.platformDispatcher.defaultRouteName
+        .trim()
+        .toLowerCase();
     final fragment = Uri.base.fragment.trim().toLowerCase();
     final path = Uri.base.path.trim().toLowerCase();
     final fullUrl = Uri.base.toString().toLowerCase();
     final openQuery =
-      Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
+        Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
     final rawHref = web_location.currentHref().trim().toLowerCase();
     final rawHash = web_location.currentHash().trim().toLowerCase();
 
     return initialRoute == '/spirit' ||
-      openQuery == 'spirit' ||
+        openQuery == 'spirit' ||
         fragment == '/spirit' ||
         fragment == 'spirit' ||
         path.endsWith('/spirit') ||
         fullUrl.contains('#/spirit') ||
-      fullUrl.contains('/spirit') ||
-      rawHash == '#/spirit' ||
-      rawHash == '#spirit' ||
-      rawHref.contains('#/spirit');
+        fullUrl.contains('/spirit') ||
+        rawHash == '#/spirit' ||
+        rawHash == '#spirit' ||
+        rawHref.contains('#/spirit');
   }
 
   void _navigateToMain() {
