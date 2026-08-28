@@ -179,10 +179,10 @@ class GoldEfficiencyCalculatorScreenUI extends StatelessWidget {
             '골드 효율 계산기',
             style: (titleStyle ?? Theme.of(context).appBarTheme.titleTextStyle)
                 ?.copyWith(
-                  fontSize: (titleStyle?.fontSize ?? 18) + 2.0,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.2,
-                ),
+              fontSize: (titleStyle?.fontSize ?? 18) + 2.0,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
+            ),
           ),
         ),
         actions: [

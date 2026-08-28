@@ -11,7 +11,6 @@ import '../../core/constants/stage_constants.dart'; // stageBaseData 사용
 import '../../core/constants/drop_item_constants.dart'; // DropInfo, DropCategory, goldDemonSellPrices 사용
 import 'package:flutter_slidable/flutter_slidable.dart'; // flutter_slidable import 추가
 
-
 // 점유율 표시 타입을 위한 Enum
 enum JournalShareType { soulStone, gold }
 
@@ -711,14 +710,13 @@ class _JournalScreenState extends State<JournalScreen> {
           .toList();
       final soul =
           entries.fold<double>(0, (sum, e) => sum + e.netSoulStones.toDouble());
-      final gold =
-          entries.fold<double>(0, (sum, e) => sum + _calculateFinalGoldForEntry(e));
+      final gold = entries.fold<double>(
+          0, (sum, e) => sum + _calculateFinalGoldForEntry(e));
       return _DailyTrendData(label: labels[i], soul: soul, gold: gold);
     });
 
-    final maxSoul = days
-        .map((d) => d.soul.abs())
-        .fold<double>(0, (m, v) => v > m ? v : m);
+    final maxSoul =
+        days.map((d) => d.soul.abs()).fold<double>(0, (m, v) => v > m ? v : m);
     final maxGold =
         days.map((d) => d.gold).fold<double>(0, (m, v) => v > m ? v : m);
     final sumSoul = days.fold<double>(0, (s, d) => s + d.soul);

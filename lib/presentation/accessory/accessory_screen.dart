@@ -405,7 +405,8 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     side: BorderSide(
-                      color: Theme.of(context).colorScheme.outline.withAlpha(52),
+                      color:
+                          Theme.of(context).colorScheme.outline.withAlpha(52),
                     ),
                   ),
                 );
