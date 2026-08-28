@@ -227,6 +227,9 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     if (normalized == '크리티컬증가') {
       aliases.addAll({'크증'});
     }
+    if (normalized == '크리티컬저항증가') {
+      aliases.addAll({'크저', '크리티컬저항'});
+    }
     if (normalized == '크리티컬데미지증가') {
       aliases.addAll({'크뎀', '크뎀증'});
     }
