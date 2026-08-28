@@ -83,7 +83,6 @@ class _AppThemeToggle extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 10, 10, 0),
               child: IconButton(
-                tooltip: enabled ? '다크 모드 끄기' : '화이트 모드 켜기',
                 onPressed: () {
                   final nextSettings = SettingsService.instance.appSettings.copyWith(
                     isDarkModeEnabled: !enabled,
