@@ -123,11 +123,6 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
   }
 
   void _applySearchQuery(String value) {
-    final composingRange = _searchController.value.composing;
-    if (composingRange.isValid && !composingRange.isCollapsed) {
-      return;
-    }
-
     _searchDebounceTimer?.cancel();
     _searchDebounceTimer = Timer(_searchDebounceDelay, () {
       if (!mounted) return;
