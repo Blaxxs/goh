@@ -341,14 +341,40 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Colors.transparent,
+        toolbarHeight: 46,
+        leadingWidth: 40,
+        titleSpacing: 0,
         leading: Builder(
           builder: (ctx) => IconButton(
-            icon: const Icon(Icons.menu),
+            icon: const Icon(Icons.menu_rounded, size: 20),
+            tooltip: '메뉴',
             onPressed: () => Scaffold.of(ctx).openDrawer(),
+            style: IconButton.styleFrom(
+              minimumSize: const Size(34, 34),
+              fixedSize: const Size(34, 34),
+              padding: EdgeInsets.zero,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surface.withAlpha(160),
+              foregroundColor: Theme.of(context).colorScheme.onSurface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outline.withAlpha(52),
+              ),
+            ),
           ),
         ),
         title: Text(
-            widget.isPickerMode ? widget.pickerTitle : widget.collectionTitle),
+          widget.isPickerMode ? widget.pickerTitle : widget.collectionTitle,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+            letterSpacing: -0.2,
+          ),
+        ),
         actions: [
           if (!widget.isPickerMode) ...[
             ValueListenableBuilder<ThemeMode>(
@@ -366,17 +392,20 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                     isDark
                         ? Icons.dark_mode_outlined
                         : Icons.light_mode_outlined,
+                    size: 18,
                   ),
                   style: IconButton.styleFrom(
+                    minimumSize: const Size(34, 34),
+                    fixedSize: const Size(34, 34),
+                    padding: EdgeInsets.zero,
                     backgroundColor:
-                        Theme.of(context).colorScheme.surface.withAlpha(180),
+                        Theme.of(context).colorScheme.surface.withAlpha(160),
                     foregroundColor: Theme.of(context).colorScheme.onSurface,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     side: BorderSide(
-                      color:
-                          Theme.of(context).colorScheme.outline.withAlpha(56),
+                      color: Theme.of(context).colorScheme.outline.withAlpha(52),
                     ),
                   ),
                 );
@@ -385,12 +414,23 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
             if (_compareMode && _compareList.length == 2)
               TextButton.icon(
                 onPressed: _showCompareDialog,
-                icon: const Icon(Icons.compare_arrows_rounded),
+                icon: const Icon(Icons.compare_arrows_rounded, size: 16),
                 label: const Text('비교'),
+                style: TextButton.styleFrom(
+                  minimumSize: const Size(0, 34),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  backgroundColor:
+                      Theme.of(context).colorScheme.surface.withAlpha(150),
+                  foregroundColor: Theme.of(context).colorScheme.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             IconButton(
               icon: Icon(
                 _compareMode ? Icons.close_rounded : Icons.compare_rounded,
+                size: 18,
               ),
               tooltip: _compareMode ? '비교 모드 끄기' : '비교 모드 켜기',
               onPressed: () {
@@ -399,6 +439,20 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
                   _compareList.clear();
                 });
               },
+              style: IconButton.styleFrom(
+                minimumSize: const Size(34, 34),
+                fixedSize: const Size(34, 34),
+                padding: EdgeInsets.zero,
+                backgroundColor:
+                    Theme.of(context).colorScheme.surface.withAlpha(160),
+                foregroundColor: Theme.of(context).colorScheme.onSurface,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                side: BorderSide(
+                  color: Theme.of(context).colorScheme.outline.withAlpha(52),
+                ),
+              ),
             ),
           ],
         ],
