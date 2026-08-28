@@ -1,6 +1,17 @@
 @echo OFF
+setlocal EnableExtensions EnableDelayedExpansion
+
+set "BUMP_TYPE=%~1"
+if "%BUMP_TYPE%"=="" set "BUMP_TYPE=small"
+if /I not "%BUMP_TYPE%"=="small" if /I not "%BUMP_TYPE%"=="medium" if /I not "%BUMP_TYPE%"=="large" (
+  echo Usage: deploy.bat [small^|medium^|large]
+  echo Default: small
+  set "BUMP_TYPE=small"
+)
+
 echo Updating app version for web build...
-powershell -NoProfile -Command "$path = 'pubspec.yaml'; $content = Get-Content -Raw $path; $timestamp = (Get-Date).ToString('yyyyMMddHHmm'); $pattern = '^version:\s*([0-9]+\.[0-9]+\.[0-9]+)(\+\d+)?\s*$'; $updated = [System.Text.RegularExpressions.Regex]::Replace($content, $pattern, ('version: $1+' + $timestamp), [System.Text.RegularExpressions.RegexOptions]::Multiline); if ($content -eq $updated) { Write-Host 'Warning: version line not updated. Check pubspec.yaml format.' } [System.IO.File]::WriteAllText($path, $updated, (New-Object System.Text.UTF8Encoding($false)))"
+powershell -NoProfile -Command "$env:BUMP_TYPE = '%BUMP_TYPE%'; $path = 'pubspec.yaml'; $content = Get-Content -Raw $path; $match = [regex]::Match($content, '(?m)^version:\s*(\d+)\.(\d+)\.(\d+)(?:\+[0-9A-Za-z.-]+)?\s*$'); if (-not $match.Success) { throw 'Could not parse version from pubspec.yaml' }; $major = [int]$match.Groups[1].Value; $minor = [int]$match.Groups[2].Value; $patch = [int]$match.Groups[3].Value; switch ($env:BUMP_TYPE.ToLowerInvariant()) { 'small' { $patch += 1 } 'medium' { $minor += 1; $patch = 0 } 'large' { $major += 1; $minor = 0; $patch = 0 } default { throw ('Unsupported bump type: ' + $env:BUMP_TYPE) } }; $timestamp = (Get-Date).ToString('yyyyMMddHHmm'); $newVersion = '{0}.{1}.{2}+{3}' -f $major, $minor, $patch, $timestamp; $updated = [regex]::Replace($content, '(?m)^version:\s*\d+\.\d+\.\d+(?:\+[0-9A-Za-z.-]+)?\s*$', ('version: ' + $newVersion), 1); if ($content -eq $updated) { throw 'Version line was not updated.' }; [System.IO.File]::WriteAllText($path, $updated, (New-Object System.Text.UTF8Encoding($false))); Write-Host ('Updated version to ' + $newVersion);"
+
 echo Building Flutter web app...
 call flutter build web --release --base-href "/goh/"
 
