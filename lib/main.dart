@@ -67,6 +67,86 @@ void main() async {
   });
 }
 
+class _AppThemeToggle extends StatelessWidget {
+  const _AppThemeToggle();
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: SettingsService.instance.themeModeNotifier,
+      builder: (context, themeMode, _) {
+        final enabled = themeMode == ThemeMode.dark;
+
+        return SafeArea(
+          child: Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 12, 0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.black.withAlpha(110)
+                      : Colors.white.withAlpha(170),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withAlpha(24)
+                        : Colors.black.withAlpha(20),
+                  ),
+                  borderRadius: BorderRadius.circular(999),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(18),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          enabled ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                          size: 16,
+                          color: enabled ? const Color(0xFFFFD76A) : const Color(0xFF7A5C00),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          enabled ? '다크' : '화이트',
+                          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: isDark ? Colors.white : Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Switch.adaptive(
+                          value: enabled,
+                          onChanged: (value) {
+                            final nextSettings = SettingsService.instance.appSettings.copyWith(
+                              isDarkModeEnabled: value,
+                            );
+                            SettingsService.instance.saveAppSettings(nextSettings);
+                          },
+                          activeColor: const Color(0xFF7EA7FF),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
@@ -120,7 +200,16 @@ class MyApp extends StatelessWidget {
                     data: mediaQuery.copyWith(
                       textScaler: TextScaler.linear(currentFontSizeMultiplier),
                     ),
-                    child: child,
+                    child: Stack(
+                      children: [
+                        child,
+                        const Positioned(
+                          top: 0,
+                          right: 0,
+                          child: _AppThemeToggle(),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               },
