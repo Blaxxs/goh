@@ -111,6 +111,15 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     super.dispose();
   }
 
+  void _commitSearchQuery(String value) {
+    final nextQuery = value.trim();
+    if (!mounted || _searchQuery == nextQuery) return;
+
+    setState(() {
+      _searchQuery = nextQuery;
+    });
+  }
+
   void _applySearchQuery(String value) {
     final composingRange = _searchController.value.composing;
     if (composingRange.isValid && !composingRange.isCollapsed) {
@@ -120,12 +129,13 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
     _searchDebounceTimer?.cancel();
     _searchDebounceTimer = Timer(_searchDebounceDelay, () {
       if (!mounted) return;
-      final nextQuery = _searchController.text.trim();
-      if (_searchQuery == nextQuery) return;
-      setState(() {
-        _searchQuery = nextQuery;
-      });
+      _commitSearchQuery(_searchController.text);
     });
+  }
+
+  void _submitSearchImmediately(String value) {
+    _searchDebounceTimer?.cancel();
+    _commitSearchQuery(value);
   }
 
   void _handlePartFilterChanged(String? newValue) {

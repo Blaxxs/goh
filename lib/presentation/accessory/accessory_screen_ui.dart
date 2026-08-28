@@ -109,6 +109,10 @@ class AccessoryScreenUI extends StatelessWidget {
                   TextField(
                     controller: searchController,
                     onChanged: onSubmitSearch,
+                    onSubmitted: onSubmitSearch,
+                    onEditingComplete: () => onSubmitSearch(searchController.text),
+                    textInputAction: TextInputAction.search,
+                    keyboardType: TextInputType.text,
                     style: const TextStyle(
                       fontFamily: 'NanumGothic',
                       fontFamilyFallback: [
