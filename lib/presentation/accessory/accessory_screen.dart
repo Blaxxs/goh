@@ -6,6 +6,7 @@ import '../../data/models/accessory.dart';
 import '../../core/constants/accessory_constants.dart';
 import 'accessory_screen_ui.dart';
 import '../../core/widgets/app_drawer.dart';
+import '../../core/widgets/liquid_glass.dart';
 import '../../core/constants/box_constants.dart';
 import '../simulator/accessory_simulation_screen.dart';
 
@@ -334,7 +335,11 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
 
     return Scaffold(
       drawer: AppDrawer(currentScreen: widget.currentScreen),
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         leading: Builder(
           builder: (ctx) => IconButton(
             icon: const Icon(Icons.menu),
@@ -366,49 +371,53 @@ class _AccessoryScreenState extends State<AccessoryScreen> {
           ],
         ],
       ),
-      body: AccessoryScreenUI(
-        searchController: _searchController,
-        filteredAccessories: displayList,
-        isDataLoading: _isAccessoryDataLoading,
-        hasSourceData: accessories.isNotEmpty,
-        selectedPartFilter: _selectedPartFilter,
-        partFilterOptions: partFilterOptions,
-        onPartFilterChanged: _handlePartFilterChanged,
-        selectedOptionTypeFilter: _selectedOptionTypeFilter,
-        optionTypeFilterOptions: _optionTypeFilterOptions,
-        onOptionTypeFilterChanged: _handleOptionTypeFilterChanged,
-        selectedSetOnlyFilter: _selectedSetOnlyFilter,
-        onSetOnlyFilterChanged: _handleSetOnlyFilterChanged,
-        onAccessoryTap: (ctx, acc) {
-          if (widget.isPickerMode) {
-            AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
-            Navigator.of(context).pop(acc);
-          } else if (_compareMode) {
-            setState(() {
-              if (_compareList.contains(acc)) {
-                _compareList.remove(acc);
-              } else if (_compareList.length < 2) {
-                _compareList.add(acc);
+      body: AppGradientBackground(
+        child: SafeArea(
+          child: AccessoryScreenUI(
+            searchController: _searchController,
+            filteredAccessories: displayList,
+            isDataLoading: _isAccessoryDataLoading,
+            hasSourceData: accessories.isNotEmpty,
+            selectedPartFilter: _selectedPartFilter,
+            partFilterOptions: partFilterOptions,
+            onPartFilterChanged: _handlePartFilterChanged,
+            selectedOptionTypeFilter: _selectedOptionTypeFilter,
+            optionTypeFilterOptions: _optionTypeFilterOptions,
+            onOptionTypeFilterChanged: _handleOptionTypeFilterChanged,
+            selectedSetOnlyFilter: _selectedSetOnlyFilter,
+            onSetOnlyFilterChanged: _handleSetOnlyFilterChanged,
+            onAccessoryTap: (ctx, acc) {
+              if (widget.isPickerMode) {
+                AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
+                Navigator.of(context).pop(acc);
+              } else if (_compareMode) {
+                setState(() {
+                  if (_compareList.contains(acc)) {
+                    _compareList.remove(acc);
+                  } else if (_compareList.length < 2) {
+                    _compareList.add(acc);
+                  } else {
+                    _compareList[1] = acc;
+                  }
+                });
               } else {
-                _compareList[1] = acc;
+                AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
+                _showAccessoryDetails(ctx, acc);
               }
-            });
-          } else {
-            AccessoryDataManager().markAccessoryAsRecentlyUsed(acc.id);
-            _showAccessoryDetails(ctx, acc);
-          }
-        },
-        onSubmitSearch: _applySearchQuery,
-        onSearchSubmitted: _submitSearchNow,
-        compareMode: _compareMode,
-        compareList: _compareList,
-        onRetryLoad: _ensureAccessoryDataReady,
-        showMaxEnhancementValues: _showMaxEnhancementValues,
-        onShowMaxEnhancementValuesChanged: (value) {
-          setState(() {
-            _showMaxEnhancementValues = value;
-          });
-        },
+            },
+            onSubmitSearch: _applySearchQuery,
+            onSearchSubmitted: _submitSearchNow,
+            compareMode: _compareMode,
+            compareList: _compareList,
+            onRetryLoad: _ensureAccessoryDataReady,
+            showMaxEnhancementValues: _showMaxEnhancementValues,
+            onShowMaxEnhancementValuesChanged: (value) {
+              setState(() {
+                _showMaxEnhancementValues = value;
+              });
+            },
+          ),
+        ),
       ),
     );
   }

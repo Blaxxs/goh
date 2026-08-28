@@ -86,9 +86,17 @@ class AccessoryScreenUI extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(6.0),
           child: Card(
-            elevation: 2,
+            elevation: 0,
+            color: isDark ? Colors.white.withAlpha(18) : Colors.white.withAlpha(210),
+            shadowColor: Colors.black.withAlpha(18),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(16),
+              side: BorderSide(
+                color: isDark
+                    ? Colors.white.withAlpha(32)
+                    : colorScheme.primary.withAlpha(40),
+                width: 1.1,
+              ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
