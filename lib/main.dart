@@ -42,9 +42,39 @@ bool _shouldOpenAccessoryFromInitialUrl() {
       rawHref.contains('#/accessory');
 }
 
+bool _shouldOpenSpiritFromInitialUrl() {
+  if (!kIsWeb) {
+    return false;
+  }
+
+  final initialRoute = WidgetsBinding
+      .instance.platformDispatcher.defaultRouteName
+      .trim()
+      .toLowerCase();
+  final fragment = Uri.base.fragment.trim().toLowerCase();
+  final path = Uri.base.path.trim().toLowerCase();
+  final fullUrl = Uri.base.toString().toLowerCase();
+  final openQuery =
+      Uri.base.queryParameters['open']?.trim().toLowerCase() ?? '';
+  final rawHref = web_location.currentHref().trim().toLowerCase();
+  final rawHash = web_location.currentHash().trim().toLowerCase();
+
+  return initialRoute == '/spirit' ||
+      openQuery == 'spirit' ||
+      fragment == '/spirit' ||
+      fragment == 'spirit' ||
+      path.endsWith('/spirit') ||
+      fullUrl.contains('#/spirit') ||
+      fullUrl.contains('/spirit') ||
+      rawHash == '#/spirit' ||
+      rawHash == '#spirit' ||
+      rawHref.contains('#/spirit');
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final openAccessoryFromInitialUrl = _shouldOpenAccessoryFromInitialUrl();
+  final openSpiritFromInitialUrl = _shouldOpenSpiritFromInitialUrl();
 
   try {
     if (Firebase.apps.isEmpty) {
@@ -56,7 +86,10 @@ void main() async {
     debugPrint('Firebase initialization error (ignored): $e');
   }
 
-  runApp(MyApp(openAccessoryFromInitialUrl: openAccessoryFromInitialUrl));
+  runApp(MyApp(
+    openAccessoryFromInitialUrl: openAccessoryFromInitialUrl,
+    openSpiritFromInitialUrl: openSpiritFromInitialUrl,
+  ));
 
   Future(() async {
     try {
@@ -71,9 +104,11 @@ class MyApp extends StatelessWidget {
   const MyApp({
     super.key,
     required this.openAccessoryFromInitialUrl,
+    this.openSpiritFromInitialUrl = false,
   });
 
   final bool openAccessoryFromInitialUrl;
+  final bool openSpiritFromInitialUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -97,6 +132,7 @@ class MyApp extends StatelessWidget {
               themeMode: currentThemeMode,
               home: LoadingScreen(
                 openAccessoryFromInitialUrl: openAccessoryFromInitialUrl,
+                openSpiritFromInitialUrl: openSpiritFromInitialUrl,
               ),
               localizationsDelegates: const [
                 GlobalMaterialLocalizations.delegate,
